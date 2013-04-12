@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./framework/bootstrap.php" clors="true">
+    <testsuite name="Php Hooks Unit Tests">
+        <file>testsuite/AllTests.php</file>
+    </testsuite>
+    <php>
+        <ini name="date.timezone" value="America/Los_Angeles"/>
+    </php>
+</phpunit>
