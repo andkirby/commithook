@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<config>
+    <notifications>
+        <hello>Please report all hook bugs to mailto://magento-kiev@sysiq.com</hello>
+        <success>Good job! Have successes! ;)</success>
+        <failure>Something wrong in the code. Please fix issues described below:</failure>
+    </notifications>
+    <validators>
+        <PhpClass>
+            <interpret>c:\xampp\php\php.exe</interpret>
+        </PhpClass>
+    </validators>
+    <processing>
+        <filter>
+            <files>
+                <skiplist>
+                    <file>app/code/core/Mage/Core/Helper/Js.php</file>
+                </skiplist>
+            </files>
+            <paths>
+                <skiplist>
+                    <!-- Magento -->
+                    <path>lib/</path>
+                    <path>lib/Varien/</path>
+                    <path>lib/Mage/</path>
+                </skiplist>
+            </paths>
+        </filter>
+    </processing>
+</config>
