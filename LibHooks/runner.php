@@ -17,7 +17,7 @@ $xmlConfigFile = isset($xmlConfigFile) ? $xmlConfigFile : $rootPath . DIRECTORY_
 $config = \PreCommit\Config::getInstance(array('file' => $xmlConfigFile));
 
 echo PHP_EOL;
-echo $config->getNode('notifications/hello');
+echo 'Please report all hook bugs to the GitHub project.';
 echo PHP_EOL . PHP_EOL;
 
 $codePath = isset($codePath) ? $codePath : realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../..');
@@ -30,11 +30,11 @@ $preCommit->setCodePath($codePath)
 $preCommit->process();
 
 if (!$preCommit->getErrors()) {
-    echo $config->getNode('notifications/success');
+    echo 'Good job! Have successes! ;)';
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
-    echo $config->getNode('notifications/failure');
+    echo 'Something wrong in the code. Please fix issues below:';
     echo PHP_EOL . PHP_EOL;
 
     foreach ($preCommit->getErrors() as $file => $fileErrors) {

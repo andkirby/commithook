@@ -1,0 +1,18 @@
+#!/usr/bin/env c:\xampp\php\php.exe
+<?php
+/**
+ * File example on case when commit hooks located not the .git directory
+ */
+$codePath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '../..');
+
+/**
+ * You can use configuration per project. Just copy source to the hooks dir
+ */
+//$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'pre-commit.xml';
+
+/**
+ * Configure following string if you put commit hooks located not in the same dir.
+ */
+$runnerPhp = realpath(__DIR__ . '/../../../commithooks/LibHooks/runner.php');
+require_once $runnerPhp;
+

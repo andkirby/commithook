@@ -1,16 +1,5 @@
 #!/usr/bin/env c:\xampp\php\php.exe
 <?php
-/**
- * Uncomment following string if you put LibHooks located not in the same dir.
- * Also you can use similar path to below for $runnerPhp
- */
-//$codePath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '../..');
-//$runnerPhp = realpath(__DIR__ . '/../../../hooks/LibHooks/runner.php');
-/**
- * You can use configuration per project. Just copy source to the hooks dir
- */
-//$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'pre-commit.xml'
-
-$runnerPhp = realpath(LibHooks/runner.php');
+$runnerPhp = realpath('LibHooks/runner.php');
 require_once $runnerPhp;
 
