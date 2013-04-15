@@ -1,0 +1,197 @@
+<?php
+
+/**
+ * Class test for PreCommit_Processor
+ */
+class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * Php file for text hooks
+     *
+     * @var string
+     */
+    static protected $_classTest = 'tests/testsuite/PreCommit/_fixture/TestClass.php';
+
+    /**
+     * Test model
+     *
+     * @var \PreCommit\Processor
+     */
+    static protected $_model;
+
+    /**
+     * Set up test model
+     */
+    static public function setUpBeforeClass()
+    {
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/pre-commit.xml'));
+        $preCommit = new \PreCommit\Processor();
+        $preCommit->setCodePath(PROJECT_ROOT)
+            ->setFiles(array(self::$_classTest));
+
+        $preCommit->process();
+        self::$_model = $preCommit;
+    }
+
+    /**
+     * Get specific errors list
+     *
+     * @param string $file
+     * @param string $code
+     * @param bool $returnLines
+     * @return array
+     * @throws PHPUnit_Framework_Exception
+     */
+    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    {
+        $errors = self::$_model->getErrors();
+        if (!isset($errors[$file])) {
+            throw new PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
+        }
+        $errors = $errors[$file];
+
+        if (!isset($errors[$code])) {
+            throw new PHPUnit_Framework_Exception("Errors for code $code not found.");
+        }
+
+        $list = array();
+        $key = $returnLines ? 'line' : 'value';
+        foreach ($errors[$code] as $item) {
+            $list[] = $item[$key];
+        }
+        return $list;
+    }
+
+    /**
+     * Test CODE_PHP_OPERATOR_SPACES_MISSED
+     */
+    public function testOperatorSpaces()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_OPERATOR_SPACES_MISSED
+        );
+
+        //TODO implement group comment validation
+        $expected = array (
+            '$a =1;',
+            '$a= 1;',
+            '$a=1;',
+            '$a = 1 +1;',
+            '$a = 1+ 1;',
+            '$a = 1+1;',
+            '$a = 1 /1;',
+            '$a = 1/ 1;',
+            '$a = 1/1;',
+            '$a = 1 *1;',
+            '$a = 1* 1;',
+            '$a = 1*1;',
+            '$a = 1 -1;',
+            '$a = 1- 1;',
+            '$a = 1-1;',
+            '$a = 1 &1;',
+            '$a = 1& 1;',
+            '$a = 1&1;',
+            '$a = 1 %1;',
+            '$a = 1% 1;',
+            '$a = 1%1;',
+            '$a = $a !=$a;',
+            '$a = $a!= $a;',
+            '$a = $a!=$a;',
+            '$a = $a !==$a;',
+            '$a = $a!== $a;',
+            '$a = $a!==$a;',
+            '$a = $a ==$a;',
+            '$a = $a== $a;',
+            '$a = $a==$a;',
+            '$a = $a ===$a;',
+            '$a = $a=== $a;',
+            '$a = $a===$a;',
+//            'for ($i = 1; $i<2; $i++) {', //not implemented
+            'for ($i=1; $i < 2; $i++) {',
+            "'a' =>\$a,",
+            "'a'=> \$a,",
+            "'a'=>\$a,",
+            "print_r('test',true);",
+        );
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_CONDITION_ASSIGNMENT
+     */
+    public function testAssignmentInCondition()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_CONDITION_ASSIGNMENT
+        );
+        $expected = array (
+            'if ($a = rand()) {'
+        );
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_REDUNDANT_SPACES
+     */
+    public function testRedundantSpaces()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_REDUNDANT_SPACES
+        );
+        $expected = array (
+            'public function test2Do( $param ) {',
+            "print_r('test',  true);",
+            "print_r('test' , true);",
+            "print_r(rand(),  true);",
+            "print_r(rand() , true);",
+            'if ($a > rand())  {',
+            'if ($a > rand() ) {',
+            'if ( $a > rand()) {',
+            'if  ($a > rand()) {',
+            'rand( );',
+            '$a   =    $a === $a;', //after = shouldn't more then 1 space
+        );
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_REDUNDANT_SPACES
+     */
+    public function testLineExceed()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_LINE_EXCEEDS,
+            true
+        );
+        $expected = array ('196');
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_SPACE_BRACKET
+     */
+    public function testSpaceBracket()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_SPACE_BRACKET
+        );
+        $expected = array (
+            'if ($a > rand())  {',
+            'if ($a == 1)',
+            'if ($a == 1) echo 1; else echo 2;',
+            'if ($a == 1) echo 1;',
+            'if ($a == 1){',
+            'if ($a == 1)',
+            '} elseif ($a == 2){',
+            '}else if($a == 2)',
+            'else if($a == 2)',
+        );
+        $this->assertEquals($expected, $errors);
+
+    }
+}

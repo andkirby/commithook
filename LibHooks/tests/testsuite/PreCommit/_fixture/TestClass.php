@@ -85,18 +85,33 @@ class Some_testClass extends stdClass
         $a = 1 +1;
         $a = 1+ 1;
         $a = 1+1;
-        $a = 1 -1;
-        $a = 1- 1;
-        $a = 1-1;
         $a = 1 /1;
         $a = 1/ 1;
         $a = 1/1;
         $a = 1 *1;
         $a = 1* 1;
         $a = 1*1;
+        $a = 1 -1;
+        $a = 1- 1;
+        $a = 1-1;
         $a = 1 &1;
         $a = 1& 1;
         $a = 1&1;
+        $a = 1 %1;
+        $a = 1% 1;
+        $a = 1%1;
+        $a = $a !=$a;
+        $a = $a!= $a;
+        $a = $a!=$a;
+        $a = $a !==$a;
+        $a = $a!== $a;
+        $a = $a!==$a;
+        $a = $a ==$a;
+        $a = $a== $a;
+        $a = $a==$a;
+        $a = $a ===$a;
+        $a = $a=== $a;
+        $a = $a===$a;
 
         for ($i = 1; $i<2; $i++) {
             //code
@@ -106,7 +121,13 @@ class Some_testClass extends stdClass
             //code
         }
 
-        print_r('some',true);
+        array(
+            'a' =>$a,
+            'a'=> $a,
+            'a'=>$a,
+        );
+
+        print_r('test',true);
 
         /**
          * Right code
@@ -115,7 +136,11 @@ class Some_testClass extends stdClass
             //code
         }
 
-        print_r('some', true);
+        print_r('test', true);
+
+        array(
+            'a' => $a,
+        );
 
         $a = 1;
         $a = 1 + 1;
@@ -140,6 +165,131 @@ class Some_testClass extends stdClass
      */
     public function someFuncWithoutMessage()
     {
+        //assignment in a condition
+        if ($a = rand()) {
+
+        }
+
+        //redundant spaces
+        print_r('test',  true);
+        print_r('test' , true);
+        print_r(rand(),  true);
+        print_r(rand() , true);
+
+        if ($a > rand())  {
+
+        }
+        if ($a > rand() ) {
+
+        }
+        if ( $a > rand()) {
+
+        }
+        if  ($a > rand()) {
+
+        }
+
+        rand( );
+
+        //line exceeds 120
+        $someVar = true;
+        print_r($someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar);
+
+        $a   =    $a === $a;
+
+        //Right code
+        if ($a == rand()) {
+
+        }
+
+        rand();
+
+        array(
+            'a'   =>     $a,
+        );
+
+        $s = '';
+        print_r($someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $s);
+        print_r('long_string long_string long_string long_string long_string long_string long_string long_string long_string', true);
+    }
+
+    /**
+     * Test
+     */
+    public function testIfDoWhileEtc()
+    {
+        $a = 1;
+        if ($a == 1)
+            echo 1;
+        else
+            echo 2;
+
+        if ($a == 1) echo 1; else echo 2;
+
+        if ($a == 1) echo 1;
+        else echo 2;
+
+        if ($a == 1){
+            echo 1;
+        }else {
+            echo 2;
+        }
+
+        if($a == 1) {
+            echo 1;
+        } else{
+            echo 2;
+        }
+
+        if ($a == 1)
+        {
+            echo 1;
+        } else
+            echo 2;
+
+        if ($a == 1) {
+            echo 1;
+        }
+        else {
+            echo 2;
+        }
+
+        if ($a == 1) {
+            echo 1;
+        }
+        else
+        {
+            echo 2;
+        }
+
+        if ($a == 1) {
+            echo 1;
+        } else
+        {
+            echo 2;
+        }
+
+        if ($a == 1) {
+            echo 1;
+        } elseif ($a == 2){
+        } elseif($a == 2) {
+        }else if($a == 2) {
+        }else if($a == 2)
+        {
+        }
+        else if($a == 2)
+        {
+            echo 2;
+        }
+
+        //Right code
+        if ($a == 1) {
+            echo 1;
+        } elseif ($a == 2) {
+            echo 3;
+        } else {
+            echo 2;
+        }
 
     }
 }
