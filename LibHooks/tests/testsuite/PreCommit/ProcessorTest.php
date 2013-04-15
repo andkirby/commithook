@@ -88,11 +88,7 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
             'public function test1(){',
             'class Some_testClass extends stdClass',
         );
-        $this->assertCount(4, $errors);
-        $this->assertEquals($expected[0], $errors[0]['value']);
-        $this->assertEquals($expected[1], $errors[1]['value']);
-        $this->assertEquals($expected[2], $errors[2]['value']);
-        $this->assertEquals($expected[3], $errors[3]['value']);
+        $this->_validateErrors($errors, $expected);
     }
 
     /**
@@ -107,8 +103,18 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
             'protected $_param3;',
             'public function someFuncWithoutMessage()',
         );
-        $this->assertCount(2, $errors);
-        $this->assertEquals($expected[0], $errors[0]['value']);
-        $this->assertEquals($expected[1], $errors[1]['value']);
+        $this->_validateErrors($errors, $expected);
+    }
+
+    /**
+     * @param $errors
+     * @param $expected
+     */
+    protected function _validateErrors($errors, $expected)
+    {
+        $this->assertCount(count($expected), $errors);
+        foreach ($expected as $i => $value) {
+            $this->assertEquals($value, $errors[$i]['value']);
+        }
     }
 }

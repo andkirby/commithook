@@ -20,6 +20,9 @@ class Config extends \SimpleXMLElement
     static public function getInstance(array $options = array())
     {
         if (!self::$_instance) {
+            if (!file_exists($options['file'])) {
+                $options['file'] = $options['file'] . '.dist';
+            }
             self::$_instance = simplexml_load_file($options['file'], '\\PreCommit\\Config');
         }
         return self::$_instance;
