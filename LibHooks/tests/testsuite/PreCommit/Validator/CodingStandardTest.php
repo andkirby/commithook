@@ -57,7 +57,11 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
         $list = array();
         $key = $returnLines ? 'line' : 'value';
         foreach ($errors[$code] as $item) {
-            $list[] = $item[$key];
+            if ($key == 'value' && isset($item['line'])) {
+                $list[$item['line']] = $item[$key];
+            } else {
+                $list[] = $item[$key];
+            }
         }
         return $list;
     }
@@ -114,7 +118,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             "'a'=>\$a,",
             "print_r('test',true);",
         );
-        $this->assertEquals($expected, $errors);
+        $this->assertEquals($expected, array_values($errors));
     }
 
     /**
@@ -129,7 +133,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
         $expected = array (
             'if ($a = rand()) {'
         );
-        $this->assertEquals($expected, $errors);
+        $this->assertEquals($expected, array_values($errors));
     }
 
     /**
@@ -154,7 +158,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'rand( );',
             '$a   =    $a === $a;', //after = shouldn't more then 1 space
         );
-        $this->assertEquals($expected, $errors);
+        $this->assertEquals($expected, array_values($errors));
     }
 
     /**
@@ -181,17 +185,37 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_SPACE_BRACKET
         );
         $expected = array (
+            'catch (Exception $e) {',
+            '} catch (Exception $e) {$i = 1;}',
+            'try { $i = 1; } catch (Exception $e) {$i = 1;}',
+            '} catch(Exception $e) {',
+            '}catch (Exception2 $e) {',
+            '} catch (Exception3 $e){',
+            '} catch (Exception4 $e)',
             'if ($a > rand())  {',
             'if ($a == 1)',
+            'else',
             'if ($a == 1) echo 1; else echo 2;',
             'if ($a == 1) echo 1;',
+            'else echo 2;',
             'if ($a == 1){',
+            '}else {',
+            '} else{',
             'if ($a == 1)',
+            'else {',
+            '} else',
             '} elseif ($a == 2){',
             '}else if($a == 2)',
             'else if($a == 2)',
+            'do{',
+            '}while($a == 1);',
+            'do',
+            '} while($a == 1);',
+            'while($a == 1) {',
+            'while ($a == 1){',
+            'while ($a == 1)',
         );
-        $this->assertEquals($expected, $errors);
+        $this->assertEquals($expected, array_values($errors));
 
     }
 }

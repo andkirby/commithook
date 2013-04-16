@@ -78,33 +78,34 @@ class CodingStandard extends AbstractValidator
                 $this->_addError($file, self::CODE_PHP_LINE_EXCEEDS, null, $line);
             }
 
-            $reg = '/\s*[^A-z0-9]((?:elseif|else if|if|switch|foreach|for|while|do))(\W+[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+            $reg = '/\s*[^A-z0-9]+((?:elseif|else if|else|if|switch|foreach|for|while|do))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+
             if (preg_match($reg, $str, $match)) {
-                if (0 === strpos(trim($match[1]), 'do') && trim($str) !== 'do {') {
-                    $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                if ($match[1] == 'do' || $match[1] == 'try') {
+                    if (trim($str) !== $match[1] . ' {') {
+                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    }
+                } elseif ($match[1] == 'while') {
+                    if (substr(trim($str), -1) == ';' && !preg_match('/^\s+\} while \(.*\);$/', $str)
+                        || substr(trim($str), -1) != ';' && !preg_match('/^\s+while \(.*\) {$/', $str)
+                    ) {
+                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    }
+                } elseif ($match[1] == 'else') {
+                    if (!preg_match('/\s*} else {$/i', $str)) {
+                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    }
                 } elseif (substr(trim($match[0]), -3) != ') {') {
                     $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                 }
             }
-            if (false !== stripos($str, 'else') && preg_match('/(\W+else(?: ?if).*)/i', $str, $match)) {
-                $hasIf = false !== strpos($match[1], 'else if') || false !== strpos($match[1], 'elseif');
-                if (!empty($match[1])
-                    && (!$hasIf && strpos($match[1], '{') === false
-                        || strpos($match[1], '}') === false)
-                ) {
-                    $this->_addError($file, self::CODE_PHP_IF_ELSE_BRACE, $currentString, $line);
-                }
-                if (preg_match('/(else\{|\}else)/i', $match[1])) {
-                    $this->_addError($file, self::CODE_PHP_IF_ELSE_BRACE, $currentString, $line);
-                }
-            }
 
-            if (preg_match('/[^A-z]try/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $match)) {
-                $this->_addError($file, self::CODE_PHP_TRY, $currentString, $line);
+            if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $match)) {
+                $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             } elseif (preg_match('/[^A-z]catch/i', $str)
                 && !preg_match('/^\s+(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
             ) {
-                $this->_addError($file, self::CODE_PHP_CATCH, $currentString, $line);
+                $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             }
         }
 

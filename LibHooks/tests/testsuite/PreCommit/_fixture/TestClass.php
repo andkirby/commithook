@@ -244,21 +244,12 @@ class Some_testClass extends stdClass
         if ($a == 1)
         {
             echo 1;
-        } else
-            echo 2;
+        }
 
         if ($a == 1) {
             echo 1;
         }
         else {
-            echo 2;
-        }
-
-        if ($a == 1) {
-            echo 1;
-        }
-        else
-        {
             echo 2;
         }
 
@@ -282,6 +273,26 @@ class Some_testClass extends stdClass
             echo 2;
         }
 
+        do{
+
+        }while($a == 1);
+
+        do
+        {
+
+        } while($a == 1);
+
+        while($a == 1) {
+
+        }
+        while ($a == 1){
+
+        }
+        while ($a == 1)
+        {
+
+        }
+
         //Right code
         if ($a == 1) {
             echo 1;
@@ -290,6 +301,10 @@ class Some_testClass extends stdClass
         } else {
             echo 2;
         }
+
+        do {
+            echo 2;
+        } while ($a == 1);
 
     }
 }
