@@ -1,5 +1,10 @@
 #!/usr/bin/env c:\xampp\php\php.exe
 <?php
+/**
+ * You can use another configuration file
+ */
+//$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'pre-commit.xml';
+
 $runnerPhp = realpath('LibHooks/runner.php');
 require_once $runnerPhp;
 

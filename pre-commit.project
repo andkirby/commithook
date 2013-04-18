@@ -1,12 +1,7 @@
 #!/usr/bin/env c:\xampp\php\php.exe
 <?php
 /**
- * File example on case when commit hooks located not the .git directory
- */
-$codePath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '../..');
-
-/**
- * You can use configuration per project. Just copy source to the hooks dir
+ * You can use another configuration file
  */
 //$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'pre-commit.xml';
 

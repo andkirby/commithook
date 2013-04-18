@@ -1,4 +1,6 @@
 <?php
+`git diff --cached --name-only --diff-filter=ACM`;
+
 $rootPath = __DIR__;
 set_include_path(
     implode(
@@ -20,7 +22,7 @@ echo PHP_EOL;
 echo 'Please report all hook bugs to the GitHub project.';
 echo PHP_EOL . PHP_EOL;
 
-$codePath = isset($codePath) ? $codePath : realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../..');
+$codePath = trim(`git rev-parse --show-toplevel`);
 $changedFiles = array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
 
 $preCommit = new \PreCommit\Processor();
