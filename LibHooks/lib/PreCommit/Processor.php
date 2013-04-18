@@ -104,13 +104,13 @@ class Processor
             throw new Exception('Files list is empty.');
         }
 
-        $fileFilter = new Validator\FileFilter();
+        $fileFilter = $this->_loadValidator('FileFilter');
 
         foreach ($this->_files as $file) {
             $file = trim($file);
 
             if (!$fileFilter->validate('', $file)) {
-                //file ignored for processing
+                //file skipped for processing
                 continue;
             }
 

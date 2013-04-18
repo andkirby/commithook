@@ -4,22 +4,34 @@
         <PhpClass>
             <interpret>c:\xampp\php\php.exe</interpret>
         </PhpClass>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <files>
+                        <file>app/code/core/Mage/Core/Helper/Js.php</file>
+                    </files>
+                    <paths>
+                        <path>lib/</path>
+                        <path>lib/Varien/</path>
+                        <path>lib/Mage/</path>
+                    </paths>
+                </skip>
+                <protect>
+                    <files>
+                        <file>index.php</file>
+                        <file>cron.php</file>
+                        <file>cron.sh</file>
+                    </files>
+                    <paths>
+                        <path>downloader/</path>
+                        <path>lib/</path> <!--if you would add some new lib comment it temporary -->
+                        <path>app/code/core/</path>
+                        <path>app/design/adminhtml/default/default/</path>
+                        <path>app/design/frontend/base/default/</path>
+                        <path>app/design/install/</path>
+                    </paths>
+                </protect>
+            </filter>
+        </FileFilter>
     </validators>
-    <processing>
-        <filter>
-            <files>
-                <skiplist>
-                    <file>app/code/core/Mage/Core/Helper/Js.php</file>
-                </skiplist>
-            </files>
-            <paths>
-                <skiplist>
-                    <!-- Magento -->
-                    <path>lib/</path>
-                    <path>lib/Varien/</path>
-                    <path>lib/Mage/</path>
-                </skiplist>
-            </paths>
-        </filter>
-    </processing>
 </config>
