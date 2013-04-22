@@ -96,7 +96,11 @@ class CodingStandard extends AbstractValidator
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif (substr(trim($match[0]), -3) != ') {') {
-                    $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    $bracketRight = substr_count($match[0], ')');
+                    $bracketLeft  = substr_count($match[0], '(');
+                    if ($bracketLeft >= 1 && $bracketLeft == $bracketRight) {
+                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    }
                 }
             }
 

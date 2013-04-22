@@ -302,6 +302,13 @@ class Some_testClass extends stdClass
             echo 2;
         }
 
+        if ($a == 1
+            || $a == 2
+            && $a == 3
+        ) {
+            echo 2;
+        }
+
         do {
             echo 2;
         } while ($a == 1);
