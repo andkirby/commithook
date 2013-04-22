@@ -141,7 +141,7 @@ class Processor
             }
 
             //for all files
-            $fileStyle = $this->_loadValidator('FileStyle');;
+            $fileStyle = $this->_loadValidator('FileStyle');
             $fileStyle->validate($content, $file);
         }
         return array() == $this->_errorCollector->getErrors();
@@ -187,6 +187,28 @@ class Processor
             throw new Exception("File '$filePath' does not exist.");
         }
         return $filePath;
+    }
+
+    /**
+     * Get errors output
+     *
+     * @return string
+     */
+    public function getErrorsOutput()
+    {
+        $output = '';
+        foreach ($this->getErrors() as $file => $fileErrors) {
+            $decorLength = 40 - strlen($file) / 2;
+            $decorLength = $decorLength > 2 ? $decorLength : 3;
+            $output .= str_repeat('=', round($decorLength - 0.1))
+                . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;
+            foreach ($fileErrors as $errorsType) {
+                foreach ($errorsType as $error) {
+                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message']) . "\n";
+                }
+            }
+        }
+        return $output;
     }
 }
 

@@ -1,6 +1,4 @@
 <?php
-`git diff --cached --name-only --diff-filter=ACM`;
-
 $rootPath = __DIR__;
 set_include_path(
     implode(
@@ -38,15 +36,7 @@ if (!$preCommit->getErrors()) {
 } else {
     echo 'Something wrong in the code. Please fix issues below:';
     echo PHP_EOL . PHP_EOL;
-
-    foreach ($preCommit->getErrors() as $file => $fileErrors) {
-        echo "======== $file =========\n";
-        foreach ($fileErrors as $errorsType) {
-            foreach ($errorsType as $error) {
-                echo str_replace(array("\n", PHP_EOL), '', $error['message']) . "\n";
-            }
-        }
-    }
+    echo $preCommit->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;
     exit(1);
 }

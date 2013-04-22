@@ -49,7 +49,6 @@ class FileFilter extends AbstractValidator
             && !$this->_isFileProtected($file)
             && !$this->_isFileSkippedByPath($file)
             && !$this->_isFileSkipped($file);
-
     }
 
     /**
@@ -119,6 +118,7 @@ class FileFilter extends AbstractValidator
             $item = (string) $item;
 //            if (preg_match($reg, $item) !== false) {
             if (strpos($file, $item) === 0) {
+                $this->_addError($file, self::PROTECTED_FILE, $item);
                 return true;
             }
         }
