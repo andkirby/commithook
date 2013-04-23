@@ -314,6 +314,8 @@ class Some_testClass extends stdClass
             $a->getIncrementId()
         );
 
+        $a->doTrackdoOrder($a->getIncrementIdDo());
+
         do {
             echo 2;
         } while ($a == 1);

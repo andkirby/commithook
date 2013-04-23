@@ -81,10 +81,10 @@ class CodingStandard extends AbstractValidator
             $reg = '/\s*[^A-z0-9]+((?:elseif|else if|else|if|switch|foreach|for|while|do))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
 
             if (preg_match($reg, $str, $match)) {
-                if (($match[1] == 'do' || $match[1] == 'try')
-                    && preg_match('/^[^A-z0-9\>\$]?(try|do)[^A-z0-9-\$]?/', trim($str))
-                ) {
-                    if (trim($str) !== $match[1] . ' {') {
+                if (($match[1] == 'do' || $match[1] == 'try')) {
+                    if (preg_match('/^[^A-z0-9\>\$]*(try|do)[^A-z0-9-\$]*$/', trim($str))
+                        && trim($str) !== $match[1] . ' {'
+                    ) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif ($match[1] == 'while') {
