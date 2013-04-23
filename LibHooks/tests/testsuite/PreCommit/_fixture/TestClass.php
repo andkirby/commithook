@@ -309,6 +309,11 @@ class Some_testClass extends stdClass
             echo 2;
         }
 
+        $a = new stdClass();
+        $a->doTrackEcommerceOrder(
+            $a->getIncrementId()
+        );
+
         do {
             echo 2;
         } while ($a == 1);
