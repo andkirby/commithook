@@ -127,6 +127,9 @@ class Processor
 
                     $this->_loadValidator('CodingStandard')
                         ->validate($content, $file);
+
+                    $this->_loadValidator('CodingStandardMagento')
+                        ->validate($content, $file);
                     //no brake!
 
                 case 'phtml':
@@ -198,7 +201,7 @@ class Processor
     {
         $output = '';
         foreach ($this->getErrors() as $file => $fileErrors) {
-            $decorLength = 40 - strlen($file) / 2;
+            $decorLength = 60 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3;
             $output .= str_repeat('=', round($decorLength - 0.1))
                 . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;

@@ -336,6 +336,14 @@ class Some_testClass extends stdClass
     }
 
     /**
+     * Test mage standards
+     */
+    public function mageStandarts()
+    {
+        Mage::throwException('text');
+    }
+
+    /**
      * Public with underscore
      */
     public function _publicFunc()
