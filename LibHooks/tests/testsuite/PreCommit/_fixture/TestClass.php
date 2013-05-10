@@ -22,6 +22,20 @@ class Some_testClass extends stdClass
      */
     protected $_param3;
 
+    /**
+     * Protected name var without underscore
+     *
+     * @var null
+     */
+    protected $protectedValue;
+
+    /**
+     * Public name var with underscore
+     *
+     * @var null
+     */
+    public $_publicValue;
+
     public function test1(){
         //test of missing phpDoc and wrong place of brace and no needed space
     }
@@ -319,6 +333,64 @@ class Some_testClass extends stdClass
         do {
             echo 2;
         } while ($a == 1);
+    }
+
+    /**
+     * Public with underscore
+     */
+    public function _publicFunc()
+    {
+
+    }
+
+    /**
+     * Public started with Capital letter
+     */
+    public function PublicFunc()
+    {
+
+    }
+
+    /**
+     * Protected without underscore
+     */
+    protected function protectedFunc()
+    {
+
+    }
+
+    /**
+     * Private function test
+     */
+    private function privateFunc()
+    {
+        //some function test
+        /**
+         * some function test
+         */
+
+        /*
+         * some function test
+         */
+
+        /*
+         some function test
+         */
+    }
+
+    /**
+     * Method without scope
+     */
+    static function staticFunc()
+    {
+
+    }
+
+    /**
+     * Method without scope
+     */
+    function func()
+    {
 
     }
 }

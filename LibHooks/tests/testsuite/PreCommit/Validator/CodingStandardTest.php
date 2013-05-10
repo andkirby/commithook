@@ -50,6 +50,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
         }
         $errors = $errors[$file];
 
+        $this->assertArrayHasKey($code, $errors);
         if (!isset($errors[$code])) {
             throw new PHPUnit_Framework_Exception("Errors for code $code not found.");
         }
@@ -171,7 +172,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
         );
-        $expected = array ('196');
+        $expected = array ('210');
         $this->assertEquals($expected, $errors);
     }
 
@@ -216,6 +217,39 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'while ($a == 1)',
         );
         $this->assertEquals($expected, array_values($errors));
+    }
 
+    /**
+     * Test CODE_PHP_SPACE_BRACKET
+     */
+    public function testFunctionNaming()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID);
+        $expected = array (
+            'public function _publicFunc()',
+            'public function PublicFunc()',
+        );
+        $this->assertEquals($expected, array_values($errors));
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID
+        );
+        $expected = array (
+            'protected function protectedFunc()',
+            'private function privateFunc()',
+        );
+        $this->assertEquals($expected, array_values($errors));
+
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_METHOD_SCOPE
+        );
+        $expected = array (
+            'static function staticFunc()',
+            'function func()',
+        );
+        $this->assertEquals($expected, array_values($errors));
     }
 }

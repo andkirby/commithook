@@ -20,6 +20,9 @@ class CodingStandard extends AbstractValidator
     const CODE_PHP_REDUNDANT_SPACES         = 'redundantSpace';
     const CODE_PHP_CONDITION_ASSIGNMENT     = 'conditionAssignment';
     const CODE_PHP_OPERATOR_SPACES_MISSED   = 'operatorSpace';
+    const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID     = 'publicMethodNaming';
+    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID  = 'protectedMethodNaming';
+    const CODE_PHP_METHOD_SCOPE             = 'methodWithoutScope';
     /**#@-*/
 
     /**
@@ -37,6 +40,9 @@ class CodingStandard extends AbstractValidator
         self::CODE_PHP_REDUNDANT_SPACES => 'Additional spaces found. Original line: %value%',
         self::CODE_PHP_CONDITION_ASSIGNMENT => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
         self::CODE_PHP_OPERATOR_SPACES_MISSED => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
+        self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID => 'Public method name should start with two small letters. Original line: %value%',
+        self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+        self::CODE_PHP_METHOD_SCOPE => 'Method should have scope: public or protected. Original line: %value%',
     );
 
     /**
@@ -112,6 +118,21 @@ class CodingStandard extends AbstractValidator
                 && !preg_match('/^\s+(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
             ) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+            }
+
+            //check function naming and scope
+            if (strpos($str, ' function ')) {
+                if (preg_match('/^\s*(static )?public /', $str)
+                    && !preg_match('/public (static )?function [a-z]{2}/', $str)
+                ) {
+                    $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
+                } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
+                    && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
+                ) {
+                    $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
+                } elseif (!preg_match('/(protected|private|public) (static )?function/', $str)) {
+                    $this->_addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
+                }
             }
         }
 
