@@ -149,7 +149,7 @@ class Some_testClass extends stdClass
         for ($i = 1; $i < 2; $i++) {
             //code
         }
-
+        $a->addHandler('productAttribute', Mage::helper('onepica_import/output'));
         print_r('test', true);
 
         array(

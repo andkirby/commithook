@@ -56,7 +56,7 @@ class CodingStandard extends AbstractValidator
     {
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         $parsedArr = $this->_splitContent($content);
-        $regPlusMinus = '/[-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D][^\x5D\)]|[^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%]/i';
+        $regPlusMinus = '/[-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D\'A-z][^\x5D\)]|[^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%]/i';
         foreach ($parsedArr as $line => $str) {
             $currentString = trim($originalArr[$line - 1]);
             if (
@@ -64,14 +64,14 @@ class CodingStandard extends AbstractValidator
                 || preg_match('/[^\s(]\!/i', $str) // operators != !== must have preceding space
 
                 // operators = == === must be wrapped with spaces
-                || preg_match('/(?:=[^=\s<>])|(?:[^-=\s!+*\x2F\.%&|^<>]=)/i', $str, $mm)
+                || preg_match('/(?:=[^=\s<>])|(?:[^-=\s!+*\x2F\.%&|^<>]=)/i', $str)
 
                 // math operators (+-*/% and comma(,)) must be wrapped with spaces
                 || preg_match($regPlusMinus, $str)
 
                 // operators > < >> << must be wrapped with spaces
                 //|| preg_match('/\S[^-=<>][<>]{1,2}[^\s<>;\)]/i', $str)
-                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&]/i', $str, $mm) // operator & && must be wrapped with spaces
+                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&]/i', $str) // operator & && must be wrapped with spaces
             ) {
                 $this->_addError($file, self::CODE_PHP_OPERATOR_SPACES_MISSED, $currentString, $line);
             }
