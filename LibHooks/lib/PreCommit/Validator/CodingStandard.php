@@ -116,8 +116,6 @@ class CodingStandard extends AbstractValidator
                     $bracketRight = substr_count($match[0], ')');
                     $bracketLeft  = substr_count($match[0], '(');
                     if ($bracketLeft >= 1 && $bracketLeft == $bracketRight) {
-//                        qqq($match);
-//                        echo __LINE__ . PHP_EOL;
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 }
