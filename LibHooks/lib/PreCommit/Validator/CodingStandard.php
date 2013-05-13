@@ -56,6 +56,7 @@ class CodingStandard extends AbstractValidator
     {
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         $parsedArr = $this->_splitContent($content);
+        $regPlusMinus = '/[-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D][^\x5D\)]|[^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%]/i';
         foreach ($parsedArr as $line => $str) {
             $currentString = trim($originalArr[$line - 1]);
             if (
@@ -66,7 +67,7 @@ class CodingStandard extends AbstractValidator
                 || preg_match('/(?:=[^=\s<>])|(?:[^-=\s!+*\x2F\.%&|^<>]=)/i', $str, $mm)
 
                 // math operators (+-*/% and comma(,)) must be wrapped with spaces
-                || preg_match('/[-+*\x2F%,][^-+*\x2F%=<>;$\)\s\x5D][^\x5D]|[^\S][^-+*\x2F%=<>;$\)\s][-+*\x2F%]/i', $str)
+                || preg_match($regPlusMinus, $str)
 
                 // operators > < >> << must be wrapped with spaces
                 //|| preg_match('/\S[^-=<>][<>]{1,2}[^\s<>;\)]/i', $str)

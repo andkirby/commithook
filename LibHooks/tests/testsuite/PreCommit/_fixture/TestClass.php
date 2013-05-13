@@ -97,7 +97,6 @@ class Some_testClass extends stdClass
         $a= 1;
         $a=1;
         $a = 1 +1;
-        $a = 1 +1;
         $a = 1+ 1;
         $a = 1+1;
         $a = 1 /1;
