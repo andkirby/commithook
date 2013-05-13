@@ -97,6 +97,7 @@ class Some_testClass extends stdClass
         $a= 1;
         $a=1;
         $a = 1 +1;
+        $a = 1 +1;
         $a = 1+ 1;
         $a = 1+1;
         $a = 1 /1;
@@ -213,6 +214,10 @@ class Some_testClass extends stdClass
 
         //Right code
         if ($a == rand()) {
+
+        }
+
+        if (0 === stripos($a, substr($a, 0, -4))) {
 
         }
 
