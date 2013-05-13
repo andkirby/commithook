@@ -216,6 +216,8 @@ class Some_testClass extends stdClass
 
         }
 
+        $urlKey = $this->getProductModel()->formatUrlKey($a->getName());
+
         if (0 === stripos($a, substr($a, 0, -4))) {
 
         }
