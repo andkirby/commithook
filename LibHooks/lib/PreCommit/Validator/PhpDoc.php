@@ -38,6 +38,9 @@ class PhpDoc extends AbstractValidator
      */
     public function validate($content, $file)
     {
+        //clean up group comments with nodes
+        $content = $this->_cleanGroupCommentedNodes($content);
+
         $text = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
 
         foreach ($text as $line => $str) {
@@ -129,11 +132,24 @@ class PhpDoc extends AbstractValidator
      */
     public function _validateExistPhpDocMessage($content, $file)
     {
-        if (preg_match_all('/\x20{4}\/\*\*\x0D?\x0A\x20{5}\*\s\@(.|\x0D?\x0A)*?\*\/\x0D?\x0A\x20(.*)/', $content, $matches)) {
+        if (preg_match_all(
+            '/\x20{4}\/\*\*\x0D?\x0A\x20{5}\*\s\@(.|\x0D?\x0A)*?\*\/\x0D?\x0A\x20(.*)/', $content, $matches
+        )) {
             foreach ($matches[2] as $match) {
                 $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, $match);
             }
         }
         return $this;
+    }
+
+    /**
+     * Remove Group commented nodes
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function _cleanGroupCommentedNodes($content)
+    {
+        return preg_replace('/\s*\/\*\*\#\@\+(\s|\S)*?\/\*\*\#@\-\*\//', '', $content);
     }
 }

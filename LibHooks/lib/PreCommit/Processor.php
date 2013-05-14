@@ -51,6 +51,13 @@ class Processor
      * @var array
      */
     protected $_validators = array();
+
+    /**
+     * Used filters list
+     *
+     * @var array
+     */
+    protected $_filters = array();
     //endregion
 
     public function __construct()
@@ -119,6 +126,8 @@ class Processor
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             switch ($ext) {
                 case 'php':
+                    $content = $this->_loadFilter('SkipContent')->filter($content);
+
                     $this->_loadValidator('PhpClass')
                         ->validate($content, $file, $filePath);
 
@@ -212,6 +221,22 @@ class Processor
             }
         }
         return $output;
+    }
+
+    /**
+     * Load filter
+     *
+     * @param string $name
+     * @param array $options
+     * @return Filter\InterfaceFilter
+     */
+    protected function _loadFilter($name, array $options = array())
+    {
+        if (empty($this->_filters[$name])) {
+            $class = __NAMESPACE__ . "\\Filter\\$name";
+            $this->_filters[$name] = new $class($options);
+        }
+        return $this->_filters[$name];
     }
 }
 

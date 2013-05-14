@@ -2,7 +2,6 @@
 namespace PreCommit\Validator;
 use PreCommit\Config;
 use PreCommit\Exception;
-use \PreCommit\Processor\ErrorCollector as Error;
 
 /**
  * Class validator for check PHP interpreter errors
@@ -83,6 +82,8 @@ class PhpClass extends AbstractValidator
     }
 
     /**
+     * Validate content by PHP interpret
+     *
      * @param string $filePath
      * @param string $file
      * @return $this

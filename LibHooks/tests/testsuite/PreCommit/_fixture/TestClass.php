@@ -9,6 +9,16 @@ class Some_testClass extends stdClass
      */
     const RIGHT = 0;
 
+
+    /**#@+
+     * Group comment
+     */
+    const NODE_1   = 'node';
+    const NODE_2   = 'node';
+
+    const NODE_3   = 'node';
+    /**#@-*/
+
     /**
      * Good PHPDoc
      *
@@ -404,6 +414,14 @@ class Some_testClass extends stdClass
      * Method without scope
      */
     function func()
+    {
+
+    }
+
+    /**
+     * Test name
+     */
+    public function __construct()
     {
 
     }
