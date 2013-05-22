@@ -24,7 +24,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
      */
     static public function setUpBeforeClass()
     {
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/pre-commit.xml'));
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         $preCommit = new \PreCommit\Processor();
         $preCommit->setCodePath(PROJECT_ROOT)
             ->setFiles(array(self::$_classTest));

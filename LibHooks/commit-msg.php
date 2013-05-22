@@ -20,18 +20,23 @@ echo PHP_EOL;
 echo 'Please report all hook bugs to the GitHub project.';
 echo PHP_EOL . PHP_EOL;
 
-/** @var \PreCommit\Processor\AbstractAdapter $processor */
-$processor = \PreCommit\Processor::factory($hookName);
-$processor->process();
+$codePath = trim(`git rev-parse --show-toplevel`);
+$changedFiles = array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
 
-if (!$processor->getErrors()) {
+$preCommit = new \PreCommit\Processor();
+$preCommit->setCodePath($codePath)
+    ->setFiles($changedFiles);
+
+$preCommit->process();
+
+if (!$preCommit->getErrors()) {
     echo 'Good job! Have successes! ;)';
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
     echo 'Something wrong in the code. Please fix issues below:';
     echo PHP_EOL . PHP_EOL;
-    echo $processor->getErrorsOutput();
+    echo $preCommit->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;
     exit(1);
 }
