@@ -8,12 +8,10 @@
             <filter>
                 <skip>
                     <files>
-                        <file>app/code/core/Mage/Core/Helper/Js.php</file>
+                        <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
                     </files>
                     <paths>
-                        <path>lib/</path>
-                        <path>lib/Varien/</path>
-                        <path>lib/Mage/</path>
+                        <!--<path>app/code/local/My/Module</path>-->
                     </paths>
                 </skip>
                 <protect>
@@ -26,8 +24,6 @@
                         <path>downloader/</path>
                         <path>lib/</path> <!--if you would add some new lib comment it temporary -->
                         <path>app/code/core/</path>
-                        <path>app/design/adminhtml/default/default/</path>
-                        <path>app/design/frontend/base/default/</path>
                         <path>app/design/install/</path>
                     </paths>
                 </protect>
