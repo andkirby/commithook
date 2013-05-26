@@ -1,13 +1,12 @@
 <?php
 namespace PreCommit\Validator;
-use \PreCommit\Processor\ErrorCollector as Error;
 
 /**
  * Class Trailing spaces validator
  *
  * @package PreCommit\Validator
  */
-class Trailing extends AbstractValidator
+class TrailingSpace extends AbstractValidator
 {
     /**#@+
      * Error codes

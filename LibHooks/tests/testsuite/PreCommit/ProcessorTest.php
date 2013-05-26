@@ -25,7 +25,7 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     static public function setUpBeforeClass()
     {
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/pre-commit.xml'));
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         $preCommit = new \PreCommit\Processor();
         $preCommit->setCodePath(self::_getCodePath())
             ->setFiles(array(self::$_classTest));

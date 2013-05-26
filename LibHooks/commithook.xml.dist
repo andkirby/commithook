@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<config>
+    <!--Validators setup-->
+    <validators>
+        <PhpClass>
+            <interpret>d:\s\php-5.3.16\php.exe</interpret>
+        </PhpClass>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <files>
+                        <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
+                    </files>
+                    <paths>
+                        <path>lib/</path>
+                    </paths>
+                </skip>
+                <protect>
+                    <files>
+                        <file>index.php</file>
+                        <file>cron.php</file>
+                        <file>cron.sh</file>
+                    </files>
+                    <paths>
+                        <path>downloader/</path>
+                        <path>lib/</path> <!--if you would add some new lib comment it temporary -->
+                        <path>app/code/core/</path>
+                        <path>app/code/local/Mage/</path>
+                        <path>app/design/install/</path>
+                    </paths>
+                </protect>
+            </filter>
+        </FileFilter>
+    </validators>
+
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <filters>
+                        <SkipContent />
+                    </filters>
+                    <validators>
+                        <PhpClass />
+                        <PhpDoc />
+                        <CodingStandard />
+                        <CodingStandardMagento />
+                        <TrailingSpace />
+                    </validators>
+                </php>
+                <phtml>
+                    <validators>
+                        <TrailingSpace />
+                    </validators>
+                </phtml>
+                <xml>
+                    <validators>
+                        <XmlParser />
+                    </validators>
+                </xml>
+            </filetype>
+        </pre-commit>
+        <commit-msg>
+            <validators>
+                <CommitMessageMage />
+            </validators>
+        </commit-msg>
+    </hooks>
+</config>
+

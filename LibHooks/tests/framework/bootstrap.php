@@ -1,4 +1,5 @@
 <?php
+require_once 'func.php';
 $includePaths = array(
     get_include_path(),
     './testsuite',

@@ -1,13 +1,12 @@
 <?php
 namespace PreCommit\Validator;
 
-
 /**
  * Class XML validator
  *
  * @package PreCommit\Validator
  */
-class Xml extends AbstractValidator
+class XmlParser extends AbstractValidator
 {
     /**#@+
      * Error codes

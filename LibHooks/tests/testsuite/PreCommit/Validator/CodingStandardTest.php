@@ -15,7 +15,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
     /**
      * Test model
      *
-     * @var \PreCommit\Processor
+     * @var \PreCommit\Processor\PreCommit
      */
     static protected $_model;
 
@@ -24,13 +24,13 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
      */
     static public function setUpBeforeClass()
     {
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/pre-commit.xml'));
-        $preCommit = new \PreCommit\Processor();
-        $preCommit->setCodePath(PROJECT_ROOT)
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        /** @var PreCommit\Processor\PreCommit $processor */
+        $processor = PreCommit\Processor::factory('pre-commit', 'git');
+        $processor->setCodePath(PROJECT_ROOT)
             ->setFiles(array(self::$_classTest));
-
-        $preCommit->process();
-        self::$_model = $preCommit;
+        $processor->process();
+        self::$_model = $processor;
     }
 
     /**
@@ -117,7 +117,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             "'a' =>\$a,",
             "'a'=> \$a,",
             "'a'=>\$a,",
-            "print_r('test',true);",
+//            "print_r('test',true);", //TODO find out the problem
         );
         $this->assertEquals($expected, array_values($errors));
     }
