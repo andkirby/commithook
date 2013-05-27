@@ -20,7 +20,26 @@ echo PHP_EOL;
 echo 'Please report all hook bugs to the GitHub project.';
 echo PHP_EOL . PHP_EOL;
 
+//Get VCS type
 $vcs = isset($vcs) ? $vcs : 'git';
+
+//Process hook name
+$supportedHooks = (array) $config->getNode('supported_hooks')->hook;
+if (empty($hookFile)) {
+    //try to get hook name from backtrace
+    $backtrace = debug_backtrace();
+    if (isset($backtrace[0]['file'])) {
+        $hookFile = $backtrace[0]['file'];
+    } else {
+        throw new \PreCommit\Exception('Error. Please add line "$hookFile = __FILE__;" in your hook file.');
+    }
+}
+$hookName = pathinfo($hookFile, PATHINFO_BASENAME);
+if (!in_array($hookName, $supportedHooks)) {
+    echo "Unsupported hook '$hookName'. Please review supported_hooks nodes in configuration.";
+    echo PHP_EOL . PHP_EOL;
+    exit(1);
+}
 
 /** @var \PreCommit\Processor\AbstractAdapter $processor */
 $processor = \PreCommit\Processor::factory($hookName, $vcs);

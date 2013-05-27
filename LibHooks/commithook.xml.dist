@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <config>
+    <supported_hooks>
+        <hook>pre-commit</hook>
+        <hook>commit-msg</hook>
+    </supported_hooks>
     <!--Validators setup-->
     <validators>
         <PhpClass>

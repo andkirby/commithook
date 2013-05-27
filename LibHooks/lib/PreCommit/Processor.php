@@ -30,6 +30,7 @@ class Processor
             if ($e->getCode() == Autoloader::EXCEPTION_CODE && strpos($e->getMessage(), $file)) {
                 throw new Exception("Seems adapter '$adapter' does not implemented.");
             }
+            throw $e;
         }
     }
 
