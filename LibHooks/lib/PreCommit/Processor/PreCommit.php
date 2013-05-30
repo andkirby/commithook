@@ -114,9 +114,13 @@ class PreCommit extends AbstractAdapter
                     break;
 
                 case 'xml':
+                    $this->_loadValidator('TrailingSpace')
+                        ->validate($content, $file);
                     $this->_loadValidator('XmlParser')
                         ->validate($content, $file);
                     break;
+
+                //no default
             }
 
             //for all files

@@ -19,6 +19,11 @@ class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $errors[0]);
     }
 
+    /**
+     * Data provider testMessageSuccess()
+     *
+     * @return array
+     */
     public function dataMessageSuccess()
     {
         return array(
@@ -31,7 +36,7 @@ class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test CODE_BAD_COMMIT_MESSAGE
+     * Test CODE_BAD_COMMIT_MESSAGE. Positive test
      *
      * @dataProvider dataMessageSuccess
      */
