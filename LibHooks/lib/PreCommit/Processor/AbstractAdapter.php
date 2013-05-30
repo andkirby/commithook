@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Processor;
-use \PreCommit\Processor\ErrorCollector as Error;
+use PreCommit\Exception;
+use PreCommit\Processor\ErrorCollector as Error;
 
 /**
  * Class abstract process adapter
@@ -41,13 +42,41 @@ abstract class AbstractAdapter
 
     /**
      * Set default error collector
+     *
+     * @param string|array $options
+     * @throws Exception
      */
-    public function __construct($vcsType)
+    public function __construct($options = array())
     {
-        $this->_errorCollector = new Error();
+        if (is_string($options)) {
+            $this->_vcsAdapter = $this->_getVcsAdapter($options);
+        } elseif (is_object($options) && $options instanceof \PreCommit\Vcs\AdapterInterface) {
+            $this->_vcsAdapter = $options;
+        } elseif (isset($options['vcs']) && is_object($options['vcs'])
+            && $options['vcs'] instanceof \PreCommit\Vcs\AdapterInterface
+        ) {
+            $this->_vcsAdapter = $options['vcs'];
+        } else {
+            throw new Exception('VCS adapter is not set.');
+        }
 
-        $vcsClass = 'PreCommit\\Vcs\\' . $vcsType;
-        $this->_vcsAdapter = new $vcsClass();
+        if (is_array($options) && isset($options['errorCollector'])) {
+            $this->_errorCollector = $options['errorCollector'];
+        } else {
+            $this->_errorCollector = $this->_getErrorCollector();
+        }
+    }
+
+    /**
+     * Get VCS object
+     *
+     * @param string $type
+     * @return string
+     */
+    protected function _getVcsAdapter($type)
+    {
+        $class = 'PreCommit\\Vcs\\' . $type;
+        return new $class();
     }
 
     /**
@@ -133,5 +162,13 @@ abstract class AbstractAdapter
             }
         }
         return $output;
+    }
+
+    /**
+     * @return ErrorCollector
+     */
+    protected function _getErrorCollector()
+    {
+        return new Error();
     }
 }

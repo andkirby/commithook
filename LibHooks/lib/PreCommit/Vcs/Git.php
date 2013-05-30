@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit\Vcs;
 
+use PreCommit\Exception;
+
 /**
  * Class for VCS adapter Git
  */
@@ -23,6 +25,21 @@ class Git implements AdapterInterface
      */
     public function getAffectedFiles()
     {
-        return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
+        return array_filter(explode(PHP_EOL, `git diff --cached --name-only --diff-filter=ACM`));
+    }
+
+    /**
+     * Get inner text of commit message file
+     *
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    public function getCommitMessage()
+    {
+        $file = $this->getCodePath() . DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR . 'COMMIT_EDITMSG';
+        if (!file_exists($file)) {
+            throw new Exception("Commit message file '$file' not found.");
+        }
+        return file_get_contents($file);
     }
 }

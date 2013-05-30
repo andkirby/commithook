@@ -9,6 +9,9 @@
         <PhpClass>
             <interpret>d:\s\php-5.3.16\php.exe</interpret>
         </PhpClass>
+        <CommitMessage>
+            <format>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z]{2,}-[0-9]+: /</format>
+        </CommitMessage>
         <FileFilter>
             <filter>
                 <skip>
@@ -67,7 +70,7 @@
         </pre-commit>
         <commit-msg>
             <validators>
-                <CommitMessageMage />
+                <CommitMessage />
             </validators>
         </commit-msg>
     </hooks>

@@ -19,4 +19,11 @@ interface AdapterInterface
      * @return string
      */
     public function getAffectedFiles();
+
+    /**
+     * Get commit message
+     *
+     * @return string
+     */
+    public function getCommitMessage();
 }
