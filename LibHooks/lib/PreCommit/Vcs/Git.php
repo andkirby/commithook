@@ -25,7 +25,7 @@ class Git implements AdapterInterface
      */
     public function getAffectedFiles()
     {
-        return array_filter(explode(PHP_EOL, `git diff --cached --name-only --diff-filter=ACM`));
+        return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
     }
 
     /**
