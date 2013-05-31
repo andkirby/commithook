@@ -7,7 +7,7 @@
     <!--Validators setup-->
     <validators>
         <PhpClass>
-            <interpret>d:\s\php-5.3.16\php.exe</interpret>
+            <interpret>c:/xampp/php/php.exe</interpret>
         </PhpClass>
         <CommitMessage>
             <format>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z]{2,}-[0-9]+: /</format>
