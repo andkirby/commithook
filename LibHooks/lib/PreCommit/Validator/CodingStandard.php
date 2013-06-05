@@ -34,21 +34,21 @@ class CodingStandard extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-            self::CODE_PHP_TRY               => "Syntax in TRY instruction is wrong. Original line: %value%",
-            self::CODE_PHP_CATCH             => "Syntax in CATCH instruction is wrong. Original line: %value%",
-            self::CODE_PHP_IF_ELSE_BRACE     => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
-            self::CODE_PHP_SPACE_BRACE       => 'Spaces missed near {. Original line: %value%',
-            self::CODE_PHP_SPACE_BRACKET     => 'Spaces missed near (. Original line: %value%',
-            self::CODE_PHP_LINE_EXCEEDS      => 'Length exceeds 120 chars.',
-            self::CODE_PHP_REDUNDANT_SPACES  => 'Additional spaces found. Original line: %value%',
-            self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
-            self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
-            self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
-            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
-            self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
-            self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
-            self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gaps after opened bracket/brace or before closed bracket/brace %value% time(s).',
-        );
+        self::CODE_PHP_TRY               => "Syntax in TRY instruction is wrong. Original line: %value%",
+        self::CODE_PHP_CATCH             => "Syntax in CATCH instruction is wrong. Original line: %value%",
+        self::CODE_PHP_IF_ELSE_BRACE     => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
+        self::CODE_PHP_SPACE_BRACE       => 'Spaces missed near {. Original line: %value%',
+        self::CODE_PHP_SPACE_BRACKET     => 'Spaces missed near (. Original line: %value%',
+        self::CODE_PHP_LINE_EXCEEDS      => 'Length exceeds 120 chars.',
+        self::CODE_PHP_REDUNDANT_SPACES  => 'Additional spaces found. Original line: %value%',
+        self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
+        self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
+        self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
+        self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+        self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
+        self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
+        self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gaps after opened bracket/brace or before closed bracket/brace %value% time(s).',
+    );
 
     /**
      * Validate content
@@ -81,7 +81,7 @@ class CodingStandard extends AbstractValidator
             $this->_addError($file, self::CODE_PHP_GAPS, count($match[0]));
         }
 
-        preg_match_all('/(\{|\()\n\n|\n\n[ ]*(\}|\))/', $content, $match);
+        preg_match_all('/(\{|\()\n\n.*|.*\n\n[ ]*(\}|\))/', $content, $match);
         if ($match[0]) {
             $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]));
         }
