@@ -5,5 +5,5 @@
  */
 //$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'commithook.xml';
 $hookName = __FILE__;
-$runnerPhp = realpath('LibHooks/runner.php');
+$runnerPhp = realpath(__DIR__ . '/../../../commithook/LibHooks/runner.php');
 require_once $runnerPhp;
