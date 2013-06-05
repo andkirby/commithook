@@ -9,7 +9,6 @@ class Some_testClass extends stdClass
      */
     const RIGHT = 0;
 
-
     /**#@+
      * Group comment
      */
@@ -57,6 +56,10 @@ class Some_testClass extends stdClass
      */
     public function test2Do( $param ) {
         //Test wrong place of brace and unneeded space between brackets
+
+        //line exceeds 120
+        $someVar = true;
+        print_r($someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar);
     }
 
     /**
@@ -67,17 +70,17 @@ class Some_testClass extends stdClass
     public function testTryCatch()
     {
         try {
-
+            //code
         }
         catch (Exception $e) {
-
+            //code
         }
 
         try
         {
-
+            //code
         } catch (Exception $e) {
-
+            //code
         }
 
         try {
@@ -153,6 +156,24 @@ class Some_testClass extends stdClass
 
         print_r('test',true);
 
+        $this->func(
+            'save',
+            array(
+                 'label'     => 'value1',
+                 'onclick'   => 'saveAndContinueEdit()',
+                 'class'     => 'save',
+            ), -100
+        );
+
+        $this->func(
+            'save',
+            array(
+                 'label'     => 'value1',
+                 'onclick'   => 'saveAndContinueEdit()',
+                 'class'     => 'save',
+            ), -time()
+        );
+
         /**
          * Right code
          */
@@ -191,7 +212,7 @@ class Some_testClass extends stdClass
     {
         //assignment in a condition
         if ($a = rand()) {
-
+            //code
         }
 
         //redundant spaces
@@ -201,35 +222,31 @@ class Some_testClass extends stdClass
         print_r(rand() , true);
 
         if ($a > rand())  {
-
+            //code
         }
         if ($a > rand() ) {
-
+            //code
         }
         if ( $a > rand()) {
-
+            //code
         }
         if  ($a > rand()) {
-
+            //code
         }
 
         rand( );
-
-        //line exceeds 120
-        $someVar = true;
-        print_r($someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar, $someVar);
 
         $a   =    $a === $a;
 
         //Right code
         if ($a == rand()) {
-
+            //code
         }
 
         $urlKey = $this->getProductModel()->formatUrlKey($a->getName());
 
         if (0 === stripos($a, substr($a, 0, -4))) {
-
+            //code
         }
 
         rand();
@@ -304,23 +321,23 @@ class Some_testClass extends stdClass
         }
 
         do{
-
+            //code
         }while($a == 1);
 
         do
         {
-
+            //code
         } while($a == 1);
 
         while($a == 1) {
-
+            //code
         }
         while ($a == 1){
-
+            //code
         }
         while ($a == 1)
         {
-
+            //code
         }
 
         //Right code
@@ -364,7 +381,7 @@ class Some_testClass extends stdClass
      */
     public function _publicFunc()
     {
-
+        //code
     }
 
     /**
@@ -372,7 +389,7 @@ class Some_testClass extends stdClass
      */
     public function PublicFunc()
     {
-
+        //code
     }
 
     /**
@@ -380,7 +397,7 @@ class Some_testClass extends stdClass
      */
     protected function protectedFunc()
     {
-
+        //code
     }
 
     /**
@@ -407,7 +424,7 @@ class Some_testClass extends stdClass
      */
     static function staticFunc()
     {
-
+        //code
     }
 
     /**
@@ -415,7 +432,7 @@ class Some_testClass extends stdClass
      */
     function func()
     {
-
+        //code
     }
 
     /**
@@ -423,6 +440,41 @@ class Some_testClass extends stdClass
      */
     public function __construct()
     {
+        //code
+    }
+
+    /**
+     * Check gaps in this method
+     *
+     * This method SHOULD be last
+     */
+    public function funcWithGaps()
+    {
+
+        $this->func();
+        /**
+         * In end added gap
+         * This method should be last
+         */
+        $this->func();
+
+
+        //double gap above
+        $this->func();
+
+        if (1 == 1) {
+
+            //one gap after bracket
+            $a = 1; //gap below
+
+        }
+
+        $a = array(
+
+            'gap above and below'
+
+        ); //gap below
 
     }
+
 }

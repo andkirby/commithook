@@ -23,6 +23,9 @@ class CodingStandard extends AbstractValidator
     const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID     = 'publicMethodNaming';
     const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID  = 'protectedMethodNaming';
     const CODE_PHP_METHOD_SCOPE             = 'methodWithoutScope';
+    const CODE_PHP_GAPS                     = 'redundantGaps';
+    const CODE_PHP_BRACKET_GAPS             = 'redundantGapAfterBracket';
+    const CODE_PHP_LAST_FUNCTION_GAP        = 'redundantGapAfterLastFunction';
     /**#@-*/
 
     /**
@@ -31,19 +34,21 @@ class CodingStandard extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_PHP_TRY => "Syntax in TRY instruction is wrong. Original line: %value%",
-        self::CODE_PHP_CATCH => "Syntax in CATCH instruction is wrong. Original line: %value%",
-        self::CODE_PHP_IF_ELSE_BRACE => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
-        self::CODE_PHP_SPACE_BRACE => 'Spaces missed near {. Original line: %value%',
-        self::CODE_PHP_SPACE_BRACKET => 'Spaces missed near (. Original line: %value%',
-        self::CODE_PHP_LINE_EXCEEDS => 'Length exceeds 120 chars.',
-        self::CODE_PHP_REDUNDANT_SPACES => 'Additional spaces found. Original line: %value%',
-        self::CODE_PHP_CONDITION_ASSIGNMENT => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
-        self::CODE_PHP_OPERATOR_SPACES_MISSED => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
-        self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
-        self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
-        self::CODE_PHP_METHOD_SCOPE => 'Method should have scope: public or protected. Original line: %value%',
-    );
+            self::CODE_PHP_TRY               => "Syntax in TRY instruction is wrong. Original line: %value%",
+            self::CODE_PHP_CATCH             => "Syntax in CATCH instruction is wrong. Original line: %value%",
+            self::CODE_PHP_IF_ELSE_BRACE     => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACE       => 'Spaces missed near {. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACKET     => 'Spaces missed near (. Original line: %value%',
+            self::CODE_PHP_LINE_EXCEEDS      => 'Length exceeds 120 chars.',
+            self::CODE_PHP_REDUNDANT_SPACES  => 'Additional spaces found. Original line: %value%',
+            self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
+            self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
+            self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
+            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+            self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
+            self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
+            self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gaps after opened bracket/brace or before closed bracket/brace %value% time(s).',
+        );
 
     /**
      * Validate content
@@ -54,10 +59,52 @@ class CodingStandard extends AbstractValidator
      */
     public function validate($content, $file)
     {
+        $this->_validateGaps($content, $file);
+        $this->_validateCodeStyleByLines($content, $file);
+
+        return array() == $this->_errorCollector->getErrors();
+    }
+
+    /**
+     * Validate content gaps
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    public function _validateGaps($content, $file)
+    {
+        $content = preg_replace('/\r/', '', $content);
+
+        preg_match_all('/\n\n\n/', $content, $match);
+        if ($match[0]) {
+            $this->_addError($file, self::CODE_PHP_GAPS, count($match[0]));
+        }
+
+        preg_match_all('/(\{|\()\n\n|\n\n[ ]*(\}|\))/', $content, $match);
+        if ($match[0]) {
+            $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]));
+        }
+    }
+
+    /**
+     * Validate code style by lines
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    protected function _validateCodeStyleByLines($content, $file)
+    {
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
-        $parsedArr = $this->_splitContent($content);
-        $regPlusMinus = '/[-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D\'A-z][^\x5D\)]|[^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%]/i';
+        $parsedArr   = $this->_splitContent($content);
+        $regPlusMin  = '/([-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D\'][^\x5D\)0-9])|([^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%])/i';
         foreach ($parsedArr as $line => $str) {
+            if (!$str) {
+                //skip empty line
+                continue;
+            }
+
             $currentString = trim($originalArr[$line - 1]);
             if (
                 preg_match('/\S=\>|=\>\S/i', $str) // operator => must be wrapped with spaces
@@ -67,18 +114,20 @@ class CodingStandard extends AbstractValidator
                 || preg_match('/(?:=[^=\s<>])|(?:[^-=\s!+*\x2F\.%&|^<>]=)/i', $str)
 
                 // math operators (+-*/% and comma(,)) must be wrapped with spaces
-                || preg_match($regPlusMinus, $str)
+                || preg_match($regPlusMin, $str)
 
                 // operators > < >> << must be wrapped with spaces
                 //|| preg_match('/\S[^-=<>][<>]{1,2}[^\s<>;\)]/i', $str)
-                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&]/i', $str) // operator & && must be wrapped with spaces
+
+                // operator & && must be wrapped with spaces
+                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&]/i', $str)
             ) {
                 $this->_addError($file, self::CODE_PHP_OPERATOR_SPACES_MISSED, $currentString, $line);
             }
 
             //checking for an assignment in a condition
-            if (preg_match('~if\s*\((.*?)\)\s*[{:]~s', $str, $matches)) {
-                if (preg_match('~\$[^= ]+ ?= ?[^=]~', $matches[1])) {
+            if (preg_match('~if\s*\((.*?)\)\s*[{:]~s', $str, $a)) {
+                if (preg_match('~\$[^= ]+ ?= ?[^=]~', $a[1])) {
                     $this->_addError($file, self::CODE_PHP_CONDITION_ASSIGNMENT, $currentString, $line);
                 }
             }
@@ -91,30 +140,31 @@ class CodingStandard extends AbstractValidator
                 $this->_addError($file, self::CODE_PHP_LINE_EXCEEDS, null, $line);
             }
 
-            $reg = '/\s*[^A-z0-9]+((?:elseif|else if|else|if|switch|foreach|for|while|do))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+            $operators = 'elseif|else if|else|if|switch|foreach|for|while|do';
+            $reg       = '/\s*[^A-z0-9]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
 
-            if (preg_match($reg, $str, $match)
-                && !preg_match('/^[A-z0-9_]/', $match[2])
+            if (preg_match($reg, $str, $b)
+                && !preg_match('/^[A-z0-9_]/', $b[2])
             ) {
-                if ($match[1] == 'do' || $match[1] == 'try') {
+                if ($b[1] == 'do' || $b[1] == 'try') {
                     if (preg_match('/^[^A-z0-9\>\$]*(try|do)[^A-z0-9-\$]*$/', trim($str))
-                        && trim($str) !== $match[1] . ' {'
+                        && trim($str) !== $b[1] . ' {'
                     ) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
-                } elseif ($match[1] == 'while') {
+                } elseif ($b[1] == 'while') {
                     if (substr(trim($str), -1) == ';' && !preg_match('/^\s+\} while \(.*\);$/', $str)
                         || substr(trim($str), -1) != ';' && !preg_match('/^\s+while \(.*\) {$/', $str)
                     ) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
-                } elseif ($match[1] == 'else') {
+                } elseif ($b[1] == 'else') {
                     if (!preg_match('/\s*} else {$/i', $str)) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
-                } elseif (substr(trim($match[0]), -3) != ') {') {
-                    $bracketRight = substr_count($match[0], ')');
-                    $bracketLeft  = substr_count($match[0], '(');
+                } elseif (substr(trim($b[0]), -3) != ') {') {
+                    $bracketRight = substr_count($b[0], ')');
+                    $bracketLeft  = substr_count($b[0], '(');
                     if ($bracketLeft >= 1 && $bracketLeft == $bracketRight) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
@@ -122,7 +172,7 @@ class CodingStandard extends AbstractValidator
             }
 
             //check try..catch
-            if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $match)) {
+            if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $b)) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             } elseif (preg_match('/[^A-z]catch/i', $str)
                 && !preg_match('/^\s+(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
@@ -145,8 +195,7 @@ class CodingStandard extends AbstractValidator
                 }
             }
         }
-
-        return array() == $this->_errorCollector->getErrors();
+        return $this;
     }
 
     /**

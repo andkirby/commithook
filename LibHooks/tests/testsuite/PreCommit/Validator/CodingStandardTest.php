@@ -24,13 +24,31 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
      */
     static public function setUpBeforeClass()
     {
+        //init config object
         \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+
+        $vcsAdapter = self::_getVcsAdapterMock();
+
         /** @var PreCommit\Processor\PreCommit $processor */
-        $processor = PreCommit\Processor::factory('pre-commit', 'git');
+        $processor = PreCommit\Processor::factory('pre-commit', $vcsAdapter);
         $processor->setCodePath(PROJECT_ROOT)
             ->setFiles(array(self::$_classTest));
         $processor->process();
         self::$_model = $processor;
+    }
+
+    /**
+     * Get VCS adapter mock
+     *
+     * @return object
+     */
+    protected static function _getVcsAdapterMock()
+    {
+        $vcsAdapter = PHPUnit_Framework_MockObject_Generator::getMock('PreCommit\Vcs\Git');
+        $vcsAdapter->expects(self::once())
+            ->method('getAffectedFiles')
+            ->will(self::returnValue(array()));
+        return $vcsAdapter;
     }
 
     /**
@@ -117,7 +135,8 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             "'a' =>\$a,",
             "'a'=> \$a,",
             "'a'=>\$a,",
-//            "print_r('test',true);", //TODO find out the problem
+            "print_r('test',true);",
+            "), -time()",
         );
         $this->assertEquals($expected, array_values($errors));
     }
@@ -172,7 +191,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
         );
-        $expected = array ('220');
+        $expected = array ('62');
         $this->assertEquals($expected, $errors);
     }
 
@@ -226,7 +245,8 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
     {
         $errors = $this->_getSpecificErrorsList(
             self::$_classTest,
-            \PreCommit\Validator\CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID);
+            \PreCommit\Validator\CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID
+        );
         $expected = array (
             'public function _publicFunc()',
             'public function PublicFunc()',
@@ -251,5 +271,31 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'function func()',
         );
         $this->assertEquals($expected, array_values($errors));
+
+
+    }
+
+    /**
+     * Test gaps
+     */
+    public function testGaps()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_GAPS
+        );
+        $this->assertEquals(array(1), $errors);
+    }
+
+    /**
+     * Test gaps after/before opened/closed bracket/brace
+     */
+    public function testGapsAfterOrBeforeBracket()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_BRACKET_GAPS
+        );
+        $this->assertEquals(array(7), $errors);
     }
 }

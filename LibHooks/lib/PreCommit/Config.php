@@ -7,6 +7,8 @@ namespace PreCommit;
 class Config extends \SimpleXMLElement
 {
     /**
+     * Self instance
+     *
      * @var Config
      */
     static protected $_instance;
