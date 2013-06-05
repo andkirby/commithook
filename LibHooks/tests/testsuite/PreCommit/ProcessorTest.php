@@ -26,12 +26,30 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
-        $preCommit = new \PreCommit\Processor();
+
+        $vcsAdapter = self::_getVcsAdapterMock();
+
+        /** @var \PreCommit\Processor\PreCommit $preCommit */
+        $preCommit = \PreCommit\Processor::factory('pre-commit', $vcsAdapter);
         $preCommit->setCodePath(self::_getCodePath())
             ->setFiles(array(self::$_classTest));
 
         $preCommit->process();
         self::$_model = $preCommit;
+    }
+
+    /**
+     * Get VCS adapter mock
+     *
+     * @return object
+     */
+    protected static function _getVcsAdapterMock()
+    {
+        $vcsAdapter = PHPUnit_Framework_MockObject_Generator::getMock('PreCommit\Vcs\Git');
+        $vcsAdapter->expects(self::once())
+            ->method('getAffectedFiles')
+            ->will(self::returnValue(array()));
+        return $vcsAdapter;
     }
 
     /**
