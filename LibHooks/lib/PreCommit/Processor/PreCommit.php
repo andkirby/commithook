@@ -111,6 +111,8 @@ class PreCommit extends AbstractAdapter
                 case 'phtml':
                     $this->_loadValidator('TrailingSpace')
                         ->validate($content, $file);
+                    $this->_loadValidator('RedundantCode')
+                        ->validate($content, $file);
                     break;
 
                 case 'xml':
