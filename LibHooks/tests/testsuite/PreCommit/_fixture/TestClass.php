@@ -143,6 +143,13 @@ class Some_testClass extends stdClass
         for ($i = 1; $i<2; $i++) {
             //code
         }
+        foreach (array() as $k=>$value) {
+            //code
+        }
+
+        for ($i = 1; $i<2; $i++) {
+            //code
+        }
 
         for ($i=1; $i < 2; $i++) {
             //code
@@ -356,6 +363,10 @@ class Some_testClass extends stdClass
             echo 2;
         }
 
+        if ($a == 1) {
+            echo 2;
+        }
+
         $a = new stdClass();
         $a->doTrackEcommerceOrder(
             $a->getIncrementId()
@@ -432,7 +443,11 @@ class Some_testClass extends stdClass
      */
     function func()
     {
-        //code
+        //test redundant code
+        $a = null;
+        if (is_null($a)) {
+            $a = 1;
+        }
     }
 
     /**

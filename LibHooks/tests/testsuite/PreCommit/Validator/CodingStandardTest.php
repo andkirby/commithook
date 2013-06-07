@@ -130,6 +130,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             '$a = $a ===$a;',
             '$a = $a=== $a;',
             '$a = $a===$a;',
+            'foreach (array() as $k=>$value) {',
 //            'for ($i = 1; $i<2; $i++) {', //not implemented
             'for ($i=1; $i < 2; $i++) {',
             "'a' =>\$a,",
@@ -220,11 +221,14 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'else echo 2;',
             'if ($a == 1){',
             '}else {',
+            'if($a == 1) {',
             '} else{',
             'if ($a == 1)',
             'else {',
             '} else',
             '} elseif ($a == 2){',
+            '} elseif($a == 2) {',
+            '}else if($a == 2) {',
             '}else if($a == 2)',
             'else if($a == 2)',
             'do{',
@@ -271,8 +275,6 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'function func()',
         );
         $this->assertEquals($expected, array_values($errors));
-
-
     }
 
     /**
@@ -297,5 +299,12 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_BRACKET_GAPS
         );
         $this->assertEquals(array(7), $errors);
+    }
+
+    public function testConstructSpaces()
+    {
+//        $errors = self::$_model->getErrors();
+//        qqq1($errors);
+//        $this->assertEquals(array(7), $errors);
     }
 }

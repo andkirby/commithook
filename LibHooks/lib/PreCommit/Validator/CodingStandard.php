@@ -97,7 +97,7 @@ class CodingStandard extends AbstractValidator
     protected function _validateCodeStyleByLines($content, $file)
     {
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
-        $parsedArr   = $this->_splitContent($content);
+        $parsedArr   = $this->splitContent($content);
         $regPlusMin  = '/([-+*\x2F%,][^-+*\x2F%=<>;$\)\s \x5D\'][^\x5D\)0-9])|([^\S][^-+*\x2F%=<>;$\)\s ][-+*\x2F%])/i';
         foreach ($parsedArr as $line => $str) {
             if (!$str) {
@@ -168,6 +168,8 @@ class CodingStandard extends AbstractValidator
                     if ($bracketLeft >= 1 && $bracketLeft == $bracketRight) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
+                } elseif (substr(ltrim($b[0], ' }'), strlen($b[1]), 1) != ' ') { //check right space after construct
+                    $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                 }
             }
 
@@ -205,7 +207,7 @@ class CodingStandard extends AbstractValidator
      * @todo Refactor method
      * @return array
      */
-    protected function _splitContent($content)
+    static public function splitContent($content)
     {
         $parsedArr = array();
         $length = strlen($content);
