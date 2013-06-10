@@ -10,3 +10,5 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths));
 require_once 'func.php';
 require_once 'Autoloader.php';
 \Autoloader::register();
+//set default PHPUnit error handler
+set_error_handler('\PHPUnit_Util_ErrorHandler::handleError');

@@ -32,23 +32,35 @@ class XmlParser extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        libxml_use_internal_errors(true);
-        $doc = new \DOMDocument('1.0', 'utf-8');
-        $doc->loadXML($content);
-        $xmlErrors = libxml_get_errors();
-        if (empty($xmlErrors)) {
-            return $this;
+        try {
+            libxml_use_internal_errors(true);
+            $doc = new \DOMDocument('1.0', 'utf-8');
+            $doc->loadXML($content);
+
+            $xmlErrors = libxml_get_errors();
+
+            if (empty($xmlErrors)) {
+                return true;
+            }
+
+            $error = $xmlErrors[0];
+            if ($error->level < 3) {
+                return true;
+            }
+            $this->_addError(
+                $file,
+                self::CODE_XML_ERROR,
+                str_replace("\n", '', $error->message),
+                $error->line
+            );
+        } catch (\Exception $e) {
+            $this->_addError(
+                $file,
+                self::CODE_XML_ERROR,
+                str_replace("\n", '', $e->getMessage())
+            );
         }
-        $error = $xmlErrors[0];
-        if ($error->level < 3) {
-            return $this;
-        }
-        $this->_addError(
-            $file,
-            self::CODE_XML_ERROR,
-            str_replace("\n", '', $error->message),
-            $error->line
-        );
+
         return array() == $this->_errorCollector->getErrors();
     }
 }

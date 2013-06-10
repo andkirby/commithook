@@ -13,6 +13,8 @@ set_include_path(
 require_once 'lib/PreCommit/Autoloader.php';
 \PreCommit\Autoloader::register();
 
+set_error_handler('\PreCommit\ErrorHandler::handleError');
+
 $xmlConfigFile = isset($xmlConfigFile) ? $xmlConfigFile : $rootPath . DIRECTORY_SEPARATOR . 'commithook.xml';
 $config = \PreCommit\Config::getInstance(array('file' => $xmlConfigFile));
 
