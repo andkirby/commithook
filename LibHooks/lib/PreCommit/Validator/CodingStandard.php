@@ -120,7 +120,7 @@ class CodingStandard extends AbstractValidator
                 //|| preg_match('/\S[^-=<>][<>]{1,2}[^\s<>;\)]/i', $str)
 
                 // operator & && must be wrapped with spaces
-                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&]/i', $str)
+                || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&$]/i', $str)
             ) {
                 $this->_addError($file, self::CODE_PHP_OPERATOR_SPACES_MISSED, $currentString, $line);
             }

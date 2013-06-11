@@ -155,6 +155,10 @@ class Some_testClass extends stdClass
             //code
         }
 
+        foreach (array() as &$item) {
+            //code
+        }
+
         array(
             'a' =>$a,
             'a'=> $a,
