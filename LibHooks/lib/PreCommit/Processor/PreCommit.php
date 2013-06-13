@@ -75,7 +75,7 @@ class PreCommit extends AbstractAdapter
     public function process()
     {
         if (!$this->_files) {
-            throw new Exception('Files list is empty.');
+            return true;
         }
 
         $fileFilter = $this->_loadValidator('FileFilter');
