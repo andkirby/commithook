@@ -35,7 +35,6 @@ class ErrorCollector
             $val = trim($val);
             $message = str_replace("%$key%", $val, $message);
         }
-        $message = str_replace('%line%', $value, $message);
 
         if ($line) {
             $message = "Line: $line. " . $message;
