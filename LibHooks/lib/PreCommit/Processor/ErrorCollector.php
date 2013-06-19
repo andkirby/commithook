@@ -28,8 +28,13 @@ class ErrorCollector
     public function addError($file, $type, $message, $value = null, $line = null)
     {
         $line = (int) $line;
-        $value = trim($value);
-        $message = str_replace('%value%', $value, $message);
+        if (!is_array($value)) {
+            $value = array('value' => $value);
+        }
+        foreach ($value as $key => $val) {
+            $val = trim($val);
+            $message = str_replace("%$key%", $val, $message);
+        }
         $message = str_replace('%line%', $value, $message);
 
         if ($line) {
