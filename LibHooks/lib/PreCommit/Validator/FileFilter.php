@@ -45,7 +45,6 @@ class FileFilter extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_isFileSkipped($file); exit(1);
         return $file
             && !$this->_isFileProtectedByPath($file)
             && !$this->_isFileProtected($file)
