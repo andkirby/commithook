@@ -14,6 +14,7 @@ class FileFilter extends AbstractValidator
      */
     const XPATH_SKIP_PATHS    = 'validators/FileFilter/filter/skip/paths/path';
     const XPATH_SKIP_FILES    = 'validators/FileFilter/filter/skip/files/file';
+    const XPATH_SKIP_FILE_EXTENSIONS = 'validators/FileFilter/filter/skip/extensions';
     const XPATH_PROTECT_PATHS = 'validators/FileFilter/filter/protect/paths/path';
     const XPATH_PROTECT_FILES = 'validators/FileFilter/filter/protect/files/file';
     /**#@-*/
@@ -44,6 +45,7 @@ class FileFilter extends AbstractValidator
      */
     public function validate($content, $file)
     {
+        $this->_isFileSkipped($file); exit(1);
         return $file
             && !$this->_isFileProtectedByPath($file)
             && !$this->_isFileProtected($file)
@@ -76,6 +78,14 @@ class FileFilter extends AbstractValidator
      */
     protected function _isFileSkipped($file)
     {
+        //check extension in skip list
+        $listExtensions = (array) Config::getInstance()->getNode(self::XPATH_SKIP_FILE_EXTENSIONS);
+        $fileExt = pathinfo($file, PATHINFO_EXTENSION);
+        if (in_array($fileExt, $listExtensions)) {
+            return true;
+        }
+
+        //check file path in skip list
         $list = Config::getInstance()->getNode(self::XPATH_SKIP_FILES, true);
         foreach ($list as $item) {
             $item = (string) $item;

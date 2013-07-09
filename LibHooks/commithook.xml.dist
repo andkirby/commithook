@@ -15,6 +15,16 @@
         <FileFilter>
             <filter>
                 <skip>
+                    <extensions>
+                        <jpg>jpg</jpg>
+                        <png>png</png>
+                        <gif>gif</gif>
+                        <bmp>bmp</bmp>
+                        <zip>zip</zip>
+                        <rar>rar</rar>
+                        <gz>gz</gz>
+                        <tar>tar</tar>
+                    </extensions>
                     <files>
                         <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
                     </files>
