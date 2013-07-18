@@ -20,10 +20,16 @@
                         <png>png</png>
                         <gif>gif</gif>
                         <bmp>bmp</bmp>
+                        <bmp>ico</bmp>
                         <zip>zip</zip>
                         <rar>rar</rar>
                         <gz>gz</gz>
                         <tar>tar</tar>
+                        <ttf>ttf</ttf>
+                        <fon>fon</fon>
+                        <eot>eot</eot>
+                        <svg>svg</svg>
+                        <woff>woff</woff>
                     </extensions>
                     <files>
                         <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
