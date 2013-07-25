@@ -11,7 +11,10 @@ class RedundantCode extends AbstractValidator
     /**#@+
      * Error codes
      */
-    const CODE_IS_NULL = 'isNullFunction';
+    const CODE_IS_NULL   = 'isNullFunction';
+    const JS_CONSOLE     = 'jsConsoleFunction';
+    const DEBUG_QQQ      = 'qqqDebugFunction';
+    const DEBUG_VAR_DUMP = 'varDumpDebugFunction';
     /**#@-*/
 
     /**
@@ -21,6 +24,9 @@ class RedundantCode extends AbstractValidator
      */
     protected $_errorMessages = array(
         self::CODE_IS_NULL => 'Redundant usage is_null() function. Use null === $a construction. Original line: %value%',
+        self::JS_CONSOLE   => 'Redundant usage JS console.log() function. Original line: %value%',
+        self::DEBUG_QQQ    => 'Redundant usage qqq() debug function. Original line: %value%',
+        self::DEBUG_VAR_DUMP => 'Redundant usage var_dump() debug function. Original line: %value%',
     );
 
     /**
@@ -43,6 +49,18 @@ class RedundantCode extends AbstractValidator
             //find is_null() function
             if (false !== strpos($str, 'is_null(')) {
                 $this->_addError($file, self::CODE_IS_NULL, $currentString, $line);
+            }
+            //find console.log()
+            if (false !== strpos($str, 'console.log(')) {
+                $this->_addError($file, self::JS_CONSOLE, $currentString, $line);
+            }
+            //find qqq()
+            if (false !== strpos($str, 'qqq')) {
+                $this->_addError($file, self::DEBUG_QQQ, $currentString, $line);
+            }
+            //find var_dump()
+            if (false !== strpos($str, 'var_dump(')) {
+                $this->_addError($file, self::DEBUG_VAR_DUMP, $currentString, $line);
             }
         }
 
