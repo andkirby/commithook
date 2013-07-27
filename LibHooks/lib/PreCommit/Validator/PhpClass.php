@@ -24,7 +24,7 @@ class PhpClass extends AbstractValidator
      */
     protected $_errorMessages = array(
         self::CODE_PHP_TAG => 'File does not start with php opening tag. Any preceding rows may start output.',
-        self::CODE_PHP_INTERPRET => "PHP interpreter has found run-time errors! Check this: \n %value%",
+        self::CODE_PHP_INTERPRET => "PHP interpreter (%path%) has found run-time errors! Check this: \n %value%",
     );
 
     /**
@@ -93,10 +93,14 @@ class PhpClass extends AbstractValidator
         $exe = "{$this->_interpreterPath} -l $filePath 2>&1";
         exec($exe, $output, $code);
         if ($code != 0) {
+            $value = trim(implode(" ", str_replace($filePath, $file, $output)));
             $this->_addError(
                 $file,
                 self::CODE_PHP_INTERPRET,
-                trim(implode(" ", str_replace($filePath, $file, $output)))
+                array(
+                     'path'  => $this->_interpreterPath,
+                     'value' => $value,
+                )
             );
         }
         return $this;
