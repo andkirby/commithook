@@ -43,7 +43,7 @@ class Config extends \SimpleXMLElement
         if ($isArray) {
             return $result;
         } else {
-            return $result[0];
+            return isset($result[0]) ? $result[0] : null;
         }
 
     }
