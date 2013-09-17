@@ -8,6 +8,11 @@ namespace PreCommit\Validator;
  */
 class CodingStandard extends AbstractValidator
 {
+    /**
+     * Skip tag for publicMethodNaming errors
+     */
+    const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
+
     /**#@+
      * Error codes
      */
@@ -187,7 +192,9 @@ class CodingStandard extends AbstractValidator
                 if (preg_match('/^\s*(static )?public /', $str)
                     && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
                 ) {
-                    $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
+                    if (!$this->_isSkipPublicMethodNaming($content, $str)) {
+                        $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
+                    }
                 } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
                     && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
                 ) {
@@ -293,5 +300,25 @@ class CodingStandard extends AbstractValidator
             }
         }
         return $parsedArr;
+    }
+
+    /**
+     * Check skip validation public method
+     *
+     * @param string $content
+     * @param string $str
+     * @return bool
+     */
+    protected function _isSkipPublicMethodNaming($content, $str)
+    {
+        preg_match('/function ([A-z_]+)\s*\(/', $str, $matches);
+        if ($matches) {
+            $funcName = $matches[1];
+            $reg      = '/\@' . self::SKIP_TAG_PUBLIC_METHOD_NAMING . '\s+' . $funcName . '/';
+            if (preg_match($reg, $content)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

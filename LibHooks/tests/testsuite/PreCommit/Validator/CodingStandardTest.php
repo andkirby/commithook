@@ -57,12 +57,16 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
      * @param string $file
      * @param string $code
      * @param bool $returnLines
+     * @param object $model
      * @return array
      * @throws PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    protected function _getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
     {
-        $errors = self::$_model->getErrors();
+        if (!$model) {
+            $model = self::$_model;
+        }
+        $errors = $model->getErrors();
         if (!isset($errors[$file])) {
             throw new PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
         }
@@ -306,5 +310,27 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
 //        $errors = self::$_model->getErrors();
 //        qqq1($errors);
 //        $this->assertEquals(array(7), $errors);
+    }
+
+    public function testSkipPublicMethodNaming()
+    {
+        $vcsAdapter = self::_getVcsAdapterMock();
+
+        /** @var PreCommit\Processor\PreCommit $processor */
+        $processor = PreCommit\Processor::factory('pre-commit', $vcsAdapter);
+        $processor->setCodePath(PROJECT_ROOT)
+            ->setFiles(array('tests/testsuite/PreCommit/_fixture/TestSkip.php'));
+        $processor->process();
+
+        $errors = $this->_getSpecificErrorsList(
+            'tests/testsuite/PreCommit/_fixture/TestSkip.php',
+            \PreCommit\Validator\CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID,
+            false,
+            $processor
+        );
+        $expected = array(
+            array('value' => 'public function _test2($param)')
+        );
+        $this->assertEquals($expected, array_values($errors));
     }
 }
