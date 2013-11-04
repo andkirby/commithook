@@ -1,7 +1,6 @@
 <?php
 
-class Some_testClass extends stdClass
-{
+class Some_testClass extends stdClass {
     const WRONG = 0;
 
     /**
@@ -155,7 +154,8 @@ class Some_testClass extends stdClass
             //code
         }
 
-        foreach (array() as &$item) {
+        $arrA = array($a);
+        foreach ($arrA as &$item) {
             //code
         }
 
@@ -452,6 +452,7 @@ class Some_testClass extends stdClass
         if (is_null($a)) {
             $a = 1;
         }
+        $a = intval($a);
     }
 
     /**

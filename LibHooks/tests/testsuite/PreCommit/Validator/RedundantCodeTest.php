@@ -86,7 +86,7 @@ class PreCommit_Validator_RedundantCodeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test CODE_PHP_OPERATOR_SPACES_MISSED
+     * Test having is_null() function
      */
     public function testIsNullExist()
     {
@@ -97,6 +97,22 @@ class PreCommit_Validator_RedundantCodeTest extends PHPUnit_Framework_TestCase
 
         $expected = array (
             'if (is_null($a)) {',
+        );
+        $this->assertEquals($expected, array_values($errors));
+    }
+
+    /**
+     * Test having intval() function
+     */
+    public function testIntValExist()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\RedundantCode::CODE_INTVAL
+        );
+
+        $expected = array (
+            '$a = intval($a);',
         );
         $this->assertEquals($expected, array_values($errors));
     }
