@@ -4,11 +4,6 @@
  * You can use another configuration file
  */
 //$xmlConfigFile = __DIR__ . DIRECTORY_SEPARATOR . 'commithook.xml';
-
-/**
- * Configure following string if you put commit hooks located not in the same dir.
- */
 $hookName = __FILE__;
 $runnerPhp = realpath(__DIR__ . '/../../../commithook/LibHooks/runner.php');
 require_once $runnerPhp;
-
