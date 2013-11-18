@@ -21,7 +21,7 @@ class ErrorCollector
      * @param string $file
      * @param int $type
      * @param int $message
-     * @param string $value
+     * @param string|array $value
      * @param int|null $line
      * @return $this
      */
