@@ -196,7 +196,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
         );
-        $expected = array ('62');
+        $expected = array ('68');
         $this->assertEquals($expected, $errors);
     }
 
@@ -328,8 +328,25 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             false,
             $processor
         );
+        $expected = array('public function _test2($param)');
+        $this->assertEquals($expected, array_values($errors));
+    }
+
+    /**
+     * Test underscore in variable
+     */
+    public function testUnderscoreInVar()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_classTest,
+            \PreCommit\Validator\CodingStandard::CODE_PHP_UNDERSCORE_IN_VAR
+        );
         $expected = array(
-            array('value' => 'public function _test2($param)')
+            '$_badA = 1;',
+            '$_badB = 2;',
+            '$bad_another = self::$_static + $_badA;',
+            '$b = $bad_another;',
+            'return $bad_another + $_badB;',
         );
         $this->assertEquals($expected, array_values($errors));
     }

@@ -31,6 +31,7 @@ class CodingStandard extends AbstractValidator
     const CODE_PHP_GAPS                     = 'redundantGaps';
     const CODE_PHP_BRACKET_GAPS             = 'redundantGapAfterBracket';
     const CODE_PHP_LAST_FUNCTION_GAP        = 'redundantGapAfterLastFunction';
+    const CODE_PHP_UNDERSCORE_IN_VAR        = 'variableHasUnderscore';
     /**#@-*/
 
     /**
@@ -53,6 +54,7 @@ class CodingStandard extends AbstractValidator
         self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
         self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
         self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gaps after opened bracket/brace or before closed bracket/brace %value% time(s).',
+        self::CODE_PHP_UNDERSCORE_IN_VAR => 'Underscore in variable(s): %vars%. Original line: %value%',
     );
 
     /**
@@ -201,6 +203,26 @@ class CodingStandard extends AbstractValidator
                     $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
                 } elseif (!preg_match('/(protected|private|public) (static )?function/', $str)) {
                     $this->_addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
+                }
+            }
+
+            //check underscore in variable name
+            if (false !== strpos($str, '$')
+                && false === strpos($str, ' public ')
+                && false === strpos($str, ' protected ')
+                && false === strpos($str, ' private ')
+                && false === strpos($str, ' static ')
+                && preg_match_all('/[:]?\$\w*_\w*/', $str, $matches)
+            ) {
+                $vars = array();
+                foreach ($matches as $value) {
+                    if (0 !== strpos($value[0], ':')) {
+                        $vars[] = $value[0];
+                    }
+                }
+                if ($vars) {
+                    $values = array('value' => $currentString, 'vars' => implode(',', $vars));
+                    $this->_addError($file, self::CODE_PHP_UNDERSCORE_IN_VAR, $values, $line);
                 }
             }
         }
