@@ -13,6 +13,7 @@ class PhpDoc extends AbstractValidator
      */
     const CODE_PHP_DOC_MISSED            = 'phpDocMissed';
     const CODE_PHP_DOC_MESSAGE           = 'phpDocMessageMissed';
+    const CODE_PHP_DOC_MISSED_GAP        = 'phpDocMissedGap';
     const CODE_PHP_DOC_ENTER_DESCRIPTION = 'phpDocEnterDescription';
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
     /**#@-*/
@@ -26,6 +27,7 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc is incomplete info: Enter description here... - Please, write a reasonable description.',
         self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc is incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
+        self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
         self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed for %value%',
     );
 
@@ -51,6 +53,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocsForClassItems($content, $file);
         $this->_validateExistPhpDocForClass($content, $file);
         $this->_validateExistPhpDocMessage($content, $file);
+        $this->_validateMissedGapAfterPhpDocMessage($content, $file);
 
         return array() == $this->_errorCollector->getErrors();
     }
@@ -133,10 +136,29 @@ class PhpDoc extends AbstractValidator
     public function _validateExistPhpDocMessage($content, $file)
     {
         if (preg_match_all(
-            '/\x20{4}\/\*\*\x0D?\x0A\x20{5}\*\s\@(.|\x0D?\x0A)*?\*\/\x0D?\x0A\x20(.*)/', $content, $matches
+            '/\x20+\/\*\*\x0D?\x0A\x20+\*\x20\W/', $content, $matches
         )) {
-            foreach ($matches[2] as $match) {
+            foreach ($matches[0] as $match) {
                 $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, $match);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Validate missed gap after PhpDoc description
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    public function _validateMissedGapAfterPhpDocMessage($content, $file)
+    {
+        if (preg_match_all(
+            '/\x20+\* \w.*(?=\x0D?\x0A\x20+\*\x20@)/', $content, $matches
+        )) {
+            foreach ($matches[0] as $match) {
+                $this->_addError($file, self::CODE_PHP_DOC_MISSED_GAP, $match);
             }
         }
         return $this;
