@@ -40,12 +40,12 @@ class ErrorCollector
             $message = "Line: $line. " . $message;
             $this->_errors[$file][$type][] = array(
                 'line'    => $line,
-                'value'   => $value,
+                'value'   => $value['value'],
                 'message' => $message,
             );
         } else {
             $this->_errors[$file][$type][] = array(
-                'value'   => $value,
+                'value'   => $value['value'],
                 'message' => $message,
             );
         }
