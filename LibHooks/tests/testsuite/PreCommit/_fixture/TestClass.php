@@ -26,9 +26,27 @@ class Some_testClass extends stdClass {
     protected $_param2;
 
     /**
+     * @var string
+     */
+    protected $_var;
+
+    /**
+     *
+     * @var string
+     */
+    protected $_varA;
+
+    /**
      * @var string      Here PHPDoc message missed
      */
     protected $_param3;
+
+    /**
+     * Static
+     *
+     * @var int
+     */
+    protected $_static = 1;
 
     /**
      * Protected name var without underscore
@@ -38,8 +56,7 @@ class Some_testClass extends stdClass {
     protected $protectedValue;
 
     /**
-     * Public name var with underscore
-     *
+     * Public name var with underscore. Missed gap in phpDoc
      * @var null
      */
     public $_publicValue;
@@ -461,6 +478,21 @@ class Some_testClass extends stdClass {
     public function __construct()
     {
         //code
+    }
+
+    /**
+     * Underscore in vars
+     */
+    public function funcVarWithUnderscore()
+    {
+        $_badA = 1;
+        $_badB = 2;
+        $normA = 1;
+        $normB = 2;
+        $bad_another = self::$_static + $_badA;
+        $a = self::$_static + $normA;
+        $b = $bad_another;
+        return $bad_another + $_badB;
     }
 
     /**

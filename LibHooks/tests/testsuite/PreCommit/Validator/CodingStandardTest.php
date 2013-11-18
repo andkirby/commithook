@@ -196,7 +196,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             \PreCommit\Validator\CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
         );
-        $expected = array ('68');
+        $expected = array ('78');
         $this->assertEquals($expected, $errors);
     }
 
