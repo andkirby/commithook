@@ -75,6 +75,7 @@ abstract class AbstractAdapter
      */
     protected function _getVcsAdapter($type)
     {
+        $type = ucfirst($type);
         $class = 'PreCommit\\Vcs\\' . $type;
         return new $class();
     }
