@@ -28,7 +28,7 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc is incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed for %value%',
+        self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%",
     );
 
     /**
@@ -84,7 +84,7 @@ class PhpDoc extends AbstractValidator
      */
     protected function _validateUnknownType($file, $str, $line)
     {
-        if (preg_match('/\*\s*unknown_type/i', $str)) {
+        if (preg_match('/\*\x20\@.*?unknown_type/i', $str)) {
             $this->_addError($file, self::CODE_PHP_DOC_UNKNOWN, null, $line);
         }
         return $this;
@@ -136,7 +136,7 @@ class PhpDoc extends AbstractValidator
     public function _validateExistPhpDocMessage($content, $file)
     {
         if (preg_match_all(
-            '/\x20+\/\*\*\x0D?\x0A\x20+\*\x20\W/', $content, $matches
+            '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//', $content, $matches
         )) {
             foreach ($matches[0] as $match) {
                 $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, $match);
