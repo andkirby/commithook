@@ -314,6 +314,7 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
 
     public function testSkipPublicMethodNaming()
     {
+        $this->markTestIncomplete();
         $vcsAdapter = self::_getVcsAdapterMock();
 
         /** @var PreCommit\Processor\PreCommit $processor */
