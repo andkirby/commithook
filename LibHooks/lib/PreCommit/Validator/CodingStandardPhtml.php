@@ -140,7 +140,7 @@ class CodingStandardPhtml extends AbstractValidator
      */
     protected function _validateStringNoProtectedMethodUsage($file, $str, $line)
     {
-        if (false !== strpos($str, '$this->_')) {
+        if (preg_match('/\$this-\>_[^_]/', $str)) {
             $this->_addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
         }
         return $this;
