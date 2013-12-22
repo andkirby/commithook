@@ -99,7 +99,7 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
             'protected $_paramB; //PhpDoc is missed',
             'protected $_paramBB; //PhpDoc is missed',
             'public function test1() //PhpDoc is missed',
-            'class Some_testClass extends stdClass //PhpDoc is missed',
+            'class Some_testClassPhpDoc extends stdClass //PhpDoc is missed',
         );
         $this->assertEquals($expected, array_values($errors));
     }

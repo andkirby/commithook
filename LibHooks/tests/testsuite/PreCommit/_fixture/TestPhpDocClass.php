@@ -1,5 +1,5 @@
 <?php
-class Some_testClass extends stdClass //PhpDoc is missed
+class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
 {
     const WRONG = 0; //PhpDoc is missed
 
