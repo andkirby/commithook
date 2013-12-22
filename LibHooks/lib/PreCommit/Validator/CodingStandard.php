@@ -92,6 +92,7 @@ class CodingStandard extends AbstractValidator
         if ($match[0]) {
             $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]));
         }
+        return $this;
     }
 
     /**
