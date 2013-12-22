@@ -1,6 +1,4 @@
 <?php
-use \PreCommit\Processor\ErrorCollector as Error;
-
 /**
  * Class test for PreCommit_Processor
  */
@@ -104,22 +102,7 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
             'const WRONG = 0;',
             'protected $_param2;',
             'public function test1(){',
-            'class Some_testClass extends stdClass',
-        );
-        $this->_validateErrors($errors, $expected);
-    }
-
-    /**
-     * Test CODE_PHP_DOC_MESSAGE
-     */
-    public function testPhpDocMessageMissed()
-    {
-        $errors = $this->_getSpecificErrorsList(self::$_classTest, PreCommit\Validator\PhpDoc::CODE_PHP_DOC_MESSAGE);
-
-        //TODO implement group comment validation
-        $expected = array (
-            'protected $_param3;',
-            'public function someFuncWithoutMessage()',
+            'class Some_testClass extends stdClass {',
         );
         $this->_validateErrors($errors, $expected);
     }
