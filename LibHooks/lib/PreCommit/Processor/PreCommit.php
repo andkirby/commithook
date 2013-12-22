@@ -106,23 +106,22 @@ class PreCommit extends AbstractAdapter
 
                     $this->_loadValidator('CodingStandardMagento')
                         ->validate($content, $file);
-                    //no break;
 
-                case 'phtml':
-                case 'js':
                     $this->_loadValidator('RedundantCode')
                         ->validate($content, $file);
-                    //no break;
+                    break;
 
-                case 'css':
-                case 'scss':
-                    $this->_loadValidator('TrailingSpace')
+                case 'phtml':
+                    $this->_loadValidator('RedundantCode')
+                        ->validate($content, $file);
+                    break;
+
+                case 'js':
+                    $this->_loadValidator('RedundantCode')
                         ->validate($content, $file);
                     break;
 
                 case 'xml':
-                    $this->_loadValidator('TrailingSpace')
-                        ->validate($content, $file);
                     $this->_loadValidator('XmlParser')
                         ->validate($content, $file);
                     break;
@@ -131,8 +130,11 @@ class PreCommit extends AbstractAdapter
             }
 
             //for all files
-            $fileStyle = $this->_loadValidator('FileStyle');
-            $fileStyle->validate($content, $file);
+            $this->_loadValidator('TrailingSpace')
+                ->validate($content, $file);
+
+            $this->_loadValidator('FileStyle')
+                ->validate($content, $file);
         }
         return array() == $this->_errorCollector->getErrors();
     }
