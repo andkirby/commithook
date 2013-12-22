@@ -114,6 +114,9 @@ class PreCommit extends AbstractAdapter
                 case 'phtml':
                     $this->_loadValidator('RedundantCode')
                         ->validate($content, $file);
+
+                    $this->_loadValidator('CodingStandardPhtml')
+                        ->validate($content, $file);
                     break;
 
                 case 'js':

@@ -1,0 +1,25 @@
+<?php
+/** @var $this Mage_Core_Block_Template */
+$_myVar = $this->getSomeData();
+$myProtected = $this->_getProtectedData();
+?>
+
+
+<div>
+    <?php foreach ($this->getData('array') as $_value) { ?>
+        <?php echo $_value; ?>
+    <?php } ?>
+    <?php if ($this->getData('aa') === 'some string') { ?>
+        <?php echo $_myVar; ?>
+    <?php } ?>
+
+
+    <?php foreach ($this->getData('array222') as $value) : ?>
+        <?php echo $value; ?>
+    <?php endforeach; ?>
+
+
+    <?php if ($this->getData('bbb') === 'some string') : ?>
+        <?php echo $myProtected; ?>
+    <?php endif; ?>
+</div>
