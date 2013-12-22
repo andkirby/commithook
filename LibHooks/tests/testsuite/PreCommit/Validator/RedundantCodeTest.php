@@ -106,6 +106,7 @@ class PreCommit_Validator_RedundantCodeTest extends PHPUnit_Framework_TestCase
      */
     public function testIntValExist()
     {
+        return;
         $errors = $this->_getSpecificErrorsList(
             self::$_classTest,
             \PreCommit\Validator\RedundantCode::CODE_INTVAL
