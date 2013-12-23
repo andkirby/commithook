@@ -72,6 +72,7 @@ class CodingStandardPhtml extends AbstractValidator
      */
     protected function _validateCodeStyleByLines($content, $file)
     {
+        $content = $this->_filterContent($content);
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         foreach ($originalArr as $line => $str) {
             $str = trim($str);
@@ -144,5 +145,18 @@ class CodingStandardPhtml extends AbstractValidator
             $this->_addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
         }
         return $this;
+    }
+
+    /**
+     * Filter content
+     *
+     * Cut JS script
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function _filterContent($content)
+    {
+        return preg_replace('/<script(\n|\r|.)*<\/script>/', '', $content);
     }
 }
