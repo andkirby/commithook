@@ -157,6 +157,6 @@ class CodingStandardPhtml extends AbstractValidator
      */
     protected function _filterContent($content)
     {
-        return preg_replace('/<script(\n|\r|.)*<\/script>/', '', $content);
+        return preg_replace('/<script(\n|\r|.)*?<\/script>/', '', $content);
     }
 }
