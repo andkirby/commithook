@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <config>
+    <version>1.0.0</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>

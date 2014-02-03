@@ -22,12 +22,13 @@ $label = $this->__('Test');
 
 
     <?php foreach ($this->getData('array222') as $value) : ?>
-        <?php echo $value; ?>
+        <?php echo SomeClass::someMethod($value); ?>
     <?php endforeach; ?>
 
 
     <?php if ($this->getData('bbb') === 'some string') : ?>
         <?php echo $myProtected; ?>
+        <?php echo Mage::helper($value); ?>
     <?php endif; ?>
 </div>
 
@@ -35,6 +36,6 @@ $label = $this->__('Test');
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
-
+        <?php echo Mage::helper($value); ?>
     });
 </script>

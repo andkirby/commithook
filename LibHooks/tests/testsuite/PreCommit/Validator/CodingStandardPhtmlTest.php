@@ -2,6 +2,8 @@
 
 /**
  * Class test for PreCommit_Processor
+ *
+ * @todo Implement validation PHP code within PHP tags
  */
 class PreCommit_Validator_CodingStandardPhtmlTest extends PHPUnit_Framework_TestCase
 {
@@ -148,6 +150,22 @@ class PreCommit_Validator_CodingStandardPhtmlTest extends PHPUnit_Framework_Test
             \PreCommit\Validator\CodingStandardPhtml::CODE_PHTML_GAPS
         );
         $expected = array(3);
+        $this->assertEquals($expected, array_values($errors));
+    }
+
+    /**
+     * Test CODE_PHTML_GAPS
+     */
+    public function testClassUsage()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_fileTest,
+            \PreCommit\Validator\CodingStandardPhtml::CODE_PHTML_CLASS
+        );
+        $expected = array(
+            '<?php echo SomeClass::someMethod($value); ?>',
+            '<?php echo Mage::helper($value); ?>',
+        );
         $this->assertEquals($expected, array_values($errors));
     }
 }

@@ -16,6 +16,7 @@ class CodingStandardPhtml extends AbstractValidator
     const CODE_PHTML_GAPS               = 'redundantGapsPhtml';
     const CODE_PHTML_UNDERSCORE_IN_VAR  = 'variableHasUnderscorePhtml';
     const CODE_PHTML_PROTECTED_METHOD   = 'protectedMethodUsage';
+    const CODE_PHTML_CLASS              = 'classUsage';
     /**#@-*/
 
     /**
@@ -27,7 +28,8 @@ class CodingStandardPhtml extends AbstractValidator
         self::CODE_PHTML_ALTERNATIVE_SYNTAX => 'No ability to use braces in the PHTML code. Please use alternative syntax as if..endif. Original line: %value%',
         self::CODE_PHTML_GAPS               => 'File contain at least two gaps in succession %value% time(s).',
         self::CODE_PHTML_UNDERSCORE_IN_VAR  => 'Underscore in variable(s): %vars%. Original line: %value%',
-        self::CODE_PHTML_PROTECTED_METHOD   => 'No ability to use protected method of $this object in a template. Original line: %value%',
+        self::CODE_PHTML_PROTECTED_METHOD   => 'It is not possible to use protected method of $this object in a template. Original line: %value%',
+        self::CODE_PHTML_CLASS              => 'It is not possible classes in templates. Original line: %value%',
     );
 
     /**
@@ -83,8 +85,22 @@ class CodingStandardPhtml extends AbstractValidator
             $this->_validateStringAlternativeSyntaxUsage($file, $str, $line);
             $this->_validateStringNoUnderscoreInVariableName($file, $str, $line);
             $this->_validateStringNoProtectedMethodUsage($file, $str, $line);
+            $this->_validateStringNoClassesUsage($file, $str, $line);
         }
         return $this;
+    }
+
+    /**
+     * Filter content
+     *
+     * Cut JS script code
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function _filterContent($content)
+    {
+        return preg_replace('/<script(\n|\r|.)*?<\/script>/', '', $content);
     }
 
     /**
@@ -148,15 +164,18 @@ class CodingStandardPhtml extends AbstractValidator
     }
 
     /**
-     * Filter content
+     * Validate string into disuse of classes
      *
-     * Cut JS script
-     *
-     * @param string $content
-     * @return string
+     * @param string $file
+     * @param string $str
+     * @param int $line
+     * @return $this
      */
-    protected function _filterContent($content)
+    protected function _validateStringNoClassesUsage($file, $str, $line)
     {
-        return preg_replace('/<script(\n|\r|.)*?<\/script>/', '', $content);
+        if (preg_match('/[A-z_]{3,}\:\:[A-z_]/', $str)) {
+            $this->_addError($file, self::CODE_PHTML_CLASS, $str, $line);
+        }
+        return $this;
     }
 }
