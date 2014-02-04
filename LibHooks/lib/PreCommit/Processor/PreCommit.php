@@ -91,10 +91,11 @@ class PreCommit extends AbstractAdapter
             $filePath = $this->_getFilePath($file);
             $content = file_get_contents($filePath);
             $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+            $content = $this->_loadFilter('SkipContent')->filter($content, $file);
+
             switch ($ext) {
                 case 'php':
-                    $content = $this->_loadFilter('SkipContent')->filter($content);
-
                     $this->_loadValidator('PhpClass')
                         ->validate($content, $file, $filePath);
 
