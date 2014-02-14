@@ -39,3 +39,13 @@ $label = $this->__('Test');
         <?php echo Mage::helper($value); ?>
     });
 </script>
+
+<?php
+if ($product->isSaleable() && $this->hasOptions()
+        && $this->getChildChildHtml('container2')
+    ):
+    ?>
+    <div class="product-options">
+        <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+    </div>
+<?php endif; ?>
