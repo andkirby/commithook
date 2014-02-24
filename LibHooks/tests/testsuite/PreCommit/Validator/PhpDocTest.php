@@ -175,7 +175,7 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
     /**
      * Test CODE_PHP_DOC_MESSAGE
      */
-    public function testPhpDoc()
+    public function testPhpDocUnknownDescription()
     {
         $errors = $this->_getSpecificErrorsList(
             self::$_fileTest,
