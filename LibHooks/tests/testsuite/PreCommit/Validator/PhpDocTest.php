@@ -137,6 +137,12 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
      *
      * @param int $param
      */',
+            '    /**
+     *
+     * Test extra gap 4
+     *
+     * @param int $param
+     */',
         );
         $this->assertEquals($expected, array_values($errors));
     }
@@ -184,5 +190,19 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
 
         $expected = 2;
         $this->assertCount($expected, $errors);
+    }
+
+    /**
+     * Test extra gap
+     */
+    public function testPhpDocExtraGap()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_fileTest,
+            \PreCommit\Validator\PhpDoc::CODE_PHP_DOC_EXTRA_GAP
+        );
+
+        $expected = 3;
+        $this->assertEquals($expected, $errors[0]);
     }
 }

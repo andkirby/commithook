@@ -16,6 +16,7 @@ class PhpDoc extends AbstractValidator
     const CODE_PHP_DOC_MISSED_GAP        = 'phpDocMissedGap';
     const CODE_PHP_DOC_ENTER_DESCRIPTION = 'phpDocEnterDescription';
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
+    const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
     /**#@-*/
 
     /**
@@ -24,11 +25,12 @@ class PhpDoc extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc is incomplete info: Enter description here... - Please, write a reasonable description.',
-        self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc is incomplete info: 'unknown_type' - Please, specify a type.",
+        self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc has incomplete info: Enter description here... - Please, write a reasonable description.',
+        self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%",
+        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%',
+        self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
     );
 
     /**
@@ -54,6 +56,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocForClass($content, $file);
         $this->_validateExistPhpDocMessage($content, $file);
         $this->_validateMissedGapAfterPhpDocMessage($content, $file);
+        $this->_validateExistPhpDocExtraGap($content, $file);
 
         return array() == $this->_errorCollector->getErrors();
     }
@@ -173,5 +176,22 @@ class PhpDoc extends AbstractValidator
     protected function _cleanGroupCommentedNodes($content)
     {
         return preg_replace('/\s*\/\*\*\#\@\+(\s|\S)*?\/\*\*\#@\-\*\//', '', $content);
+    }
+
+    /**
+     * Validate missed gap after PhpDoc description
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    public function _validateExistPhpDocExtraGap($content, $file)
+    {
+        if (preg_match_all(
+            '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
+        )) {
+            $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]));
+        }
+        return $this;
     }
 }

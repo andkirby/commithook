@@ -140,4 +140,47 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
     {
         //Test Right PHPDoc
     }
+
+    /**
+     * Test extra gap 1
+     *
+     *
+     * @param int $param
+     */
+    public function testExtraGap1($param)
+    {
+        //Test Right PHPDoc
+    }
+
+    /**
+     * Test extra gap 2
+     *
+     */
+    public function testExtraGap2($param)
+    {
+        //Test wrong PHPDoc
+    }
+
+    /**
+     * Test extra gap 3
+     *
+     * @param int $param
+     *
+     */
+    public function testExtraGap3($param)
+    {
+        //Test wrong PHPDoc
+    }
+
+    /**
+     *
+     * Test extra gap 4
+     *
+     * @param int $param
+     */
+    public function testExtraGap4($param)
+    {
+        //Test wrong PHPDoc
+        // !!! For this case will responsible validator CODE_PHP_DOC_MESSAGE
+    }
 }
