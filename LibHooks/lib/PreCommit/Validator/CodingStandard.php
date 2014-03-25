@@ -113,6 +113,11 @@ class CodingStandard extends AbstractValidator
                 continue;
             }
 
+            if (!isset($originalArr[$line - 1])) {
+                //skip not exit line
+                continue;
+            }
+
             $currentString = trim($originalArr[$line - 1]);
             if (
                 preg_match('/\S=\>|=\>\S/i', $str) // operator => must be wrapped with spaces
@@ -344,4 +349,5 @@ class CodingStandard extends AbstractValidator
         }
         return false;
     }
+
 }
