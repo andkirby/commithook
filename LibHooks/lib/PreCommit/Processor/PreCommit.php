@@ -78,6 +78,10 @@ class PreCommit extends AbstractAdapter
             return true;
         }
 
+        if (!$this->_canProcessed()) {
+            return true;
+        }
+
         $fileFilter = $this->_loadValidator('FileFilter');
 
         foreach ($this->_files as $file) {
@@ -157,5 +161,20 @@ class PreCommit extends AbstractAdapter
             throw new Exception("File '$filePath' does not exist.");
         }
         return $filePath;
+    }
+
+    /**
+     * Can files processed
+     *
+     * In this method added checking commit message.
+     * We need no to check "Revert" commits and "Merge branch".
+     *
+     * @return string
+     */
+    protected function _canProcessed()
+    {
+        $commitMessage = $this->_vcsAdapter->getCommitMessage();
+        return false === strpos('Revert ', $commitMessage)
+            && false === strpos('Merge branch ', $commitMessage);
     }
 }
