@@ -35,6 +35,11 @@ class CodingStandardMagento extends CodingStandard
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         $parsedArr = $this->splitContent($content);
         foreach ($parsedArr as $line => $str) {
+            if (!isset($originalArr[$line - 1])) {
+                //skip if line not exists
+                //TODO investigate this case
+                continue;
+            }
             $currentString = trim($originalArr[$line - 1]);
             //check using Mage::throwException();
             if (false !== strpos($str, 'Mage::throwException(')) {
