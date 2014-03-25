@@ -115,6 +115,7 @@ class CodingStandard extends AbstractValidator
 
             if (!isset($originalArr[$line - 1])) {
                 //skip not exit line
+                //TODO investigate this case.
                 continue;
             }
 
