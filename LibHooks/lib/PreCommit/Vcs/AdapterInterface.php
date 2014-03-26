@@ -26,4 +26,11 @@ interface AdapterInterface
      * @return string
      */
     public function getCommitMessage();
+
+    /**
+     * Get merge status
+     *
+     * @return bool
+     */
+    public function isMergeInProgress();
 }

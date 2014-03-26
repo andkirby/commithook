@@ -42,4 +42,15 @@ class Git implements AdapterInterface
         }
         return file_get_contents($file);
     }
+
+    /**
+     * Get inner text of commit message file
+     *
+     * @return string
+     */
+    public function isMergeInProgress()
+    {
+        $mergeFile = $this->getCodePath() . DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR . 'MERGE_HEAD';
+        return file_exists($mergeFile);
+    }
 }

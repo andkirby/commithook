@@ -173,8 +173,6 @@ class PreCommit extends AbstractAdapter
      */
     protected function _canProcessed()
     {
-        $commitMessage = $this->_vcsAdapter->getCommitMessage();
-        return false === strpos('Revert ', $commitMessage)
-            && false === strpos('Merge branch ', $commitMessage);
+        return !$this->_vcsAdapter->isMergeInProgress();
     }
 }
