@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config>
+    <list>
+        <same>same1</same>
+        <same>same2</same>
+        <same>same3</same>
+        <same>same4</same>
+        <not_same>not same1</not_same>
+        <not_same>not same2</not_same>
+        <not_same>not same3</not_same>
+    </list>
+    <node2>
+        <structure1>
+            <child>value1</child>
+            <child2>value2</child2>
+        </structure1>
+        <nodes_list>
+            <node1 />
+            <node2 />
+            <node3 />
+        </nodes_list>
+    </node2>
+</config>
