@@ -17,7 +17,6 @@ class PreCommit_ConfigTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         $file         = __DIR__ . '/_fixture/config-test.xml';
-        var_dump($file);
         self::$_model = simplexml_load_file($file, '\\PreCommit\\Config');
     }
 
