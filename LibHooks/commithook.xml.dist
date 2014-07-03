@@ -61,10 +61,14 @@
     <hooks>
         <pre-commit>
             <filetype>
-                <php>
+                <!--Run validators, filters before specific validators-->
+                <all_before>
                     <filters>
                         <SkipContent />
                     </filters>
+                </all_before>
+                <all_after />
+                <php>
                     <validators>
                         <PhpClass />
                         <PhpDoc />
