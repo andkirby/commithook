@@ -1,8 +1,6 @@
 <?php
 namespace PreCommit\Validator;
 
-use PreCommit\Config;
-
 /**
  * Class validator for check commit message format
  *
