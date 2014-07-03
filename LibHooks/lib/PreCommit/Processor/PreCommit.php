@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Processor;
 use \PreCommit\Exception as Exception;
+use \PreCommit\Config as Config;
 
 /**
  * Class abstract process adapter
@@ -98,43 +99,10 @@ class PreCommit extends AbstractAdapter
 
             $content = $this->_loadFilter('SkipContent')->filter($content, $file);
 
-            switch ($ext) {
-                case 'php':
-                    $this->_loadValidator('PhpClass')
-                        ->validate($content, $file, $filePath);
-
-                    $this->_loadValidator('PhpDoc')
-                        ->validate($content, $file);
-
-                    $this->_loadValidator('CodingStandard')
-                        ->validate($content, $file);
-
-                    $this->_loadValidator('CodingStandardMagento')
-                        ->validate($content, $file);
-
-                    $this->_loadValidator('RedundantCode')
-                        ->validate($content, $file);
-                    break;
-
-                case 'phtml':
-                    $this->_loadValidator('RedundantCode')
-                        ->validate($content, $file);
-
-                    $this->_loadValidator('CodingStandardPhtml')
-                        ->validate($content, $file);
-                    break;
-
-                case 'js':
-                    $this->_loadValidator('RedundantCode')
-                        ->validate($content, $file);
-                    break;
-
-                case 'xml':
-                    $this->_loadValidator('XmlParser')
-                        ->validate($content, $file);
-                    break;
-
-                //no default
+            $validators = $this->getValidators($ext);
+            foreach ($validators as $validatorName) {
+                $this->_loadValidator($validatorName)
+                    ->validate($content, $file, $filePath);
             }
 
             //for all files
@@ -174,5 +142,28 @@ class PreCommit extends AbstractAdapter
     protected function _canProcessed()
     {
         return !$this->_vcsAdapter->isMergeInProgress();
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     * @throws \PreCommit\Exception
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
+    }
+
+    /**
+     * Get validators by file type
+     *
+     * @param string $fileType
+     * @return array
+     */
+    public function getValidators($fileType)
+    {
+        $array = $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/validators');
+        return array_keys($array);
     }
 }

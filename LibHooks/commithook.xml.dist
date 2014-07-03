@@ -74,14 +74,20 @@
                         <PhpDoc />
                         <CodingStandard />
                         <CodingStandardMagento />
-                        <TrailingSpace />
+                        <RedundantCode />
                     </validators>
                 </php>
                 <phtml>
                     <validators>
-                        <TrailingSpace />
+                        <RedundantCode />
+                        <CodingStandardPhtml />
                     </validators>
                 </phtml>
+                <js>
+                    <validators>
+                        <RedundantCode />
+                    </validators>
+                </js>
                 <xml>
                     <validators>
                         <XmlParser />
