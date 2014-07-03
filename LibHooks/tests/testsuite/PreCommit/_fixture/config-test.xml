@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <config>
     <list>
+        <!--Some comment-->
         <same>same1</same>
-        <same>same2</same>
+        <same>same2</same>  <!-- comment -->
         <same>same3</same>
         <same>same4</same>
+
+        <!--Some comment 2-->
         <not_same>not same1</not_same>
         <not_same>not same2</not_same>
         <not_same>not same3</not_same>

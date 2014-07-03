@@ -58,7 +58,7 @@ class Config extends \SimpleXMLElement
     public function getNodeArray($xpath)
     {
         $result = $this->xpath(self::XPATH_START . $xpath);
-        $result = isset($result[0]) ? (array)$result[0] : null;
+        $result = isset($result[0]) ? (array)$result[0] : array();
         return $result;
     }
 
@@ -79,7 +79,7 @@ class Config extends \SimpleXMLElement
 
         $result = $this->getNodeArray($xpath);
 
-        $result = isset($result[$last]) ? $result[$last] : null;
+        $result = isset($result[$last]) ? (array) $result[$last] : array();
         return $result;
     }
 }

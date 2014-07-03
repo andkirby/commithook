@@ -60,7 +60,7 @@ class FileFilter extends AbstractValidator
      */
     protected function _isFileSkippedByPath($file)
     {
-        $list = Config::getInstance()->getNode(self::XPATH_SKIP_PATHS, true);
+        $list = Config::getInstance()->getMultiNode(self::XPATH_SKIP_PATHS);
         foreach ($list as $item) {
             if (strpos($file, (string) $item) === 0) {
                 return true;
@@ -85,7 +85,7 @@ class FileFilter extends AbstractValidator
         }
 
         //check file path in skip list
-        $list = Config::getInstance()->getNode(self::XPATH_SKIP_FILES, true);
+        $list = Config::getInstance()->getMultiNode(self::XPATH_SKIP_FILES);
         foreach ($list as $item) {
             $item = (string) $item;
             if (strpos($file, $item) === 0) {
@@ -103,7 +103,7 @@ class FileFilter extends AbstractValidator
      */
     protected function _isFileProtectedByPath($file)
     {
-        $list = Config::getInstance()->getNode(self::XPATH_PROTECT_PATHS, true);
+        $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_PATHS);
         foreach ($list as $item) {
             if (strpos($file, (string) $item) === 0) {
                 $this->_addError($file, self::PROTECTED_PATH, $item);
@@ -121,11 +121,8 @@ class FileFilter extends AbstractValidator
      */
     protected function _isFileProtected($file)
     {
-//        $reg = '/' . str_replace('/', '\/', '/' . $file) . '/';
-        $list = Config::getInstance()->getNode(self::XPATH_PROTECT_FILES, true);
+        $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_FILES);
         foreach ($list as $item) {
-            $item = (string) $item;
-//            if (preg_match($reg, $item) !== false) {
             if (strpos($file, $item) === 0) {
                 $this->_addError($file, self::PROTECTED_FILE, $item);
                 return true;
