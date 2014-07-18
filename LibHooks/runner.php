@@ -26,7 +26,7 @@ echo PHP_EOL . PHP_EOL;
 $vcs = isset($vcs) ? $vcs : 'git';
 
 //Process hook name
-$supportedHooks = (array) $config->getNode('supported_hooks');
+$supportedHooks = $config->getNodeArray('supported_hooks');
 $supportedHooks = $supportedHooks['hook'];
 if (empty($hookFile)) {
     //try to get hook name from backtrace

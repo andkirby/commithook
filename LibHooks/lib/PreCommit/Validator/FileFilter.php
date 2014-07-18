@@ -78,7 +78,7 @@ class FileFilter extends AbstractValidator
     protected function _isFileSkipped($file)
     {
         //check extension in skip list
-        $listExtensions = (array) Config::getInstance()->getNode(self::XPATH_SKIP_FILE_EXTENSIONS);
+        $listExtensions = Config::getInstance()->getNodeArray(self::XPATH_SKIP_FILE_EXTENSIONS);
         $fileExt = pathinfo($file, PATHINFO_EXTENSION);
         if (in_array($fileExt, $listExtensions)) {
             return true;

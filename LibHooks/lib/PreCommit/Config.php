@@ -40,7 +40,7 @@ class Config extends \SimpleXMLElement
      * Get node by xpath
      *
      * @param string $xpath
-     * @return array|Config
+     * @return string|null
      */
     public function getNode($xpath)
     {
