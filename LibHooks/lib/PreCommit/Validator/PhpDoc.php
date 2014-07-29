@@ -17,6 +17,7 @@ class PhpDoc extends AbstractValidator
     const CODE_PHP_DOC_ENTER_DESCRIPTION = 'phpDocEnterDescription';
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
+    const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
     /**#@-*/
 
     /**
@@ -31,6 +32,7 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
         self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%',
         self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
+        self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
     );
 
     /**
@@ -57,6 +59,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocMessage($content, $file);
         $this->_validateMissedGapAfterPhpDocMessage($content, $file);
         $this->_validateExistPhpDocExtraGap($content, $file);
+        $this->_validateExistPhpDocVarNull($content, $file);
 
         return array() == $this->_errorCollector->getErrors();
     }
@@ -191,6 +194,24 @@ class PhpDoc extends AbstractValidator
             '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
         )) {
             $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]));
+        }
+        return $this;
+    }
+
+    /**
+     * Validate missed gap after PhpDoc description
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    public function _validateExistPhpDocVarNull($content, $file)
+    {
+        if (preg_match_all(
+            '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
+        )) {
+            var_dump($matches);
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]));
         }
         return $this;
     }

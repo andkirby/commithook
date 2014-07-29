@@ -205,4 +205,18 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
         $expected = 3;
         $this->assertEquals($expected, $errors[0]);
     }
+
+    /**
+     * Test null in PHPDoc without extra explanation
+     */
+    public function testPhpDocVarNull()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_fileTest,
+            \PreCommit\Validator\PhpDoc::CODE_PHP_DOC_VAR_NULL
+        );
+
+        $expected = 3;
+        $this->assertEquals($expected, $errors[0]);
+    }
 }

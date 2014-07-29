@@ -28,6 +28,28 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
     protected $_paramBB; //PhpDoc is missed
 
     /**
+     * Some comment
+     *
+     * @var null
+     */
+    protected $_varNull; //extra type missed in PHPDoc for @var
+
+    /**
+     * Some comment
+     *
+     * @var NULL
+     */
+    protected $_varNullUpper; //extra type missed in PHPDoc for @var
+
+    /**
+     * Some comment
+     *
+     * @var null|string
+     * @var string|null
+     */
+    protected $_varProperNull; //extra type NOT missed in PHPDoc for @var
+
+    /**
      * @var string
      */
     protected $_var; //comment missed in PHPDoc
@@ -53,7 +75,7 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
     /**
      * Enter description here...
      *
-     * @var null
+     * @var string
      */
     protected $_protectedValueA;
 
@@ -66,7 +88,7 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
 
     /**
      * Missed gap in phpDoc
-     * @var null
+     * @var string
      */
     protected $_publicValue;
 
@@ -83,6 +105,26 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
     public function test2Do($param)
     {
         //Test unknown_type in PHPDoc
+    }
+
+    /**
+     * Test null in PHPDoc of method
+     *
+     * @param null $param
+     */
+    public function test3ParamNull($param)
+    {
+        //Test null in PHPDoc
+    }
+
+    /**
+     * Test proper null in PHPDoc of method
+     *
+     * @param null|string $param
+     */
+    public function test3ProperParamNull($param)
+    {
+        //Test null in PHPDoc
     }
 
     /**
