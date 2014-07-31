@@ -210,7 +210,6 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
         )) {
-            var_dump($matches);
             $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]));
         }
         return $this;
