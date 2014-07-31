@@ -530,3 +530,12 @@ class Some_testClass extends stdClass {
     }
 
 }
+
+try {
+    $shell = new stdClass();
+    $shell->run();
+} catch (My_Exception $e) {
+    echo 'ERROR: ' . $e->getMessage() . PHP_EOL;
+} catch (Exception $e) {
+    echo $e . PHP_EOL;
+}

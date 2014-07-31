@@ -191,7 +191,7 @@ class CodingStandard extends AbstractValidator
             if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $b)) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             } elseif (preg_match('/[^A-z]catch/i', $str)
-                && !preg_match('/^\s+(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
+                && !preg_match('/^\s*(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
             ) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             }
