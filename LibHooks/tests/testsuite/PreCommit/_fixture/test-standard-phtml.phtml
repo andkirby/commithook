@@ -49,3 +49,6 @@ if ($product->isSaleable() && $this->hasOptions()
         <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
     </div>
 <?php endif; ?>
+<?php if ($i != $recommendationsCount-1) echo ","?>
+<?php $_product = $this->getProduct(); ?>
+<?php Mage::getModel('catalog/product'); ?>

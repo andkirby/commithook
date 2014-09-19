@@ -103,6 +103,7 @@ class PreCommit_Validator_CodingStandardPhtmlTest extends PHPUnit_Framework_Test
         $expected = array (
             '<?php foreach ($this->getData(\'array\') as $_value) { ?>',
             '<?php if ($this->getData(\'aa\') === \'some string\') { ?>',
+            '<?php if ($i != $recommendationsCount-1) echo ","?>',
         );
         $this->assertEquals($expected, array_values($errors));
     }
@@ -121,6 +122,7 @@ class PreCommit_Validator_CodingStandardPhtmlTest extends PHPUnit_Framework_Test
             '<?php foreach ($this->getData(\'array\') as $_value) { ?>',
             '<?php echo $_value; ?>',
             '<?php echo $_myVar; ?>',
+            '<?php $_product = $this->getProduct(); ?>',
         );
         $this->assertEquals($expected, array_values($errors));
     }
@@ -165,6 +167,7 @@ class PreCommit_Validator_CodingStandardPhtmlTest extends PHPUnit_Framework_Test
         $expected = array(
             '<?php echo SomeClass::someMethod($value); ?>',
             '<?php echo Mage::helper($value); ?>',
+            '<?php Mage::getModel(\'catalog/product\'); ?>',
         );
         $this->assertEquals($expected, array_values($errors));
     }
