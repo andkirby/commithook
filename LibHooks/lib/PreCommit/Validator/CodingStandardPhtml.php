@@ -139,9 +139,8 @@ class CodingStandardPhtml extends AbstractValidator
     protected function _validateStringAlternativeSyntaxUsage($file, $str, $line)
     {
         $operators = 'elseif|else if|if|switch|foreach|for|while';
-        if (preg_match('/[^A-z0-9]+(?:' . $operators . ')[^A-z]?\(.*?\)[ ]?{/i', $str, $b)
-            || (preg_match('/[^A-z0-9]+(?:' . $operators . ')[^A-z]?\(.*?\).*/i', $str, $b)
-            && !preg_match('/[^A-z0-9]+(?:' . $operators . ').*?\).*?:?/i', $b[0], $m))
+        if (preg_match('/[^A-z0-9]+(?:' . $operators . ')[^A-z]?\(.*?\).*/i', $str, $b)
+            && !preg_match('/[^A-z0-9]+(?:' . $operators . ').*?\).*?:/i', $b[0], $m)
         ) {
             $this->_addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
         }
