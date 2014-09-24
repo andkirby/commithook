@@ -155,7 +155,7 @@ class CodingStandard extends AbstractValidator
             }
 
             $operators = 'elseif|else if|else|if|switch|foreach|for|while|do';
-            $reg       = '/\s*[^A-z0-9]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+            $reg       = '/\s*[^A-z0-9$_]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
 
             if (preg_match($reg, $str, $b)
                 && !preg_match('/^[A-z0-9_]/', $b[2])
