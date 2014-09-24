@@ -539,3 +539,5 @@ try {
 } catch (Exception $e) {
     echo $e . PHP_EOL;
 }
+
+$switch = $this->getRequest()->getGetParam('switch');
