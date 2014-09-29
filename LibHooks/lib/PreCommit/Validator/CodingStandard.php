@@ -155,7 +155,7 @@ class CodingStandard extends AbstractValidator
             }
 
             $operators = 'elseif|else if|else|if|switch|foreach|for|while|do';
-            $reg       = '/\s*[^A-z0-9]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+            $reg       = '/\s*[^A-z0-9$_]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
 
             if (preg_match($reg, $str, $b)
                 && !preg_match('/^[A-z0-9_]/', $b[2])
@@ -255,7 +255,7 @@ class CodingStandard extends AbstractValidator
             $byte = $content[$i];
             switch ($state) {
                 case 1: //in single quotes
-                    if ($byte == '\'' && $i > 1 && $content[$i - 1] != '\\') {
+                    if ($byte == '\'' && $i > 1 && ($content[$i - 1] != '\\' || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')) {
                         $state = 0;
                     }
                     $cleanedText .= $byte;
@@ -264,6 +264,9 @@ class CodingStandard extends AbstractValidator
                             && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
+                    }
+                    if ($state === 0) {
+                        @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
                     }
                     break;
 
