@@ -1,4 +1,5 @@
 <?php
+use PreCommit\Processor\ErrorCollector;
 
 /**
  * Class test for PreCommit_Processor
@@ -347,5 +348,76 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
             'return $bad_another + $_badB;',
         );
         $this->assertEquals($expected, array_values($errors));
+    }
+
+    /**
+     * Test split simple content
+     */
+    public function testSplitContentSimple()
+    {
+        $content = '$this->getText(\'12345\');';
+        $options['errorCollector'] = new ErrorCollector();
+        $validator = new \PreCommit\Validator\CodingStandard($options);
+        $parsed = $validator->splitContent($content);
+
+        $expected = '$this->getText(\'\');';
+        $this->assertEquals($expected, current($parsed));
+    }
+
+    /**
+     * Test split complex content
+     */
+    public function testSplitContentComplex()
+    {
+        $content = file_get_contents(__DIR__ . '/../_fixture/TestClassSplit.php');
+        $options['errorCollector'] = new ErrorCollector();
+        $validator = new \PreCommit\Validator\CodingStandard($options);
+        $parsed = $validator->splitContent($content);
+
+        $expected = array (
+            '<?php',
+            '',
+            'class Some_testClass2',
+            '{',
+            '    ',
+            '    protected function _render(array $data = array(), $template = null, $blockClass = null)',
+            '    {',
+            '        ',
+            '        if ($blockClass) {',
+            '            $blockClass = \'\' . \'\' . $blockClass;',
+            '            $block = new $blockClass($data);',
+            '        } else {',
+            '            $block = new Renderer($data);',
+            '        }',
+            '',
+            '        if (!$template) {',
+            '            ',
+            '            $template = $this->getControllerName() . DIRECTORY_SEPARATOR',
+            '                . $this->getActionName() . \'\';',
+            '        }',
+            '        $block->setTemplate($template);',
+            '',
+            '        ',
+            '        $actionHtml = $block->toHtml();',
+            '',
+            '        if (!$this->isAjax()) {',
+            '            $block = new Renderer(array(\'\' => $actionHtml));',
+            '            $block->setTemplate(\'\');',
+            '',
+            '            ',
+            '            $message = new Message();',
+            '            $message->setTemplate(\'\');',
+            '            $block->setChild(\'\', $message);',
+            '',
+            '            echo $block->toHtml();',
+            '        } else {',
+            '            echo $actionHtml;',
+            '        }',
+            '        return $this;',
+            '    }',
+            '}',
+            '',
+        );
+        $this->assertEquals($expected, array_values($parsed));
     }
 }
