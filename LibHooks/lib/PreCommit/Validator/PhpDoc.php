@@ -18,6 +18,7 @@ class PhpDoc extends AbstractValidator
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
     const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
+    const CODE_PHP_DOC_VAR_EMPTY         = 'phpDocVarEmpty';
     /**#@-*/
 
     /**
@@ -33,6 +34,7 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%',
         self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
         self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
+        self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
     );
 
     /**
@@ -59,6 +61,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocMessage($content, $file);
         $this->_validateMissedGapAfterPhpDocMessage($content, $file);
         $this->_validateExistPhpDocExtraGap($content, $file);
+        $this->_validateExistPhpDocVarEmptyType($content, $file);
         $this->_validateExistPhpDocVarNull($content, $file);
 
         return array() == $this->_errorCollector->getErrors();
@@ -199,7 +202,24 @@ class PhpDoc extends AbstractValidator
     }
 
     /**
-     * Validate missed gap after PhpDoc description
+     * Validate empty types in tags "var" and "param"
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    public function _validateExistPhpDocVarEmptyType($content, $file)
+    {
+        if (preg_match_all(
+            '/\x0D?\x0A\x20+\*\x20@(param|var)((\x20+\$.+)|(\x0D?\x0A))/', $content, $matches
+        )) {
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]));
+        }
+        return $this;
+    }
+
+    /**
+     * Validate NULL types in tags "var" and "param"
      *
      * @param string $content
      * @param string $file

@@ -92,6 +92,13 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
      */
     protected $_publicValue;
 
+    /**
+     * Empty var tag
+     *
+     * @var
+     */
+    protected $_emptyVar;
+
     public function test1() //PhpDoc is missed
     {
         //test of missing phpDoc
@@ -224,5 +231,16 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
     {
         //Test wrong PHPDoc
         // !!! For this case will responsible validator CODE_PHP_DOC_MESSAGE
+    }
+
+    /**
+     * Some message
+     *
+     * @param $param1
+     * @param
+     */
+    protected function _testTypeParam($param1, $param2)
+    {
+        //empty
     }
 }
