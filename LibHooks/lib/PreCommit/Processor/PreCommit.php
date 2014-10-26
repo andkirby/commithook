@@ -97,20 +97,18 @@ class PreCommit extends AbstractAdapter
             $content = file_get_contents($filePath);
             $ext = pathinfo($file, PATHINFO_EXTENSION);
 
-            $content = $this->_loadFilter('SkipContent')->filter($content, $file);
+            //run validators for non-filtered content
+            $this->runValidatorsByExtension('before_all_original', $content, $file, $filePath);
 
-            $validators = $this->getValidators($ext);
-            foreach ($validators as $validatorName) {
-                $this->_loadValidator($validatorName)
-                    ->validate($content, $file, $filePath);
-            }
+            //run filters and validators before running by the file extension
+            $content = $this->runFiltersByExtension('before_all', $content, $file, $filePath);
+            $this->runValidatorsByExtension('before_all', $content, $file, $filePath);
 
-            //for all files
-            $this->_loadValidator('TrailingSpace')
-                ->validate($content, $file);
+            $content = $this->runFiltersByExtension($ext, $content, $file, $filePath);
+            $this->runValidatorsByExtension($ext, $content, $file, $filePath);
 
-            $this->_loadValidator('FileStyle')
-                ->validate($content, $file);
+            $content = $this->runFiltersByExtension('after_all', $content, $file, $filePath);
+            $this->runValidatorsByExtension('after_all', $content, $file, $filePath);
         }
         return array() == $this->_errorCollector->getErrors();
     }
@@ -165,5 +163,52 @@ class PreCommit extends AbstractAdapter
     {
         $array = $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/validators');
         return array_keys($array);
+    }
+
+    /**
+     * Get filters by file type
+     *
+     * @param string $fileType
+     * @return array
+     */
+    public function getFilters($fileType)
+    {
+        $array = $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/filters');
+        return array_keys($array);
+    }
+
+    /**
+     * Run filters gotten by file extension or some key
+     *
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return string           Return filtered content
+     */
+    public function runFiltersByExtension($ext, $content, $file, $filePath)
+    {
+        foreach ($this->getFilters($ext) as $validatorName) {
+            $content = $this->_loadFilter($validatorName)
+                ->filter($content, $file, $filePath);
+        }
+        return $content;
+    }
+
+    /**
+     * Run validators gotten by file extension or some key
+     *
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return void             Returns nothing
+     */
+    public function runValidatorsByExtension($ext, $content, $file, $filePath)
+    {
+        foreach ($this->getValidators($ext) as $validatorName) {
+            $content = $this->_loadValidator($validatorName)
+                ->validate($content, $file, $filePath);
+        }
     }
 }

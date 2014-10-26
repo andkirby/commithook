@@ -215,6 +215,9 @@ class PhpDoc extends AbstractValidator
         )) {
             $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]));
         }
+        print_r($file . PHP_EOL);
+        print_r($matches);
+        die;
         return $this;
     }
 
