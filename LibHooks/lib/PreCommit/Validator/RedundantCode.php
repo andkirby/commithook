@@ -25,8 +25,8 @@ class RedundantCode extends AbstractValidator
      */
     protected $_errorMessages = array(
         self::CODE_IS_NULL => 'Redundant usage is_null() function. Use null === $a construction. Original line: %value%',
-        self::JS_CONSOLE   => 'Redundant usage JS console.log() function. Original line: %value%',
-        self::DEBUG_QQQ    => 'Redundant usage qqq() debug function. Original line: %value%',
+        self::JS_CONSOLE     => 'Redundant usage JS console.log() function. Original line: %value%',
+        self::DEBUG_QQQ      => 'Redundant usage qqq() debug function. Original line: %value%',
         self::DEBUG_VAR_DUMP => 'Redundant usage var_dump() debug function. Original line: %value%',
     );
 

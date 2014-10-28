@@ -207,13 +207,27 @@ class PreCommit_Validator_PhpDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test null in PHPDoc without extra explanation
+     * Test null in PHPDoc without extra types
      */
     public function testPhpDocVarNull()
     {
         $errors = $this->_getSpecificErrorsList(
             self::$_fileTest,
             \PreCommit\Validator\PhpDoc::CODE_PHP_DOC_VAR_NULL
+        );
+
+        $expected = 3;
+        $this->assertEquals($expected, $errors[0]);
+    }
+
+    /**
+     * Test when @param hasn't described type
+     */
+    public function testParamEmptyType()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_fileTest,
+            \PreCommit\Validator\PhpDoc::CODE_PHP_DOC_VAR_EMPTY
         );
 
         $expected = 3;

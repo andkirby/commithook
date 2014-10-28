@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config>
-    <version>1.2.4</version>
+    <version>1.4.2</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
@@ -17,19 +17,22 @@
             <filter>
                 <skip>
                     <extensions>
+                        <!--Images-->
                         <jpg>jpg</jpg>
                         <png>png</png>
                         <gif>gif</gif>
                         <bmp>bmp</bmp>
                         <bmp>ico</bmp>
+                        <svg>svg</svg>
+                        <!--Archives-->
                         <zip>zip</zip>
                         <rar>rar</rar>
                         <gz>gz</gz>
                         <tar>tar</tar>
+                        <!--Fonts-->
                         <ttf>ttf</ttf>
                         <fon>fon</fon>
                         <eot>eot</eot>
-                        <svg>svg</svg>
                         <woff>woff</woff>
                     </extensions>
                     <files>
@@ -61,13 +64,17 @@
     <hooks>
         <pre-commit>
             <filetype>
+                <!--Run validators before any filter because filters run always before validators-->
+                <before_all_original />
                 <!--Run validators, filters before specific validators-->
-                <all_before>
+                <before_all>
                     <filters>
                         <SkipContent />
                     </filters>
-                </all_before>
-                <all_after />
+                    <validators>
+                        <UnresolvedConflict />
+                    </validators>
+                </before_all>
                 <php>
                     <validators>
                         <PhpClass />
@@ -93,6 +100,12 @@
                         <XmlParser />
                     </validators>
                 </xml>
+                <after_all>
+                    <validators>
+                        <TrailingSpace />
+                        <FileStyle />
+                    </validators>
+                </after_all>
             </filetype>
         </pre-commit>
         <commit-msg>
