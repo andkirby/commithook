@@ -3,14 +3,14 @@
 /**
  * Class test for PreCommit_Processor
  */
-class PreCommit_Validator_XmlParserTest extends PHPUnit_Framework_TestCase
+class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Php file for text hooks
      *
      * @var string
      */
-    static protected $_fileTest = 'tests/testsuite/PreCommit/_fixture/empty.xml';
+    static protected $_fileTest = 'tests/testsuite/PreCommit/_fixture/file-have-trailing-space-and-dont-have-last-empty.php';
 
     /**
      * Test model
@@ -88,16 +88,49 @@ class PreCommit_Validator_XmlParserTest extends PHPUnit_Framework_TestCase
     /**
      * Test CODE_PHP_OPERATOR_SPACES_MISSED
      */
-    public function testEmptyFile()
+    public function testExistTrailingSpaces()
     {
         $errors = $this->_getSpecificErrorsList(
             self::$_fileTest,
-            \PreCommit\Validator\XmlParser::CODE_XML_ERROR
+            \PreCommit\Validator\TrailingSpace::CODE_PHP_REDUNDANT_TRAILING_SPACES
         );
 
-        $expected = array (
-            'DOMDocument::loadXML(): Empty string supplied as input',
+        $expected = array(3);
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_OPERATOR_SPACES_MISSED
+     */
+    public function testNotExistsTrailingLine()
+    {
+        $errors = $this->_getSpecificErrorsList(
+            self::$_fileTest,
+            \PreCommit\Validator\TrailingSpace::CODE_PHP_NO_END_TRAILING_LINE
         );
-        $this->assertEquals($expected, array_values($errors));
+
+        $this->assertCount(1, $errors);
+    }
+
+    /**
+     * Test finding trailing space and not exist trailing spaces (full test)
+     */
+    public function testFindTrailingLineAndNotExistTrailingSpaces()
+    {
+        $errorCollector = $this->getMock(
+            '\PreCommit\Processor\ErrorCollector',
+            array('addError')
+        );
+        $errorCollector->expects($this->never())->method('addError');
+        $str = <<<CONTENT
+<?php
+\$space = 1;
+\$tab = 2;
+\$noTail = 33;
+
+CONTENT;
+
+        $validator = new PreCommit\Validator\TrailingSpace(array('errorCollector' => $errorCollector));
+        $validator->validate($str, '');
     }
 }

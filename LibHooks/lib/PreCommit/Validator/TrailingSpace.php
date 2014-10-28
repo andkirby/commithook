@@ -21,7 +21,7 @@ class TrailingSpace extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_PHP_REDUNDANT_TRAILING_SPACES => 'Contains trailing space(s).',
+        self::CODE_PHP_REDUNDANT_TRAILING_SPACES => 'Contains trailing space(s) at lease %value% times.',
         self::CODE_PHP_NO_END_TRAILING_LINE => 'Missing trailing line in the end of file.',
     );
 
@@ -66,12 +66,11 @@ class TrailingSpace extends AbstractValidator
     protected function _validateRedundantTrailingSpaces($content, $file)
     {
         $matches = array();
-        if (preg_match_all("~^.*?( |\t)\r?\n~s", $content, $matches)) {
+        if (preg_match_all("~.*?[ |\t]+\r?\n~", $content, $matches)) {
             $this->_addError(
                 $file,
                 self::CODE_PHP_REDUNDANT_TRAILING_SPACES,
-                null,
-                (count(explode("\n", $matches[0][0])) - 1)
+                count($matches[0])
             );
         }
         return $this;
