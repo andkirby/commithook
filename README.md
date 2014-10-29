@@ -9,7 +9,9 @@ The system loads LibHooks/config.xml file at first.
 
 #### Config caching
 In then it will try to load cached file with full merged configuration by path:
+
 - commithook/.cache/md5(version + directory of hookfile).xml
+
 Cache will be invalidated if version was updated.
 
 *NOTE:* In case you changed your local config files your need to clean up cache files. 
