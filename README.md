@@ -23,7 +23,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 - PROJECT_DIR/commithook.xml (it may contain a project specific configuration which can be shared among your team)
 The last one can be committed into a project and might be used by all developers.
 
-#Release notes:
+# Release notes
 - v1.5.0 Implemented layered configuration loading.
 - v1.4.3 Minor fix in the check trailing spaces.
 - v1.4.2 [CRITICAL] Fixed running validators from pre-commit processor.
