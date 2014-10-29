@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config>
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <validators>
+                        <CodingStandardMagento />
+                    </validators>
+                </php>
+            </filetype>
+        </pre-commit>
+    </hooks>
+</config>
+

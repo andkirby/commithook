@@ -10,7 +10,8 @@ class PreCommit_Processor_PreCommitTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        \PreCommit\Config::mergeExtraConfig(PROJECT_ROOT, 'd:/hook');
     }
 
     /**
@@ -27,8 +28,8 @@ class PreCommit_Processor_PreCommitTest extends PHPUnit_Framework_TestCase
                     'PhpClass',
                     'PhpDoc',
                     'CodingStandard',
-                    'CodingStandardMagento',
                     'RedundantCode',
+                    'CodingStandardMagento',
                 )
             ),
             array(

@@ -26,7 +26,8 @@ class PreCommit_Validator_CodingStandardTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config object
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        \PreCommit\Config::mergeExtraConfig(PROJECT_ROOT, 'd:/hook');
 
         $vcsAdapter = self::_getVcsAdapterMock();
 

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config>
+    <version>1.5.0</version>
+    <supported_hooks>
+        <hook>pre-commit</hook>
+        <hook>commit-msg</hook>
+    </supported_hooks>
+
+    <!--Additional configuration file-->
+    <additional_config>
+        <main>commithook.xml</main>
+        <magento>commithook-magento.xml</magento>
+        <local>../commithook-local.xml</local>
+        <project>PROJECT_DIR/commithook.xml</project>
+    </additional_config>
+    <cache_dir>../.cache</cache_dir>
+</config>
