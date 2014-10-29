@@ -11,6 +11,7 @@ The system load LibHooks/config.xml file at first.
 In then it will try to load cached file with full merged configuration by path:
 - commithook/.cache/md5(version + directory of hookfile).xml
 Cache will be invalidated if version was updated.
+*NOTE:* In case you changed your local config files your need to clean up cache files. 
 
 #### Config layers
 In such case it will merge all files in the XML node "additional_config". There are several default config XML files which will be loaded by default. So default files ordering is presented as this list below:
