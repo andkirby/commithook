@@ -15,15 +15,19 @@ require_once 'lib/PreCommit/Autoloader.php';
 
 set_error_handler('\PreCommit\ErrorHandler::handleError');
 
-$xmlConfigFile = isset($xmlConfigFile) ? $xmlConfigFile : $rootPath . DIRECTORY_SEPARATOR . 'commithook.xml';
-$config = \PreCommit\Config::getInstance(array('file' => $xmlConfigFile));
-
-echo PHP_EOL;
-echo 'Please report all hook bugs to the GitHub project.';
-echo PHP_EOL . PHP_EOL;
-
 //Get VCS type
 $vcs = isset($vcs) ? $vcs : 'git';
+
+//load config
+$config = \PreCommit\Config::getInstance(array('file' => $rootPath . DIRECTORY_SEPARATOR . 'config.xml'));
+
+echo PHP_EOL;
+echo 'PHP CommitHooks v' . $config->getNode('version');
+echo PHP_EOL;
+echo 'Please report all hook bugs to the GitHub project.';
+echo PHP_EOL;
+echo 'http://github.com/andkirby/commithook';
+echo PHP_EOL . PHP_EOL;
 
 //Process hook name
 $supportedHooks = $config->getNodeArray('supported_hooks');
@@ -37,11 +41,16 @@ if (empty($hookFile)) {
         throw new \PreCommit\Exception('Error. Please add line "$hookFile = __FILE__;" in your hook file.');
     }
 }
+
 $hookName = pathinfo($hookFile, PATHINFO_BASENAME);
 if (!in_array($hookName, $supportedHooks)) {
     echo "Unsupported hook '$hookName'. Please review supported_hooks nodes in configuration.";
     echo PHP_EOL . PHP_EOL;
     exit(1);
+}
+
+if (!PreCommit\Config::loadCache($rootPath, $hookFile)) {
+    PreCommit\Config::mergeExtraConfig($rootPath, $hookFile);
 }
 
 /** @var \PreCommit\Processor\AbstractAdapter $processor */
