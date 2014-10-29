@@ -1,5 +1,5 @@
 # PHP CommitHOOKs
-The main purpose of this project is making an application which can check coding standards at first for PHP files.
+The main purpose of this project is checking coding standards at first for PHP files.
 
 ## Configuration
 
