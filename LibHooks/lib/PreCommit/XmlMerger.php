@@ -77,13 +77,20 @@ class XmlMerger
         /** @var \SimpleXMLElement $node */
         foreach ($xmlUpdate as $name => $node) {
             $this->_addProcessXpathName($name);
-            if ($this->_isCollectionXpath() || !$xmlSource->$name) {
+            /** @var \SimpleXMLElement $nodeSource */
+            $nodeSource = $xmlSource->$name;
+            if ($this->_isCollectionXpath() || !$nodeSource) {
                 $this->xmlAppend($xmlSource, $node);
             } else {
-                /** @var \SimpleXMLElement $nodeSource */
-                $nodeSource = $xmlSource->$name;
                 $this->_mergeAttributes($nodeSource, $node);
-                $this->_merge($nodeSource, $node);
+
+                if ($node->count()) {
+                    //merge child nodes
+                    $this->_merge($nodeSource, $node);
+                } else {
+                    //set only value
+                    $nodeSource[0] = (string)$node;
+                }
             }
             $this->_unsetProcessXpathName($name);
         }

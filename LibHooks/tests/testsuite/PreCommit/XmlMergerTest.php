@@ -25,6 +25,8 @@ class PreCommit_XmlMergerTest extends PHPUnit_Framework_TestCase
             <child_node1 />
         </collection_node>
     </section>
+    <value_node>12</value_node>
+    <unpair_tag/>
 </root>
 XML;
         $xml2 = <<<XML
@@ -50,6 +52,7 @@ XML;
             </another_child>
         </collection_node>
     </another_section>
+    <value_node>44</value_node>
 </root>
 XML;
         $expected = <<<XML
@@ -66,6 +69,8 @@ XML;
             <child_node3/>
         </collection_node>
     </section>
+    <value_node>44</value_node>
+    <unpair_tag/>
     <another_section>
         <collection_node>
             <some_child>
