@@ -13,7 +13,7 @@ Cache will be invalidated if version was updated. In such case it will merge all
 The last one can be committed into a project and might be used by all developers.
 
 Release notes:
-- v1.5.0 Implemented layred configuration loading.
+- v1.5.0 Implemented layered configuration loading.
 - v1.4.3 Minor fix in the check trailing spaces.
 - v1.4.2 [CRITICAL] Fixed running validators from pre-commit processor.
 - v1.4.1 Added tests for trailing spaces and trailing line validator. Improved trailing spaces validation.
@@ -23,11 +23,3 @@ Release notes:
 - v1.2.3 Fixed case when operator name used in variable.
 - v1.2.2 Bugfix for case:
 <?php if ($i != $recommendationsCount-1) echo ","?>
-
-
-
-
-
-
-
-
