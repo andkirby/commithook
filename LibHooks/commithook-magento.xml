@@ -1,5 +1,33 @@
 <?xml version="1.0"?>
 <config>
+    <!--Validators setup-->
+    <validators>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <!--<files>-->
+                        <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
+                    <!--</files>-->
+                    <paths>
+                        <path>lib/</path>
+                    </paths>
+                </skip>
+                <protect>
+                    <files>
+                        <file>cron.php</file>
+                        <file>cron.sh</file>
+                    </files>
+                    <paths>
+                        <path>downloader/</path>
+                        <path>lib/</path>
+                        <path>app/code/core/</path>
+                        <path>app/code/local/Mage/</path>
+                        <path>app/design/install/</path>
+                    </paths>
+                </protect>
+            </filter>
+        </FileFilter>
+    </validators>
     <!--Hooks process setup-->
     <hooks>
         <pre-commit>

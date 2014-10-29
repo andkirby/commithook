@@ -30,26 +30,20 @@
                         <eot>eot</eot>
                         <woff>woff</woff>
                     </extensions>
-                    <files>
-                        <!--<file>app/code/core/Mage/Core/Helper/Js.php</file>-->
-                    </files>
-                    <paths>
-                        <path>lib/</path>
-                    </paths>
+                    <!--<paths>-->
+                        <!--<path>libs/</path>-->
+                    <!--</paths>-->
+                    <!--<files>-->
+                        <!--<file>index.php</file>-->
+                    <!--</files>-->
                 </skip>
                 <protect>
                     <files>
                         <file>index.php</file>
-                        <file>cron.php</file>
-                        <file>cron.sh</file>
                     </files>
-                    <paths>
-                        <path>downloader/</path>
-                        <path>lib/</path> <!--if you would add some new lib comment it temporary -->
-                        <path>app/code/core/</path>
-                        <path>app/code/local/Mage/</path>
-                        <path>app/design/install/</path>
-                    </paths>
+                    <!--<paths>-->
+                        <!--<path>libs/</path>-->
+                    <!--</paths>-->
                 </protect>
             </filter>
         </FileFilter>
