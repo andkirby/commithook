@@ -66,7 +66,7 @@ class TrailingSpace extends AbstractValidator
     protected function _validateRedundantTrailingSpaces($content, $file)
     {
         $matches = array();
-        if (preg_match_all("~.*?[ |\t]+\r?\n~", $content, $matches)) {
+        if (preg_match_all("~.*?[ \t]+\r?\n~", $content, $matches)) {
             $this->_addError(
                 $file,
                 self::CODE_PHP_REDUNDANT_TRAILING_SPACES,
