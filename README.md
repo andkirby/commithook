@@ -1,6 +1,13 @@
 # PHP CommitHOOKs
 The main purpose of this project is checking coding standards at first for PHP files.
 
+## Set up GIT hooks
+
+To set up GIT hooks you have to set up your commit-msg and pre-commit files.
+If you placed commithook project into the same projects root directory and you 
+have just to copy such from commithook directory into yourproject/.git/hooks.
+In other cases please set up them manually.
+
 ## Configuration
 
 ### How to use configuration layers
