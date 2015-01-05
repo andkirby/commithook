@@ -1,0 +1,12 @@
+{
+  "name": "andkirby/commithook",
+  "description": "PHP Commit Hooks",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Andrew Roslik",
+      "email": "bizkirby@gmail.com"
+    }
+  ]
+}
