@@ -253,7 +253,7 @@ PHP;
      */
     protected function getRunnerFile()
     {
-        return $this->commithookDir . '/runner.php';
+        return $this->commithookDir . '/LibHooks/runner.php';
     }
 
     /**

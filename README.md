@@ -60,6 +60,8 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.0 Added CommitHook files installer.
+- v1.5.1 Added composer supporting.
 - v1.5.0 Implemented layered configuration loading.
 - v1.4.3 Minor fix in the check trailing spaces.
 - v1.4.2 [CRITICAL] Fixed running validators from pre-commit processor.
