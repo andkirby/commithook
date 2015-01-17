@@ -1,7 +1,32 @@
 # PHP CommitHOOKs
 The main purpose of this project is checking coding standards at first for PHP files.
 
-## Set up GIT hooks
+## Composer Installation
+
+Install package by command (you may put it into your global vendor directory):
+
+    $ composer require andkirby/commithook:*
+
+### Set up via command line
+
+This feature is available since v1.6.0.
+
+Go to your project root directory and install commithook files:
+
+    $ cd /d/home/my-project
+    $ commithook-install
+    PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
+
+Actually you may skip step of getting project directory.
+Run it from anywhere and put path to your project:
+
+    cd d:/home/
+    Please set your root project directory [d:/home]: d:/home/my-project
+    PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
+
+NOTE: Tested on Windows. Feel free to put your faced issues on the project issues page.
+
+## Set up GIT hooks manually
 
 To set up GIT hooks you have to set up your commit-msg and pre-commit files.
 If you placed commithook project into the same projects root directory and you 
