@@ -5,13 +5,15 @@ The main purpose of this project is checking coding standards at first for PHP f
 
 ## Composer Installation
 
-Install package by command (you may put it into your global vendor directory):
+Install composer package `andkirby/commithook` by command (you may put it into your global vendor directory):
 
     $ composer require andkirby/commithook:*
 
 ### Set up via command line
 
 This feature is available since v1.6.0.
+
+#### Generate files
 
 Go to your project root directory and install commithook files:
 
@@ -29,6 +31,21 @@ Run it from anywhere and put path to your project:
 If system couldn't find path to your executable PHP file it will ask about it.
 
 NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
+
+#### Set up Composer vendor/bin directory
+If you using GitBash or Unix system please be sure that your shell can find files in global vendor directory.
+Or try to use absolute path `/d/s/php/vendor/bin/commithook-install`.
+##### GitBash for Windows
+You may don't have `vendor/bin` directory in global `PATH` environment variable.
+For GitBash for Windows you can check this out:
+```shell
+$ echo $PATH | grep "vendor/bin"
+```
+If you got nothing try to add your `vendor/dir` path to your ~/.bashrc file:
+```shell
+echo 'PATH=$PATH":/d/yourpath/to/php/vendor/bin"'
+```
+and restart your shell.
 
 ## Set up GIT hooks manually
 
