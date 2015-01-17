@@ -6,9 +6,9 @@ The main purpose of this project is checking coding standards at first for PHP f
 ## Composer Installation
 
 Install composer package `andkirby/commithook` by command (you may put it into your global vendor directory):
-
-    $ composer require andkirby/commithook:*
-
+```shell
+$ composer require andkirby/commithook
+```
 ### Set up via command line
 
 This feature is available since v1.6.0.
@@ -18,18 +18,18 @@ This feature is available since v1.6.0.
 Before you start please be sure that shell can run files from `vendor/bin` directory. [Read more](#set-up-composer-vendorbin-directory). Or use absolute path `/path/to/vendor/bin/commithook-install`.
 
 Go to your project root directory and install commithook files:
-
-    $ cd /d/home/my-project
-    $ commithook-install
-    PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
-
+```shell
+$ cd /d/home/my-project
+$ commithook-install
+PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
+```
 Actually you may skip step of getting project directory.
 Run it from anywhere and put path to your project:
-
-    $ cd d:/somewhere/
-    Please set your root project directory [d:/home]: d:/home/my-project
-    PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
-
+```shell
+$ cd d:/somewhere/
+Please set your root project directory [d:/home]: d:/home/my-project
+PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
+```
 If system couldn't find path to your executable PHP file it will ask about it.
 
 NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
