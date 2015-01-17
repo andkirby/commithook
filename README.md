@@ -15,6 +15,8 @@ This feature is available since v1.6.0.
 
 #### Generate files
 
+Before you start please be sure that shell can run files from `vendor/bin` directory. [Read more](#set-up-composer-vendorbin-directory). Or use absolute path `/path/to/vendor/bin/commithook-install`.
+
 Go to your project root directory and install commithook files:
 
     $ cd /d/home/my-project
@@ -34,7 +36,7 @@ NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") 
 
 #### Set up Composer vendor/bin directory
 If you using GitBash or Unix system please be sure that your shell can find files in global vendor directory.
-Or try to use absolute path `/d/s/php/vendor/bin/commithook-install`.
+Or try to use absolute path `/path/to/vendor/bin/commithook-install`.
 ##### GitBash for Windows
 You may don't have `vendor/bin` directory in global `PATH` environment variable.
 For GitBash for Windows you can check this out:
