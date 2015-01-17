@@ -1,4 +1,6 @@
 # PHP CommitHOOKs
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 The main purpose of this project is checking coding standards at first for PHP files.
 
 ## Set up GIT hooks
