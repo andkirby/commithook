@@ -26,7 +26,7 @@ Run it from anywhere and put path to your project:
     Please set your root project directory [d:/home]: d:/home/my-project
     PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 
-If system couldn't find path your executable PHP file it will ask about it.
+If system couldn't find path to your executable PHP file it will ask about it.
 
 NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
 
