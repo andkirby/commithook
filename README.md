@@ -22,11 +22,13 @@ Go to your project root directory and install commithook files:
 Actually you may skip step of getting project directory.
 Run it from anywhere and put path to your project:
 
-    cd d:/home/
+    $ cd d:/somewhere/
     Please set your root project directory [d:/home]: d:/home/my-project
     PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 
-NOTE: Tested on Windows. Feel free to put your faced issues on the project issues page.
+If system couldn't find path your executable PHP file it will ask about it.
+
+NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
 
 ## Set up GIT hooks manually
 
