@@ -5,6 +5,7 @@ use Composer\Command\Helper\DialogHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -34,11 +35,13 @@ class Install extends Command
     {
         $this->commithookDir = $commithookDir;
 
-        $this->_initCommand();
+        $this->initCommand();
         if ($alone) {
-            $this->_initDefaultHelpers();
+            $this->initDefaultHelpers();
         }
         parent::__construct();
+
+        $this->initInputDefinition();
     }
 
     /**
@@ -46,14 +49,14 @@ class Install extends Command
      *
      * @return $this
      */
-    protected function _initCommand()
+    protected function initCommand()
     {
         $this->setName('install');
         $this->setHelp(
-            'This command can install available GIT hook files into your project.'
+            'This command can install available hook files into your project.'
         );
         $this->setDescription(
-            'This command can install available GIT hook files into your project.'
+            'This command can install available hook files into your project.'
         );
         return $this;
     }
@@ -63,7 +66,7 @@ class Install extends Command
      *
      * @return $this
      */
-    protected function _initDefaultHelpers()
+    protected function initDefaultHelpers()
     {
         $this->setHelperSet(
             new HelperSet(array('dialog' => new DialogHelper()))
@@ -323,5 +326,18 @@ PHP;
     protected function normalizePath($path)
     {
         return str_replace('\\', '/', $path);
+    }
+
+    /**
+     * Init input definitions
+     *
+     * @return $this
+     */
+    protected function initInputDefinition()
+    {
+        $definition = $this->getDefinition();
+        $definition->addOption(new InputOption('--remove', '-r', InputOption::VALUE_NONE, 'Remove hook files.'));
+        $definition->addOption(new InputOption('--hook', '-h', InputOption::VALUE_REQUIRED, 'Specific hook file.'));
+        return $this;
     }
 }
