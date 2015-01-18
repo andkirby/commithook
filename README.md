@@ -17,7 +17,7 @@ This feature is available since v1.6.0.
 
 #### Generate files
 
-Before you start please be sure that shell can run files from `vendor/bin` directory. [Read more](#set-up-composer-vendorbin-directory). Or use absolute path `/path/to/vendor/bin/commithook-install`.
+Before you start please be sure that shell can run files from `vendor/bin` directory ([read more](#set-up-composer-vendorbin-directory)). Or use absolute path `/path/to/vendor/bin/commithook-install`.
 
 Go to your project root directory and install commithook files:
 ```shell
