@@ -1,9 +1,12 @@
 <?php
+namespace PreCommit\Test\Validator;
+
+use PreCommit\Validator\CodingStandardMagento;
 
 /**
- * Class test for PreCommit_Processor
+ * Class test for Processor
  */
-class PreCommit_Validator_CodingStandardMagentoTest extends PreCommit_Validator_CodingStandardTest
+class CodingStandardMagentoTest extends CodingStandardTest
 {
     /**
      * Test CODE_PHP_SPACE_BRACKET
@@ -12,7 +15,7 @@ class PreCommit_Validator_CodingStandardMagentoTest extends PreCommit_Validator_
     {
         $errors = $this->_getSpecificErrorsList(
             self::$_classTest,
-            \PreCommit\Validator\CodingStandardMagento::CODE_PHP_DEPRECATED_THROW_EXCEPTION);
+            CodingStandardMagento::CODE_PHP_DEPRECATED_THROW_EXCEPTION);
         $expected = array (
             "Mage::throwException('text');",
         );

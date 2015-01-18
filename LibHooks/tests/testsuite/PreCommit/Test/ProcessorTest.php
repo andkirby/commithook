@@ -1,20 +1,26 @@
 <?php
+namespace PreCommit\Test;
+use PreCommit\Validator\PhpDoc;
+use PreCommit\Config;
+use PreCommit\Processor;
+use PreCommit\Processor\PreCommit;
+
 /**
- * Class test for PreCommit_Processor
+ * Class test for Processor
  */
-class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Php file for text hooks
      *
      * @var string
      */
-    static protected $_classTest = 'tests/testsuite/PreCommit/_fixture/TestClass.php';
+    static protected $_classTest = 'testsuite/PreCommit/Test/_fixture/TestClass.php';
 
     /**
      * Test model
      *
-     * @var \PreCommit\Processor
+     * @var PreCommit
      */
     static protected $_model;
 
@@ -23,12 +29,12 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     static public function setUpBeforeClass()
     {
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
 
         $vcsAdapter = self::_getVcsAdapterMock();
 
-        /** @var \PreCommit\Processor\PreCommit $preCommit */
-        $preCommit = \PreCommit\Processor::factory('pre-commit', $vcsAdapter);
+        /** @var PreCommit $preCommit */
+        $preCommit = Processor::factory('pre-commit', $vcsAdapter);
         $preCommit->setCodePath(self::_getCodePath())
             ->setFiles(array(self::$_classTest));
 
@@ -43,7 +49,8 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     protected static function _getVcsAdapterMock()
     {
-        $vcsAdapter = PHPUnit_Framework_MockObject_Generator::getMock('PreCommit\Vcs\Git');
+        $generator = new \PHPUnit_Framework_MockObject_Generator();
+        $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects(self::once())
             ->method('getAffectedFiles')
             ->will(self::returnValue(array()));
@@ -66,18 +73,18 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
      * @param string $file
      * @param string $code
      * @return array
-     * @throws PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_Exception
      */
     protected function _getSpecificErrorsList($file, $code)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
-            throw new PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
+            throw new \PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
         }
         $errors = $errors[$file];
 
         if (!isset($errors[$code])) {
-            throw new PHPUnit_Framework_Exception("Errors for code $code not found.");
+            throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
         }
         return $errors[$code];
     }
@@ -95,7 +102,7 @@ class PreCommit_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testPhpDocMissed()
     {
-        $errors = $this->_getSpecificErrorsList(self::$_classTest, PreCommit\Validator\PhpDoc::CODE_PHP_DOC_MISSED);
+        $errors = $this->_getSpecificErrorsList(self::$_classTest, PhpDoc::CODE_PHP_DOC_MISSED);
 
         //TODO implement group comment validation
         $expected = array (

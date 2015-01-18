@@ -1,8 +1,10 @@
 <?php
+namespace PreCommit\Test;
+
 /**
- * Class test for PreCommit_Processor
+ * Class test for Processor
  */
-class PreCommit_ConfigTest extends PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test model

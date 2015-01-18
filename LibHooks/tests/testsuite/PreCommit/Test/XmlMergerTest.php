@@ -1,8 +1,11 @@
 <?php
+namespace PreCommit\Test;
+use PreCommit\XmlMerger;
+
 /**
- * Class PreCommit_XmlMergerTest
+ * Class XmlMergerTest
  */
-class PreCommit_XmlMergerTest extends PHPUnit_Framework_TestCase
+class XmlMergerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test instance of
@@ -86,7 +89,7 @@ XML;
 </root>
 
 XML;
-        $test = new PreCommit\XmlMerger();
+        $test = new XmlMerger();
         $test->addCollectionNode('section/collection_node');
         $test->addCollectionNode('another_section/collection_node');
         $simpleXml = $test->merge($xml1, $xml2);
