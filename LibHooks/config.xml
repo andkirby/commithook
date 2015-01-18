@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
@@ -10,8 +10,9 @@
     <additional_config>
         <main>commithook.xml</main>
         <magento>commithook-magento.xml</magento>
-        <local>../commithook-local.xml</local>
+        <local>../commithook-global.xml</local>
         <project>PROJECT_DIR/commithook.xml</project>
+        <project_local>PROJECT_DIR/commithook-local.xml</project_local>
     </additional_config>
     <cache_dir>../.cache</cache_dir>
 </config>
