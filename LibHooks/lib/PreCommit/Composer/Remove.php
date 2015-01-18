@@ -50,7 +50,6 @@ class Remove extends Command
         $this->initInput();
     }
 
-
     /**
      * Init default helpers
      *
