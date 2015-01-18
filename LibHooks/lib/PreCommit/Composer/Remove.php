@@ -226,13 +226,12 @@ class Remove extends Command
      * @param OutputInterface $output
      * @return array
      * @throws Exception
-     * @
      */
     protected function getTargetFiles(InputInterface $input, OutputInterface $output)
     {
         if (!$this->isAskedSpecificFile($input)) {
             if ($this->isVeryVerbose($output)) {
-                $output->writeln('Remove all files mode.');
+                $output->writeln('All files mode.');
             }
             return $this->getAvailableHooks();
         }
@@ -271,7 +270,7 @@ class Remove extends Command
         OutputInterface $output
     ) {
         if ($this->isVeryVerbose($output)) {
-            $output->writeln('Remove specific files mode.');
+            $output->writeln('Specific files mode.');
         }
 
         $files = array();
