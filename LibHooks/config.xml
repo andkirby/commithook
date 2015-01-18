@@ -10,9 +10,9 @@
     <additional_config>
         <main>commithook.xml</main>
         <magento>commithook-magento.xml</magento>
-        <local>../commithook-global.xml</local>
+        <local>../commithook-local.xml</local>
         <project>PROJECT_DIR/commithook.xml</project>
-        <project_local>PROJECT_DIR/commithook-local.xml</project_local>
+        <project_local>PROJECT_DIR/commithook-self.xml</project_local>
     </additional_config>
     <cache_dir>../.cache</cache_dir>
 </config>
