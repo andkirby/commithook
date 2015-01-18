@@ -17,7 +17,7 @@ class Application extends BaseApplication
      *
      * @see LibHooks/config.xml
      */
-    const VERSION = '1.6.2';
+    const VERSION = '1.6.3';
 
     /**
      * Logo
