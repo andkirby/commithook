@@ -15,24 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Install extends CommandAbstract
 {
     /**
-     * Base commithook directory
-     *
-     * @var null|string
-     */
-    protected $commithookDir;
-
-    /**
-     * Construct
-     *
-     * @param string $commithookDir
-     */
-    public function __construct($commithookDir)
-    {
-        $this->commithookDir = $commithookDir;
-        parent::__construct();
-    }
-
-    /**
      * Init default helpers
      *
      * @return $this
