@@ -44,9 +44,9 @@ For GitBash for Windows you can check this out:
 ```shell
 $ echo $PATH | grep "vendor/bin"
 ```
-If you got nothing try to add your `vendor/dir` path to your ~/.bashrc file:
+If you got nothing try to add your `vendor/dir` path to your `~/.bashrc` file:
 ```shell
-echo 'PATH=$PATH":/d/yourpath/to/php/vendor/bin"'
+echo 'PATH=$PATH":/d/yourpath/to/php/vendor/bin"' >> ~/.bashrc
 ```
 and restart your shell.
 
