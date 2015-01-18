@@ -23,10 +23,11 @@ $ cd /d/home/my-project
 $ commithook-install
 PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 ```
-Actually you may skip step of getting project directory.
-Run it from anywhere and put path to your project:
+Actually you may skip step of getting in a project directory.
+Run `commithook-install` anywhere and put path to your project:
 ```shell
-$ cd d:/somewhere/
+$ cd /d/home
+$ commithook-install
 Please set your root project directory [d:/home]: d:/home/my-project
 PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 ```
