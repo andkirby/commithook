@@ -2,6 +2,7 @@
 namespace PreCommit\Composer\Command;
 
 use Composer\Command\Helper\DialogHelper;
+use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
