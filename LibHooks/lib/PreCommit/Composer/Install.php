@@ -5,7 +5,6 @@ use Composer\Command\Helper\DialogHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -40,8 +39,6 @@ class Install extends Command
             $this->initDefaultHelpers();
         }
         parent::__construct();
-
-        $this->initInputDefinition();
     }
 
     /**
@@ -326,18 +323,5 @@ PHP;
     protected function normalizePath($path)
     {
         return str_replace('\\', '/', $path);
-    }
-
-    /**
-     * Init input definitions
-     *
-     * @return $this
-     */
-    protected function initInputDefinition()
-    {
-        $definition = $this->getDefinition();
-        $definition->addOption(new InputOption('--remove', '-r', InputOption::VALUE_NONE, 'Remove hook files.'));
-        $definition->addOption(new InputOption('--hook', '-h', InputOption::VALUE_REQUIRED, 'Specific hook file.'));
-        return $this;
     }
 }
