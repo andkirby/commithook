@@ -2,9 +2,9 @@
 namespace PreCommit\Composer;
 
 use Composer\Command\Helper\DialogHelper;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\HelperSet;
+use PreCommit\Composer\Command\CommandAbstract;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit
  */
-class Install extends Command
+class Install extends CommandAbstract
 {
     /**
      * Base commithook directory
@@ -23,21 +23,12 @@ class Install extends Command
 
     /**
      * Construct
-     * Set commithook directory.
-     * Set dialog helper.
-     * Set console name.
      *
      * @param string $commithookDir
-     * @param bool   $alone         Flag if command will run alone ie without application
      */
-    public function __construct($commithookDir, $alone = false)
+    public function __construct($commithookDir)
     {
         $this->commithookDir = $commithookDir;
-
-        $this->initCommand();
-        if ($alone) {
-            $this->initDefaultHelpers();
-        }
         parent::__construct();
     }
 
@@ -46,7 +37,7 @@ class Install extends Command
      *
      * @return $this
      */
-    protected function initCommand()
+    protected function configureCommand()
     {
         $this->setName('install');
         $this->setHelp(
@@ -59,14 +50,16 @@ class Install extends Command
     }
 
     /**
-     * Init default helpers
+     * Init input definitions
      *
      * @return $this
      */
-    protected function initDefaultHelpers()
+    protected function configureInput()
     {
-        $this->setHelperSet(
-            new HelperSet(array('dialog' => new DialogHelper()))
+        parent::configureInput();
+        $this->addOption(
+            'overwrite', '-w', InputOption::VALUE_NONE,
+            'Overwrite exist hook files.'
         );
         return $this;
     }
@@ -84,66 +77,64 @@ class Install extends Command
     /**
      * Execute command
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     * @return int|null|void
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $hooksDir = $this->getHooksDir(
-            $output, $this->askProjectDir($output)
-        );
-        $this->createHooks(
-            $output,
-            $hooksDir,
-            $this->askPhpPath($output),
-            $this->getRunnerFile()
-        );
+        try {
+            $hooksDir = $this->getHooksDir(
+                $output, $this->askProjectDir($output)
+            );
+            $this->createHooks(
+                $output, $input,
+                $hooksDir,
+                $this->getTargetFiles($input, $output),
+                $this->askPhpPath($output),
+                $this->getRunnerFile()
+            );
+        } catch (Exception $e) {
+            if ($this->isVeryVerbose($output)) {
+                throw $e;
+            } else {
+                $output->writeln($e->getMessage());
+                return 1;
+            }
+        }
 
-        $output->writeln(
-            "PHP CommitHook files have been created in '$hooksDir'."
-        );
+        if ($this->isVerbose($output)) {
+            $output->writeln(
+                "PHP CommitHook files have been created in '$hooksDir'."
+            );
+        } else {
+            $output->writeln(
+                "PHP CommitHook files have been created."
+            );
+        }
         return 0;
     }
 
     /**
-     * Get GIT hooks directory path
+     * Create hook files
      *
      * @param OutputInterface $output
-     * @param string          $projectDir
-     * @return string
-     * @throws Exception
-     */
-    protected function getHooksDir(OutputInterface $output, $projectDir)
-    {
-        $hooksDir = $projectDir . '/.git/hooks';
-        if (!is_dir($hooksDir)) {
-            if (!$this->getDialog()->askConfirmation(
-                $output,
-                "GIT hooks directory does not exist. Would you like to create hooks directory?"
-            )
-            ) {
-                throw new Exception('Could not create directory ' . $hooksDir);
-            }
-            mkdir($hooksDir, 0770, false);
-        }
-        return $hooksDir;
-    }
-
-    /**
-     * @param OutputInterface $output
+     * @param InputInterface  $input
      * @param string          $hooksDir
+     * @param array           $targetHooks
      * @param string          $phpPath
      * @param string          $runnerPath
      * @return $this
      * @throws Exception
      */
-    protected function createHooks(OutputInterface $output, $hooksDir, $phpPath, $runnerPath)
-    {
+    protected function createHooks(OutputInterface $output, InputInterface $input, $hooksDir,
+        $targetHooks, $phpPath, $runnerPath
+    ) {
         $body = $this->getHookBody($phpPath, $runnerPath);
-        foreach ($this->getAvailableHooks() as $hook) {
+        foreach ($targetHooks as $file) {
             $this->createHookFile(
-                $output, $hooksDir . DIRECTORY_SEPARATOR . $hook, $body
+                $output, $input, $hooksDir . DIRECTORY_SEPARATOR . $file, $body
             );
         }
         return $this;
@@ -153,22 +144,26 @@ class Install extends Command
      * Create hook file
      *
      * @param OutputInterface $output
+     * @param InputInterface  $input
      * @param string          $file
      * @param string          $body
      * @return $this
      * @throws Exception
      */
-    protected function createHookFile(OutputInterface $output, $file, $body)
+    protected function createHookFile(OutputInterface $output, InputInterface $input, $file, $body)
     {
-        if (file_exists($file)
+        if (!$input->getOption('overwrite') && file_exists($file)
             && !$this->getDialog()->askConfirmation(
-                $output, "File '$file' already exists. Overwrite it?"
+                $output, "File '$file' already exists. Overwrite it? [yes]: "
             )
         ) {
             throw new Exception('Could not overwrite file ' . $file);
         }
         if (!file_put_contents($file, $body)) {
             throw new Exception('Could not create file ' . $file);
+        }
+        if ($this->isVerbose($output)) {
+            $output->writeln("CommitHook file set to '$file'.");
         }
         return $this;
     }
@@ -204,49 +199,6 @@ class Install extends Command
     }
 
     /**
-     * Ask about GIT project root dir
-     *
-     * @param OutputInterface $output
-     * @return array
-     */
-    protected function askProjectDir(OutputInterface $output)
-    {
-        $dir = $this->getCommandDir();
-        $validator = function ($dir) {
-            $dir = rtrim($dir, '\\/');
-            return is_dir($dir . '/.git');
-        };
-
-        if ($validator($dir)) {
-            return $dir;
-        }
-
-        do {
-            $dir = $this->getDialog()->ask(
-                $output, "Please set your root project directory [$dir]: ", $dir
-            );
-            if (!$validator($dir)) {
-                $output->writeln(
-                    'Sorry, selected directory does not contain ".git" directory.'
-                );
-                $dir = null;
-            }
-        } while (!$dir);
-
-        return rtrim($dir, '\\/');
-    }
-
-    /**
-     * Get CLI directory (pwd)
-     *
-     * @return string
-     */
-    protected function getCommandDir()
-    {
-        return $_SERVER['PWD'];
-    }
-
-    /**
      * Get commithook file template
      *
      * @return string
@@ -270,10 +222,10 @@ PHP;
      */
     protected function getHookBody($phpPath, $runnerPhpPath)
     {
-        $phpPath        = $this->normalizePath($phpPath);
-        $runnerPhpPath  = $this->normalizePath($runnerPhpPath);
-        $template       = $this->getHookTemplate();
-        $template       = str_replace('{PHP_EXE}', $phpPath, $template);
+        $phpPath = $this->normalizePath($phpPath);
+        $runnerPhpPath = $this->normalizePath($runnerPhpPath);
+        $template = $this->getHookTemplate();
+        $template = str_replace('{PHP_EXE}', $phpPath, $template);
         return str_replace('{RUNNER_PHP}', $runnerPhpPath, $template);
     }
 
@@ -288,16 +240,6 @@ PHP;
     }
 
     /**
-     * Get available hooks in CommitHooks application
-     *
-     * @return array
-     */
-    protected function getAvailableHooks()
-    {
-        return array('commit-msg', 'pre-commit');
-    }
-
-    /**
      * Get system path to executable PHP file
      *
      * @return null|string
@@ -306,7 +248,11 @@ PHP;
     {
         if (defined('PHP_BIN_DIR') && (is_file(PHP_BIN_DIR . '/php'))) {
             return PHP_BIN_DIR . '/php';
-        } elseif (defined('PHP_BIN_DIR') && (is_file(PHP_BIN_DIR . '/php.exe'))) {
+        } elseif (defined('PHP_BIN_DIR')
+            && (is_file(
+                PHP_BIN_DIR . '/php.exe'
+            ))
+        ) {
             return PHP_BIN_DIR . '/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
             return PHP_BINARY;
@@ -323,5 +269,26 @@ PHP;
     protected function normalizePath($path)
     {
         return str_replace('\\', '/', $path);
+    }
+
+    /**
+     * Get custom hook option description
+     *
+     * @return string
+     */
+    protected function getCustomHookOptionDescription()
+    {
+        return 'Set specific hook file to install.';
+    }
+
+    /**
+     * Get hook option description
+     *
+     * @param string $hook
+     * @return string
+     */
+    protected function getHookOptionDescription($hook)
+    {
+        return "Set '$hook' hook file to install.";
     }
 }
