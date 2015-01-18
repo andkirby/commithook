@@ -161,10 +161,10 @@ class Install extends Command
 
         do {
             $file = $this->getDialog()->ask(
-                $output, "Please set your PHP directory [$file]: ", $file
+                $output, "Please set your PHP executable file [$file]: ", $file
             );
             if (!$validator($file)) {
-                $output->writeln('Given file does not exists.');
+                $output->writeln('Given PHP executable file does not exists.');
                 $file = null;
             }
         } while (!$file);
