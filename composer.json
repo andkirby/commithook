@@ -10,9 +10,10 @@
     }
   ],
   "require": {
+    "php": ">=5.3.*",
     "symfony/console": "2.*||3.*"
   },
   "bin": [
-    "LibHooks/commithook-install"
+    "bin/commithook"
   ]
 }

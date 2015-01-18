@@ -13,23 +13,23 @@ $ composer require andkirby/commithook
 ```
 ### Set up via command line
 
-This feature is available since v1.6.0.
+This feature is available since v1.6.3.
 
-#### Generate files
+#### `commithook install`: Generate files
 
-Before you start please be sure that shell can run files from `vendor/bin` directory ([read more](#set-up-composer-vendorbin-directory)). Or use absolute path `/path/to/vendor/bin/commithook-install`.
+Before you start please be sure that shell can run files from `vendor/bin` directory ([read more](#set-up-composer-vendorbin-directory)). Or use absolute path `/path/to/vendor/bin/commithook`.
 
 Go to your project root directory and install commithook files:
 ```shell
 $ cd /d/home/my-project
-$ commithook-install
+$ commithook install
 PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 ```
 Actually you may skip step of getting in a project directory.
-Run `commithook-install` anywhere and put path to your project:
+Run `commithook install` anywhere and put path to your project:
 ```shell
 $ cd /d/home
-$ commithook-install
+$ commithook install
 Please set your root project directory [d:/home]: d:/home/my-project
 PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 ```
@@ -37,9 +37,27 @@ If system couldn't find path to your executable PHP file it will ask about it.
 
 NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
 
+##### Extra Options
+`commithook install` has options.
+Please take a look them via command `commithook install -h`.
+```shell
+$ commithook install -h
+...
+Options:
+ --hook                Set specific hook file to install.
+ --commit-msg          Set 'commit-msg' hook file to install.
+ --pre-commit          Set 'pre-commit' hook file to install.
+ --overwrite (-w)      Overwrite exist hook files.
+...
+```
+
+#### `commithook remove`: Remove Hooks Files
+To remove CommitHook files from your project you may use command `commithook remove`.
+Options list the same but without `--overwrite`.
+
 #### Set up Composer vendor/bin directory
 If you using GitBash or Unix system please be sure that your shell can find files in global vendor directory.
-Or try to use absolute path `/path/to/vendor/bin/commithook-install`.
+Or try to use absolute path `/path/to/vendor/bin/commithook`.
 ##### GitBash for Windows
 You may don't have `vendor/bin` directory in global `PATH` environment variable.
 For GitBash for Windows you can check this out:
@@ -92,6 +110,9 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.3 Improved installer. Added CommitHook files remover.
+- v1.6.2 (alpha) Implemented application console usage.
+- v1.6.1 Fixed dialog message.
 - v1.6.0 Added CommitHook files installer.
 - v1.5.1 Added composer supporting.
 - v1.5.0 Implemented layered configuration loading.
