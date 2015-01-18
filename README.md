@@ -5,6 +5,8 @@ The main purpose of this project is checking coding standards at first for PHP f
 
 ## Composer Installation
 
+To install Composer you may follow the link https://getcomposer.org/download/. Just go to your PHP directory and follow the instructions therefrom. ([Composer Intro](https://getcomposer.org/doc/00-intro.md))
+
 Install composer package `andkirby/commithook` by command (you may put it into your global vendor directory):
 ```shell
 $ composer require andkirby/commithook
