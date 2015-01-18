@@ -6,7 +6,7 @@ $autoloader = require_once 'autoload.php';
 $autoloader->addPsr4('PreCommit\\', array(__DIR__ . '/lib/PreCommit/'));
 
 use Symfony\Component\Console;
-use PreCommit\Install;
+use PreCommit\Composer\Install;
 $install = new Install(realpath(__DIR__ . '/..'));
 $install->run(
     new Console\Input\ArgvInput(),

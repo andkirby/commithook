@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit;
+namespace PreCommit\Composer;
 
 use Composer\Command\Helper\DialogHelper;
 use Symfony\Component\Console\Command\Command;
