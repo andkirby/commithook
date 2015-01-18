@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+require_once 'autoload-init.php';
+
+use Symfony\Component\Console;
+use PreCommit\Composer\Install;
+
+$install = new Install(realpath(__DIR__ . '/..'), true);
+$install->run(
+    new Console\Input\ArgvInput(),
+    new Console\Output\ConsoleOutput()
+);
+

@@ -23,21 +23,52 @@ class Install extends Command
 
     /**
      * Construct
-     *
      * Set commithook directory.
      * Set dialog helper.
      * Set console name.
      *
      * @param string $commithookDir
+     * @param bool   $alone         Flag if command will run alone ie without application
      */
-    public function __construct($commithookDir)
+    public function __construct($commithookDir, $alone = false)
     {
         $this->commithookDir = $commithookDir;
-        $this->setName('commithook:install');
+
+        $this->_initCommand();
+        if ($alone) {
+            $this->_initDefaultHelpers();
+        }
+        parent::__construct();
+    }
+
+    /**
+     * Init default helpers
+     *
+     * @return $this
+     */
+    protected function _initCommand()
+    {
+        $this->setName('install');
+        $this->setHelp(
+            'This command can install available GIT hook files into your project.'
+        );
+        $this->setDescription(
+            'This command can install available GIT hook files into your project.'
+        );
+        return $this;
+    }
+
+    /**
+     * Init default helpers
+     *
+     * @return $this
+     */
+    protected function _initDefaultHelpers()
+    {
         $this->setHelperSet(
             new HelperSet(array('dialog' => new DialogHelper()))
         );
-        parent::__construct();
+        return $this;
     }
 
     /**
@@ -81,7 +112,7 @@ class Install extends Command
      * @param OutputInterface $output
      * @param string          $projectDir
      * @return string
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
     protected function getHooksDir(OutputInterface $output, $projectDir)
     {
@@ -105,7 +136,7 @@ class Install extends Command
      * @param string          $phpPath
      * @param string          $runnerPath
      * @return $this
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
     protected function createHooks(OutputInterface $output, $hooksDir, $phpPath, $runnerPath)
     {
