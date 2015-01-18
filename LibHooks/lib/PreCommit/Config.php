@@ -6,6 +6,9 @@ namespace PreCommit;
  */
 class Config extends \SimpleXMLElement
 {
+    /**
+     * Root node XPATH
+     */
     const XPATH_START = '/config/';
 
     /**
@@ -53,27 +56,29 @@ class Config extends \SimpleXMLElement
      * Get config cache file
      *
      * @param string $rootPath
-     * @param string $hookFile
+     * @param string $projectDir
      * @return string
      */
-    public static function getCacheFile($rootPath, $hookFile)
+    public static function getCacheFile($rootPath, $projectDir)
     {
-        return $rootPath . DIRECTORY_SEPARATOR . Config::getInstance()->getNode('cache_dir')
+        return $rootPath . DIRECTORY_SEPARATOR
+            . Config::getInstance()->getNode('cache_dir')
             . DIRECTORY_SEPARATOR
-            . md5(self::getInstance()->getNode('version') . pathinfo($hookFile, PATHINFO_DIRNAME)) . '.xml';
+            . md5(self::getInstance()->getNode('version') . $projectDir)
+            . '.xml';
     }
 
     /**
      * Load cached config
      *
      * @param string $rootPath
-     * @param string $hookFile
+     * @param string $projectDir
      * @return bool             Returns FALSE in case it couldn't load cached config
      */
-    public static function loadCache($rootPath, $hookFile)
+    public static function loadCache($rootPath, $projectDir)
     {
         //load config from cache
-        $configCacheFile = self::getCacheFile($rootPath, $hookFile);
+        $configCacheFile = self::getCacheFile($rootPath, $projectDir);
         if (is_file($configCacheFile)) {
             $configCached = self::loadInstance(array('file' => $configCacheFile));
             if (version_compare(
@@ -92,16 +97,11 @@ class Config extends \SimpleXMLElement
      * Merge additional config files
      *
      * @param string $rootPath
-     * @param string $hookFile
+     * @param string $projectDir
      * @return void
      */
-    public static function mergeExtraConfig($rootPath, $hookFile)
+    public static function mergeExtraConfig($rootPath, $projectDir)
     {
-        /**
-         * Merge extra config files
-         */
-        $projectDir = realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..');
-
         $merger = new XmlMerger();
         $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
@@ -126,10 +126,22 @@ class Config extends \SimpleXMLElement
         }
 
         //write cached config file
-        $cacheFile = self::getCacheFile($rootPath, $hookFile);
+        $cacheFile = self::getCacheFile($rootPath, $projectDir);
         if (is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
+    }
+
+    /**
+     * Get project dir from hook file
+     *
+     * @todo It should be removed from Config
+     * @param string $hookFile
+     * @return string
+     */
+    public static function getProjectDir($hookFile)
+    {
+        return $projectDir = realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..');
     }
 
     /**
