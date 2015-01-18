@@ -35,14 +35,21 @@ class Remove extends Command
     {
         $this->commithookDir = $commithookDir;
 
-        $this->initCommand();
         if ($alone) {
             $this->initDefaultHelpers();
         }
         parent::__construct();
-
-        $this->initInputDefinition();
     }
+
+    /**
+     * Configure command
+     */
+    protected function configure()
+    {
+        $this->initCommand();
+        $this->initInput();
+    }
+
 
     /**
      * Init default helpers
@@ -58,6 +65,27 @@ class Remove extends Command
         $this->setDescription(
             'This command can remove installed hook files in your project.'
         );
+        return $this;
+    }
+
+    /**
+     * Init input definitions
+     *
+     * @return $this
+     */
+    protected function initInput()
+    {
+        $this->addOption(
+            'hook', null, InputOption::VALUE_REQUIRED,
+            "Set specific hook file to remove."
+        );
+        foreach ($this->getAvailableHooks() as $hook) {
+            $this->addOption(
+                $hook, null, InputOption::VALUE_NONE,
+                "Set '$hook' hook file to remove."
+            );
+        }
+
         return $this;
     }
 
@@ -87,20 +115,27 @@ class Remove extends Command
     /**
      * Execute command
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return int|null|void
+     * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $hooksDir = $this->getHooksDir(
-            $output, $this->askProjectDir($output)
-        );
-
-        $files = $this->getTargetFiles();
-
-        $this->removeHookFiles($output, $hooksDir, $files);
-
+        try {
+            $hooksDir = $this->getHooksDir(
+                $output, $this->askProjectDir($output)
+            );
+            $files = $this->getTargetFiles($input, $output);
+            $this->removeHookFiles($output, $hooksDir, $files);
+        } catch (Exception $e) {
+            if ($this->isVeryVerbose($output)) {
+                throw $e;
+            } else {
+                $output->writeln($e->getMessage());
+                return 1;
+            }
+        }
         return 0;
     }
 
@@ -186,41 +221,84 @@ class Remove extends Command
     }
 
     /**
-     * Init input definitions
+     * Get target files
      *
-     * @return $this
+     * @param InputInterface   $input
+     * @param OutputInterface $output
+     * @return array
+     * @throws Exception
+     * @
      */
-    protected function initInputDefinition()
+    protected function getTargetFiles(InputInterface $input, OutputInterface $output)
     {
-        $definition = $this->getDefinition();
-        $definition->addOption(
-            new InputOption(
-                '--hook', '-h', InputOption::VALUE_REQUIRED,
-                'Set specific hook file to remove.'
-            )
-        );
-        return $this;
+        if (!$this->isAskedSpecificFile($input)) {
+            if ($this->isVeryVerbose($output)) {
+                $output->writeln('Remove all files mode.');
+            }
+            return $this->getAvailableHooks();
+        }
+
+        return $this->getOptionTargetFiles($input, $output);
     }
 
     /**
+     * Get status of asked specific hook files to delete
+     *
+     * @param InputInterface $input
+     * @return bool
+     */
+    protected function isAskedSpecificFile(InputInterface $input)
+    {
+        if ($input->getOption('hook')) {
+            return true;
+        }
+        foreach ($this->getAvailableHooks() as $hook) {
+            if ($input->getOption($hook)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get target files from input options
+     *
+     * @param InputInterface   $input
+     * @param OutputInterface $output
      * @return array
      * @throws \PreCommit\Composer\Exception
      */
-    protected function getTargetFiles()
-    {
-        $files = $this->getAvailableHooks();
-        $userFile = $this->getDefinition()->getArgument('--hook');
+    protected function getOptionTargetFiles(InputInterface $input,
+        OutputInterface $output
+    ) {
+        if ($this->isVeryVerbose($output)) {
+            $output->writeln('Remove specific files mode.');
+        }
+
+        $files = array();
+        foreach ($this->getAvailableHooks() as $hook) {
+            if ($input->getOption($hook)) {
+                $files[] = $hook;
+            }
+        }
+
+        $userFile = $input->getOption('hook');
         if ($userFile) {
-            if (!in_array($userFile, $files)) {
+            if (!in_array($userFile, $this->getAvailableHooks())) {
                 throw new Exception("Unknown commithook file '$userFile'.");
             }
-            $files = array($userFile);
+            if (!in_array($userFile, $files)) {
+                $files[] = $userFile;
+                return $files;
+            }
             return $files;
         }
         return $files;
     }
 
     /**
+     * Remove hook files
+     *
      * @param OutputInterface $output
      * @param string          $hooksDir
      * @param array           $files
@@ -230,20 +308,45 @@ class Remove extends Command
         array $files
     ) {
         foreach ($files as $filename) {
-            $file = $hooksDir . PATH_SEPARATOR . $filename;
-            if (!is_file($file) && $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $file = $hooksDir . DIRECTORY_SEPARATOR . $filename;
+            if (!is_file($file)) {
                 //file not found
-                $output->writeln("Hook file '$filename' not found. Skipped.");
+                if ($this->isVerbose($output)) {
+                    $output->writeln("Hook file '$filename' not found. Skipped.");
+                }
+                continue;
             } else {
                 if (!unlink($file)) {
                     //cannot remove
                     $output->writeln("Hook file '$filename' cannot be removed. Skipped.");
-                } elseif ($output->getVerbosity()) {
+                } elseif ($this->isVerbose($output)) {
                     //success removing
                     $output->writeln("Hook file '$filename' has removed.");
                 }
             }
         }
         return $this;
+    }
+
+    /**
+     * Is output very verbose
+     *
+     * @param OutputInterface $output
+     * @return bool
+     */
+    protected function isVeryVerbose(OutputInterface $output)
+    {
+        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
+    }
+
+    /**
+     * Is output verbose
+     *
+     * @param OutputInterface $output
+     * @return bool
+     */
+    protected function isVerbose(OutputInterface $output)
+    {
+        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
     }
 }
