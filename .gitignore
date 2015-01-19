@@ -3,3 +3,4 @@ atlassian-ide-plugin.xml
 commithook-local.xml
 commithook-self.xml
 .cache/*
+ca.pem
