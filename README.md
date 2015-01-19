@@ -13,7 +13,7 @@ $ composer require andkirby/commithook
 ```
 ### Set up via command line
 
-This feature is available since v1.6.3.
+This feature is available since v1.6.3. _(Simple install command `commithook-install` is available since v1.6.0.)_
 
 #### `commithook install`: Generate files
 
@@ -35,6 +35,16 @@ PHP CommitHook files have been created in 'd:/home/my-project/.git/hooks'.
 ```
 If system couldn't find path to your executable PHP file it will ask about it.
 
+Since PHP 5.4 console should not ask your about PHP binary file. Anyway you may set up path to your PHP binary file.
+Also you may set path your project/VCS root.
+```shell
+$ commithook install --php-binary=d:/s/php/php.exe --project-dir=d:/home/my-project
+```
+Or short version:
+```shell
+$ commithook install -pd:/s/php/php.exe -dd:/home/my-project
+```
+
 NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
 
 ##### Extra Options
@@ -42,18 +52,23 @@ NOTE: Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") 
 Please take a look them via command `commithook install -h`.
 ```shell
 $ commithook install -h
-...
+[...]
 Options:
+ --project-dir (-d)    Set path to project (VCS) root directory.
  --hook                Set specific hook file to install.
  --commit-msg          Set 'commit-msg' hook file to install.
  --pre-commit          Set 'pre-commit' hook file to install.
  --overwrite (-w)      Overwrite exist hook files.
-...
+ --php-binary (-p)     Set path to PHP binary file.
+[...]
 ```
 
 #### `commithook remove`: Remove Hooks Files
-To remove CommitHook files from your project you may use command `commithook remove`.
-Options list the same but without `--overwrite`.
+To remove CommitHook files from your project you may use command:
+```shell
+$ commithook remove
+```
+Options list the same but without `--overwrite` and `--php-binary`.
 
 #### Set up Composer vendor/bin directory
 If you using GitBash or Unix system please be sure that your shell can find files in global vendor directory.
@@ -110,6 +125,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.5 Added new options command `--php-binary|-b` and `--project-dir|-d`. Improved PHP file validator.
 - v1.6.4 Pushed tests to use PSR-4 autoload standard and to namespaces usage. Pushed code to use `bin/runner.php` file. `LibHooks/runner.php` is deprecated. Composer package require at least PHP 5.3.x version.
 - v1.6.3 Improved installer. Added CommitHook files remover.
 - v1.6.2 (alpha) Implemented application console usage.

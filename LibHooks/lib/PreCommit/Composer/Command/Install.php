@@ -43,6 +43,10 @@ class Install extends CommandAbstract
             'overwrite', '-w', InputOption::VALUE_NONE,
             'Overwrite exist hook files.'
         );
+        $this->addOption(
+            'php-binary', '-p', InputOption::VALUE_REQUIRED,
+            'Path to PHP binary file.'
+        );
         return $this;
     }
 
@@ -68,13 +72,13 @@ class Install extends CommandAbstract
     {
         try {
             $hooksDir = $this->getHooksDir(
-                $output, $this->askProjectDir($output)
+                $output, $this->askProjectDir($input, $output)
             );
             $this->createHooks(
                 $output, $input,
                 $hooksDir,
                 $this->getTargetFiles($input, $output),
-                $this->askPhpPath($output),
+                $this->askPhpPath($input, $output),
                 $this->getRunnerFile()
             );
         } catch (Exception $e) {
@@ -153,31 +157,50 @@ class Install extends CommandAbstract
     /**
      * Ask about PHP executable file
      *
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
      */
-    protected function askPhpPath(OutputInterface $output)
+    protected function askPhpPath(InputInterface $input, OutputInterface $output)
     {
-        $validator = function ($file) {
-            return is_file($file);
-        };
-        $file = $this->getSystemPhpPath();
+        $validator = $this->getPhpValidator();
 
-        if ($validator($file)) {
-            return $file;
+        $file = $input->getOption('php-binary');
+        if (!$file) {
+            $file = $this->getSystemPhpPath();
         }
 
-        do {
+        while (!$file || !$validator($file, $output)) {
+            if ($file) {
+                $output->writeln('Given PHP executable file is not valid.');
+            }
             $file = $this->getDialog()->ask(
                 $output, "Please set your PHP executable file [$file]: ", $file
             );
-            if (!$validator($file)) {
-                $output->writeln('Given PHP executable file does not exists.');
-                $file = null;
-            }
-        } while (!$file);
+        }
 
-        return rtrim($file, '\\/');
+        return $file;
+    }
+
+    /**
+     * Get PHP binary file validator
+     *
+     * @return callable
+     */
+    protected function getPhpValidator()
+    {
+        return function ($file, OutputInterface $output = null) {
+            if (is_file($file)) {
+                $test = `$file -r "echo 'Test passed.';" 2>&1`;
+                if ($output && $output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
+                    $output->writeln(
+                        'PHP test output: ' . PHP_EOL . $test
+                    );
+                }
+                return 0 === strpos($test, 'Test passed.');
+            }
+            return false;
+        };
     }
 
     /**
