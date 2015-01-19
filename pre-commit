@@ -4,6 +4,6 @@
  * Configure following string if you put commit hooks located not in the same dir.
  */
 $hookName = __FILE__;
-$runnerPhp = realpath(__DIR__ . '/../../../commithook/LibHooks/runner.php');
+$runnerPhp = realpath(__DIR__ . '/../../../commithook/bin/runner.php');
 require_once $runnerPhp;
 

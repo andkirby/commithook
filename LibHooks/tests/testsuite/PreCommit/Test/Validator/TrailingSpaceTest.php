@@ -1,21 +1,25 @@
 <?php
+namespace PreCommit\Test\Validator;
+use PreCommit\Processor;
+use PreCommit\Config;
+use PreCommit\Validator\TrailingSpace;
 
 /**
- * Class test for PreCommit_Processor
+ * Class test for Processor
  */
-class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
+class TrailingSpaceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Php file for text hooks
      *
      * @var string
      */
-    static protected $_fileTest = 'tests/testsuite/PreCommit/_fixture/file-have-trailing-space-and-dont-have-last-empty.php';
+    static protected $_fileTest = 'tests/testsuite/PreCommit/Test/_fixture/file-have-trailing-space-and-dont-have-last-empty.php';
 
     /**
      * Test model
      *
-     * @var \PreCommit\Processor\PreCommit
+     * @var Processor\PreCommit
      */
     static protected $_model;
 
@@ -25,12 +29,12 @@ class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config object
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
 
         $vcsAdapter = self::_getVcsAdapterMock();
 
-        /** @var PreCommit\Processor\PreCommit $processor */
-        $processor = PreCommit\Processor::factory('pre-commit', $vcsAdapter);
+        /** @var Processor\PreCommit $processor */
+        $processor = Processor::factory('pre-commit', $vcsAdapter);
         $processor->setCodePath(PROJECT_ROOT)
             ->setFiles(array(self::$_fileTest));
         $processor->process();
@@ -44,7 +48,8 @@ class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
      */
     protected static function _getVcsAdapterMock()
     {
-        $vcsAdapter = PHPUnit_Framework_MockObject_Generator::getMock('PreCommit\Vcs\Git');
+        $generator = new \PHPUnit_Framework_MockObject_Generator();
+        $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects(self::once())
             ->method('getAffectedFiles')
             ->will(self::returnValue(array()));
@@ -58,19 +63,19 @@ class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
      * @param string $code
      * @param bool $returnLines
      * @return array
-     * @throws PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_Exception
      */
     protected function _getSpecificErrorsList($file, $code, $returnLines = false)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
-            throw new PHPUnit_Framework_Exception('Errors for file ' . self::$_fileTest . ' not found.');
+            throw new \PHPUnit_Framework_Exception('Errors for file ' . self::$_fileTest . ' not found.');
         }
         $errors = $errors[$file];
 
         $this->assertArrayHasKey($code, $errors);
         if (!isset($errors[$code])) {
-            throw new PHPUnit_Framework_Exception("Errors for code $code not found.");
+            throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
         }
 
         $list = array();
@@ -130,7 +135,7 @@ class PreCommit_Validator_TrailingSpaceTest extends PHPUnit_Framework_TestCase
 
 CONTENT;
 
-        $validator = new PreCommit\Validator\TrailingSpace(array('errorCollector' => $errorCollector));
+        $validator = new TrailingSpace(array('errorCollector' => $errorCollector));
         $validator->validate($str, '');
     }
 }

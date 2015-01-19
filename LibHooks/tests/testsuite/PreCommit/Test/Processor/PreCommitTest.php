@@ -1,8 +1,12 @@
 <?php
+namespace PreCommit\Test\Processor;
+
+use PreCommit\Config;
+
 /**
- * Class test for PreCommit_Processor
+ * Class test for Processor
  */
-class PreCommit_Processor_PreCommitTest extends PHPUnit_Framework_TestCase
+class PreCommitTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Set up test model
@@ -10,8 +14,8 @@ class PreCommit_Processor_PreCommitTest extends PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config
-        \PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
-        \PreCommit\Config::mergeExtraConfig(PROJECT_ROOT, 'd:/hook');
+        Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        Config::mergeExtraConfig(PROJECT_ROOT, 'd:/hook');
     }
 
     /**

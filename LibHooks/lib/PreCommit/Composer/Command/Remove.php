@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer;
+namespace PreCommit\Composer\Command;
 
-use PreCommit\Composer\Command\CommandAbstract;
+use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -34,7 +34,7 @@ class Remove extends CommandAbstract
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return int
      * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)

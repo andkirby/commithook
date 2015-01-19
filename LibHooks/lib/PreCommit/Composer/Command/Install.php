@@ -1,8 +1,8 @@
 <?php
-namespace PreCommit\Composer;
+namespace PreCommit\Composer\Command;
 
 use Composer\Command\Helper\DialogHelper;
-use PreCommit\Composer\Command\CommandAbstract;
+use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,24 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Install extends CommandAbstract
 {
-    /**
-     * Base commithook directory
-     *
-     * @var null|string
-     */
-    protected $commithookDir;
-
-    /**
-     * Construct
-     *
-     * @param string $commithookDir
-     */
-    public function __construct($commithookDir)
-    {
-        $this->commithookDir = $commithookDir;
-        parent::__construct();
-    }
-
     /**
      * Init default helpers
      *
@@ -236,7 +218,7 @@ PHP;
      */
     protected function getRunnerFile()
     {
-        return $this->commithookDir . '/LibHooks/runner.php';
+        return $this->commithookDir . '/bin/runner.php';
     }
 
     /**
@@ -246,13 +228,9 @@ PHP;
      */
     protected function getSystemPhpPath()
     {
-        if (defined('PHP_BIN_DIR') && (is_file(PHP_BIN_DIR . '/php'))) {
+        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php')) {
             return PHP_BIN_DIR . '/php';
-        } elseif (defined('PHP_BIN_DIR')
-            && (is_file(
-                PHP_BIN_DIR . '/php.exe'
-            ))
-        ) {
+        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php.exe')) {
             return PHP_BIN_DIR . '/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
             return PHP_BINARY;

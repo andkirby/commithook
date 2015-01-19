@@ -1,4 +1,11 @@
 <?php
+/**
+ * End point file to run CommitHooks
+ *
+ * @deprecated Deprecated to direct using since v1.6.4.
+ *             All code will be pushed to use /bin/runner.php
+ * @see /bin/runner.php
+ */
 $rootPath = __DIR__;
 set_include_path(
     implode(
@@ -49,8 +56,9 @@ if (!in_array($hookName, $supportedHooks)) {
     exit(1);
 }
 
-if (!PreCommit\Config::loadCache($rootPath, $hookFile)) {
-    PreCommit\Config::mergeExtraConfig($rootPath, $hookFile);
+$projectDir = PreCommit\Config::getProjectDir($hookFile);
+if (!PreCommit\Config::loadCache($rootPath, $projectDir)) {
+    PreCommit\Config::mergeExtraConfig($rootPath, $projectDir);
 }
 
 /** @var \PreCommit\Processor\AbstractAdapter $processor */

@@ -48,8 +48,8 @@ class XmlMerger
     /**
      * Merge two XML
      *
-     * @param \SimpleXMLElement $xmlSource
-     * @param \SimpleXMLElement $xmlUpdate
+     * @param \SimpleXMLElement|string $xmlSource
+     * @param \SimpleXMLElement|string $xmlUpdate
      * @return \SimpleXMLElement
      */
     public function merge($xmlSource, $xmlUpdate)

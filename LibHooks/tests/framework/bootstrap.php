@@ -1,13 +1,9 @@
 <?php
-@include_once 'func.php';
-$includePaths = array(
-    get_include_path(),
-    './testsuite',
-    '../lib',
-);
 define('PROJECT_ROOT', realpath(__DIR__ . '/../..'));
-set_include_path(implode(PATH_SEPARATOR, $includePaths));
-require_once 'Autoloader.php';
-\Autoloader::register();
-//set default PHPUnit error handler
+
+/** @var Composer\Autoload\ClassLoader $autoloader */
+$autoloader = require_once 'autoload.php';
+$autoloader->addPsr4('PreCommit\\', array(realpath(PROJECT_ROOT . '/lib/PreCommit/')));
+$autoloader->addPsr4('PreCommit\\Test\\', array(realpath(PROJECT_ROOT . '/tests/testsuite/PreCommit/Test/')));
+
 set_error_handler('\PHPUnit_Util_ErrorHandler::handleError');

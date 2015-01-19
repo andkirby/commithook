@@ -13,7 +13,20 @@
     "php": ">=5.3.*",
     "symfony/console": "2.*||3.*"
   },
+  "require-dev": {
+    "php": ">=5.3.*",
+    "symfony/console": "2.*||3.*"
+  },
+  "suggest": {
+    "phpunit/phpunit": "4.*"
+  },
   "bin": [
     "bin/commithook"
-  ]
+  ],
+  "autoload": {
+    "psr-4": {
+      "PreCommit\\": "LibHooks/lib/PreCommit",
+      "PreCommit\\Test\\": "LibHooks/tests/testsuite/PreCommit/Test"
+    }
+  }
 }

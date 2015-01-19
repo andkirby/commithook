@@ -110,6 +110,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.4 Pushed tests to use PSR-4 autoload standard and to namespaces usage. Pushed code to use `bin/runner.php` file. `LibHooks/runner.php` is deprecated. Composer package require at least PHP 5.3.x version.
 - v1.6.3 Improved installer. Added CommitHook files remover.
 - v1.6.2 (alpha) Implemented application console usage.
 - v1.6.1 Fixed dialog message.

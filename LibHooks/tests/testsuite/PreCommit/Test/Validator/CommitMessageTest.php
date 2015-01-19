@@ -1,8 +1,12 @@
 <?php
+namespace PreCommit\Test\Validator;
+use PreCommit\Config;
+use PreCommit\Validator\CommitMsg;
+
 /**
- * Class test for Validator_CommitMsg
+ * Class test for CommitMsg
  */
-class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
+class CommitMsgTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test CODE_BAD_COMMIT_MESSAGE. Negative test
@@ -11,7 +15,7 @@ class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
     {
         $processor = $this->_prepareModelAndProcess('My message.');
         $errors = $processor->getErrors();
-        $errors = $errors['Commit Message'][\PreCommit\Validator\CommitMsg::CODE_BAD_COMMIT_MESSAGE];
+        $errors = $errors['Commit Message'][CommitMsg::CODE_BAD_COMMIT_MESSAGE];
         $expected = array (
             'value'   => 'My message.',
             'message' => 'Your commit message "My message." has improper form.',
@@ -39,6 +43,7 @@ class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
      * Test CODE_BAD_COMMIT_MESSAGE. Positive test
      *
      * @dataProvider dataMessageSuccess
+     * @param string $message
      */
     public function testMessageSuccess($message)
     {
@@ -50,17 +55,17 @@ class PreCommit_Validator_CommitMsgTest extends PHPUnit_Framework_TestCase
      * Prepare model and method mocks
      *
      * @param string $message
-     * @return PHPUnit_Framework_MockObject_MockObject|\PreCommit\Processor\CommitMsg
+     * @return CommitMsg|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _prepareModelAndProcess($message)
     {
-        PreCommit\Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         $vcsAdapter = $this->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects($this->once())
             ->method('getCommitMessage')
             ->will($this->returnValue($message));
 
-        /** @var PreCommit\Processor\CommitMsg|PHPUnit_Framework_MockObject_MockObject $processor */
+        /** @var CommitMsg|\PHPUnit_Framework_MockObject_MockObject $processor */
         $processor = $this->getMock('PreCommit\Processor\CommitMsg', array('_getVcsAdapter'), array($vcsAdapter));
 
         $processor->setCodePath(PROJECT_ROOT);

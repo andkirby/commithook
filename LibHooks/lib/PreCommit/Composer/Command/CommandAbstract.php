@@ -10,6 +10,7 @@ namespace PreCommit\Composer\Command;
 
 use Composer\Command\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
+use PreCommit\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,6 +23,24 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class CommandAbstract extends Command
 {
+    /**
+     * Base commithook directory
+     *
+     * @var null|string
+     */
+    protected $commithookDir;
+
+    /**
+     * Construct
+     *
+     * @param string $commithookDir
+     */
+    public function __construct($commithookDir)
+    {
+        $this->commithookDir = $commithookDir;
+        parent::__construct();
+    }
+
     /**
      * Configure command
      */
@@ -250,5 +269,18 @@ abstract class CommandAbstract extends Command
     protected function isVerbose(OutputInterface $output)
     {
         return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
+    }
+
+    /**
+     * Get config
+     *
+     * @param OutputInterface $output
+     * @param bool            $cached
+     * @return Config
+     */
+    public function getConfig(OutputInterface $output, $cached = true)
+    {
+        return Config::getInstance(array('file' => $this->commithookDir
+            . DIRECTORY_SEPARATOR . 'LibHooks' . DIRECTORY_SEPARATOR . 'config.xml'));
     }
 }
