@@ -218,7 +218,7 @@ PHP;
      */
     protected function getRunnerFile()
     {
-        return $this->commithookDir . '/LibHooks/runner.php';
+        return $this->commithookDir . '/bin/runner.php';
     }
 
     /**
@@ -228,13 +228,9 @@ PHP;
      */
     protected function getSystemPhpPath()
     {
-        if (defined('PHP_BIN_DIR') && (is_file(PHP_BIN_DIR . '/php'))) {
+        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php')) {
             return PHP_BIN_DIR . '/php';
-        } elseif (defined('PHP_BIN_DIR')
-            && (is_file(
-                PHP_BIN_DIR . '/php.exe'
-            ))
-        ) {
+        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php.exe')) {
             return PHP_BIN_DIR . '/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
             return PHP_BINARY;

@@ -1,4 +1,11 @@
 <?php
+/**
+ * End point file to run CommitHooks
+ *
+ * @deprecated Deprecated to direct using since v1.6.4.
+ *             All code will be pushed to use /bin/runner.php
+ * @see /bin/runner.php
+ */
 $rootPath = __DIR__;
 set_include_path(
     implode(

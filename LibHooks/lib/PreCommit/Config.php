@@ -117,7 +117,7 @@ class Config extends \SimpleXMLElement
                 continue;
             }
             try {
-                $xml = simplexml_load_file($file);
+                $xml = self::loadXmlFileToMerge($file);
                 $merger->merge(self::getInstance(), $xml);
             } catch (\Exception $e) {
                 echo 'XML ERROR: Could not load additional config file ' . $file;
@@ -130,6 +130,17 @@ class Config extends \SimpleXMLElement
         if (is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
+    }
+
+    /**
+     * Load file to merge
+     *
+     * @param string $file
+     * @return \SimpleXMLElement
+     */
+    protected static function loadXmlFileToMerge($file)
+    {
+        return simplexml_load_file($file);
     }
 
     /**
