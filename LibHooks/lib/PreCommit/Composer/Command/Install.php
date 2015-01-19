@@ -72,7 +72,7 @@ class Install extends CommandAbstract
     {
         try {
             $hooksDir = $this->getHooksDir(
-                $output, $this->askProjectDir($output)
+                $output, $this->askProjectDir($input, $output)
             );
             $this->createHooks(
                 $output, $input,

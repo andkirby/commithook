@@ -67,6 +67,10 @@ abstract class CommandAbstract extends Command
     protected function configureInput()
     {
         $this->addOption(
+            'project-dir', '-d', InputOption::VALUE_REQUIRED,
+            'Path to project (VCS) root directory.'
+        );
+        $this->addOption(
             'hook', null, InputOption::VALUE_REQUIRED,
             $this->getCustomHookOptionDescription()
         );
@@ -199,32 +203,32 @@ abstract class CommandAbstract extends Command
     /**
      * Ask about GIT project root dir
      *
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
      */
-    protected function askProjectDir(OutputInterface $output)
+    protected function askProjectDir(InputInterface $input, OutputInterface $output)
     {
-        $dir = $this->getCommandDir();
+        $dir = $input->getOption('project-dir');
+        if (!$dir) {
+            $dir = $this->getCommandDir();
+        }
+
         $validator = function ($dir) {
             $dir = rtrim($dir, '\\/');
             return is_dir($dir . '/.git');
         };
 
-        if ($validator($dir)) {
-            return $dir;
-        }
-
-        do {
-            $dir = $this->getDialog()->ask(
-                $output, "Please set your root project directory [$dir]: ", $dir
-            );
-            if (!$validator($dir)) {
+        while (!$dir || !$validator($dir)) {
+            if ($dir) {
                 $output->writeln(
                     'Sorry, selected directory does not contain ".git" directory.'
                 );
-                $dir = null;
             }
-        } while (!$dir);
+            $dir = $this->getDialog()->ask(
+                $output, "Please set your root project directory [$dir]: ", $dir
+            );
+        }
 
         return rtrim($dir, '\\/');
     }

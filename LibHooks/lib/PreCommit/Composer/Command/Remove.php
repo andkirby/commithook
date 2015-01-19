@@ -41,7 +41,7 @@ class Remove extends CommandAbstract
     {
         try {
             $hooksDir = $this->getHooksDir(
-                $output, $this->askProjectDir($output)
+                $output, $this->askProjectDir($input, $output)
             );
             $files = $this->getTargetFiles($input, $output);
             $status = $this->removeHookFiles($output, $hooksDir, $files);
