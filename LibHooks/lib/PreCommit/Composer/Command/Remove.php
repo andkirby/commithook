@@ -54,7 +54,13 @@ class Remove extends CommandAbstract
             }
         }
         if ($status) {
-            $output->writeln('Existed CommitHook file(s) has been removed.');
+            if ($this->isVerbose($output)) {
+                $output->writeln("Existed CommitHook file(s) has been removed from '$hooksDir'.");
+            } else {
+                $output->writeln('Existed CommitHook file(s) has been removed.');
+            }
+        } elseif ($this->isVerbose($output)) {
+            $output->writeln('No CommitHook file(s) to remove.');
         }
         return 0;
     }
