@@ -21,7 +21,8 @@
     "phpunit/phpunit": "4.*"
   },
   "bin": [
-    "bin/commithook"
+    "bin/commithook",
+    "bin/commithook.php"
   ],
   "autoload": {
     "psr-4": {
