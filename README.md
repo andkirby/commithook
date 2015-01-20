@@ -13,9 +13,11 @@ $ composer require andkirby/commithook
 ```
 ### Set up via command line
 
-This feature is available since v1.6.3. _(Simple install command `commithook-install` is available since v1.6.0.)_
+This feature is available since v1.6.3. _(Simple install command `commithook-install` is available since v1.6.0 but it was removed in later versions.)_
 
 #### `commithook install`: Generate files
+
+**NOTE:** Since v1.6.6 you may run via **_alias_** command **`php commithook.php`**. It could be helpful if you have some global PHP version but would like to use another one to run PHP CommitHooks. (This problem faced on Windows with **XAMPP** and another PHP version) If you'll install PHP CommitHooks into your global PHP you shouldn't face this issue.
 
 Before you start please be sure that shell can run files from `vendor/bin` directory ([read more](#set-up-composer-vendorbin-directory)). Or use absolute path `/path/to/vendor/bin/commithook`.
 
@@ -126,6 +128,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.6 Added PHP version of bin file (you may run all commands via `php commithook.php`). Added extra "complete" messages on "verbose" mode to the "remove" command.
 - v1.6.5 Added new options command `--php-binary|-b` and `--project-dir|-d`. Improved PHP file validator.
 - v1.6.4 Pushed tests to use PSR-4 autoload standard and to namespaces usage. Pushed code to use `bin/runner.php` file. `LibHooks/runner.php` is deprecated. Composer package require at least PHP 5.3.x version.
 - v1.6.3 Improved installer. Added CommitHook files remover.
