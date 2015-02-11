@@ -39,7 +39,7 @@ If system couldn't find path to your executable PHP file it will ask about it.
 
 Since PHP 5.4 console should not ask your about PHP binary file. Anyway you may set up path to your PHP binary file.
 Also you may set path your project/VCS root.
-```shell
+```shellп
 $ commithook install --php-binary=d:/s/php/php.exe --project-dir=d:/home/my-project
 ```
 Or short version:
@@ -128,6 +128,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 # Release notes
+- v1.6.7 Added supporting numbers in the issue project key in commit message.
 - v1.6.6 Added PHP version of bin file (you may run all commands via `php commithook.php`). Added extra "complete" messages on "verbose" mode to the "remove" command.
 - v1.6.5 Added new options command `--php-binary|-b` and `--project-dir|-d`. Improved PHP file validator.
 - v1.6.4 Pushed tests to use PSR-4 autoload standard and to namespaces usage. Pushed code to use `bin/runner.php` file. `LibHooks/runner.php` is deprecated. Composer package require at least PHP 5.3.x version.
