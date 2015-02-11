@@ -33,7 +33,7 @@ class CommitMsg extends AbstractValidator
     public function validate($content, $file)
     {
         if (!preg_match('/^Merge /', $content) && !preg_match('/^Revert /', $content)
-            && !preg_match('/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z]{2,}-[0-9]+: /', $content)
+            && !preg_match('/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z0-9]{2,}-[0-9]+: /', $content)
         ) {
                 $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $content);
         }

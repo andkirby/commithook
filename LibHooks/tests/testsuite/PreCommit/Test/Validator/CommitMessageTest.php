@@ -34,8 +34,8 @@ class CommitMsgTest extends \PHPUnit_Framework_TestCase
             array('Implemented ASDF-1234: Some text'),
             array('Fixed ASDF-1234: Some text'),
             array('CR Change ASDFQWER-1: Some text'),
-            array('CR Changes ASDF-1234: Some text'),
-            array('Refactored WE-1234: Some text'),
+            array('CR Changes AS0099DF-1234: Some text'),
+            array('Refactored WE2-1234: Some text'),
         );
     }
 
