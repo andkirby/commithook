@@ -153,6 +153,7 @@ $a=function($b){return $b};
 ```
 
 ## Release notes
+- v1.6.9 Fixed generating paths on install hook files into a project.
 - v1.6.8 Improved skipping methods name validation. Added new tag @skipHookMethodNaming.
 - v1.6.7 Added supporting numbers in the issue project key in commit message.
 - v1.6.6 Added PHP version of bin file (you may run all commands via `php commithook.php`). Added extra "complete" messages on "verbose" mode to the "remove" command.
