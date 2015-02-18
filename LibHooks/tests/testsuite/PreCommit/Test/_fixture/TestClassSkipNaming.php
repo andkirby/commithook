@@ -14,7 +14,7 @@ class Some_testClassSkip extends stdClass
     /**
      * Some message
      *
-     * @skipHookMethodNaming _testSkipNameValidation2
+     * @skipCommitHookMethodNaming _testSkipNameValidation2
      */
     public function _testSkipNameValidation2($param1, $param2)
     {
@@ -24,7 +24,7 @@ class Some_testClassSkip extends stdClass
     /**
      * Some message
      *
-     * @skipHookMethodNaming testSkipProtectedNameValidation
+     * @skipCommitHookMethodNaming testSkipProtectedNameValidation
      */
     protected function testSkipProtectedNameValidation($param1, $param2)
     {

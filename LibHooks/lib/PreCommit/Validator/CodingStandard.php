@@ -12,7 +12,7 @@ class CodingStandard extends AbstractValidator
      * Skip tag for publicMethodNaming errors
      */
     const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
-    const SKIP_TAG_METHOD_NAMING = 'skipHookMethodNaming';
+    const SKIP_TAG_METHOD_NAMING = 'skipCommitHookMethodNaming';
 
     /**#@+
      * Error codes
