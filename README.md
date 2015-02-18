@@ -127,7 +127,33 @@ In such case it will merge all files in the XML node "additional_config". There 
 - PROJECT_DIR/commithook-self.xml (it may contain a project specific configuration which shouldn't shared to your team)
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
-# Release notes
+## Features
+### Skip Method Name Validation
+To skip validation of methods name just add PHPDoc block tag @skipHookMethodNaming like following:
+
+```php
+    /**
+     * My method
+     *
+     * @skipCommitHookMethodNaming myMethod
+     */
+    protected function myMethod()
+    {
+        //...
+    }
+```
+
+### Skip Code Block Full Validation
+Also you may skip validation fully for a particular code block:
+
+```php
+//@startSkipCommitHooks
+$a=function($b){return $b};
+//@finishSkipCommitHooks
+```
+
+## Release notes
+- v1.6.8 Improved skipping methods name validation. Added new tag @skipHookMethodNaming.
 - v1.6.7 Added supporting numbers in the issue project key in commit message.
 - v1.6.6 Added PHP version of bin file (you may run all commands via `php commithook.php`). Added extra "complete" messages on "verbose" mode to the "remove" command.
 - v1.6.5 Added new options command `--php-binary|-b` and `--project-dir|-d`. Improved PHP file validator.
