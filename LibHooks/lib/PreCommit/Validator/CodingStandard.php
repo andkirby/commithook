@@ -12,6 +12,7 @@ class CodingStandard extends AbstractValidator
      * Skip tag for publicMethodNaming errors
      */
     const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
+    const SKIP_TAG_METHOD_NAMING = 'skipHookMethodNaming';
 
     /**#@+
      * Error codes
@@ -198,17 +199,18 @@ class CodingStandard extends AbstractValidator
 
             //check function naming and scope
             if (strpos($str, ' function ')) {
-                if (preg_match('/^\s*(static )?public /', $str)
-                    && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
-                ) {
-                    if (!$this->_isSkipPublicMethodNaming($content, $str)) {
+                if (!$this->_isSkipMethodNameValidation($content, $str)) {
+                    if (preg_match('/^\s*(static )?public /', $str)
+                        && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
+                    ) {
                         $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
+                    } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
+                        && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
+                    ) {
+                        $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
                     }
-                } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
-                    && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
-                ) {
-                    $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
-                } elseif (!preg_match('/(protected|private|public) (static )?function/', $str)) {
+                }
+                if (!preg_match('/(protected|private|public) (static )?function/', $str)) {
                     $this->_addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
                 }
             }
@@ -341,13 +343,13 @@ class CodingStandard extends AbstractValidator
      * @param string $str
      * @return bool
      */
-    protected function _isSkipPublicMethodNaming($content, $str)
+    protected function _isSkipMethodNameValidation($content, $str)
     {
-        preg_match('/function ([A-z_]+)\s*\(/', $str, $matches);
+        preg_match('/function ([A-z_]+)/', $str, $matches);
         if ($matches) {
             $funcName = $matches[1];
-            $reg      = '/\@' . self::SKIP_TAG_PUBLIC_METHOD_NAMING . '\s+' . $funcName . '/';
-            if (preg_match($reg, $content)) {
+            $reg      = '~[ *]*\@(' . self::SKIP_TAG_PUBLIC_METHOD_NAMING . '|' . self::SKIP_TAG_METHOD_NAMING . ')\s+' . $funcName . '\n~';
+            if (preg_match($reg, $content, $m)) {
                 return true;
             }
         }
