@@ -269,7 +269,10 @@ PHP;
      */
     protected function normalizePath($path)
     {
-        return str_replace('\\', '/', $path);
+        if (DIRECTORY_SEPARATOR == '/') {
+            return str_replace('\\', DIRECTORY_SEPARATOR, $path);
+        }
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
     /**
