@@ -128,8 +128,11 @@ class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
      * Test proper null in PHPDoc of method
      *
      * @param null|string $param
+     * @param string|null $another
+     * @param string|int|null $another
+     * @param null|string|int $another
      */
-    public function test3ProperParamNull($param)
+    public function test3ProperParamNull($param, $another)
     {
         //Test null in PHPDoc
     }
