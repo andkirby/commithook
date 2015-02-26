@@ -1,7 +1,7 @@
 {
   "name": "andkirby/commithook",
   "description": "PHP Commit Hooks",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license": "proprietary",
   "authors": [
     {
@@ -11,14 +11,11 @@
   ],
   "require": {
     "php": ">=5.3.2",
-    "symfony/console": "2.*||3.*"
+    "symfony/console": "2.*||3.*@stable",
+    "chobie/jira-api-restclient": "@dev"
   },
   "require-dev": {
-    "php": ">=5.3.2",
-    "symfony/console": "2.*||3.*"
-  },
-  "suggest": {
-    "phpunit/phpunit": "4.*"
+    "phpunit/phpunit": "~4.5@stable"
   },
   "bin": [
     "bin/commithook",
