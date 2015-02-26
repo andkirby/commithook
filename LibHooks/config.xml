@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <config>
+    <!--Please update also PreCommit\Composer\Application::VERSION-->
     <version>1.6.10-alpha</version>
     <supported_hooks>
         <hook>pre-commit</hook>
