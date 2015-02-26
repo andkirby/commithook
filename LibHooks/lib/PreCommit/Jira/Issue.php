@@ -205,4 +205,14 @@ class Issue extends JiraLib\Issue
         }
         return $changeLog;
     }
+
+    /**
+     * Get summary
+     *
+     * @return string
+     */
+    public function getSummary()
+    {
+        return $this->fields['summary'];
+    }
 }
