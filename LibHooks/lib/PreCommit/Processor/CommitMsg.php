@@ -19,6 +19,9 @@ class CommitMsg extends AbstractAdapter
 
     /**
      * Set adapter data from config
+     *
+     * @param array|string $vcsType
+     * @throws \PreCommit\Exception
      */
     public function __construct($vcsType)
     {
@@ -51,7 +54,11 @@ class CommitMsg extends AbstractAdapter
         $this->_loadValidator('CommitMsg')
             ->validate($message, null);
 
-        return array() == $this->_errorCollector->getErrors();
+        $result = array() == $this->_errorCollector->getErrors();
+        if ($result) {
+            $this->_setCommitMessage($message);
+        }
+        return $result;
     }
 
     /**
@@ -62,5 +69,16 @@ class CommitMsg extends AbstractAdapter
     protected function _getCommitMessage()
     {
         return $this->_vcsAdapter->getCommitMessage();
+    }
+
+    /**
+     * Set commit message
+     *
+     * @param string $message
+     * @return string
+     */
+    protected function _setCommitMessage($message)
+    {
+        return $this->_vcsAdapter->setCommitMessage($message);
     }
 }

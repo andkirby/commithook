@@ -28,6 +28,14 @@ interface AdapterInterface
     public function getCommitMessage();
 
     /**
+     * Set commit message
+     *
+     * @param string $message
+     * @return string
+     */
+    public function setCommitMessage($message);
+
+    /**
      * Get merge status
      *
      * @return bool

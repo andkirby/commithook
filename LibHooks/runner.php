@@ -7,6 +7,7 @@
  * @see /bin/runner.php
  */
 $rootPath = __DIR__;
+!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', $rootPath);
 set_include_path(
     implode(
         PATH_SEPARATOR,

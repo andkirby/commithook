@@ -36,11 +36,38 @@ class Git implements AdapterInterface
      */
     public function getCommitMessage()
     {
-        $file = $this->getCodePath() . DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR . 'COMMIT_EDITMSG';
+        $file = $this->_getCommitMessageFile();
         if (!file_exists($file)) {
             throw new Exception("Commit message file '$file' not found.");
         }
         return file_get_contents($file);
+    }
+
+    /**
+     * Get inner text of commit message file
+     *
+     * @param string $message
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    public function setCommitMessage($message)
+    {
+        $file = $this->_getCommitMessageFile();
+        if (false === file_put_contents($file, $message)) {
+            throw new Exception("Commit message file '$file' cannot be updated.");
+        }
+        return $this;
+    }
+
+    /**
+     * Get commit message file
+     *
+     * @return string
+     */
+    protected function _getCommitMessageFile()
+    {
+        return $this->getCodePath() . DIRECTORY_SEPARATOR . '.git'
+        . DIRECTORY_SEPARATOR . 'COMMIT_EDITMSG';
     }
 
     /**

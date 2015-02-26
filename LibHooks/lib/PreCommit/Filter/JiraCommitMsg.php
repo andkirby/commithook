@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Filter;
 
+use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Jira\Api;
 use chobie\Jira\Api\Authentication\Basic;
@@ -23,19 +24,24 @@ class JiraCommitMsg implements InterfaceFilter
      */
     public function filter($content, $file = null)
     {
+        $content = trim($content);
         $arr = explode("\n", $content);
-        $first = $arr[0];
-        preg_match('/^([IRFC]) ([A-Z0-9]+-[0-9]+)[ ]*$/', $first, $m);
+        $first = array_shift($arr);
 
+        //improve extra description row
+        $secondOrig = array_shift($arr);
+        if ($secondOrig && 0 !== strpos(trim($secondOrig), '-')) {
+            $content = str_replace($secondOrig, ' - ' . trim($secondOrig), $content);
+        }
+
+        //interpret first row to get summary
+        preg_match('/^([IRFC]) ([A-Z0-9]+-[0-9]+)[ ]*$/', $first, $m);
         $row = array_shift($m);
         $verb = array_shift($m);
         $issueKey = array_shift($m);
 
-        try {
-            $summary = $this->_getIssueSummary($issueKey);
-        } catch (Api\Exception $e) {
-            return $content;
-        } catch (ApiException $e) {
+        $summary = $this->_getIssueSummary($issueKey);
+        if (!$summary) {
             return $content;
         }
         $verb = $this->_interpretVerb($verb);
@@ -52,12 +58,7 @@ class JiraCommitMsg implements InterfaceFilter
      */
     protected function _interpretVerb($verb)
     {
-        $map = array(
-            'I' => 'Implemented',
-            'F' => 'Fixed',
-            'C' => 'CR Changes',
-            'R' => 'Refactored',
-        );
+        $map = $this->_getVerbsMap();
         if (!isset($map[$verb])) {
             throw new Exception('Unknown verb key.');
         }
@@ -66,17 +67,122 @@ class JiraCommitMsg implements InterfaceFilter
     }
 
     /**
-     * @param $issueKey
+     * Get verbs map
+     *
+     * @return array
+     */
+    protected function _getVerbsMap()
+    {
+        return array(
+            'I' => 'Implemented',
+            'F' => 'Fixed',
+            'C' => 'CR Changes',
+            'R' => 'Refactored',
+        );
+    }
+
+    /**
+     * Get issue summary
+     *
+     * @param string $issueKey
      * @return mixed
      */
     protected function _getIssueSummary($issueKey)
     {
-        $api = new Api(
-            '',
+        $summary = $this->_getCachedSummary($issueKey);
+        if ($summary) {
+            return $summary;
+        }
+
+        try {
+            $summary = $this->_getIssue($issueKey)->getSummary();
+            if (!$summary) {
+                return false;
+            }
+        } catch (Api\Exception $e) {
+            return false;
+        } catch (ApiException $e) {
+            return false;
+        }
+
+        $this->_cacheSummary($issueKey, $summary);
+        return $summary;
+    }
+
+    /**
+     * Get cache point key
+     *
+     * @param string $number
+     * @return string
+     */
+    protected function _getCacheStringKey($number)
+    {
+        return '|' . $number . ': ';
+    }
+
+    /**
+     * Get cache file
+     *
+     * @param string $project
+     * @return string
+     */
+    protected function _getCacheFile($project)
+    {
+        $project = strtolower($project);
+        return $this->_getCacheDir()
+            . "/issues-$project-v0";
+    }
+
+    /**
+     * Get cache summary string
+     *
+     * @param string $issueKey
+     * @return string
+     */
+    protected function _getCachedSummary($issueKey)
+    {
+        list($project, $number) = $this->_interpretIssueKey($issueKey);
+        $cacheFile = $this->_getCacheFile($project);
+
+        if (!is_file($cacheFile)) {
+            return false;
+        }
+        $fileData = file_get_contents($cacheFile);
+        $key = $this->_getCacheStringKey($number);
+        $pos = strpos($fileData, $key);
+        $fileData = substr($fileData, $pos + strlen($key));
+        $pos = strpos($fileData, "\n");
+        if (false !== $pos) {
+            $fileData = substr($fileData, 0, $pos);
+        }
+        return $fileData;
+    }
+
+    /**
+     * Get JIRA API
+     *
+     * @return Api
+     */
+    protected function _getApi()
+    {
+        return new Api(
+            Config::getInstance()->getNode('jira/url'),
             new Basic(
-                '', ''
+                Config::getInstance()->getNode('jira/username'),
+                Config::getInstance()->getNode('jira/password')
             )
         );
+    }
+
+    /**
+     * Get issue
+     *
+     * @param string $issueKey
+     * @return \PreCommit\Jira\Issue
+     */
+    protected function _getIssue($issueKey)
+    {
+        $api = $this->_getApi();
 
         /** @var Api\Result $result */
         $result = $api->api(
@@ -84,8 +190,45 @@ class JiraCommitMsg implements InterfaceFilter
             sprintf("/rest/api/2/issue/%s", $issueKey),
             array('fields' => 'summary')
         );
-        $issue = new Issue($result->getResult());
-        $summary = $issue->getSummary();
-        return $summary;
+        return new Issue($result->getResult());
+    }
+
+    /**
+     * Explode issue key to PROJECT and issue number
+     *
+     * @param string $issueKey
+     * @return array
+     */
+    protected function _interpretIssueKey($issueKey)
+    {
+        list($project, $number) = explode('-', $issueKey);
+        $project = strtoupper($project);
+        return array($project, $number);
+    }
+
+    /**
+     * Write summary to cache file
+     *
+     * @param string $issueKey
+     * @param string $summary
+     * @return $this
+     */
+    protected function _cacheSummary($issueKey, $summary)
+    {
+        list($project, $number) = $this->_interpretIssueKey($issueKey);
+        $file = $this->_getCacheFile($project);
+        $summaryCache = $this->_getCacheStringKey($number) . $summary;
+        file_put_contents($file, $summaryCache, FILE_APPEND);
+        return $this;
+    }
+
+    /**
+     * Get cache directory
+     *
+     * @return string
+     */
+    protected function _getCacheDir()
+    {
+        return Config::getInstance()->getCacheDir(COMMIT_HOOKS_ROOT);
     }
 }

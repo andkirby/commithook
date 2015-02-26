@@ -61,8 +61,7 @@ class Config extends \SimpleXMLElement
      */
     public static function getCacheFile($rootPath, $projectDir)
     {
-        return $rootPath . DIRECTORY_SEPARATOR
-            . Config::getInstance()->getNode('cache_dir')
+        return self::getCacheDir($rootPath)
             . DIRECTORY_SEPARATOR
             . md5(self::getInstance()->getNode('version') . $projectDir)
             . '.xml';
@@ -190,6 +189,18 @@ class Config extends \SimpleXMLElement
         $result = isset($result[0]) ? (array)$result[0] : array();
         $result = json_decode(json_encode($result), true);
         return $result;
+    }
+
+    /**
+     * @param string $rootPath
+     * @return string
+     */
+    public static function getCacheDir($rootPath)
+    {
+        return realpath(
+            $rootPath . DIRECTORY_SEPARATOR
+                . trim(Config::getInstance()->getNode('cache_dir'), '\\/')
+        );
     }
 
     /**
