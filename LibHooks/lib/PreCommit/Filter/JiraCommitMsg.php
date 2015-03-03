@@ -36,6 +36,9 @@ class JiraCommitMsg implements InterfaceFilter
 
         //interpret first row to get summary
         preg_match('/^([IRFC]) ([A-Z0-9]+-[0-9]+)[ ]*$/', $first, $m);
+        if (!$m) {
+            return $content;
+        }
         $row = array_shift($m);
         $verb = array_shift($m);
         $issueKey = array_shift($m);
