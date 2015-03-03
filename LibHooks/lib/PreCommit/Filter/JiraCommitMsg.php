@@ -152,11 +152,16 @@ class JiraCommitMsg implements InterfaceFilter
         }
         $fileData = file_get_contents($cacheFile);
         $key = $this->_getCacheStringKey($number);
-        $pos = strpos($fileData, $key);
-        $fileData = substr($fileData, $pos + strlen($key));
-        $pos = strpos($fileData, "\n");
-        if (false !== $pos) {
-            $fileData = substr($fileData, 0, $pos);
+        $position = strpos($fileData, $key);
+
+        if (false === $position) {
+            return false;
+        }
+
+        $fileData = substr($fileData, $position + strlen($key));
+        $position = strpos($fileData, "\n");
+        if (false !== $position) {
+            $fileData = substr($fileData, 0, $position);
         }
         return $fileData;
     }
