@@ -55,7 +55,7 @@ class CommitMsgTest extends \PHPUnit_Framework_TestCase
      * Prepare model and method mocks
      *
      * @param string $message
-     * @return CommitMsg|\PHPUnit_Framework_MockObject_MockObject
+     * @return \PreCommit\Processor\CommitMsg|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _prepareModelAndProcess($message)
     {
