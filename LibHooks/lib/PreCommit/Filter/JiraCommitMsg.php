@@ -140,7 +140,7 @@ class JiraCommitMsg implements InterfaceFilter
      * Get cache summary string
      *
      * @param string $issueKey
-     * @return string
+     * @return string|bool
      */
     protected function _getCachedSummary($issueKey)
     {
