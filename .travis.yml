@@ -3,6 +3,7 @@ php:
   - "5.4"
   - "5.3"
 install:
+  - php -i | grep '_SERVER\["_"\]'
   - composer install --no-dev
 script: phpunit --configuration LibHooks/tests/phpunit.xml.dist --coverage-text
 notifications:
