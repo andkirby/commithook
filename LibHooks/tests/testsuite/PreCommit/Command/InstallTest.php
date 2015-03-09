@@ -84,7 +84,9 @@ BODY;
      */
     protected function tearDown()
     {
-        `rm -rf {$this->_tmp}/*`;
+        if (is_dir($this->_tmp)) {
+            `rm -rf {$this->_tmp}/*`;
+        }
         parent::tearDown();
     }
 }
