@@ -204,13 +204,24 @@ class JiraCommitMsg implements InterfaceFilter
     /**
      * Explode issue key to PROJECT and issue number
      *
+     * It takes project key from configuration if it was set.
+     *
      * @param string $issueKey
      * @return array
+     * @throws \PreCommit\Exception
      */
     protected function _interpretIssueKey($issueKey)
     {
-        list($project, $number) = explode('-', $issueKey);
-        $project = strtoupper($project);
+        if ((string)(int)$issueKey === $issueKey) {
+            $project = $this->_getConfig()->getNode('jira/project');
+            if (!$project) {
+                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook-project.xml".');
+            }
+            $number = $issueKey;
+        } else {
+            list($project, $number) = explode('-', $issueKey);
+            $project = strtoupper($project);
+        }
         return array($project, $number);
     }
 
