@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Composer\Command;
 
-use Composer\Command\Helper\DialogHelper;
+use Symfony\Component\Console\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -170,6 +170,8 @@ class Install extends CommandAbstract
             $file = $this->getSystemPhpPath();
         }
 
+        $max = 3;
+        $i = 0;
         while (!$file || !$validator($file, $output)) {
             if ($file) {
                 $output->writeln('Given PHP executable file is not valid.');
@@ -177,6 +179,9 @@ class Install extends CommandAbstract
             $file = $this->getDialog()->ask(
                 $output, "Please set your PHP executable file [$file]: ", $file
             );
+            if (++$i > $max) {
+                throw new Exception('Path to PHP executable file is not set.');
+            }
         }
 
         return $file;
@@ -249,16 +254,22 @@ PHP;
      *
      * @return null|string
      */
-    protected function getSystemPhpPath()
+    public function getSystemPhpPath()
     {
+        $file = null;
         if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php')) {
-            return PHP_BIN_DIR . '/php';
+            $file = PHP_BIN_DIR . '/php';
         } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php.exe')) {
-            return PHP_BIN_DIR . '/php.exe';
+            $file = PHP_BIN_DIR . '/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
-            return PHP_BINARY;
+            $file = PHP_BINARY;
+        } elseif (isset($_SERVER['_'])) {
+            $file = $_SERVER['_'];
         }
-        return null;
+        if ($file) {
+            $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
+        }
+        return $file;
     }
 
     /**

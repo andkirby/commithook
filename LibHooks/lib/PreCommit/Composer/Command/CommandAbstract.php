@@ -8,7 +8,7 @@
 
 namespace PreCommit\Composer\Command;
 
-use Composer\Command\Helper\DialogHelper;
+use Symfony\Component\Console\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
 use PreCommit\Config;
 use Symfony\Component\Console\Command\Command;
@@ -211,6 +211,9 @@ abstract class CommandAbstract extends Command
     {
         $dir = $input->getOption('project-dir');
         if (!$dir) {
+            $dir = $this->getVcsDir();
+        }
+        if (!$dir) {
             $dir = $this->getCommandDir();
         }
 
@@ -219,6 +222,8 @@ abstract class CommandAbstract extends Command
             return is_dir($dir . '/.git');
         };
 
+        $max = 3;
+        $i = 0;
         while (!$dir || !$validator($dir)) {
             if ($dir) {
                 $output->writeln(
@@ -228,6 +233,9 @@ abstract class CommandAbstract extends Command
             $dir = $this->getDialog()->ask(
                 $output, "Please set your root project directory [$dir]: ", $dir
             );
+            if (++$i > $max) {
+                throw new Exception('Project directory is not set.');
+            }
         }
 
         return rtrim($dir, '\\/');
@@ -241,6 +249,16 @@ abstract class CommandAbstract extends Command
     protected function getCommandDir()
     {
         return $_SERVER['PWD'];
+    }
+
+    /**
+     * Get VCS directory (GIT)
+     *
+     * @return string
+     */
+    protected function getVcsDir()
+    {
+        return realpath(trim(`git rev-parse --show-toplevel 2>&1`));
     }
 
     /**

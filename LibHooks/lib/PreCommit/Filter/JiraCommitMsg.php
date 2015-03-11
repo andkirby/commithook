@@ -140,7 +140,7 @@ class JiraCommitMsg implements InterfaceFilter
      * Get cache summary string
      *
      * @param string $issueKey
-     * @return string
+     * @return string|bool
      */
     protected function _getCachedSummary($issueKey)
     {
@@ -174,10 +174,10 @@ class JiraCommitMsg implements InterfaceFilter
     protected function _getApi()
     {
         return new Api(
-            Config::getInstance()->getNode('jira/url'),
+            $this->_getConfig()->getNode('jira/url'),
             new Basic(
-                Config::getInstance()->getNode('jira/username'),
-                Config::getInstance()->getNode('jira/password')
+                $this->_getConfig()->getNode('jira/username'),
+                $this->_getConfig()->getNode('jira/password')
             )
         );
     }
@@ -204,13 +204,24 @@ class JiraCommitMsg implements InterfaceFilter
     /**
      * Explode issue key to PROJECT and issue number
      *
+     * It takes project key from configuration if it was set.
+     *
      * @param string $issueKey
      * @return array
+     * @throws \PreCommit\Exception
      */
     protected function _interpretIssueKey($issueKey)
     {
-        list($project, $number) = explode('-', $issueKey);
-        $project = strtoupper($project);
+        if ((string)(int)$issueKey === $issueKey) {
+            $project = $this->_getConfig()->getNode('jira/project');
+            if (!$project) {
+                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook-project.xml".');
+            }
+            $number = $issueKey;
+        } else {
+            list($project, $number) = explode('-', $issueKey);
+            $project = strtoupper($project);
+        }
         return array($project, $number);
     }
 
@@ -237,6 +248,16 @@ class JiraCommitMsg implements InterfaceFilter
      */
     protected function _getCacheDir()
     {
-        return Config::getInstance()->getCacheDir(COMMIT_HOOKS_ROOT);
+        return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
     }
 }
