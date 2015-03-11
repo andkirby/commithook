@@ -174,10 +174,10 @@ class JiraCommitMsg implements InterfaceFilter
     protected function _getApi()
     {
         return new Api(
-            Config::getInstance()->getNode('jira/url'),
+            $this->_getConfig()->getNode('jira/url'),
             new Basic(
-                Config::getInstance()->getNode('jira/username'),
-                Config::getInstance()->getNode('jira/password')
+                $this->_getConfig()->getNode('jira/username'),
+                $this->_getConfig()->getNode('jira/password')
             )
         );
     }
@@ -237,6 +237,16 @@ class JiraCommitMsg implements InterfaceFilter
      */
     protected function _getCacheDir()
     {
-        return Config::getInstance()->getCacheDir(COMMIT_HOOKS_ROOT);
+        return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
     }
 }
