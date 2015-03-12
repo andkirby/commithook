@@ -35,13 +35,11 @@ class JiraCommitMsg implements InterfaceFilter
         }
 
         //interpret first row to get summary
-        preg_match('/^([IRFC]) (([A-Z0-9]+-)?[0-9]+)[ ]*$/', $first, $m);
-        if (!$m) {
+        $interpretResult = $this->_interpretMessageTitle($first);
+        if (!$interpretResult) {
             return $content;
         }
-        $row = array_shift($m);
-        $verb = array_shift($m);
-        $issueKey = $this->_normalizeIssueKey(array_shift($m));
+        list($verb, $issueKey) = $interpretResult;
 
         $summary = $this->_getIssueSummary($issueKey);
         if (!$summary) {
@@ -49,7 +47,7 @@ class JiraCommitMsg implements InterfaceFilter
         }
         $verb = $this->_interpretVerb($verb);
         $full = "$verb $issueKey: $summary";
-        return str_replace($row, $full, $content);
+        return str_replace($first, $full, $content);
     }
 
     /**
@@ -271,5 +269,26 @@ class JiraCommitMsg implements InterfaceFilter
     protected function _getConfig()
     {
         return Config::getInstance();
+    }
+
+    /**
+     * Interpret message title
+     *
+     * @param string $message
+     * @return array
+     * @throws \PreCommit\Exception
+     */
+    protected function _interpretMessageTitle($message)
+    {
+        preg_match('/^([IRFC]) (([A-Z0-9]+-)?[0-9]+)[ ]*$/', $message, $m);
+        if (!$m) {
+            return false;
+        }
+        //skip first match
+        array_shift($m);
+
+        $commitVerb = array_shift($m);
+        $issueKey = $this->_normalizeIssueKey(array_shift($m));
+        return array($commitVerb, $issueKey);
     }
 }
