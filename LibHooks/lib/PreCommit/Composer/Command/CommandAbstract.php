@@ -206,6 +206,7 @@ abstract class CommandAbstract extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
+     * @throws Exception
      */
     protected function askProjectDir(InputInterface $input, OutputInterface $output)
     {
