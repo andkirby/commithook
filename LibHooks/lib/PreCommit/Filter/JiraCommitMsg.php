@@ -35,13 +35,13 @@ class JiraCommitMsg implements InterfaceFilter
         }
 
         //interpret first row to get summary
-        preg_match('/^([IRFC]) ([A-Z0-9]+-[0-9]+)[ ]*$/', $first, $m);
+        preg_match('/^([IRFC]) (([A-Z0-9]+-)?[0-9]+)[ ]*$/', $first, $m);
         if (!$m) {
             return $content;
         }
         $row = array_shift($m);
         $verb = array_shift($m);
-        $issueKey = array_shift($m);
+        $issueKey = $this->_normalizeIssueKey(array_shift($m));
 
         $summary = $this->_getIssueSummary($issueKey);
         if (!$summary) {
@@ -208,21 +208,33 @@ class JiraCommitMsg implements InterfaceFilter
      *
      * @param string $issueKey
      * @return array
-     * @throws \PreCommit\Exception
      */
     protected function _interpretIssueKey($issueKey)
+    {
+        list($project, $number) = explode('-', $issueKey);
+        $project = strtoupper($project);
+        return array($project, $number);
+    }
+
+    /**
+     * Normalize issue-key
+     *
+     * Add project key to issue number when it did not set.
+     *
+     * @param string $issueKey
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    protected function _normalizeIssueKey($issueKey)
     {
         if ((string)(int)$issueKey === $issueKey) {
             $project = $this->_getConfig()->getNode('jira/project');
             if (!$project) {
                 throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook-project.xml".');
             }
-            $number = $issueKey;
-        } else {
-            list($project, $number) = explode('-', $issueKey);
-            $project = strtoupper($project);
+            $issueKey = "$project-$issueKey";
         }
-        return array($project, $number);
+        return $issueKey;
     }
 
     /**
