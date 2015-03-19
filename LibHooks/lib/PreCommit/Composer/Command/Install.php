@@ -265,6 +265,9 @@ PHP;
             $file = PHP_BINARY;
         } elseif (isset($_SERVER['_'])) {
             $file = $_SERVER['_'];
+        } elseif (is_file('/usr/local/bin/php')) {
+            //try to check Unix system php file
+            $file = '/usr/local/bin/php';
         }
         if ($file) {
             $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
