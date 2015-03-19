@@ -247,7 +247,7 @@ class JiraCommitMsg implements InterfaceFilter
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $file = $this->_getCacheFile($project);
         $summaryCache = $this->_getCacheStringKey($number) . $summary;
-        file_put_contents($file, $summaryCache, FILE_APPEND);
+        file_put_contents($file, $summaryCache . PHP_EOL, FILE_APPEND);
         return $this;
     }
 
