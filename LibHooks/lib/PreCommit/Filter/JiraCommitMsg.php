@@ -188,6 +188,7 @@ class JiraCommitMsg implements InterfaceFilter
      */
     protected function _getIssue($issueKey)
     {
+        //TODO Move getting an issue into JIRA namespace.
         $api = $this->_getApi();
 
         /** @var Api\Result $result */
@@ -196,7 +197,10 @@ class JiraCommitMsg implements InterfaceFilter
             sprintf("/rest/api/2/issue/%s", $issueKey),
             array('fields' => 'summary')
         );
-        return new Issue($result->getResult());
+        if ($result) {
+            return new Issue($result->getResult());
+        }
+        throw new Api\Exception('Result is empty.');
     }
 
     /**
