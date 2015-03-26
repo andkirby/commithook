@@ -52,3 +52,8 @@ if ($product->isSaleable() && $this->hasOptions()
 <?php if ($i != $recommendationsCount-1) echo ","?>
 <?php $_product = $this->getProduct(); ?>
 <?php Mage::getModel('catalog/product'); ?>
+
+<?php if ($this->getCollection()->getSize() &&
+          ($this->getCollection()->getLastPageNumber() > $this->getCollection()->getCurPage())): ?>
+    <span />
+<?php endif; ?>
