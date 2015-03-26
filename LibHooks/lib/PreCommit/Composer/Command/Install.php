@@ -263,7 +263,9 @@ PHP;
             $file = PHP_BIN_DIR . '/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
             $file = PHP_BINARY;
-        } elseif (isset($_SERVER['_'])) {
+        } elseif (getenv('PHP_BINARY') && is_file(getenv('PHP_BINARY'))) {
+            $file = getenv('PHP_BINARY');
+        } elseif (isset($_SERVER['_']) && pathinfo($_SERVER['_'], PATHINFO_FILENAME) == 'php') {
             $file = $_SERVER['_'];
         } elseif (is_file('/usr/local/bin/php')) {
             //try to check Unix system php file

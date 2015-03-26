@@ -140,6 +140,7 @@ class CodingStandardPhtml extends AbstractValidator
     {
         $operators = 'elseif|else if|if|switch|foreach|for|while';
         if (preg_match('/[^A-z0-9]+(?:' . $operators . ')[^A-z]?\(.*?\).*/i', $str, $b)
+            && substr_count($str, '(') === substr_count($str, ')') //ignore multi-line conditions
             && !preg_match('/[^A-z0-9]+(?:' . $operators . ').*?\).*?:/i', $b[0], $m)
         ) {
             $this->_addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
