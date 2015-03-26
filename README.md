@@ -146,10 +146,10 @@ Fixed PRJNM-256: An email validation doesn't work
 Where PNM-25 is an issue key of your tasks tracker.
 
 There are available commit verbs:
-- Implemented (for tasks)
-- Fixed (for bugs)
-- Refactored
-- CR Change(s) ("changes" or "change", for applying code review changes)
+- `Implemented` (for tasks)
+- `Fixed` (for bugs)
+- `Refactored` (for commits which contains refactoring only)
+- `CR Change(s)` ("changes" or "change", for applying code review changes)
 
 *NOTE:* Actually this validation is hardcoded. It will be moved to configuration to be flexible later.
 
