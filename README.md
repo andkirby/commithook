@@ -93,7 +93,7 @@ and restart your shell.
 ## Set up GIT hooks manually
 
 To set up GIT hooks you have to set up your commit-msg and pre-commit files.
-If you placed commithook project into the same projects root directory and you 
+If you placed commithook project into the same projects root directory and you
 have just to copy such files from commithook directory into yourproject/.git/hooks.
 In other cases please set up them manually.
 
@@ -118,7 +118,7 @@ In then it will try to load cached file with full merged configuration by path:
 
 Cache will be invalidated if version was updated.
 
-*NOTE:* In case you changed your local config files your need to clean up cache files. 
+*NOTE:* In case you changed your local config files your need to clean up cache files.
 
 #### Config layers
 In such case it will merge all files in the XML node "additional_config". There are several default config XML files which will be loaded by default. So default files ordering is presented as this list below:
@@ -126,11 +126,92 @@ In such case it will merge all files in the XML node "additional_config". There 
 - commithook/LibHooks/commithook.xml (contains main part of configuration)
 - commithook/LibHooks/commithook-magento.xml (contains configuration for magento projects)
 - commithook/commithook-local.xml (it may contain your specific local configuration)
+- HOME/.commithook.xml (the same but in user profile directory, the same `~/.commithook.xml`)
 - PROJECT_DIR/commithook.xml (it may contain a project specific configuration which can be shared among your team)
 - PROJECT_DIR/commithook-self.xml (it may contain a project specific configuration which shouldn't shared to your team)
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 ## Features
+### Commit Message Validation
+Default commit message format is:
+```
+[Commit verb] [Issue Key]: [Issue Summary]
+[Commit Message]
+```
+E.g. for the bug:
+```
+Fixed PRJNM-256: An email validation doesn't work
+ - Added missed email validator.
+```
+Where PNM-25 is an issue key of your tasks tracker.
+
+There are available commit verbs:
+- Implemented (for tasks)
+- Fixed (for bugs)
+- Refactored
+- CR Change(s) ("changes" or "change", for applying code review changes)
+
+*NOTE:* Actually this validation is hardcoded. It will be moved to configuration to be flexible later.
+
+#### JIRA Integration
+Since v1.6.10a an integration with JIRA issues tracker is available.
+How it works?
+At first you have to set up authorization to JIRA. All what we need: URL to JIRA, username, password.
+Open file CommitHook XML configuration file:
+```xml
+<?xml version="1.0"?>
+<config>
+    ...
+    <jira>
+        <url>http://jira.example.com</url>
+        <username>my.name</username>
+        <password>some-password</password>
+    </jira>
+    ...
+</config>
+```
+If it's a global configuration you may place it in `~/.commithook.xml` (`%USERPROFILE%/.commithook.xml` for Windows, the path for GitBash).
+
+##### Short Issue Commit
+So, if you want to be ~~lazy~~ productive... :)
+If you tired of copy-pasting issue key and summary that there is a good news.
+If you'd like to speed up of writing commit-verb that there is a good news.
+You may write it shortly:
+```
+F PRJNM-256
+ - Added missed email validator.
+```
+The system will connect to JIRA and get an issue summary. Also it will recognize the commit-verb.
+There are following short-names:
+- `I` for `Implemented`
+- `F` for `Fixed`
+- `R` for `Refactored`
+- `C` for `CR Changes`
+
+Actually, you can be more ~~lazy~~ productive and avoid using project. Usually it's the one for all commits.
+Please add following config in `PROJECT_DIR/commithook.xml` and commit to share with your team.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <jira>
+        <project>PRJNM</project>
+    </jira>
+</config>
+```
+
+Commit message can be more simpler:
+```
+F 256
+ - Added missed email validator.
+```
+
+Please do not forget check issue numbers always!! It's just be more productive! ;)
+
+###### Future Features
+- Protect commits into issues with not appropriate status.
+- Protect commits with verb Fixed/Implemented into issues Task/Bug (or auto set it).
+
+
 ### Skip Method Name Validation
 To skip validation of methods name just add PHPDoc block tag @skipHookMethodNaming like following:
 
