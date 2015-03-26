@@ -122,13 +122,13 @@ Cache will be invalidated if version was updated.
 
 #### Config layers
 In such case it will merge all files in the XML node "additional_config". There are several default config XML files which will be loaded by default. So default files ordering is presented as this list below:
-- commithook/LibHooks/config.xml (base configuration)
-- commithook/LibHooks/commithook.xml (contains main part of configuration)
-- commithook/LibHooks/commithook-magento.xml (contains configuration for magento projects)
-- commithook/commithook-local.xml (it may contain your specific local configuration)
-- HOME/.commithook.xml (the same but in user profile directory, the same `~/.commithook.xml`)
-- PROJECT_DIR/commithook.xml (it may contain a project specific configuration which can be shared among your team)
-- PROJECT_DIR/commithook-self.xml (it may contain a project specific configuration which shouldn't shared to your team)
+- `commithook/LibHooks/config.xml` (base configuration)
+- `commithook/LibHooks/commithook.xml` (contains main part of configuration)
+- `commithook/LibHooks/commithook-magento.xml` (contains configuration for magento projects)
+- `commithook/commithook-local.xml` (it may contain your specific local configuration)
+- `HOME/.commithook.xml` (the same but in user profile directory, the same `~/.commithook.xml`)
+- `PROJECT_DIR/commithook.xml` (it may contain a project specific configuration which can be shared among your team)
+- `PROJECT_DIR/commithook-self.xml` (it may contain a project specific configuration which shouldn't shared to your team)
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
 
 ## Features
@@ -170,7 +170,8 @@ Open file CommitHook XML configuration file:
     ...
 </config>
 ```
-If it's a global configuration you may place it in `~/.commithook.xml` (`%USERPROFILE%/.commithook.xml` for Windows, the path for GitBash).
+If it's a global configuration you may put it in `~/.commithook.xml` (`%USERPROFILE%/.commithook.xml` for Windows CLI, or the same path for GitBash).
+(*in next releases a password will be protected.*)
 
 ##### Short Issue Commit
 So, if you want to be ~~lazy~~ productive... :)
@@ -189,7 +190,9 @@ There are following short-names:
 - `C` for `CR Changes`
 
 Actually, you can be more ~~lazy~~ productive and avoid using project. Usually it's the one for all commits.
-Please add following config in `PROJECT_DIR/commithook.xml` and commit to share with your team.
+Please put following config into `PROJECT_DIR/commithook.xml` and commit this file to share it with your team if haven't done this yet.
+
+**Config to set default JIRA project**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -198,22 +201,28 @@ Please add following config in `PROJECT_DIR/commithook.xml` and commit to share 
     </jira>
 </config>
 ```
+Of course it will used only when commit message will contain the issue number without project key.
 
-Commit message can be more simpler:
+Still complexly? :) Commit message can be more simpler:
 ```
 F 256
  - Added missed email validator.
 ```
 
-Please do not forget check issue numbers always!! It's just be more productive! ;)
+Please do not forget check issue numbers always!! It's just to be more ~~lazy~~ productive! ;D
 
-###### Future Features
+###### Caching
+Information about JIRA issues cached in file `.cache/issues-prjnm-v0` where
+- `prjnm` is your JIRA project key,
+- `v0` version of cache schema.
+
+###### Future Features with JIRA Integration
 - Protect commits into issues with not appropriate status.
-- Protect commits with verb Fixed/Implemented into issues Task/Bug (or auto set it).
+- Protect commits with verb Fixed/Implemented into an issue Task/Bug (or auto set it).
 
 
 ### Skip Method Name Validation
-To skip validation of methods name just add PHPDoc block tag @skipHookMethodNaming like following:
+To skip validation of methods name just add PHPDoc block tag `@skipCommitHookMethodNaming` like following:
 
 ```php
     /**
@@ -232,13 +241,14 @@ Also you may skip validation fully for a particular code block:
 
 ```php
 //@startSkipCommitHooks
+//some bad code or code which cannot validate properly
 $a=function($b){return $b};
 //@finishSkipCommitHooks
 ```
 
 ## Release notes
 - v1.6.9 Fixed generating paths on install hook files into a project.
-- v1.6.8 Improved skipping methods name validation. Added new tag @skipCommitHookMethodNaming.
+- v1.6.8 Improved skipping methods name validation. Added new tag `@skipCommitHookMethodNaming`.
 - v1.6.7 Added supporting numbers in the issue project key in commit message.
 - v1.6.6 Added PHP version of bin file (you may run all commands via `php commithook.php`). Added extra "complete" messages on "verbose" mode to the "remove" command.
 - v1.6.5 Added new options command `--php-binary|-b` and `--project-dir|-d`. Improved PHP file validator.
@@ -257,4 +267,4 @@ $a=function($b){return $b};
 - v1.2.4 Added close symbol on split content. Added checking slashed slash (\\) on split content.
 - v1.2.3 Fixed case when operator name used in variable.
 - v1.2.2 Bugfix for case:
-<?php if ($i != $recommendationsCount-1) echo ","?>
+`<?php if ($i != $recommendationsCount-1) echo ","?>`
