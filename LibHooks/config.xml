@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
     <!--Please update also PreCommit\Composer\Application::VERSION-->
-    <version>1.6.10-alpha.7</version>
+    <version>1.6.10-alpha.10</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
