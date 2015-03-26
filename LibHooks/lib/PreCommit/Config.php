@@ -109,6 +109,8 @@ class Config extends \SimpleXMLElement
         foreach (self::getInstance()->getNodeArray('additional_config') as $file) {
             if (0 === strpos($file, 'PROJECT_DIR')) {
                 $file = str_replace('PROJECT_DIR', $projectDir, $file);
+            } elseif (0 === strpos($file, 'HOME')) {
+                $file = str_replace('HOME', $_SERVER['HOME'], $file);
             } else {
                 $file = $rootPath . DIRECTORY_SEPARATOR . $file;
             }
