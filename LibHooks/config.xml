@@ -12,6 +12,7 @@
         <main>commithook.xml</main>
         <magento>commithook-magento.xml</magento>
         <local>../commithook-local.xml</local>
+        <userprofile>HOME/.commithook.xml</userprofile>
         <project>PROJECT_DIR/commithook.xml</project>
         <project_local>PROJECT_DIR/commithook-self.xml</project_local>
     </additional_config>
