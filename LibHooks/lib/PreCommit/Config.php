@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit;
 
+use PreCommit\Exception;
+
 /**
  * Class for get config
  */
@@ -110,7 +112,7 @@ class Config extends \SimpleXMLElement
             if (0 === strpos($file, 'PROJECT_DIR')) {
                 $file = str_replace('PROJECT_DIR', $projectDir, $file);
             } elseif (0 === strpos($file, 'HOME')) {
-                $file = str_replace('HOME', $_SERVER['HOME'], $file);
+                $file = str_replace('HOME', self::_getHomeUserDir(), $file);
             } else {
                 $file = $rootPath . DIRECTORY_SEPARATOR . $file;
             }
@@ -131,6 +133,24 @@ class Config extends \SimpleXMLElement
         if (is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
+    }
+
+    /**
+     * Get home user directory
+     *
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    protected static function _getHomeUserDir()
+    {
+        if (isset($_SERVER['HOMEPATH'])) {
+            $home = $_SERVER['HOMEPATH'];
+        } elseif (isset($_SERVER['HOME'])) {
+            $home = $_SERVER['HOME'];
+        } else {
+            throw new Exception('Path to home directory not found.');
+        }
+        return $home;
     }
 
     /**
