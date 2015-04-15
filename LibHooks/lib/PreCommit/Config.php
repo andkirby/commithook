@@ -1,8 +1,6 @@
 <?php
 namespace PreCommit;
 
-use PreCommit\Exception;
-
 /**
  * Class for get config
  */
