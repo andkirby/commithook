@@ -141,7 +141,7 @@ class Config extends \SimpleXMLElement
      * Get home user directory
      *
      * @return string
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
     protected static function _getHomeUserDir()
     {
@@ -242,13 +242,18 @@ class Config extends \SimpleXMLElement
      * Get cache directory
      *
      * @return string
+     * @throws Exception
      */
     public static function getCacheDir()
     {
         $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
-        return realpath(
-            self::_readPath($path)
-        );
+        $dir = realpath(self::_readPath($path));
+        if (!is_dir($dir)) {
+            if (!mkdir($dir)) {
+                throw new Exception("Unable to create cache directory by path '$dir'");
+            }
+        }
+        return $dir;
     }
 
     /**
@@ -256,7 +261,7 @@ class Config extends \SimpleXMLElement
      *
      * @param string $path
      * @return string
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
     protected static function _readPath($path)
     {
