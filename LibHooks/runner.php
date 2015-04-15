@@ -64,9 +64,12 @@ if (!in_array($hookName, $supportedHooks)) {
     exit(1);
 }
 
-$projectDir = PreCommit\Config::getProjectDir($hookFile);
-if (!PreCommit\Config::loadCache($rootPath, $projectDir)) {
-    PreCommit\Config::mergeExtraConfig($rootPath, $projectDir);
+//set work directories
+PreCommit\Config::setProjectDir($hookFile);
+PreCommit\Config::setRootDir($rootPath);
+
+if (!PreCommit\Config::loadCache()) {
+    PreCommit\Config::mergeExtraConfig();
 }
 
 /** @var \PreCommit\Processor\AbstractAdapter $processor */

@@ -1,8 +1,6 @@
 <?php
 namespace PreCommit;
 
-use PreCommit\Exception;
-
 /**
  * Class for get config
  */
@@ -19,6 +17,20 @@ class Config extends \SimpleXMLElement
      * @var Config
      */
     static protected $_instance;
+
+    /**
+     * Project directory
+     *
+     * @var string
+     */
+    protected static $_rootDir;
+
+    /**
+     * CommitHook root directory
+     *
+     * @var string
+     */
+    protected static $_projectDir;
 
     /**
      * Get config instance
@@ -57,29 +69,25 @@ class Config extends \SimpleXMLElement
     /**
      * Get config cache file
      *
-     * @param string $rootPath
-     * @param string $projectDir
      * @return string
      */
-    public static function getCacheFile($rootPath, $projectDir)
+    public static function getCacheFile()
     {
-        return self::getCacheDir($rootPath)
+        return self::getCacheDir(static::$_rootDir)
             . DIRECTORY_SEPARATOR
-            . md5(self::getInstance()->getNode('version') . $projectDir)
+            . md5(self::getInstance()->getNode('version') . static::getProjectDir())
             . '.xml';
     }
 
     /**
      * Load cached config
      *
-     * @param string $rootPath
-     * @param string $projectDir
      * @return bool             Returns FALSE in case it couldn't load cached config
      */
-    public static function loadCache($rootPath, $projectDir)
+    public static function loadCache()
     {
         //load config from cache
-        $configCacheFile = self::getCacheFile($rootPath, $projectDir);
+        $configCacheFile = self::getCacheFile();
         if (is_file($configCacheFile)) {
             $configCached = self::loadInstance(array('file' => $configCacheFile));
             if (version_compare(
@@ -97,11 +105,9 @@ class Config extends \SimpleXMLElement
     /**
      * Merge additional config files
      *
-     * @param string $rootPath
-     * @param string $projectDir
      * @return void
      */
-    public static function mergeExtraConfig($rootPath, $projectDir)
+    public static function mergeExtraConfig()
     {
         $merger = new XmlMerger();
         $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
@@ -109,13 +115,7 @@ class Config extends \SimpleXMLElement
         $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
         foreach (self::getInstance()->getNodeArray('additional_config') as $file) {
-            if (0 === strpos($file, 'PROJECT_DIR')) {
-                $file = str_replace('PROJECT_DIR', $projectDir, $file);
-            } elseif (0 === strpos($file, 'HOME')) {
-                $file = str_replace('HOME', self::_getHomeUserDir(), $file);
-            } else {
-                $file = $rootPath . DIRECTORY_SEPARATOR . $file;
-            }
+            $file = self::_readPath($file);
             if (!is_file($file)) {
                 continue;
             }
@@ -129,7 +129,7 @@ class Config extends \SimpleXMLElement
         }
 
         //write cached config file
-        $cacheFile = self::getCacheFile($rootPath, $projectDir);
+        $cacheFile = self::getCacheFile();
         if (is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
@@ -139,16 +139,16 @@ class Config extends \SimpleXMLElement
      * Get home user directory
      *
      * @return string
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
     protected static function _getHomeUserDir()
     {
-        if (isset($_SERVER['HOMEPATH'])) {
-            $home = $_SERVER['HOMEPATH'];
+        if (isset($_SERVER['USERPROFILE'])) {
+            $home = $_SERVER['USERPROFILE'];
         } elseif (isset($_SERVER['HOME'])) {
             $home = $_SERVER['HOME'];
         } else {
-            throw new Exception('Path to home directory not found.');
+            throw new Exception('Path to user home directory not found.');
         }
         return $home;
     }
@@ -165,15 +165,38 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get project dir from hook file
+     * Get project dir
+     *
+     * @todo It should be removed from Config
+     * @return string
+     */
+    public static function getProjectDir()
+    {
+        return static::$_projectDir;
+    }
+
+    /**
+     * Set project dir by hook file
      *
      * @todo It should be removed from Config
      * @param string $hookFile
      * @return string
      */
-    public static function getProjectDir($hookFile)
+    public static function setProjectDir($hookFile)
     {
-        return $projectDir = realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..');
+        static::$_projectDir = realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..');
+    }
+
+    /**
+     * Set project dir by hook file
+     *
+     * @todo  It should be removed from Config
+     * @param string $dir
+     * @return string
+     */
+    public static function setRootDir($dir)
+    {
+        static::$_rootDir = rtrim($dir, '\\/');
     }
 
     /**
@@ -214,15 +237,40 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * @param string $rootPath
+     * Get cache directory
+     *
      * @return string
+     * @throws Exception
      */
-    public static function getCacheDir($rootPath)
+    public static function getCacheDir()
     {
-        return realpath(
-            $rootPath . DIRECTORY_SEPARATOR
-                . trim(Config::getInstance()->getNode('cache_dir'), '\\/')
-        );
+        $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
+        $dir = self::_readPath($path);
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0750, true)) {
+                throw new Exception("Unable to create cache directory by path '$dir'");
+            }
+        }
+        return realpath($dir);
+    }
+
+    /**
+     * Read path
+     *
+     * @param string $path
+     * @return string
+     * @throws Exception
+     */
+    protected static function _readPath($path)
+    {
+        if (0 === strpos($path, 'PROJECT_DIR')) {
+            $path = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
+        } elseif (0 === strpos($path, 'HOME')) {
+            $path = str_replace('HOME', self::_getHomeUserDir(), $path);
+        } else {
+            $path = static::$_rootDir . DIRECTORY_SEPARATOR . $path;
+        }
+        return $path;
     }
 
     /**

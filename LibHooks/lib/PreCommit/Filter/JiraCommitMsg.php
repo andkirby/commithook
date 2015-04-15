@@ -101,8 +101,10 @@ class JiraCommitMsg implements InterfaceFilter
                 return false;
             }
         } catch (Api\Exception $e) {
+            //add verbosity
             return false;
         } catch (ApiException $e) {
+            //add verbosity
             return false;
         }
 
@@ -185,14 +187,14 @@ class JiraCommitMsg implements InterfaceFilter
      *
      * @param string $issueKey
      * @return \PreCommit\Jira\Issue
+     * @throws Api\Exception
      */
     protected function _getIssue($issueKey)
     {
         //TODO Move getting an issue into JIRA namespace.
-        $api = $this->_getApi();
 
         /** @var Api\Result $result */
-        $result = $api->api(
+        $result = $this->_getApi()->api(
             Api::REQUEST_GET,
             sprintf("/rest/api/2/issue/%s", $issueKey),
             array('fields' => 'summary')

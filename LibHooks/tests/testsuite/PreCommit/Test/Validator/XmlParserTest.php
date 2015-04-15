@@ -31,7 +31,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
     {
         //init config object
         Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
-
+        Config::setRootDir(PROJECT_ROOT);
         $vcsAdapter = self::_getVcsAdapterMock();
 
         /** @var PreCommit $processor */
