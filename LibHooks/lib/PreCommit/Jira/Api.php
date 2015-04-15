@@ -38,7 +38,7 @@ class Api extends JiraLib\Api
         AuthenticationInterface $authentication,
         ClientInterface $client = null
     ) {
-        if (!$authentication->getId() || $authentication->getPassword()) {
+        if (!$authentication->getId() || !$authentication->getPassword()) {
             throw new Api\Exception('Username or password is empty.', self::ERROR_EMPTY_CREDENTIALS);
         }
         parent::__construct($endpoint, $authentication, $client);
