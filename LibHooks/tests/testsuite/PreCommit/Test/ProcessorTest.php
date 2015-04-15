@@ -30,6 +30,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::setRootDir(PROJECT_ROOT);
 
         $vcsAdapter = self::_getVcsAdapterMock();
 
