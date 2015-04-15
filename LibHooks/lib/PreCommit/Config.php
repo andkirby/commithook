@@ -143,12 +143,12 @@ class Config extends \SimpleXMLElement
      */
     protected static function _getHomeUserDir()
     {
-        if (isset($_SERVER['HOMEPATH'])) {
-            $home = $_SERVER['HOMEPATH'];
+        if (isset($_SERVER['USERPROFILE'])) {
+            $home = $_SERVER['USERPROFILE'];
         } elseif (isset($_SERVER['HOME'])) {
             $home = $_SERVER['HOME'];
         } else {
-            throw new Exception('Path to home directory not found.');
+            throw new Exception('Path to user home directory not found.');
         }
         return $home;
     }
