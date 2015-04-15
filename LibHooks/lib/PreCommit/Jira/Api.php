@@ -2,6 +2,8 @@
 namespace PreCommit\Jira;
 
 use chobie\Jira as JiraLib;
+use chobie\Jira\Api\Authentication\AuthenticationInterface;
+use chobie\Jira\Api\Client\ClientInterface;
 
 /**
  * Class Api
@@ -12,11 +14,35 @@ use chobie\Jira as JiraLib;
 class Api extends JiraLib\Api
 {
     /**
+     * Exception code when one of credentials is empty
+     */
+    const ERROR_EMPTY_CREDENTIALS = 401;
+
+    /**
      * Process errors flag
      *
      * @var bool
      */
     protected $_processErrors = true;
+
+    /**
+     * Check credentials
+     *
+     * @param string                  $endpoint
+     * @param AuthenticationInterface $authentication
+     * @param ClientInterface         $client
+     * @throws Api\Exception
+     */
+    public function __construct(
+        $endpoint,
+        AuthenticationInterface $authentication,
+        ClientInterface $client = null
+    ) {
+        if (!$authentication->getId() || $authentication->getPassword()) {
+            throw new Api\Exception('Username or password is empty.');
+        }
+        parent::__construct($endpoint, $authentication, $client);
+    }
 
     /**
      * Make API request
