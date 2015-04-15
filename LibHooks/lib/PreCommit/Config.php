@@ -249,7 +249,7 @@ class Config extends \SimpleXMLElement
         $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
         $dir = realpath(self::_readPath($path));
         if (!is_dir($dir)) {
-            if (!mkdir($dir)) {
+            if (!mkdir($dir, 0750, true)) {
                 throw new Exception("Unable to create cache directory by path '$dir'");
             }
         }
