@@ -12,7 +12,7 @@ To install Composer you may follow the link https://getcomposer.org/download/. J
 
 Install composer package `andkirby/commithook` by command (you may put it into your global vendor directory):
 ```shell
-$ composer require andkirby/commithook
+$ composer global require andkirby/commithook
 ```
 ### Set up via command line
 
