@@ -114,7 +114,7 @@ The system loads LibHooks/config.xml file at first.
 #### Config caching
 In then it will try to load cached file with full merged configuration by path:
 
-- commithook/.cache/md5(version + directory of hookfile).xml
+- `HOME/.commithook/.cache/md5(version + directory of hookfile).xml`
 
 Cache will be invalidated if version was updated.
 
@@ -126,7 +126,7 @@ In such case it will merge all files in the XML node "additional_config". There 
 - `commithook/LibHooks/commithook.xml` (contains main part of configuration)
 - `commithook/LibHooks/commithook-magento.xml` (contains configuration for magento projects)
 - `commithook/commithook-local.xml` (it may contain your specific local configuration)
-- `HOME/.commithook.xml` (the same but in user profile directory, the same `~/.commithook.xml`)
+- `HOME/.commithook/commithook.xml` (the same but in user profile directory, the same `~/.commithook.xml`)
 - `PROJECT_DIR/commithook.xml` (it may contain a project specific configuration which can be shared among your team)
 - `PROJECT_DIR/commithook-self.xml` (it may contain a project specific configuration which shouldn't shared to your team)
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
@@ -162,6 +162,7 @@ Open file CommitHook XML configuration file:
 <?xml version="1.0"?>
 <config>
     ...
+    <issue_type>jira</issue_type>
     <jira>
         <url>http://jira.example.com</url>
         <username>my.name</username>
@@ -170,8 +171,9 @@ Open file CommitHook XML configuration file:
     ...
 </config>
 ```
-If it's a global configuration you may put it in `~/.commithook.xml` (`%USERPROFILE%/.commithook.xml` for Windows CLI, or the same path for GitBash).
+If it's a global configuration you may put it in `~/.commithook/commithook.xml` (`%USERPROFILE%/.commithook/commithook.xml` for Windows CLI, or the same path for GitBash).
 (*in next releases a password will be protected.*)
+`issue_type` config node isn't supported now but it will be needed for different issue trackers (future feature).
 
 ##### Short Issue Commit
 So, if you want to be ~~lazy~~ productive... :)
@@ -212,7 +214,7 @@ F 256
 Please do not forget check issue numbers always!! It's just to be more ~~lazy~~ productive! ;D
 
 ###### Caching
-Information about JIRA issues cached in file `.cache/issues-prjnm-v0` where
+Information about JIRA issues cached in file `HOME/.commithook/cache/issues-prjnm-v0` where
 - `prjnm` is your JIRA project key,
 - `v0` version of cache schema.
 
