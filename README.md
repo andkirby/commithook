@@ -154,7 +154,7 @@ There are available commit verbs:
 *NOTE:* Actually this validation is hardcoded. It will be moved to configuration to be flexible later.
 
 #### JIRA Integration
-Since v1.6.10a an integration with JIRA issues tracker is available.
+Since v1.7.0b an integration with JIRA issues tracker is available.
 How it works?
 At first you have to set up authorization to JIRA. All what we need: URL to JIRA, username, password.
 Open file CommitHook XML configuration file:
@@ -243,12 +243,13 @@ Also you may skip validation fully for a particular code block:
 
 ```php
 //@startSkipCommitHooks
-//some bad code or code which cannot validate properly
+//some bad code or code which cannot be validated properly
 $a=function($b){return $b};
 //@finishSkipCommitHooks
 ```
 
 ## Release notes
+- v1.7.0b JIRA integration. (Removed blocking by the code validation for multiline 'if' conditions in PHTML)
 - v1.6.9 Fixed generating paths on install hook files into a project.
 - v1.6.8 Improved skipping methods name validation. Added new tag `@skipCommitHookMethodNaming`.
 - v1.6.7 Added supporting numbers in the issue project key in commit message.
