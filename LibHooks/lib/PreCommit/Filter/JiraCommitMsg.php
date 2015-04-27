@@ -16,6 +16,11 @@ use PreCommit\Jira\Issue;
 class JiraCommitMsg implements InterfaceFilter
 {
     /**
+     * Cache schema version
+     */
+    const CACHE_SCHEMA_VERSION = "0";
+
+    /**
      * Filter commit message
      *
      * @param string $content
@@ -133,7 +138,7 @@ class JiraCommitMsg implements InterfaceFilter
     {
         $project = strtolower($project);
         return $this->_getCacheDir()
-            . "/issues-$project-v0";
+            . "/issues-$project-v" . self::CACHE_SCHEMA_VERSION;
     }
 
     /**
