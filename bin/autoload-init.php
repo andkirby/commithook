@@ -3,7 +3,8 @@ $dir = null;
 $internal = __DIR__ . '/../vendor/';
 if (realpath($internal)) {
     $dir = $internal;
+} else {
+    $dir = realpath(__DIR__ . '/../../../') . '/';
 }
 /** @var Composer\Autoload\ClassLoader $autoloader */
 $autoloader = require $dir . 'autoload.php';
-$autoloader->addPsr4('PreCommit\\', array(realpath(__DIR__ . '/../LibHooks/lib/PreCommit/')));
