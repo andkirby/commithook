@@ -18,11 +18,8 @@ set_include_path(
     )
 );
 
-if (is_file(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-} else {
-    require_once 'autoload.php';
-}
+//init autoloader
+require_once __DIR__ . '/../bin/autoload-init.php';
 
 //Deprecated autoloader since v1.6.10
 //require_once 'lib/PreCommit/Autoloader.php';
