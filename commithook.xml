@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+    <!--Validators setup-->
+    <validators>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <files>
+                        <file>LibHooks/lib/PreCommit/Composer/Application.php</file>
+                    </files>
+                </skip>
+            </filter>
+        </FileFilter>
+    </validators>
+</config>
