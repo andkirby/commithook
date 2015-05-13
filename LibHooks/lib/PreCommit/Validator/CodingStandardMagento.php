@@ -47,6 +47,6 @@ class CodingStandardMagento extends CodingStandard
             }
         }
 
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 }

@@ -9,7 +9,6 @@ use \PreCommit\Exception as Exception;
  */
 class CommitMsg extends AbstractAdapter
 {
-
     /**
      * Path to root of code
      *
@@ -40,9 +39,10 @@ class CommitMsg extends AbstractAdapter
         $this->_codePath = $codePath;
         return $this;
     }
-    //endregion
 
     /**
+     * Process commit message
+     *
      * @return bool
      * @throws Exception
      */
@@ -54,11 +54,10 @@ class CommitMsg extends AbstractAdapter
         $this->_loadValidator('CommitMsg')
             ->validate($message, null);
 
-        $result = array() == $this->_errorCollector->getErrors();
-        if ($result) {
+        if (!$this->_errorCollector->hasErrors()) {
             $this->_setCommitMessage($message);
         }
-        return $result;
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**

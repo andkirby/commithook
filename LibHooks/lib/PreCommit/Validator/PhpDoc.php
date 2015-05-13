@@ -64,11 +64,11 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocVarEmptyType($content, $file);
         $this->_validateExistPhpDocVarNull($content, $file);
 
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
-     * Validate PHPDoc for contained "Enter description here..."
+     * Validate PHPDoc for contained "Enter_description here..."
      *
      * @param string $file
      * @param string $str
@@ -77,7 +77,7 @@ class PhpDoc extends AbstractValidator
      */
     protected function _validateEnterDescription($file, $str, $line)
     {
-        if (preg_match('/\*\s*Enter description here/i', $str)) {
+        if (preg_match('/\*\s*Enter ' . 'description here/i', $str)) {
             $this->_addError($file, self::CODE_PHP_DOC_ENTER_DESCRIPTION, null, $line);
         }
         return $this;
@@ -125,7 +125,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateExistPhpDocForClass($content, $file)
+    protected function _validateExistPhpDocForClass($content, $file)
     {
         if (preg_match_all('/(?<!\*\/\x0D|\*\/)\x0A(class[^\x0A]*)/i', $content, $matches)) {
             foreach ($matches[1] as $match) {
@@ -142,7 +142,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateExistPhpDocMessage($content, $file)
+    protected function _validateExistPhpDocMessage($content, $file)
     {
         if (preg_match_all(
             '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//', $content, $matches
@@ -161,7 +161,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateMissedGapAfterPhpDocMessage($content, $file)
+    protected function _validateMissedGapAfterPhpDocMessage($content, $file)
     {
         if (preg_match_all(
             '/\x20+\* \w.*(?=\x0D?\x0A\x20+\*\x20@)/', $content, $matches
@@ -191,7 +191,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateExistPhpDocExtraGap($content, $file)
+    protected function _validateExistPhpDocExtraGap($content, $file)
     {
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
@@ -208,7 +208,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateExistPhpDocVarEmptyType($content, $file)
+    protected function _validateExistPhpDocVarEmptyType($content, $file)
     {
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)((\x20+\$.+)|(\x0D?\x0A))/', $content, $matches
@@ -225,7 +225,7 @@ class PhpDoc extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateExistPhpDocVarNull($content, $file)
+    protected function _validateExistPhpDocVarNull($content, $file)
     {
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches

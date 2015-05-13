@@ -63,7 +63,7 @@ class PhpClass extends AbstractValidator
         $this->_validatePhpOpenedTag($content, $file);
         $filePath = func_get_arg(2);
         $this->_validatePhpByInterpret($filePath, $file);
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
