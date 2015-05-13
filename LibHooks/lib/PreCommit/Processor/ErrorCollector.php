@@ -61,4 +61,14 @@ class ErrorCollector
     {
         return $this->_errors;
     }
+
+    /**
+     * Check having errors
+     *
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return (bool)$this->_errors;
+    }
 }
