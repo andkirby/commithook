@@ -49,6 +49,12 @@
         </FileFilter>
     </validators>
 
+    <filters>
+        <ShortCommitMsg>
+            <task_tracker_type>jira</task_tracker_type>
+        </ShortCommitMsg>
+    </filters>
+
     <!--Hooks process setup-->
     <hooks>
         <pre-commit>
