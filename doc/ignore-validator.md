@@ -1,3 +1,4 @@
+[Back](README.md)
 ### Ignore code validators
 
 #### Skip Method Name Validation
@@ -24,3 +25,4 @@ Also you may skip validation fully for a particular code block:
 $a=function($b){return $b};
 //@finishSkipCommitHooks
 ```
+[Back](README.md)
