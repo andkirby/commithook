@@ -1,8 +1,9 @@
 <?php
-namespace PreCommit\Filter;
+namespace PreCommit\Filter\ShortCommitMessage;
 
 use PreCommit\Config;
 use PreCommit\Exception;
+use PreCommit\Filter\InterfaceFilter;
 use PreCommit\Jira\Api;
 use chobie\Jira\Api\Authentication\Basic;
 use chobie\Jira\Api\Exception as ApiException;
@@ -13,7 +14,7 @@ use PreCommit\Jira\Issue;
  *
  * @package PreCommit\Validator
  */
-class JiraCommitMsg implements InterfaceFilter
+class Jira implements InterfaceFilter
 {
     /**
      * Cache schema version
