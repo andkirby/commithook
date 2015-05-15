@@ -48,7 +48,7 @@ class CommitMsg extends AbstractAdapter
      */
     public function process()
     {
-        $message = $this->_loadFilter('JiraCommitMsg')
+        $message = $this->_loadFilter('ShortCommitMsg')
             ->filter($this->_getCommitMessage());
 
         $this->_loadValidator('CommitMsg')
