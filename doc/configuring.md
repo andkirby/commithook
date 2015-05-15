@@ -24,4 +24,5 @@ In such case it will merge all files in the XML node "additional_config". There 
 - `PROJECT_DIR/commithook.xml` (it may contain a project specific configuration which can be shared among your team)
 - `PROJECT_DIR/commithook-self.xml` (it may contain a project specific configuration which shouldn't shared to your team)
 The last one can be added into a project and might be used by all developers. PROJECT_DIR - is your project directory where from CommitHOOK has been run.
+
 [Back](README.md)

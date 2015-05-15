@@ -89,4 +89,5 @@ Information about JIRA issues cached in file `HOME/.commithook/cache/issues-prjn
 - Protect commits into issues with not appropriate status.
 - Protect commits with verb Fixed/Implemented into an issue Task/Bug (or auto set it).
 .travis.yml
+
 [Back](README.md)

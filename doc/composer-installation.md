@@ -76,4 +76,5 @@ If you got nothing try to add your `vendor/dir` path to your `~/.bashrc` file:
 echo 'PATH=$PATH":/d/yourpath/to/php/vendor/bin"' >> ~/.bashrc
 ```
 and restart your shell.
+
 [Back](README.md)
