@@ -16,6 +16,12 @@ Install composer package `andkirby/commithook` by command (you may put it into y
 ```shell
 $ composer global require andkirby/commithook
 ```
+### Install
+And install...
+```shell
+$ cd myproject
+$ commithook install
+```
 [More info about installation.](doc/composer-installation.md)
 
 ## [Configuring](doc/configuring.md)
