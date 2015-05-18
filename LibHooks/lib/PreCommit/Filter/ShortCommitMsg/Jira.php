@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Filter\ShortCommitMessage;
+namespace PreCommit\Filter\ShortCommitMsg;
 
 use PreCommit\Config;
 use PreCommit\Exception;

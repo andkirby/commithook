@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Filter;
 
-use PreCommit\Filter\ShortCommitMessage\Jira;
+use PreCommit\Filter\ShortCommitMsg\Jira;
 
 /**
  * Class ShortCommitMsg filter
