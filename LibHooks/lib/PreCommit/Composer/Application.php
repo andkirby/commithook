@@ -17,8 +17,9 @@ class Application extends BaseApplication
      *
      * @see LibHooks/config.xml
      */
-    const VERSION = '1.6.10-alpha.12';
+    const VERSION = 'v1.7.0b.2';
 
+    //@startSkipCommitHooks
     /**
      * Logo
      *
@@ -31,6 +32,7 @@ class Application extends BaseApplication
 /     /  /_ /   (___/(_)/ / /_/ / /_(_(__ /  /_(_)(_)/ |_/_)_
 
 LOGO;
+    //@finishSkipCommitHooks
 
     /**
      * Construct
