@@ -44,8 +44,10 @@ If it's a global configuration you may put it in `~/.commithook/commithook.xml` 
 
 ##### Short Issue Commit
 So, if you want to be ~~lazy~~ productive... :)
-If you tired of copy-pasting issue key and summary that there is a good news.
-If you'd like to speed up of writing commit-verb that there is a good news.
+If you tired of copy-pasting issue key and summary that there is good news.
+If you'd like to speed up of writing commit-verb that there is good news.
+
+First option.
 You may write it shortly:
 ```
 F PRJNM-256
@@ -72,11 +74,52 @@ Please put following config into `PROJECT_DIR/commithook.xml` and commit this fi
 ```
 Of course it will used only when commit message will contain the issue number without project key.
 
-Still complexly? :) Commit message can be more simpler:
+Still complexly? :) Commit message can be more simpler.
+
+Second option. Omit project key.
 ```
 F 256
  - Added missed email validator.
 ```
+In this case the system will find a project key and set it (it should be set in this case).
+
+Third option. Omit verb.
+```
+256
+ - Added missed email validator.
+```
+In this case the system will take default verb by issue type. For bug - `Fixed`
+and for tasks - `Implemented`. Of course if you're making refactoring
+or applying code review you have to set related verb.
+
+There is predefined configuration:
+```xml
+<?xml version="1.0"?>
+<config>
+    ...
+    <filters>
+        <ShortCommitMsg>
+            ...
+            <issue>
+                <jira>
+                    <issue>
+                        <type>
+                            <!-- Tasks -->
+                            <Task>task</Task>
+                            <Sub_Task_Task>task</Sub_Task_Task>
+                            <Change_Request>task</Change_Request>
+                            <!-- Bugs -->
+                            <Bug>bug</Bug>
+                        </type>
+                    </issue>
+                </jira>
+            </issue>
+        </ShortCommitMsg>
+    </filters>
+    ...
+</config>
+```
+
 
 Please do not forget check issue numbers always!! It's just to be more ~~lazy~~ productive! ;D
 
