@@ -215,4 +215,15 @@ class Issue extends JiraLib\Issue
     {
         return $this->fields['summary'];
     }
+
+    /**
+     * Get summary
+     *
+     * @return string
+     */
+    public function getIssueType()
+    {
+        return isset($this->fields['issuetype']['name'])
+            ? $this->fields['issuetype']['name'] : null;
+    }
 }
