@@ -56,9 +56,11 @@
                 <jira>
                     <issue>
                         <type>
+                            <!-- Tasks -->
                             <Task>task</Task>
                             <Sub_Task_Task>task</Sub_Task_Task>
                             <Change_Request>task</Change_Request>
+                            <!-- Bugs -->
                             <Bug>bug</Bug>
                         </type>
                     </issue>
