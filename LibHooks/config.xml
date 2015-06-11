@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
     <!--Please update also PreCommit\Composer\Application::VERSION-->
-    <version>1.8.0-dev</version>
+    <version>1.8.0</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
