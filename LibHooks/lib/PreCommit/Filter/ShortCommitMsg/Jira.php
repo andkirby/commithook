@@ -19,7 +19,7 @@ class Jira implements InterfaceFilter
     /**
      * Cache schema version
      */
-    const CACHE_SCHEMA_VERSION = "0";
+    const CACHE_SCHEMA_VERSION = 1;
 
     /**
      * Filter commit message
@@ -96,13 +96,14 @@ class Jira implements InterfaceFilter
      */
     protected function _getIssueSummary($issueKey)
     {
-        $summary = $this->_getCachedSummary($issueKey);
-        if ($summary) {
-            return $summary;
+        $issueData = $this->_getCachedIssueData($issueKey);
+        if ($issueData['summary']) {
+            return $issueData['summary'];
         }
 
         try {
-            $summary = $this->_getIssue($issueKey)->getSummary();
+            $issue   = $this->_getIssue($issueKey);
+            $summary = $issue->getSummary();
             if (!$summary) {
                 return false;
             }
@@ -114,7 +115,7 @@ class Jira implements InterfaceFilter
             return false;
         }
 
-        $this->_cacheSummary($issueKey, $summary);
+        $this->_cacheIssue($issueKey, $issue);
         return $summary;
     }
 
@@ -148,12 +149,13 @@ class Jira implements InterfaceFilter
      * @param string $issueKey
      * @return string|bool
      */
-    protected function _getCachedSummary($issueKey)
+    protected function _getCachedIssueData($issueKey)
     {
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $cacheFile = $this->_getCacheFile($project);
 
         if (!is_file($cacheFile)) {
+            //no cache file
             return false;
         }
         $fileData = file_get_contents($cacheFile);
@@ -161,15 +163,19 @@ class Jira implements InterfaceFilter
         $position = strpos($fileData, $key);
 
         if (false === $position) {
+            //cache not found
             return false;
         }
 
+        //find cache data
         $fileData = substr($fileData, $position + strlen($key));
         $position = strpos($fileData, "\n");
         if (false !== $position) {
+            //cut target string if it's not in the beginning
             $fileData = substr($fileData, 0, $position);
         }
-        return $fileData;
+
+        return unserialize($fileData);
     }
 
     /**
@@ -251,16 +257,30 @@ class Jira implements InterfaceFilter
      * Write summary to cache file
      *
      * @param string $issueKey
-     * @param string $summary
+     * @param Issue $issue
      * @return $this
      */
-    protected function _cacheSummary($issueKey, $summary)
+    protected function _cacheIssue($issueKey, $issue)
     {
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $file = $this->_getCacheFile($project);
-        $summaryCache = $this->_getCacheStringKey($number) . $summary;
-        file_put_contents($file, $summaryCache . PHP_EOL, FILE_APPEND);
+        $cacheString = $this->_getCacheStringKey($number)
+                       . serialize($this->_getDataToCache($issue));
+        file_put_contents($file, $cacheString . PHP_EOL, FILE_APPEND);
         return $this;
+    }
+
+    /**
+     * Get data for caching
+     *
+     * @param Issue $issue
+     * @return array
+     */
+    protected function _getDataToCache($issue)
+    {
+        return array(
+            'summary' => $issue->getSummary()
+        );
     }
 
     /**
