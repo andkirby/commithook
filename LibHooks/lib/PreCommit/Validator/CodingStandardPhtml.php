@@ -8,7 +8,6 @@ namespace PreCommit\Validator;
  */
 class CodingStandardPhtml extends AbstractValidator
 {
-
     /**#@+
      * Error codes
      */
@@ -44,7 +43,7 @@ class CodingStandardPhtml extends AbstractValidator
         $this->_validateGaps($content, $file);
         $this->_validateCodeStyleByLines($content, $file);
 
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
@@ -54,7 +53,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateGaps($content, $file)
+    protected function _validateGaps($content, $file)
     {
         $content = preg_replace('/\r/', '', $content);
 

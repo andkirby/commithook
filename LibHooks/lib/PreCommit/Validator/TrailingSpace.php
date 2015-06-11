@@ -36,7 +36,7 @@ class TrailingSpace extends AbstractValidator
     {
         $this->_validateRedundantTrailingSpaces($content, $file);
         $this->_validateTrailingLine($content, $file);
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**

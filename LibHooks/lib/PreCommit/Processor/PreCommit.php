@@ -35,6 +35,9 @@ class PreCommit extends AbstractAdapter
 
     /**
      * Set adapter data from config
+     *
+     * @param array|string $vcsType
+     * @throws \PreCommit\Exception
      */
     public function __construct($vcsType)
     {
@@ -70,6 +73,8 @@ class PreCommit extends AbstractAdapter
     //endregion
 
     /**
+     * Process code
+     *
      * @return bool
      * @throws Exception
      */
@@ -110,13 +115,13 @@ class PreCommit extends AbstractAdapter
             $content = $this->runFiltersByExtension('after_all', $content, $file, $filePath);
             $this->runValidatorsByExtension('after_all', $content, $file, $filePath);
         }
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
      * Get file path
      *
-     * @param $file
+     * @param string $file
      * @return string
      * @throws Exception
      */

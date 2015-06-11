@@ -84,7 +84,7 @@ class RedundantCode extends AbstractValidator
             }
         }
 
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**

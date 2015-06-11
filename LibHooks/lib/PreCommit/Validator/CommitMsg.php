@@ -37,6 +37,6 @@ class CommitMsg extends AbstractValidator
         ) {
                 $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $content);
         }
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 }

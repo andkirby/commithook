@@ -8,11 +8,12 @@ namespace PreCommit\Validator;
  */
 class CodingStandard extends AbstractValidator
 {
-    /**
+    /**#@+
      * Skip tag for publicMethodNaming errors
      */
     const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
     const SKIP_TAG_METHOD_NAMING = 'skipCommitHookMethodNaming';
+    /**#@-*/
 
     /**#@+
      * Error codes
@@ -70,7 +71,7 @@ class CodingStandard extends AbstractValidator
         $this->_validateGaps($content, $file);
         $this->_validateCodeStyleByLines($content, $file);
 
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
@@ -80,7 +81,7 @@ class CodingStandard extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    public function _validateGaps($content, $file)
+    protected function _validateGaps($content, $file)
     {
         $content = preg_replace('/\r/', '', $content);
 
@@ -257,7 +258,9 @@ class CodingStandard extends AbstractValidator
             $byte = $content[$i];
             switch ($state) {
                 case 1: //in single quotes
-                    if ($byte == '\'' && $i > 1 && ($content[$i - 1] != '\\' || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')) {
+                    if ($byte == '\'' && $i > 1 && ($content[$i - 1] != '\\'
+                        || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')
+                    ) {
                         $state = 0;
                     }
                     $cleanedText .= $byte;
@@ -348,12 +351,12 @@ class CodingStandard extends AbstractValidator
         preg_match('/function ([A-z_]+)/', $str, $matches);
         if ($matches) {
             $funcName = $matches[1];
-            $reg      = '~[ *]*\@(' . self::SKIP_TAG_PUBLIC_METHOD_NAMING . '|' . self::SKIP_TAG_METHOD_NAMING . ')\s+' . $funcName . '\n~';
+            $reg      = '~[ *]*\@(' . self::SKIP_TAG_PUBLIC_METHOD_NAMING
+                        . '|' . self::SKIP_TAG_METHOD_NAMING . ')\s+' . $funcName . '\n~';
             if (preg_match($reg, $content, $m)) {
                 return true;
             }
         }
         return false;
     }
-
 }

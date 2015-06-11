@@ -42,7 +42,7 @@ class FileStyle extends AbstractValidator
         $this->_validateTabIndents($content, $file);
         $this->_validateLineBreaks($content, $file);
         $this->_validateBom($content, $file);
-        return array() == $this->_errorCollector->getErrors();
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**

@@ -1,8 +1,9 @@
 <?php
-namespace PreCommit\Filter;
+namespace PreCommit\Filter\ShortCommitMsg;
 
 use PreCommit\Config;
 use PreCommit\Exception;
+use PreCommit\Filter\InterfaceFilter;
 use PreCommit\Jira\Api;
 use chobie\Jira\Api\Authentication\Basic;
 use chobie\Jira\Api\Exception as ApiException;
@@ -13,19 +14,19 @@ use PreCommit\Jira\Issue;
  *
  * @package PreCommit\Validator
  */
-class JiraCommitMsg implements InterfaceFilter
+class Jira implements InterfaceFilter
 {
     /**
      * Cache schema version
      */
-    const CACHE_SCHEMA_VERSION = "0";
+    const CACHE_SCHEMA_VERSION = 1;
 
     /**
      * Filter commit message
      *
      * @param string $content
      * @param string $file
-     * @return mixed
+     * @return string
      */
     public function filter($content, $file = null)
     {
@@ -46,13 +47,39 @@ class JiraCommitMsg implements InterfaceFilter
         }
         list($verb, $issueKey) = $interpretResult;
 
-        $summary = $this->_getIssueSummary($issueKey);
-        if (!$summary) {
+        $issueData = $this->_getIssueData($issueKey);
+        if (!$issueData) {
             return $content;
         }
-        $verb = $this->_interpretVerb($verb);
-        $full = "$verb $issueKey: $summary";
+
+        //get commit message verb
+        if ($verb) {
+            $verb = $this->_interpretVerb($verb);
+        } else {
+            $verb = $this->_getVerbByIssueType($issueData['type']);
+        }
+        $full = "$verb $issueKey: {$issueData['summary']}";
         return str_replace($first, $full, $content);
+    }
+
+    /**
+     * Get verb by issue type
+     *
+     * @param string $type
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    protected function _getVerbByIssueType($type)
+    {
+        $type = preg_replace('/[^A-z]/', '_', $type); //normalize name
+        $xpath = 'filters/ShortCommitMsg/issue/jira/issue/type/' . $type;
+        $generalType = $this->_getConfig()->getNode($xpath);
+        if ('task' === $generalType) {
+            return $this->_interpretVerb('I');
+        } elseif ('bug' === $generalType) {
+            return $this->_interpretVerb('F');
+        }
+        throw new Exception("Invalid type for config node: '$xpath'.");
     }
 
     /**
@@ -93,16 +120,18 @@ class JiraCommitMsg implements InterfaceFilter
      * @param string $issueKey
      * @return mixed
      */
-    protected function _getIssueSummary($issueKey)
+    protected function _getIssueData($issueKey)
     {
-        $summary = $this->_getCachedSummary($issueKey);
-        if ($summary) {
-            return $summary;
+        $issueData = $this->_getCachedIssueData($issueKey);
+        if ($issueData) {
+            return $issueData;
         }
 
         try {
-            $summary = $this->_getIssue($issueKey)->getSummary();
-            if (!$summary) {
+            $issue = $this->_getIssue($issueKey);
+            $issueData = $this->_collectIssueData($issue);
+
+            if (!$this->_isIssueDataValid($issueData)) {
                 return false;
             }
         } catch (Api\Exception $e) {
@@ -113,8 +142,8 @@ class JiraCommitMsg implements InterfaceFilter
             return false;
         }
 
-        $this->_cacheSummary($issueKey, $summary);
-        return $summary;
+        $this->_cacheIssue($issueKey, $issue);
+        return $issueData;
     }
 
     /**
@@ -146,28 +175,44 @@ class JiraCommitMsg implements InterfaceFilter
      *
      * @param string $issueKey
      * @return string|bool
+     * @todo Refactoring needed
      */
-    protected function _getCachedSummary($issueKey)
+    protected function _getCachedIssueData($issueKey)
     {
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $cacheFile = $this->_getCacheFile($project);
 
         if (!is_file($cacheFile)) {
+            //no cache file
             return false;
         }
-        $fileData = file_get_contents($cacheFile);
-        $key = $this->_getCacheStringKey($number);
-        $position = strpos($fileData, $key);
+        $cacheContent = file_get_contents($cacheFile);
+        $cacheKey = $this->_getCacheStringKey($number);
+        $position = strpos($cacheContent, $cacheKey);
 
         if (false === $position) {
+            //cache not found
             return false;
         }
 
-        $fileData = substr($fileData, $position + strlen($key));
-        $position = strpos($fileData, "\n");
+        //find cache data
+        $dataStr = substr($cacheContent, $position + strlen($cacheKey));
+        $position = strpos($dataStr, "\n");
         if (false !== $position) {
-            $fileData = substr($fileData, 0, $position);
+            //cut target string if it's not in the beginning
+            $dataStr = substr($dataStr, 0, $position);
         }
+
+        $fileData = unserialize($dataStr);
+
+        if ($this->_isIssueDataValid($fileData)) {
+            //not full data was cached
+            //invalidate cache element
+            $cacheContent = str_replace($cacheKey . $dataStr . "\n", '', $cacheContent);
+            file_put_contents($cacheFile, $cacheContent);
+            return false;
+        }
+
         return $fileData;
     }
 
@@ -202,7 +247,7 @@ class JiraCommitMsg implements InterfaceFilter
         $result = $this->_getApi()->api(
             Api::REQUEST_GET,
             sprintf("/rest/api/2/issue/%s", $issueKey),
-            array('fields' => 'summary')
+            array('fields' => 'summary,issuetype')
         );
         if ($result) {
             return new Issue($result->getResult());
@@ -239,7 +284,7 @@ class JiraCommitMsg implements InterfaceFilter
         if ((string)(int)$issueKey === $issueKey) {
             $project = $this->_getConfig()->getNode('jira/project');
             if (!$project) {
-                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook-project.xml".');
+                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook.xml" within current project.');
             }
             $issueKey = "$project-$issueKey";
         }
@@ -250,16 +295,31 @@ class JiraCommitMsg implements InterfaceFilter
      * Write summary to cache file
      *
      * @param string $issueKey
-     * @param string $summary
+     * @param Issue $issue
      * @return $this
      */
-    protected function _cacheSummary($issueKey, $summary)
+    protected function _cacheIssue($issueKey, $issue)
     {
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $file = $this->_getCacheFile($project);
-        $summaryCache = $this->_getCacheStringKey($number) . $summary;
-        file_put_contents($file, $summaryCache . PHP_EOL, FILE_APPEND);
+        $cacheString = $this->_getCacheStringKey($number)
+                       . serialize($this->_collectIssueData($issue));
+        file_put_contents($file, $cacheString . PHP_EOL, FILE_APPEND);
         return $this;
+    }
+
+    /**
+     * Get data for caching
+     *
+     * @param Issue $issue
+     * @return array
+     */
+    protected function _collectIssueData($issue)
+    {
+        return array(
+            'summary' => $issue->getSummary(),
+            'type'    => $issue->getIssueType()
+        );
     }
 
     /**
@@ -291,15 +351,26 @@ class JiraCommitMsg implements InterfaceFilter
      */
     protected function _interpretMessageTitle($message)
     {
-        preg_match('/^([IRFC]) (([A-Z0-9]+-)?[0-9]+)[ ]*$/', $message, $m);
+        preg_match('/^([IRFC] )?(([A-Z0-9]+-)?[0-9]+)/', $message, $m);
         if (!$m) {
             return false;
         }
         //skip first match
         array_shift($m);
 
-        $commitVerb = array_shift($m);
+        $commitVerb = trim(array_shift($m));
         $issueKey = $this->_normalizeIssueKey(array_shift($m));
         return array($commitVerb, $issueKey);
+    }
+
+    /**
+     * Validate issue data
+     *
+     * @param array $issueData
+     * @return bool
+     */
+    protected function _isIssueDataValid($issueData)
+    {
+        return !empty($issueData['summary']) && !empty($issueData['type']);
     }
 }
