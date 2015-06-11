@@ -158,9 +158,9 @@ class Jira implements InterfaceFilter
             //no cache file
             return false;
         }
-        $fileData = file_get_contents($cacheFile);
+        $fileContent = file_get_contents($cacheFile);
         $key = $this->_getCacheStringKey($number);
-        $position = strpos($fileData, $key);
+        $position = strpos($fileContent, $key);
 
         if (false === $position) {
             //cache not found
@@ -168,14 +168,16 @@ class Jira implements InterfaceFilter
         }
 
         //find cache data
-        $fileData = substr($fileData, $position + strlen($key));
-        $position = strpos($fileData, "\n");
+        $dataStr = substr($fileContent, $position + strlen($key));
+        $position = strpos($dataStr, "\n");
         if (false !== $position) {
             //cut target string if it's not in the beginning
-            $fileData = substr($fileData, 0, $position);
+            $dataStr = substr($dataStr, 0, $position);
         }
 
-        return unserialize($fileData);
+        $fileData = unserialize($dataStr);
+
+        return $fileData;
     }
 
     /**
@@ -279,7 +281,8 @@ class Jira implements InterfaceFilter
     protected function _getDataToCache($issue)
     {
         return array(
-            'summary' => $issue->getSummary()
+            'summary' => $issue->getSummary(),
+            'type'    => $issue->getIssueType()
         );
     }
 
