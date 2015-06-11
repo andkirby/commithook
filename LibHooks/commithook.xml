@@ -52,6 +52,18 @@
     <filters>
         <ShortCommitMsg>
             <task_tracker_type>jira</task_tracker_type>
+            <issue>
+                <jira>
+                    <issue>
+                        <type>
+                            <Task>task</Task>
+                            <Sub_Task_Task>task</Sub_Task_Task>
+                            <Change_Request>task</Change_Request>
+                            <Bug>bug</Bug>
+                        </type>
+                    </issue>
+                </jira>
+            </issue>
         </ShortCommitMsg>
     </filters>
 

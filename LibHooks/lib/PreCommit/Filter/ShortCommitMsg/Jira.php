@@ -26,7 +26,7 @@ class Jira implements InterfaceFilter
      *
      * @param string $content
      * @param string $file
-     * @return mixed
+     * @return string
      */
     public function filter($content, $file = null)
     {
@@ -47,13 +47,39 @@ class Jira implements InterfaceFilter
         }
         list($verb, $issueKey) = $interpretResult;
 
-        $summary = $this->_getIssueSummary($issueKey);
-        if (!$summary) {
+        $issueData = $this->_getIssueData($issueKey);
+        if (!$issueData) {
             return $content;
         }
-        $verb = $this->_interpretVerb($verb);
-        $full = "$verb $issueKey: $summary";
+
+        //get commit message verb
+        if ($verb) {
+            $verb = $this->_interpretVerb($verb);
+        } else {
+            $verb = $this->_getVerbByIssueType($issueData['type']);
+        }
+        $full = "$verb $issueKey: {$issueData['summary']}";
         return str_replace($first, $full, $content);
+    }
+
+    /**
+     * Get verb by issue type
+     *
+     * @param string $type
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    protected function _getVerbByIssueType($type)
+    {
+        $type = preg_replace('/[^A-z]/', '_', $type); //normalize name
+        $xpath = 'filters/ShortCommitMsg/issue/jira/issue/type/' . $type;
+        $generalType = $this->_getConfig()->getNode($xpath);
+        if ('task' === $generalType) {
+            return $this->_interpretVerb('I');
+        } elseif ('bug' === $generalType) {
+            return $this->_interpretVerb('F');
+        }
+        throw new Exception("Invalid type for config node: '$xpath'.");
     }
 
     /**
@@ -94,17 +120,18 @@ class Jira implements InterfaceFilter
      * @param string $issueKey
      * @return mixed
      */
-    protected function _getIssueSummary($issueKey)
+    protected function _getIssueData($issueKey)
     {
         $issueData = $this->_getCachedIssueData($issueKey);
-        if ($issueData['summary']) {
-            return $issueData['summary'];
+        if ($issueData) {
+            return $issueData;
         }
 
         try {
-            $issue   = $this->_getIssue($issueKey);
-            $summary = $issue->getSummary();
-            if (!$summary) {
+            $issue = $this->_getIssue($issueKey);
+            $issueData = $this->_collectIssueData($issue);
+
+            if (!$this->_isIssueDataValid($issueData)) {
                 return false;
             }
         } catch (Api\Exception $e) {
@@ -116,7 +143,7 @@ class Jira implements InterfaceFilter
         }
 
         $this->_cacheIssue($issueKey, $issue);
-        return $summary;
+        return $issueData;
     }
 
     /**
@@ -178,7 +205,7 @@ class Jira implements InterfaceFilter
 
         $fileData = unserialize($dataStr);
 
-        if (empty($fileData['summary']) || empty($fileData['type'])) {
+        if ($this->_isIssueDataValid($fileData)) {
             //not full data was cached
             //invalidate cache element
             $cacheContent = str_replace($cacheKey . $dataStr . "\n", '', $cacheContent);
@@ -276,7 +303,7 @@ class Jira implements InterfaceFilter
         list($project, $number) = $this->_interpretIssueKey($issueKey);
         $file = $this->_getCacheFile($project);
         $cacheString = $this->_getCacheStringKey($number)
-                       . serialize($this->_getDataToCache($issue));
+                       . serialize($this->_collectIssueData($issue));
         file_put_contents($file, $cacheString . PHP_EOL, FILE_APPEND);
         return $this;
     }
@@ -287,7 +314,7 @@ class Jira implements InterfaceFilter
      * @param Issue $issue
      * @return array
      */
-    protected function _getDataToCache($issue)
+    protected function _collectIssueData($issue)
     {
         return array(
             'summary' => $issue->getSummary(),
@@ -324,15 +351,26 @@ class Jira implements InterfaceFilter
      */
     protected function _interpretMessageTitle($message)
     {
-        preg_match('/^([IRFC]) (([A-Z0-9]+-)?[0-9]+)[ ]*$/', $message, $m);
+        preg_match('/^([IRFC] )?(([A-Z0-9]+-)?[0-9]+)/', $message, $m);
         if (!$m) {
             return false;
         }
         //skip first match
         array_shift($m);
 
-        $commitVerb = array_shift($m);
+        $commitVerb = trim(array_shift($m));
         $issueKey = $this->_normalizeIssueKey(array_shift($m));
         return array($commitVerb, $issueKey);
+    }
+
+    /**
+     * Validate issue data
+     *
+     * @param array $issueData
+     * @return bool
+     */
+    protected function _isIssueDataValid($issueData)
+    {
+        return !empty($issueData['summary']) && !empty($issueData['type']);
     }
 }
