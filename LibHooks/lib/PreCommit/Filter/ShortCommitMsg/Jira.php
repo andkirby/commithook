@@ -148,6 +148,7 @@ class Jira implements InterfaceFilter
      *
      * @param string $issueKey
      * @return string|bool
+     * @todo Refactoring needed
      */
     protected function _getCachedIssueData($issueKey)
     {
@@ -158,9 +159,9 @@ class Jira implements InterfaceFilter
             //no cache file
             return false;
         }
-        $fileContent = file_get_contents($cacheFile);
-        $key = $this->_getCacheStringKey($number);
-        $position = strpos($fileContent, $key);
+        $cacheContent = file_get_contents($cacheFile);
+        $cacheKey = $this->_getCacheStringKey($number);
+        $position = strpos($cacheContent, $cacheKey);
 
         if (false === $position) {
             //cache not found
@@ -168,7 +169,7 @@ class Jira implements InterfaceFilter
         }
 
         //find cache data
-        $dataStr = substr($fileContent, $position + strlen($key));
+        $dataStr = substr($cacheContent, $position + strlen($cacheKey));
         $position = strpos($dataStr, "\n");
         if (false !== $position) {
             //cut target string if it's not in the beginning
@@ -176,6 +177,14 @@ class Jira implements InterfaceFilter
         }
 
         $fileData = unserialize($dataStr);
+
+        if (empty($fileData['summary']) || empty($fileData['type'])) {
+            //not full data was cached
+            //invalidate cache element
+            $cacheContent = str_replace($cacheKey . $dataStr . "\n", '', $cacheContent);
+            file_put_contents($cacheFile, $cacheContent);
+            return false;
+        }
 
         return $fileData;
     }
@@ -211,7 +220,7 @@ class Jira implements InterfaceFilter
         $result = $this->_getApi()->api(
             Api::REQUEST_GET,
             sprintf("/rest/api/2/issue/%s", $issueKey),
-            array('fields' => 'summary')
+            array('fields' => 'summary,issuetype')
         );
         if ($result) {
             return new Issue($result->getResult());
