@@ -240,7 +240,7 @@ class Jira implements InterfaceFilter
         if ((string)(int)$issueKey === $issueKey) {
             $project = $this->_getConfig()->getNode('jira/project');
             if (!$project) {
-                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook-project.xml".');
+                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook.xml" within current project.');
             }
             $issueKey = "$project-$issueKey";
         }
