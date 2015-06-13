@@ -30,30 +30,30 @@ class PreCommitTest extends \PHPUnit_Framework_TestCase
             array(
                 'php',
                 array(
-                    'PhpClass',
-                    'PhpDoc',
-                    'CodingStandard',
-                    'RedundantCode',
-                    'CodingStandardMagento',
+                    'PhpClass' => 1,
+                    'PhpDoc' => 1,
+                    'CodingStandard' => 1,
+                    'RedundantCode' => 1,
+                    'CodingStandardMagento' => 1,
                 )
             ),
             array(
                 'phtml',
                 array(
-                    'RedundantCode',
-                    'CodingStandardPhtml',
+                    'RedundantCode' => 1,
+                    'CodingStandardPhtml' => 1,
                 )
             ),
             array(
                 'js',
                 array(
-                    'RedundantCode',
+                    'RedundantCode' => 1,
                 )
             ),
             array(
                 'xml',
                 array(
-                    'XmlParser',
+                    'XmlParser' => 1,
                 )
             ),
         );
