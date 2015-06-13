@@ -34,7 +34,7 @@
             <filetype>
                 <php>
                     <validators>
-                        <CodingStandardMagento />
+                        <CodingStandardMagento>1</CodingStandardMagento>
                     </validators>
                 </php>
             </filetype>
