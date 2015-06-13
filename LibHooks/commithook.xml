@@ -78,47 +78,47 @@
                 <!--Run validators, filters before specific validators-->
                 <before_all>
                     <filters>
-                        <SkipContent />
+                        <SkipContent>1</SkipContent>
                     </filters>
                     <validators>
-                        <UnresolvedConflict />
+                        <UnresolvedConflict>1</UnresolvedConflict>
                     </validators>
                 </before_all>
                 <php>
                     <validators>
-                        <PhpClass />
-                        <PhpDoc />
-                        <CodingStandard />
-                        <RedundantCode />
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
                     </validators>
                 </php>
                 <phtml>
                     <validators>
-                        <RedundantCode />
-                        <CodingStandardPhtml />
+                        <RedundantCode>1</RedundantCode>
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
                     </validators>
                 </phtml>
                 <js>
                     <validators>
-                        <RedundantCode />
+                        <RedundantCode>1</RedundantCode>
                     </validators>
                 </js>
                 <xml>
                     <validators>
-                        <XmlParser />
+                        <XmlParser>1</XmlParser>
                     </validators>
                 </xml>
                 <after_all>
                     <validators>
-                        <TrailingSpace />
-                        <FileStyle />
+                        <TrailingSpace>1</TrailingSpace>
+                        <FileStyle>1</FileStyle>
                     </validators>
                 </after_all>
             </filetype>
         </pre-commit>
         <commit-msg>
             <validators>
-                <CommitMessage />
+                <CommitMessage>1</CommitMessage>
             </validators>
         </commit-msg>
     </hooks>

@@ -103,17 +103,17 @@ class PreCommit extends AbstractAdapter
             $ext = pathinfo($file, PATHINFO_EXTENSION);
 
             //run validators for non-filtered content
-            $this->runValidatorsByExtension('before_all_original', $content, $file, $filePath);
+            $this->runValidators('before_all_original', $content, $file, $filePath);
 
             //run filters and validators before running by the file extension
-            $content = $this->runFiltersByExtension('before_all', $content, $file, $filePath);
-            $this->runValidatorsByExtension('before_all', $content, $file, $filePath);
+            $content = $this->runFilters('before_all', $content, $file, $filePath);
+            $this->runValidators('before_all', $content, $file, $filePath);
 
-            $content = $this->runFiltersByExtension($ext, $content, $file, $filePath);
-            $this->runValidatorsByExtension($ext, $content, $file, $filePath);
+            $content = $this->runFilters($ext, $content, $file, $filePath);
+            $this->runValidators($ext, $content, $file, $filePath);
 
-            $content = $this->runFiltersByExtension('after_all', $content, $file, $filePath);
-            $this->runValidatorsByExtension('after_all', $content, $file, $filePath);
+            $content = $this->runFilters('after_all', $content, $file, $filePath);
+            $this->runValidators('after_all', $content, $file, $filePath);
         }
         return !$this->_errorCollector->hasErrors();
     }
@@ -166,8 +166,7 @@ class PreCommit extends AbstractAdapter
      */
     public function getValidators($fileType)
     {
-        $array = $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/validators');
-        return array_keys($array);
+        return $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/validators');
     }
 
     /**
@@ -178,8 +177,7 @@ class PreCommit extends AbstractAdapter
      */
     public function getFilters($fileType)
     {
-        $array = $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/filters');
-        return array_keys($array);
+        return $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/filters');
     }
 
     /**
@@ -191,11 +189,13 @@ class PreCommit extends AbstractAdapter
      * @param string $filePath
      * @return string           Return filtered content
      */
-    public function runFiltersByExtension($ext, $content, $file, $filePath)
+    public function runFilters($ext, $content, $file, $filePath)
     {
-        foreach ($this->getFilters($ext) as $validatorName) {
-            $content = $this->_loadFilter($validatorName)
-                ->filter($content, $file, $filePath);
+        foreach ($this->getFilters($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                $content = $this->_loadFilter($validatorName)
+                    ->filter($content, $file, $filePath);
+            }
         }
         return $content;
     }
@@ -209,11 +209,13 @@ class PreCommit extends AbstractAdapter
      * @param string $filePath
      * @return void             Returns nothing
      */
-    public function runValidatorsByExtension($ext, $content, $file, $filePath)
+    public function runValidators($ext, $content, $file, $filePath)
     {
-        foreach ($this->getValidators($ext) as $validatorName) {
-            $this->_loadValidator($validatorName)
-                ->validate($content, $file, $filePath);
+        foreach ($this->getValidators($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                $this->_loadValidator($validatorName)
+                    ->validate($content, $file, $filePath);
+            }
         }
     }
 }
