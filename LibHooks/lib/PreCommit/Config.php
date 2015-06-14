@@ -88,7 +88,9 @@ class Config extends \SimpleXMLElement
     {
         //load config from cache
         $configCacheFile = self::getCacheFile();
-        if (is_file($configCacheFile)) {
+        if (self::getInstance()->getNode('disable_cache')
+            && is_file($configCacheFile)
+        ) {
             $configCached = self::loadInstance(array('file' => $configCacheFile));
             if (version_compare(
                 $configCached->getNode('version'),
@@ -120,7 +122,7 @@ class Config extends \SimpleXMLElement
                 continue;
             }
             try {
-                $xml = self::loadXmlFileToMerge($file);
+                $xml = self::_loadXmlFileToMerge($file);
                 $merger->merge(self::getInstance(), $xml);
             } catch (\Exception $e) {
                 echo 'XML ERROR: Could not load additional config file ' . $file;
@@ -143,6 +145,7 @@ class Config extends \SimpleXMLElement
      */
     protected static function _getHomeUserDir()
     {
+        //@startSkipCommitHooks
         if (isset($_SERVER['USERPROFILE'])) {
             $home = $_SERVER['USERPROFILE'];
         } elseif (isset($_SERVER['HOME'])) {
@@ -150,6 +153,7 @@ class Config extends \SimpleXMLElement
         } else {
             throw new Exception('Path to user home directory not found.');
         }
+        //@finishSkipCommitHooks
         return $home;
     }
 
@@ -159,7 +163,7 @@ class Config extends \SimpleXMLElement
      * @param string $file
      * @return \SimpleXMLElement
      */
-    protected static function loadXmlFileToMerge($file)
+    protected static function _loadXmlFileToMerge($file)
     {
         return simplexml_load_file($file);
     }
