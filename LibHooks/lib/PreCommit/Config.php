@@ -80,6 +80,16 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Check cache enabling
+     *
+     * @return null|string
+     */
+    public static function isCacheDisabled()
+    {
+        return (bool)self::getInstance()->getNode('disable_cache');
+    }
+
+    /**
      * Load cached config
      *
      * @return bool             Returns FALSE in case it couldn't load cached config
@@ -273,16 +283,6 @@ class Config extends \SimpleXMLElement
             $path = static::$_rootDir . DIRECTORY_SEPARATOR . $path;
         }
         return $path;
-    }
-
-    /**
-     * Check cache enabling
-     *
-     * @return null|string
-     */
-    public static function isCacheDisabled()
-    {
-        return (bool)self::getInstance()->getNode('disable_cache');
     }
 
     /**
