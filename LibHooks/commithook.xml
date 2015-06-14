@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <config>
+    <!--Tasks tracker name. Default: JIRA-->
+    <tracker_name>jira</tracker_name>
+
     <!--Validators setup-->
     <validators>
         <PhpClass>
@@ -55,10 +58,11 @@
 
     <filters>
         <ShortCommitMsg>
-            <task_tracker_type>jira</task_tracker_type>
             <issue>
-                <jira>
-                    <issue>
+                <tracker>
+                    <!--JIRA specific types-->
+                    <jira>
+                        <!--JIRA issue-type map to general issue-type-->
                         <type>
                             <!-- Tasks -->
                             <Task>task</Task>
@@ -67,8 +71,26 @@
                             <!-- Bugs -->
                             <Bug>bug</Bug>
                         </type>
-                    </issue>
-                </jira>
+                    </jira>
+                </tracker>
+
+                <!--Short verb version for quick message-->
+                <short_verb>
+                    <!--For tasks at all-->
+                    <I>Implemented</I>
+                    <!--Functionality wasn't changed - refactoring only-->
+                    <R>Refactored</R>
+                    <!--Something was fixed. For bugs only-->
+                    <R>Fixed</R>
+                    <!--Applying Code Review Changes-->
+                    <C>CR Changes</C>
+                </short_verb>
+
+                <!--If the verb was omitted-->
+                <default_type_verb>
+                    <task>I</task>
+                    <bug>F</bug>
+                </default_type_verb>
             </issue>
         </ShortCommitMsg>
     </filters>
