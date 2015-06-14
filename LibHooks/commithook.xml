@@ -81,7 +81,7 @@
                     <!--Functionality wasn't changed - refactoring only-->
                     <R>Refactored</R>
                     <!--Something was fixed. For bugs only-->
-                    <R>Fixed</R>
+                    <F>Fixed</F>
                     <!--Applying Code Review Changes-->
                     <C>CR Changes</C>
                 </short_verb>
