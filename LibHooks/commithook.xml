@@ -120,10 +120,5 @@
                 </after_all>
             </filetype>
         </pre-commit>
-        <commit-msg>
-            <validators>
-                <CommitMessage>1</CommitMessage>
-            </validators>
-        </commit-msg>
     </hooks>
 </config>
