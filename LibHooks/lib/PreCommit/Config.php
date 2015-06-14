@@ -98,7 +98,7 @@ class Config extends \SimpleXMLElement
     {
         //load config from cache
         $configCacheFile = self::getCacheFile();
-        if (self::isCacheDisabled() && is_file($configCacheFile)) {
+        if (!self::isCacheDisabled() && is_file($configCacheFile)) {
             $configCached = self::loadInstance(array('file' => $configCacheFile));
             if (version_compare(
                 $configCached->getNode('version'),
@@ -140,7 +140,7 @@ class Config extends \SimpleXMLElement
 
         //write cached config file
         $cacheFile = self::getCacheFile();
-        if (self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
+        if (!self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
     }
