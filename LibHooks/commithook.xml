@@ -3,6 +3,16 @@
     <!--Tasks tracker name. Default: JIRA-->
     <tracker_name>jira</tracker_name>
 
+    <tracker>
+        <jira>
+            <adapter>
+                <issue>
+                    <class>\PreCommit\Issue\JiraAdapter</class>
+                </issue>
+            </adapter>
+        </jira>
+    </tracker>
+
     <!--Validators setup-->
     <validators>
         <PhpClass>
