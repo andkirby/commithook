@@ -6,7 +6,11 @@
             <interpret>c:/xampp/php/php.exe</interpret>
         </PhpClass>
         <CommitMessage>
-            <format>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z]{2,}-[0-9]+: /</format>
+            <match>
+                <merge>/^Merge /</merge>
+                <revert>/^Revert /</revert>
+                <full>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z0-9]{2,}-[0-9]+: /</full>
+            </match>
         </CommitMessage>
         <FileFilter>
             <filter>

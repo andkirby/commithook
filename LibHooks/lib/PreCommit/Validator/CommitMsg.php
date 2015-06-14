@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit\Validator;
 
+use PreCommit\Config;
+
 /**
  * Class validator for check commit message format
  *
@@ -32,11 +34,46 @@ class CommitMsg extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        if (!preg_match('/^Merge /', $content) && !preg_match('/^Revert /', $content)
-            && !preg_match('/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z0-9]{2,}-[0-9]+: /', $content)
-        ) {
-                $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $content);
+        if (!$this->_matchMessage($content)) {
+            $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $content);
         }
         return !$this->_errorCollector->hasErrors();
+    }
+
+    /**
+     * Match commit message
+     *
+     * @param string $content
+     * @return bool
+     */
+    protected function _matchMessage($content)
+    {
+        foreach ($this->_getRegularExpressions() as $regular) {
+            //here should match at least one of plenty
+            if (preg_match($regular, $content)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get regular expressions to match
+     *
+     * @return array|null
+     */
+    protected function _getRegularExpressions()
+    {
+        return $this->_getConfig()->getNodeArray('validators/CommitMessage/match');
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
     }
 }
