@@ -6,7 +6,7 @@ namespace PreCommit\Filter;
  *
  * @package PreCommit\Filter
  */
-class JiraCommitMsgTest extends \PHPUnit_Framework_TestCase
+class ShortCommitMsgTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test filter commit message for single cache
@@ -22,9 +22,9 @@ Implemented TEST-551: Implement CmsDev module
  - Some additional comment.
 MMM;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|JiraCommitMsg $test */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\JiraCommitMsg',
+            __NAMESPACE__ . '\ShortCommitMsg',
             array('_getCacheDir', '_getIssue')
         );
         $test->expects($this->once())
@@ -47,9 +47,9 @@ MMM;
      */
     public function testFilterGetCachedSummaryMany($message, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|JiraCommitMsg $test */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\JiraCommitMsg',
+            __NAMESPACE__ . '\ShortCommitMsg',
             array('_getCacheFile', '_getIssue')
         );
         $test->expects($this->once())
@@ -81,9 +81,9 @@ MMM;
 Implemented TEST-551: Implement CmsDev module
  - Some additional comment.
 MMM;
-        /** @var \PHPUnit_Framework_MockObject_MockObject|JiraCommitMsg $test */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\JiraCommitMsg',
+            __NAMESPACE__ . '\ShortCommitMsg',
             array('_getCacheFile', '_getIssue')
         );
         $test->expects($this->never())
