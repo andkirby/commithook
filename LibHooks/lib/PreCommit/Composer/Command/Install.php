@@ -148,6 +148,7 @@ class Install extends CommandAbstract
         if (!file_put_contents($file, $body)) {
             throw new Exception('Could not create file ' . $file);
         }
+        chmod($file, 0777);
         if ($this->isVerbose($output)) {
             $output->writeln("CommitHook file set to '$file'.");
         }
@@ -160,6 +161,7 @@ class Install extends CommandAbstract
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
+     * @throws \PreCommit\Composer\Exception
      */
     protected function askPhpPath(InputInterface $input, OutputInterface $output)
     {
