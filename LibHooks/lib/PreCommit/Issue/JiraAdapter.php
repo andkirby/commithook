@@ -194,7 +194,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     /**
      * Load issue by API
      *
-     * @param Issue $issueKey
+     * @param string $issueKey
      * @return \chobie\Jira\Api\Result
      */
     protected function _loadIssueData($issueKey)
