@@ -152,7 +152,7 @@ abstract class AbstractAdapter
     {
         $output = '';
         foreach ($this->getErrors() as $file => $fileErrors) {
-            $decorLength = 60 - strlen($file) / 2;
+            $decorLength = 30 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
             $output .= str_repeat('=', round($decorLength - 0.1))
                 . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;
