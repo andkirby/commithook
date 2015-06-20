@@ -10,23 +10,4 @@ use PreCommit\Jira\Api;
  */
 abstract class AdapterAbstract implements AdapterInterface
 {
-    /**
-     * Check issue type "bug"
-     *
-     * @return bool
-     */
-    public function isBug()
-    {
-        return self::TYPE_BUG === $this->getType();
-    }
-
-    /**
-     * Check issue type "task"
-     *
-     * @return bool
-     */
-    public function isTask()
-    {
-        return self::TYPE_TASK === $this->getType();
-    }
 }

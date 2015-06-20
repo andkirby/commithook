@@ -1,9 +1,10 @@
 <?php
 namespace PreCommit\Filter\ShortCommitMsg;
 
+use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Filter\InterfaceFilter;
-use PreCommit\Issue\JiraAdapter;
+use PreCommit\Issue;
 use PreCommit\Jira\Api;
 
 /**
@@ -11,8 +12,15 @@ use PreCommit\Jira\Api;
  *
  * @package PreCommit\Validator
  */
-class Jira extends JiraAdapter implements InterfaceFilter
+class Jira implements InterfaceFilter
 {
+    /**
+     * Issue adapter
+     *
+     * @var Issue\AdapterInterface
+     */
+    protected $_issue;
+
     /**
      * Filter commit message
      *
@@ -39,13 +47,24 @@ class Jira extends JiraAdapter implements InterfaceFilter
         }
         list($verb, $issueKey) = $interpretResult;
 
-        if (!$this->_getIssue($issueKey)) {
+        $this->_issue = Issue::factory($issueKey);
+        if (!$this->_issue) {
             //could not get an issue
             return $inputMessage;
         }
 
-        $full = "{$this->_getVerb($verb)} {$this->getKey()}: {$this->getSummary()}";
+        $full = "{$this->_getVerb($verb)} {$this->_issue->getKey()}: {$this->_issue->getSummary()}";
         return str_replace($first, $full, $inputMessage);
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
     }
 
     /**
@@ -76,7 +95,7 @@ class Jira extends JiraAdapter implements InterfaceFilter
     {
         $map = $this->_getShortVerbsMap();
         if (!isset($map[$shortVerb])) {
-            throw new Exception('Unknown verb key.');
+            throw new Exception("Unknown verb key '$shortVerb'.");
         }
         return $map[$shortVerb];
     }
@@ -107,24 +126,24 @@ class Jira extends JiraAdapter implements InterfaceFilter
     }
 
     /**
-     * Normalize issue-key
+     * Convert issue number to issue key
      *
      * Add project key to issue number when it did not set.
      *
-     * @param string $issueKey
+     * @param string $issueNo
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _normalizeIssueKey($issueKey)
+    protected function _normalizeIssueKey($issueNo)
     {
-        if ((string)(int)$issueKey === $issueKey) {
+        if ((string)(int)$issueNo === $issueNo) {
             $project = $this->_getConfig()->getNode('jira/project');
             if (!$project) {
                 throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook.xml" within current project.');
             }
-            $issueKey = "$project-$issueKey";
+            $issueNo = "$project-$issueNo";
         }
-        return $issueKey;
+        return $issueNo;
     }
 
     /**
@@ -159,7 +178,7 @@ class Jira extends JiraAdapter implements InterfaceFilter
      */
     protected function _getIssueGeneralType()
     {
-        $issueType = $this->getType();
+        $issueType = $this->_issue->getType();
         $issueType = preg_replace('/[^A-z]/', '_', $issueType); //normalize name
         $xpath     = 'filters/ShortCommitMsg/issue/tracker/' . $this->_getTrackerName() . '/type/' . $issueType;
         return $this->_getConfig()->getNode($xpath);

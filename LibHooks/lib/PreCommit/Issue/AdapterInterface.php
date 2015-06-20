@@ -16,6 +16,13 @@ interface AdapterInterface
     /**#@-*/
 
     /**
+     * Set issue key
+     *
+     * @param string $issueKey
+     */
+    public function __construct($issueKey);
+
+    /**
      * Get issue summary
      *
      * @return $this
@@ -30,23 +37,9 @@ interface AdapterInterface
     public function getKey();
 
     /**
-     * Get issue summary
+     * Get issue type
      *
      * @return $this
      */
     public function getType();
-
-    /**
-     * Check type "bug"
-     *
-     * @return bool
-     */
-    public function isBug();
-
-    /**
-     * Check type "task"
-     *
-     * @return bool
-     */
-    public function isTask();
 }

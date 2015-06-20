@@ -1,13 +1,24 @@
 <?php
 namespace PreCommit\Filter;
 
-use PreCommit\Filter\ShortCommitMsg\Jira;
-
 /**
  * Class ShortCommitMsg filter
  *
  * @package PreCommit\Filter
  */
-class ShortCommitMsg extends Jira
+class ShortCommitMsg implements InterfaceFilter
 {
+    /**
+     * Filter short commit message
+     *
+     * @param string $content
+     * @param string|null   $file
+     * @return string
+     */
+    public function filter($content, $file = null)
+    {
+        //JIRA is the one issue tracker so far
+        $jira = new ShortCommitMsg\Jira();
+        return $jira->filter($content, $file);
+    }
 }

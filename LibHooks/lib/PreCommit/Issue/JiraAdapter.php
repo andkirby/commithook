@@ -5,7 +5,6 @@ use chobie\Jira\Api\Authentication\Basic;
 use PreCommit\Config;
 use PreCommit\Jira\Api;
 use PreCommit\Jira\Issue;
-use chobie\Jira\Api\Exception as ApiException;
 
 /**
  * Class JiraAdapter
@@ -20,6 +19,11 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     const CACHE_SCHEMA_VERSION = 1;
 
     /**
+     * Exception code when issue not found
+     */
+    const EXCEPTION_CODE_ISSUE_NOT_FOUND = 404;
+
+    /**
      * Issue API object
      *
      * @var Issue
@@ -27,42 +31,77 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected $_issue;
 
     /**
-     * Get issue
+     * Issue API object
+     *
+     * @var Issue
+     */
+    protected $_issueKey;
+
+    /**
+     * Set issue key
      *
      * @param string $issueKey
+     */
+    public function __construct($issueKey)
+    {
+        $this->_issueKey = (string)$issueKey;
+    }
+
+    /**
+     * Get issue
+     *
      * @return \PreCommit\Jira\Issue
      * @throws Api\Exception
      */
-    protected function _getIssue($issueKey)
+    protected function _getIssue()
     {
-        if (null === $this->_issue) {
-            $result = $this->_getCachedResult($issueKey);
-            $cached = (bool)$result;
-            if (!$cached) {
-                try {
-                    /** @var Api\Result $result */
-                    $result = $this->_loadIssueData($issueKey);
-                    if (!$result) {
-                        throw new Api\Exception('Issue request result is empty.');
-                    }
-                } catch (Api\Exception $e) {
-                    //add verbosity
-                    return false;
-                } catch (ApiException $e) {
-                    //add verbosity
-                    return false;
-                }
-            } else {
-                $result = new Api\Result($result);
-            }
-            $this->_issue = new Issue($result->getResult());
-            if (!$cached) {
-                $this->_cacheResult($this->_issue->getKey(), $result->getResult());
-            }
+        if (null !== $this->_issue) {
+            return $this->_issue;
         }
+
+        $result = $this->_getCachedResult($this->_issueKey);
+        if (!$result) {
+            /** @var Api\Result $result */
+            $result = $this->_loadIssueData($this->_issueKey);
+            if (!$result) {
+                throw new Api\Exception(
+                    "Issue not {$this->_issueKey} found.", self::EXCEPTION_CODE_ISSUE_NOT_FOUND
+                );
+            }
+            $this->_cacheResult($this->_issueKey, $result->getResult());
+        } else {
+            $result = new Api\Result($result);
+        }
+        $this->_issue = new Issue($result->getResult());
         return $this->_issue;
     }
 
+    /**
+     * Explode issue key to PROJECT and issue number
+     *
+     * It takes project key from configuration if it was set.
+     *
+     * @param string $issueKey
+     * @return array
+     */
+    protected function _interpretIssueKey($issueKey)
+    {
+        list($project, $number) = explode('-', $issueKey);
+        $project = strtoupper($project);
+        return array($project, $number);
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
+    }
+
+    //region Caching methods
     /**
      * Write summary to cache file
      *
@@ -149,20 +188,54 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     {
         return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
     }
+    //endregion
+
+    //region Interface methods
+    /**
+     * Get issue summary
+     *
+     * @return string
+     */
+    public function getSummary()
+    {
+        return $this->_getIssue()->getSummary();
+    }
 
     /**
-     * Explode issue key to PROJECT and issue number
+     * Get issue key
      *
-     * It takes project key from configuration if it was set.
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->_getIssue()->getKey();
+    }
+
+    /**
+     * Get issue type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->_getIssue()->getIssueType();
+    }
+    //endregion
+
+    //region API methods
+    /**
+     * Load issue by API
      *
      * @param string $issueKey
-     * @return array
+     * @return \chobie\Jira\Api\Result
      */
-    protected function _interpretIssueKey($issueKey)
+    protected function _loadIssueData($issueKey)
     {
-        list($project, $number) = explode('-', $issueKey);
-        $project = strtoupper($project);
-        return array($project, $number);
+        return $this->_getApi()->api(
+            Api::REQUEST_GET,
+            sprintf($this->_getApiUrl(), $issueKey),
+            array('fields' => $this->_getIssueApiFields())
+        );
     }
 
     /**
@@ -182,57 +255,35 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Get config model
+     * Get request API URL
      *
-     * @return Config
-     */
-    protected function _getConfig()
-    {
-        return Config::getInstance();
-    }
-
-    /**
-     * Load issue by API
-     *
-     * @param string $issueKey
-     * @return \chobie\Jira\Api\Result
-     */
-    protected function _loadIssueData($issueKey)
-    {
-        return $this->_getApi()->api(
-            Api::REQUEST_GET,
-            sprintf("/rest/api/2/issue/%s", $issueKey),
-            array('fields' => 'summary,issuetype')
-        );
-    }
-
-    /**
-     * Get issue summary
+     * "%s" to set issue key
      *
      * @return string
      */
-    public function getSummary()
+    protected function _getApiUrl()
     {
-        return $this->_issue->getSummary();
+        return '/rest/api/2/issue/%s';
     }
 
     /**
-     * Get issue key
+     * Get API parameter of issue fields
      *
      * @return string
      */
-    public function getKey()
+    protected function _getIssueApiFields()
     {
-        return $this->_issue->getKey();
+        return implode(',', $this->_getIssueRequestFields());
     }
 
     /**
-     * Get issue type
+     * Get issue request fields list
      *
      * @return string
      */
-    public function getType()
+    protected function _getIssueRequestFields()
     {
-        return $this->_issue->getIssueType();
+        return array('summary', 'issuetype');
     }
+    //endregion
 }
