@@ -21,10 +21,6 @@ set_include_path(
 //init autoloader
 require_once __DIR__ . '/../bin/autoload-init.php';
 
-//Deprecated autoloader since v1.6.10
-//require_once 'lib/PreCommit/Autoloader.php';
-//\PreCommit\Autoloader::register();
-
 set_error_handler('\PreCommit\ErrorHandler::handleError');
 
 //Get VCS type
