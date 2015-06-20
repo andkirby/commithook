@@ -99,7 +99,7 @@ class PreCommit extends AbstractAdapter
             }
 
             $filePath = $this->_getFilePath($file);
-            $content = file_get_contents($filePath);
+            $content  = $this->_getFileContent($filePath);
             $ext = pathinfo($file, PATHINFO_EXTENSION);
 
             //run validators for non-filtered content
@@ -116,6 +116,17 @@ class PreCommit extends AbstractAdapter
             $this->runValidators('after_all', $content, $file, $filePath);
         }
         return !$this->_errorCollector->hasErrors();
+    }
+
+    /**
+     * Get file content
+     *
+     * @param string $filePath
+     * @return string
+     */
+    protected function _getFileContent($filePath)
+    {
+        return file_get_contents($filePath);
     }
 
     /**
