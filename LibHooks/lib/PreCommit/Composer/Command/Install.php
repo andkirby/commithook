@@ -51,16 +51,6 @@ class Install extends CommandAbstract
     }
 
     /**
-     * Get dialog helper
-     *
-     * @return DialogHelper
-     */
-    protected function getDialog()
-    {
-        return $this->getHelperSet()->get('dialog');
-    }
-
-    /**
      * Execute command
      *
      * @param InputInterface  $input
