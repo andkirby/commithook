@@ -26,5 +26,10 @@
       "PreCommit\\": "LibHooks/lib/PreCommit",
       "PreCommit\\Test\\": "LibHooks/tests/testsuite/PreCommit/Test"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-develop": "2.x-dev"
+    }
   }
 }
