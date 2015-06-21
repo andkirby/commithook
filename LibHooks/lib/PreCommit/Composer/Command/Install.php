@@ -1,7 +1,6 @@
 <?php
 namespace PreCommit\Composer\Command;
 
-use Symfony\Component\Console\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
