@@ -18,6 +18,7 @@ class ShortCommitMsg implements InterfaceFilter
     public function filter($content, $file = null)
     {
         //JIRA is the one issue tracker so far
+        //TODO implement factory loading
         $jira = new ShortCommitMsg\Jira();
         return $jira->filter($content, $file);
     }
