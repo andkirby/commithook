@@ -14,14 +14,18 @@
     </tracker>
 
     <interpreters>
-        <FullCommitMessage>
-            <format>~^__verb__ __issue_key__: __summary__~</format>
-            <keys>
-                <verb>Implemented|Fixed|CR Changes?|Refactored</verb>
-                <issue_key>[A-Z0-9]{2,}-[0-9]+</issue_key>
-                <summary>[^\n]+</summary>
-            </keys>
-        </FullCommitMessage>
+        <FullCommitMsg>
+            <default>
+                <regular>~^__format__~</regular>
+                <format>__verb__ __issue_key__: __summary__</format>
+                <key>
+                    <!--Please make the same order like in format node-->
+                    <verb>Implemented|Fixed|CR Changes?|Refactored</verb>
+                    <issue_key>[A-Z0-9]{2,}-[0-9]+</issue_key>
+                    <summary>[^\n]+</summary>
+                </key>
+            </default>
+        </FullCommitMsg>
     </interpreters>
 
     <!--Validators setup-->
@@ -34,7 +38,17 @@
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
                 <full>
-                    <class>PreCommit\\Interpreter\\FullCommitMsg</class>
+                    <interpreter>
+                        <class>\PreCommit\Interpreter\FullCommitMsg</class>
+                        <options>
+                            <type>default</type>
+                        </options>
+                    </interpreter>
+                    <required>
+                        <verb>1</verb>
+                        <issue_key>1</issue_key>
+                        <summary>1</summary>
+                    </required>
                 </full>
             </match>
             <explanation>

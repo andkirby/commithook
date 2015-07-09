@@ -2,6 +2,8 @@
 namespace PreCommit\Validator;
 
 use PreCommit\Config;
+use PreCommit\Exception;
+use PreCommit\Interpreter\InterpreterInterface;
 
 /**
  * Class validator for check commit message format
@@ -45,12 +47,17 @@ class CommitMsg extends AbstractValidator
      *
      * @param string $content
      * @return bool
+     * @throws \PreCommit\Exception
      */
     protected function _matchMessage($content)
     {
-        foreach ($this->_getRegularExpressions() as $regular) {
-            //here should match at least one of plenty
-            if (preg_match($regular, $content)) {
+        foreach ($this->_getExpressions() as $expression) {
+            if (is_array($expression)) {
+                if ($this->_getInterpreterResult($content, $expression)) {
+                    return true;
+                }
+            } elseif (preg_match($expression, $content)) {
+                //here should match at least one of plenty
                 return true;
             }
         }
@@ -58,13 +65,69 @@ class CommitMsg extends AbstractValidator
     }
 
     /**
+     * Get result by external matching
+     *
+     * @param string $content
+     * @param array $config
+     * @return bool
+     * @throws \PreCommit\Exception
+     */
+    protected function _getInterpreterResult($content, array $config)
+    {
+        $result = $this->_getInterpreter($config)
+            ->interpret(array('message' => $content));
+
+        foreach ($this->_getRequiredKeys() as $name => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+            if (!isset($result[$name]) || !$result[$name]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Get regular expressions to match
      *
      * @return array|null
      */
-    protected function _getRegularExpressions()
+    protected function _getExpressions()
     {
         return $this->_getConfig()->getNodeArray('validators/CommitMessage/match');
+    }
+
+    /**
+     * Get required keys
+     *
+     * @return array|null
+     */
+    protected function _getRequiredKeys()
+    {
+        return $this->_getConfig()->getNodeArray('validators/CommitMessage/match/full/required');
+    }
+
+    /**
+     * Get interpreter
+     *
+     * @param array $config
+     * @return \PreCommit\Interpreter\InterpreterInterface
+     * @throws Exception
+     */
+    protected function _getInterpreter(array $config)
+    {
+        if (empty($config['interpreter']['class'])) {
+            throw new Exception('Interpreter class is not set.');
+        }
+        /** @var InterpreterInterface $interpreter */
+        if (empty($config['interpreter']['options'])) {
+            return new $config['interpreter']['class'];
+        } else {
+            return new $config['interpreter']['class'](
+                $config['interpreter']['options']
+            );
+        }
     }
 
     /**
