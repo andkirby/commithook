@@ -22,8 +22,19 @@
             <match>
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
-                <full>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z0-9]{2,}-[0-9]+: /</full>
+                <full>/^(Implemented|Fixed|CR Changes?|Refactored) ([A-Z0-9]{2,}-[0-9]+): ([^\n]+)/</full>
             </match>
+            <explanation>
+                <match>
+                    <m1>verb</m1>
+                    <m2>issue-key</m2>
+                    <m3>summary</m3>
+                </match>
+                <ignore_match>
+                    <merge>1</merge>
+                    <revert>1</revert>
+                </ignore_match>
+            </explanation>
         </CommitMessage>
         <FileFilter>
             <filter>
