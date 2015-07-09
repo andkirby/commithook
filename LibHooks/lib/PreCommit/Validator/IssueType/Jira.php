@@ -25,9 +25,7 @@ class Jira extends AbstractValidator
     );
 
     /**
-     * Validate code style
-     *
-     * Validate line breaks and BOM
+     * Validate JIRA issue type
      *
      * @param string $content
      * @param string $file
