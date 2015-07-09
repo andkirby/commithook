@@ -64,6 +64,25 @@
                 </protect>
             </filter>
         </FileFilter>
+        <IssueType>
+            <issue>
+                <tracker>
+                    <!--JIRA specific types-->
+                    <jira>
+                        <!--JIRA issue-type map to general issue-type-->
+                        <type>
+                            <!-- Tasks -->
+                            <Task>1</Task>
+                            <Sub_Task_Task>1</Sub_Task_Task>
+                            <Change_Request>1</Change_Request>
+                            <Improvement>1</Improvement>
+                            <!-- Bugs -->
+                            <Bug>1</Bug>
+                        </type>
+                    </jira>
+                </tracker>
+            </issue>
+        </IssueType>
     </validators>
 
     <filters>
