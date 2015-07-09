@@ -54,7 +54,7 @@ class CommitMsg extends AbstractAdapter
         $this->_loadValidator('CommitMsg')
             ->validate($message, null);
 
-        $this->_loadValidator('Jira\\IssueType')
+        $this->_loadValidator('IssueType')
             ->validate($message, null);
 
         if (!$this->_errorCollector->hasErrors()) {

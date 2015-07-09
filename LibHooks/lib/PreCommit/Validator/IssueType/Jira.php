@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Validator\Jira;
+namespace PreCommit\Validator\IssueType;
 use PreCommit\Validator\AbstractValidator;
 
 /**
@@ -7,7 +7,7 @@ use PreCommit\Validator\AbstractValidator;
  *
  * @package PreCommit\Validator
  */
-class IssueType extends AbstractValidator
+class Jira extends AbstractValidator
 {
     /**#@+
      * Error codes
