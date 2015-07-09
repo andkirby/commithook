@@ -13,6 +13,17 @@
         </jira>
     </tracker>
 
+    <interpreters>
+        <FullCommitMessage>
+            <format>~^__verb__ __issue_key__: __summary__~</format>
+            <keys>
+                <verb>Implemented|Fixed|CR Changes?|Refactored</verb>
+                <issue_key>[A-Z0-9]{2,}-[0-9]+</issue_key>
+                <summary>[^\n]+</summary>
+            </keys>
+        </FullCommitMessage>
+    </interpreters>
+
     <!--Validators setup-->
     <validators>
         <PhpClass>
@@ -22,18 +33,11 @@
             <match>
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
-                <full>~^(Implemented|Fixed|CR Changes?|Refactored) ([A-Z0-9]{2,}-[0-9]+): ([^\n]+)~</full>
+                <full>
+                    <class>PreCommit\\Interpreter\\FullCommitMsg</class>
+                </full>
             </match>
             <explanation>
-                <match>
-                    <m1>verb</m1>
-                    <m2>issue-key</m2>
-                    <m3>summary</m3>
-                </match>
-                <ignore_match>
-                    <merge>1</merge>
-                    <revert>1</revert>
-                </ignore_match>
             </explanation>
         </CommitMessage>
         <FileFilter>
