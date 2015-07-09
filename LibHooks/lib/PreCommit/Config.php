@@ -245,6 +245,9 @@ class Config extends \SimpleXMLElement
         $result = $this->xpath(self::XPATH_START . $xpath);
         $result = isset($result[0]) ? (array)$result[0] : array();
         $result = json_decode(json_encode($result), true);
+
+        //remove XML comments (hack) TODO investigate a problem
+        unset($result['comment']);
         return $result;
     }
 
