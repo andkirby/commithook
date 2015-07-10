@@ -31,6 +31,16 @@
         </FullCommitMsg>
     </interpreters>
 
+    <formatters>
+        <ShortCommitMsg>
+            <formatting>
+                <default>
+                    <format>__verb__ __issue_key__: __summary__</format>
+                </default>
+            </formatting>
+        </ShortCommitMsg>
+    </formatters>
+
     <!--Validators setup-->
     <validators>
         <PhpClass>
@@ -54,8 +64,6 @@
                     </required>
                 </full>
             </match>
-            <explanation>
-            </explanation>
         </CommitMessage>
         <FileFilter>
             <filter>
@@ -120,6 +128,12 @@
     <filters>
         <ShortCommitMsg>
             <issue>
+                <formatter>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Formatter</class>
+                    <options>
+                        <type>default</type>
+                    </options>
+                </formatter>
                 <tracker>
                     <!--JIRA specific types-->
                     <jira>

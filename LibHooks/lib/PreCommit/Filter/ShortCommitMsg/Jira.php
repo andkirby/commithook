@@ -48,8 +48,14 @@ class Jira implements InterfaceFilter
             return $inputMessage;
         }
 
-        $full = $this->_getFormattedMessage($verb, $comment);
-        return $comment ? ($full . "\n" . $comment) : $full;
+        return array(
+            'keys' => array(
+                'verb'      => $this->_getVerb($verb),
+                'issue_key' => $this->_getIssue()->getKey(),
+                'summary'   => $this->_getIssue()->getSummary(),
+            ),
+            'comment' => $comment
+        );
     }
 
     /**
