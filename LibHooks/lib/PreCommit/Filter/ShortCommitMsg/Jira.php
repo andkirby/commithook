@@ -30,31 +30,26 @@ class Jira implements InterfaceFilter
      */
     public function filter($inputMessage, $file = null)
     {
-        $inputMessage = trim($inputMessage);
-        $arr = explode("\n", $inputMessage);
-        $first = array_shift($arr);
-
-        //improve extra description row
-        $secondOrig = array_shift($arr);
-        if ($secondOrig && 0 !== strpos(trim($secondOrig), '-')) {
-            $inputMessage = str_replace($secondOrig, ' - ' . trim($secondOrig), $inputMessage);
-        }
+        list($mainLine, $comment) = $this->_explodeMessage($inputMessage);
 
         //interpret first row to get summary
-        $interpretResult = $this->_interpretShortMessage($first);
+        $interpretResult = $this->_interpretShortMessage($mainLine);
         if (!$interpretResult) {
             return $inputMessage;
         }
-        list($verb, $issueKey) = $interpretResult;
+        list($verb, $issueKey, $commentInline) = $interpretResult;
 
-        $this->_issue = Issue::factory($issueKey);
-        if (!$this->_issue) {
-            //could not get an issue
+        $comment = $this->_mergeComment($comment, $commentInline);
+        $comment = $this->_addHyphen($comment);
+
+        $this->_initIssue($issueKey);
+        if (!$this->_getIssue()) {
+            //ignore when could not get an issue to build a full message
             return $inputMessage;
         }
 
-        $full = "{$this->_getVerb($verb)} {$this->_issue->getKey()}: {$this->_issue->getSummary()}";
-        return str_replace($first, $full, $inputMessage);
+        $full = $this->_getFormattedMessage($verb, $comment);
+        return $comment ? ($full . "\n" . $comment) : $full;
     }
 
     /**
@@ -158,7 +153,7 @@ class Jira implements InterfaceFilter
         $verbs = array_keys($this->_getShortVerbsMap());
         $verbs = implode('|', $verbs);
         $verbs = "($verbs)";
-        preg_match("/^($verbs )?(([A-Z0-9]+-)?[0-9]+)/", $message, $m);
+        preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+)( [^\n]+)?/", trim($message), $m);
         if (!$m) {
             return false;
         }
@@ -166,9 +161,15 @@ class Jira implements InterfaceFilter
         array_shift($m);
         array_shift($m);
 
-        $commitVerb = trim(array_shift($m));
-        $issueKey = $this->_normalizeIssueKey(array_shift($m));
-        return array($commitVerb, $issueKey);
+        $commitVerb  = trim(array_shift($m));
+        $issueKey    = $this->_normalizeIssueKey(array_shift($m));
+        $userMessage = null;
+        if ($m) {
+            //skip empty
+            array_shift($m);
+            $userMessage = trim(array_shift($m));
+        }
+        return array($commitVerb, $issueKey, $userMessage);
     }
 
     /**
@@ -204,5 +205,84 @@ class Jira implements InterfaceFilter
     protected function _getDefaultShortVerb($generalType)
     {
         return $this->_getConfig()->getNode('filters/ShortCommitMsg/issue/default_type_verb/' . $generalType);
+    }
+
+    /**
+     * Merge inline comment
+     *
+     * @param string $comment
+     * @param string $commentInline
+     * @return string
+     */
+    protected function _mergeComment($comment, $commentInline)
+    {
+        if ($commentInline && $comment) {
+            $comment = $commentInline . "\n" . $comment;
+        } elseif ($commentInline) {
+            $comment = $commentInline;
+        }
+        return $comment;
+    }
+
+    /**
+     * Explode message
+     *
+     * @param string $inputMessage
+     * @return array
+     */
+    protected function _explodeMessage($inputMessage)
+    {
+        $arr         = explode("\n", $inputMessage);
+        $firstLine   = array_shift($arr);
+        $description = trim(str_replace($firstLine, '', $inputMessage));
+        return array($firstLine, $description);
+    }
+
+    /**
+     * Add "-" to comment row
+     *
+     * @param string $comment
+     * @return string
+     */
+    protected function _addHyphen($comment)
+    {
+        if ($comment && 0 !== strpos(trim($comment), '-')) {
+            $comment = ' - ' . $comment;
+        }
+        return $comment;
+    }
+
+    /**
+     * Get formatted message
+     *
+     * @param string $verb
+     * @return string
+     */
+    protected function _getFormattedMessage($verb)
+    {
+        return "{$this->_getVerb($verb)} {$this->_getIssue()->getKey()}: {$this->_issue->getSummary()}";
+    }
+
+    /**
+     * Initialize issue adapter
+     *
+     * @param string $issueKey
+     * @return \PreCommit\Issue\AdapterInterface
+     * @throws \PreCommit\Exception
+     */
+    protected function _initIssue($issueKey)
+    {
+        $this->_issue = Issue::factory($issueKey);
+        return $this;
+    }
+
+    /**
+     * Get issue
+     *
+     * @return \PreCommit\Issue\AdapterInterface
+     */
+    protected function _getIssue()
+    {
+        return $this->_issue;
     }
 }
