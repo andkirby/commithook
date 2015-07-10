@@ -15,17 +15,19 @@
 
     <interpreters>
         <FullCommitMsg>
-            <default>
-                <regular>~^__format__~</regular>
-                <format>__verb__ __issue_key__: __summary__</format>
-                <key>
-                    <!--Please make the same order like in format node-->
-                    <!--Regular expressions SHOULD NOT contain braces-->
-                    <verb>Implemented|Fixed|CR Changes?|Refactored</verb>
-                    <issue_key>[A-Z0-9]{2,}-[0-9]+</issue_key>
-                    <summary>[^\n]+</summary>
-                </key>
-            </default>
+            <formatting>
+                <default>
+                    <regular>~^__format__~</regular>
+                    <format>__verb__ __issue_key__: __summary__</format>
+                    <key>
+                        <!--Please make the same order like in format node-->
+                        <!--Regular expressions SHOULD NOT contain braces-->
+                        <verb>Implemented|Fixed|CR Changes?|Refactored</verb>
+                        <issue_key>[A-Z0-9]{2,}-[0-9]+</issue_key>
+                        <summary>[^\n]+</summary>
+                    </key>
+                </default>
+            </formatting>
         </FullCommitMsg>
     </interpreters>
 
