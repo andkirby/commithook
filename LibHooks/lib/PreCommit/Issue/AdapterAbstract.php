@@ -58,9 +58,10 @@ abstract class AdapterAbstract implements AdapterInterface
     public function getType()
     {
         $issueType = preg_replace('/[^A-z]/', '_', $this->getIssueType()); //normalize name
-        $xpath     = 'hooks/commit-msg/message/issue/type/tracker/'
-                     . $this->_getTrackerName() . '/' . $this->_type . '/' . $issueType;
-        return $this->_getConfig()->getNode($xpath);
+        return $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'
+                                            . $this->_getTrackerName() . '/' . $this->_type . '/' . $issueType)
+            ?: $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'
+                                            . $this->_getTrackerName() . '/default/' . $issueType);
     }
 
     /**
