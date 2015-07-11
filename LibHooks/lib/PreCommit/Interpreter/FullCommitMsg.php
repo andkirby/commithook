@@ -32,7 +32,11 @@ class FullCommitMsg implements InterpreterInterface
      */
     public function __construct(array $options = array())
     {
-        $this->_type = isset($options['type']) ? $options['type'] : 'default';
+        if (isset($options['type'])) {
+            $this->_type = $options['type'];
+        } else {
+            $this->_type = $this->_getConfig()->getNodeArray('hooks/commit-msg/message_type');
+        }
     }
 
     /**
