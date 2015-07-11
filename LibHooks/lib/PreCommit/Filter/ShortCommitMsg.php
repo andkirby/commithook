@@ -23,9 +23,13 @@ class ShortCommitMsg implements InterfaceFilter
         $inputMessage = trim($inputMessage);
         //JIRA is the one issue tracker so far
         //TODO implement factory loading
-        $jira = new ShortCommitMsg\Jira();
+        $jira = new ShortCommitMsg\Parser();
+        $options = $jira->filter($inputMessage, $file);
+        if (!$options) {
+            return $inputMessage;
+        }
         return $this->_buildMessage(
-            $jira->filter($inputMessage, $file)
+            $options
         );
     }
 

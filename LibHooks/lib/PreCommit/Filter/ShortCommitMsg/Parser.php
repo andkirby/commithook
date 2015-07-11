@@ -8,11 +8,11 @@ use PreCommit\Issue;
 use PreCommit\Jira\Api;
 
 /**
- * Class validator for check commit message format
+ * Class filter to parse short message
  *
  * @package PreCommit\Validator
  */
-class Jira implements InterfaceFilter
+class Parser implements InterfaceFilter
 {
     /**
      * Issue adapter
@@ -20,6 +20,31 @@ class Jira implements InterfaceFilter
      * @var Issue\AdapterInterface
      */
     protected $_issue;
+
+    /**
+     * Message interpreting type
+     *
+     * @var string
+     */
+    protected $_type;
+
+    /**
+     * Set type
+     *
+     * @param array $options
+     * @throws \PreCommit\Exception
+     */
+    public function __construct(array $options = array())
+    {
+        if (isset($options['type'])) {
+            $this->_type = $options['type'];
+        } else {
+            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+        }
+        if (!$this->_type) {
+            throw new Exception('Type is not set.');
+        }
+    }
 
     /**
      * Filter commit message
@@ -40,12 +65,12 @@ class Jira implements InterfaceFilter
         list($verb, $issueKey, $commentInline) = $interpretResult;
 
         $comment = $this->_mergeComment($comment, $commentInline);
-        $comment = $this->_addHyphen($comment);
+        $comment = $this->_addHyphen($comment); //TODO move to another filter
 
         $this->_initIssue($issueKey);
         if (!$this->_getIssue()) {
             //ignore when could not get an issue to build a full message
-            return $inputMessage;
+            return false;
         }
 
         return array(
@@ -76,7 +101,7 @@ class Jira implements InterfaceFilter
      */
     protected function _getIssueTypeDefaultVerb()
     {
-        $generalType = $this->_getIssueGeneralType();
+        $generalType = $this->_issue->getType();
         if ($generalType) {
             return $this->_interpretShortVerb(
                 $this->_getDefaultShortVerb($generalType)
@@ -94,7 +119,7 @@ class Jira implements InterfaceFilter
      */
     protected function _interpretShortVerb($shortVerb)
     {
-        $map = $this->_getShortVerbsMap();
+        $map = $this->_getVerbs();
         if (!isset($map[$shortVerb])) {
             throw new Exception("Unknown verb key '$shortVerb'.");
         }
@@ -121,9 +146,10 @@ class Jira implements InterfaceFilter
      *
      * @return array
      */
-    protected function _getShortVerbsMap()
+    protected function _getVerbs()
     {
-        return (array)$this->_getConfig()->getNodeArray('filters/ShortCommitMsg/issue/short_verb');
+        return (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->_type)
+            ?: (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
     /**
@@ -156,7 +182,7 @@ class Jira implements InterfaceFilter
      */
     protected function _interpretShortMessage($message)
     {
-        $verbs = array_keys($this->_getShortVerbsMap());
+        $verbs = array_keys($this->_getVerbs());
         $verbs = implode('|', $verbs);
         $verbs = "($verbs)";
         preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+)( [^\n]+)?/", trim($message), $m);
@@ -176,30 +202,6 @@ class Jira implements InterfaceFilter
             $userMessage = trim(array_shift($m));
         }
         return array($commitVerb, $issueKey, $userMessage);
-    }
-
-    /**
-     * Get issue general type
-     *
-     * @return array
-     */
-    protected function _getIssueGeneralType()
-    {
-        $issueType = $this->_issue->getType();
-        $issueType = preg_replace('/[^A-z]/', '_', $issueType); //normalize name
-        $xpath     = 'filters/ShortCommitMsg/issue/tracker/' . $this->_getTrackerName() . '/type/' . $issueType;
-        return $this->_getConfig()->getNode($xpath);
-        //throw new Exception("Invalid type for config node: '$xpath'.");
-    }
-
-    /**
-     * Get tracker name
-     *
-     * @return string
-     */
-    protected function _getTrackerName()
-    {
-        return (string)$this->_getConfig()->getNode('tracker_name');
     }
 
     /**
