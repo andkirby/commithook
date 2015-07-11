@@ -53,9 +53,9 @@
                 <full>
                     <interpreter>
                         <class>\PreCommit\Interpreter\FullCommitMsg</class>
-                        <options>
+                        <!--<options>
                             <type>default</type>
-                        </options>
+                        </options>-->
                     </interpreter>
                     <required>
                         <verb>1</verb>
@@ -130,9 +130,9 @@
             <issue>
                 <formatter>
                     <class>\PreCommit\Filter\ShortCommitMsg\Formatter</class>
-                    <options>
+                    <!--<options>
                         <type>default</type>
-                    </options>
+                    </options>-->
                 </formatter>
                 <tracker>
                     <!--JIRA specific types-->
@@ -218,5 +218,8 @@
                 </after_all>
             </filetype>
         </pre-commit>
+        <commit-hook>
+            <message_type>default</message_type>
+        </commit-hook>
     </hooks>
 </config>
