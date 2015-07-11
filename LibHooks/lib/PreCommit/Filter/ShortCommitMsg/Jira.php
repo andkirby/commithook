@@ -259,17 +259,6 @@ class Jira implements InterfaceFilter
     }
 
     /**
-     * Get formatted message
-     *
-     * @param string $verb
-     * @return string
-     */
-    protected function _getFormattedMessage($verb)
-    {
-        return "{$this->_getVerb($verb)} {$this->_getIssue()->getKey()}: {$this->_issue->getSummary()}";
-    }
-
-    /**
      * Initialize issue adapter
      *
      * @param string $issueKey
