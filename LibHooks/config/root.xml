@@ -9,10 +9,14 @@
 
     <!--Additional configuration file-->
     <additional_config>
-        <main>commithook.xml</main>
-        <magento>commithook-magento.xml</magento>
+        <main>config/commithook.xml</main>
+        <pre-commit>config/pre-commit.xml</pre-commit>
+        <commit-msg>config/commit-msg.xml</commit-msg>
+        <magento>config/commithook-magento.xml</magento>
         <local>../commithook-local.xml</local>
         <userprofile>HOME/.commithook/commithook.xml</userprofile>
+        <userprofile-pre-commit>HOME/.commithook/pre-commit.xml</userprofile-pre-commit>
+        <userprofile-commit-msg>HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
         <project>PROJECT_DIR/commithook.xml</project>
         <project_local>PROJECT_DIR/commithook-self.xml</project_local>
     </additional_config>

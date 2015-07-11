@@ -27,7 +27,10 @@ set_error_handler('\PreCommit\ErrorHandler::handleError');
 $vcs = isset($vcs) ? $vcs : 'git';
 
 //load config
-$config = \PreCommit\Config::getInstance(array('file' => $rootPath . DIRECTORY_SEPARATOR . 'config.xml'));
+if (!isset($rootConfigFile)) {
+    $rootConfigFile = $rootPath . DIRECTORY_SEPARATOR . 'config/root.xml';
+}
+$config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
 
 echo PHP_EOL;
 echo 'PHP CommitHooks v' . $config->getNode('version');
