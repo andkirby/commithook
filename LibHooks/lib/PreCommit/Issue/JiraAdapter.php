@@ -91,16 +91,6 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
         return array($project, $number);
     }
 
-    /**
-     * Get config model
-     *
-     * @return Config
-     */
-    protected function _getConfig()
-    {
-        return Config::getInstance();
-    }
-
     //region Caching methods
     /**
      * Write summary to cache file
@@ -216,7 +206,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      *
      * @return string
      */
-    public function getType()
+    public function getIssueType()
     {
         return $this->_getIssue()->getIssueType();
     }
@@ -233,7 +223,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     {
         return $this->_getApi()->api(
             Api::REQUEST_GET,
-            sprintf($this->_getApiUrl(), $issueKey),
+            sprintf($this->_getApiUri(), $issueKey),
             array('fields' => $this->_getIssueApiFields())
         );
     }
@@ -261,7 +251,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      *
      * @return string
      */
-    protected function _getApiUrl()
+    protected function _getApiUri()
     {
         return '/rest/api/2/issue/%s';
     }
