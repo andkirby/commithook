@@ -25,6 +25,7 @@ class Formatter implements InterfaceFilter
      * Set type
      *
      * @param array $options
+     * @throws \PreCommit\Exception
      */
     public function __construct(array $options = array())
     {
@@ -32,6 +33,9 @@ class Formatter implements InterfaceFilter
             $this->_type = $options['type'];
         } else {
             $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message_type');
+        }
+        if (!$this->_type) {
+            throw new Exception('Type is not set.');
         }
     }
 

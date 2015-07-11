@@ -218,8 +218,8 @@
                 </after_all>
             </filetype>
         </pre-commit>
-        <commit-hook>
+        <commit-msg>
             <message_type>default</message_type>
-        </commit-hook>
+        </commit-msg>
     </hooks>
 </config>
