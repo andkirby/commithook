@@ -51,21 +51,22 @@
         </CommitMessage>
         <IssueType>
             <issue>
-                <tracker>
-                    <!--JIRA specific types-->
-                    <jira>
-                        <!--JIRA issue-type map to general issue-type-->
-                        <type>
-                            <!-- Tasks -->
-                            <Task>1</Task>
-                            <Sub_Task_Task>1</Sub_Task_Task>
-                            <Change_Request>1</Change_Request>
-                            <Improvement>1</Improvement>
-                            <!-- Bugs -->
-                            <Bug>1</Bug>
-                        </type>
-                    </jira>
-                </tracker>
+                <verb>
+                    <allowed>
+                        <default>
+                            <task>
+                                <I>1</I>
+                                <R>1</R>
+                                <C>1</C>
+                            </task>
+                            <bug>
+                                <F>1</F>
+                                <R>1</R>
+                                <C>1</C>
+                            </bug>
+                        </default>
+                    </allowed>
+                </verb>
             </issue>
         </IssueType>
     </validators>
@@ -79,33 +80,6 @@
                         <type>default</type>
                     </options>-->
                 </formatter>
-                <tracker>
-                    <!--JIRA specific types-->
-                    <jira>
-                        <!--JIRA issue-type map to general issue-type-->
-                        <type>
-                            <!-- Tasks -->
-                            <Task>task</Task>
-                            <Sub_Task_Task>task</Sub_Task_Task>
-                            <Change_Request>task</Change_Request>
-                            <Improvement>task</Improvement>
-                            <!-- Bugs -->
-                            <Bug>bug</Bug>
-                        </type>
-                    </jira>
-                </tracker>
-
-                <!--Short verb version for quick message-->
-                <short_verb>
-                    <!--For tasks at all-->
-                    <I>Implemented</I>
-                    <!--Functionality wasn't changed - refactoring only-->
-                    <R>Refactored</R>
-                    <!--Something was fixed. For bugs only-->
-                    <F>Fixed</F>
-                    <!--Applying Code Review Changes-->
-                    <C>CR Changes</C>
-                </short_verb>
 
                 <!--If the verb was omitted-->
                 <default_type_verb>
@@ -121,6 +95,43 @@
         <commit-msg>
             <message>
                 <type>default</type>
+
+                <!--Commit message verbs list-->
+                <!--Node name should be short for quick message-->
+                <verb>
+                    <list>
+                        <default>
+                            <!--For tasks at all-->
+                            <I>Implemented</I>
+                            <!--Functionality wasn't changed - refactoring only-->
+                            <R>Refactored</R>
+                            <!--Something was fixed. For bugs only-->
+                            <F>Fixed</F>
+                            <!--Applying Code Review Changes-->
+                            <C>CR Changes</C>
+                        </default>
+                    </list>
+                </verb>
+
+                <issue>
+                    <type>
+                        <tracker>
+                            <!--JIRA specific types-->
+                            <jira>
+                                <default>
+                                    <!--JIRA issue-type map to general issue-type-->
+                                    <!-- Tasks -->
+                                    <Task>task</Task>
+                                    <Sub_Task_Task>task</Sub_Task_Task>
+                                    <Change_Request>task</Change_Request>
+                                    <Improvement>task</Improvement>
+                                    <!-- Bugs -->
+                                    <Bug>bug</Bug>
+                                </default>
+                            </jira>
+                        </tracker>
+                    </type>
+                </issue>
             </message>
         </commit-msg>
     </hooks>
