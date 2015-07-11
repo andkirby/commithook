@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<config>
+    <!--Validators setup-->
+    <validators>
+        <PhpClass>
+            <interpret>c:/xampp/php/php.exe</interpret>
+        </PhpClass>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <extensions>
+                        <!--Images-->
+                        <jpg>jpg</jpg>
+                        <png>png</png>
+                        <gif>gif</gif>
+                        <bmp>bmp</bmp>
+                        <bmp>ico</bmp>
+                        <svg>svg</svg>
+                        <!--Archives-->
+                        <zip>zip</zip>
+                        <rar>rar</rar>
+                        <gz>gz</gz>
+                        <tar>tar</tar>
+                        <!--Fonts-->
+                        <ttf>ttf</ttf>
+                        <fon>fon</fon>
+                        <eot>eot</eot>
+                        <woff>woff</woff>
+                    </extensions>
+                    <!--<paths>-->
+                        <!--<path>libs/</path>-->
+                    <!--</paths>-->
+                    <!--<files>-->
+                        <!--<file>index.php</file>-->
+                    <!--</files>-->
+                </skip>
+                <protect>
+                    <files>
+                        <file>index.php</file>
+                    </files>
+                    <!--<paths>-->
+                        <!--<path>libs/</path>-->
+                    <!--</paths>-->
+                </protect>
+            </filter>
+        </FileFilter>
+    </validators>
+
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <!--Run validators before any filter because filters run always before validators-->
+                <before_all_original />
+                <!--Run validators, filters before specific validators-->
+                <before_all>
+                    <filters>
+                        <SkipContent>1</SkipContent>
+                    </filters>
+                    <validators>
+                        <UnresolvedConflict>1</UnresolvedConflict>
+                    </validators>
+                </before_all>
+                <php>
+                    <validators>
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
+                    </validators>
+                </php>
+                <phtml>
+                    <validators>
+                        <RedundantCode>1</RedundantCode>
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
+                    </validators>
+                </phtml>
+                <js>
+                    <validators>
+                        <RedundantCode>1</RedundantCode>
+                    </validators>
+                </js>
+                <xml>
+                    <validators>
+                        <XmlParser>1</XmlParser>
+                    </validators>
+                </xml>
+                <after_all>
+                    <validators>
+                        <TrailingSpace>1</TrailingSpace>
+                        <FileStyle>1</FileStyle>
+                    </validators>
+                </after_all>
+            </filetype>
+        </pre-commit>
+    </hooks>
+</config>
