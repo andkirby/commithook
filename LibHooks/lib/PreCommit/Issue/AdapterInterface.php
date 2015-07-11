@@ -42,4 +42,11 @@ interface AdapterInterface
      * @return $this
      */
     public function getType();
+
+    /**
+     * Get original issue type
+     *
+     * @return $this
+     */
+    public function getOriginalType();
 }

@@ -34,13 +34,6 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Get internal issue type
-     *
-     * @return string
-     */
-    abstract public function getIssueType();
-
-    /**
      * Get config model
      *
      * @return Config
@@ -57,7 +50,7 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function getType()
     {
-        $issueType = preg_replace('/[^A-z]/', '_', $this->getIssueType()); //normalize name
+        $issueType = preg_replace('/[^A-z]/', '_', $this->getOriginalType()); //normalize name
         return $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'
                                             . $this->_getTrackerName() . '/' . $this->_type . '/' . $issueType)
             ?: $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'

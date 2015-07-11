@@ -206,7 +206,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      *
      * @return string
      */
-    public function getIssueType()
+    public function getOriginalType()
     {
         return $this->_getIssue()->getIssueType();
     }
