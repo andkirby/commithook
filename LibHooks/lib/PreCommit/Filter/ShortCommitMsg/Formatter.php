@@ -8,7 +8,7 @@ use PreCommit\Issue;
 use PreCommit\Jira\Api;
 
 /**
- * Class validator for check commit message format
+ * Formatter prepare commit message according to format
  *
  * @package PreCommit\Validator
  */
@@ -59,6 +59,7 @@ class Formatter implements InterfaceFilter
      * @param array $config  Config for formatting
      * @param array $options key-value parsed data
      * @return string
+     * @throws \PreCommit\Exception
      */
     protected function _buildMessage($config, $options)
     {
@@ -76,6 +77,8 @@ class Formatter implements InterfaceFilter
                     $output   = $this->_putKeys(
                         array($name => $keyValue), $output
                     );
+                } else {
+                    throw new Exception("Please set 'xpath' node with a path to a local value.");
                 }
             }
         }
