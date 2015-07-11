@@ -76,7 +76,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function _getFormat()
     {
-        $format = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting' . $this->_type . '/format');
+        $format = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting/' . $this->_type . '/format');
         if (!$format) {
             throw new Exception('Format regular expression is not set.');
         }
@@ -91,7 +91,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function _getRegularFormat()
     {
-        $regular = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting' . $this->_type . '/regular');
+        $regular = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting/' . $this->_type . '/regular');
         if (!$regular) {
             throw new Exception('Base regular expression is not set.');
         }
@@ -106,7 +106,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function _getKeys()
     {
-        $keys = $this->_getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting' . $this->_type . '/key');
+        $keys = $this->_getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting/' . $this->_type . '/key');
         if (!$keys) {
             throw new Exception('Key regular expressions is not set.');
         }
