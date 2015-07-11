@@ -32,7 +32,7 @@ class Formatter implements InterfaceFilter
         if (isset($options['type'])) {
             $this->_type = $options['type'];
         } else {
-            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message_type');
+            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
         }
         if (!$this->_type) {
             throw new Exception('Type is not set.');

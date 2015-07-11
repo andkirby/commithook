@@ -119,7 +119,9 @@
     <!--Hooks process setup-->
     <hooks>
         <commit-msg>
-            <message_type>default</message_type>
+            <message>
+                <type>default</type>
+            </message>
         </commit-msg>
     </hooks>
 </config>
