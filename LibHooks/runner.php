@@ -6,14 +6,15 @@
  *             All code will be pushed to use /bin/runner.php
  * @see /bin/runner.php
  */
-$rootPath = __DIR__;
-!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', $rootPath);
+/** stub */
+
+!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', __DIR__);
 set_include_path(
     implode(
         PATH_SEPARATOR,
         array(
             get_include_path(),
-            $rootPath . '/lib',
+            COMMIT_HOOKS_ROOT . '/lib',
         )
     )
 );
@@ -28,7 +29,7 @@ $vcs = isset($vcs) ? $vcs : 'git';
 
 //load config
 if (!isset($rootConfigFile)) {
-    $rootConfigFile = $rootPath . DIRECTORY_SEPARATOR . 'config/root.xml';
+    $rootConfigFile = COMMIT_HOOKS_ROOT . DIRECTORY_SEPARATOR . 'config/root.xml';
 }
 $config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
 
@@ -62,7 +63,7 @@ if (!in_array($hookName, $supportedHooks)) {
 
 //set work directories
 PreCommit\Config::setProjectDir($hookFile);
-PreCommit\Config::setRootDir($rootPath);
+PreCommit\Config::setRootDir(COMMIT_HOOKS_ROOT);
 
 if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
