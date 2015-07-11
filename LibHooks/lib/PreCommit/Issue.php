@@ -13,7 +13,7 @@ class Issue
     /**
      * Object instance
      *
-     * @var $this
+     * @var AdapterInterface[]
      */
     static protected $_adapters = array();
 
@@ -32,7 +32,7 @@ class Issue
                 return null;
             }
 
-            $class   = self::_getConfig()->getNode('tracker/' . $tracker . '/adapter/issue/class');
+            $class   = self::_getConfig()->getNode('tracker/' . $tracker . '/issue/adapter/class');
 
             self::$_adapters[$key] = new $class($key);
             if (!(self::$_adapters[$key] instanceof AdapterInterface)) {

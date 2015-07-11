@@ -5,11 +5,11 @@
 
     <tracker>
         <jira>
-            <adapter>
-                <issue>
+            <issue>
+                <adapter>
                     <class>\PreCommit\Issue\JiraAdapter</class>
-                </issue>
-            </adapter>
+                </adapter>
+            </issue>
         </jira>
     </tracker>
 </config>
