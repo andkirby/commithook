@@ -115,16 +115,39 @@ class Config extends \SimpleXMLElement
     /**
      * Merge additional config files
      *
-     * @return void
+     * @param array $allowed
      */
-    public static function mergeExtraConfig()
+    public static function mergeExtraConfig(array $allowed = null)
     {
         $merger = new XmlMerger();
         $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
-        foreach (self::getInstance()->getNodeArray('additional_config') as $file) {
+        $files = self::getInstance()->getNodeArray('additional_config');
+
+        self::_mergeFiles($merger, $files, $allowed);
+
+        //write cached config file
+        $cacheFile = self::getCacheFile();
+        if (!self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
+            self::getInstance()->asXML($cacheFile);
+        }
+    }
+
+    /**
+     * Merge files
+     *
+     * @param XmlMerger $merger
+     * @param array     $files
+     * @param array     $allowed
+     */
+    protected static function _mergeFiles($merger, $files, array $allowed = null)
+    {
+        foreach ($files as $key => $file) {
+            if ($allowed && !in_array($key, $allowed)) {
+                continue;
+            }
             $file = self::_readPath($file);
             if (!is_file($file)) {
                 continue;
@@ -136,12 +159,6 @@ class Config extends \SimpleXMLElement
                 echo 'XML ERROR: Could not load additional config file ' . $file;
                 echo PHP_EOL;
             }
-        }
-
-        //write cached config file
-        $cacheFile = self::getCacheFile();
-        if (!self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
-            self::getInstance()->asXML($cacheFile);
         }
     }
 
