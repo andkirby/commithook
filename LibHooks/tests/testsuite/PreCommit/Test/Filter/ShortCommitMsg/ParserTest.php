@@ -13,58 +13,76 @@ use PreCommit\Message;
 class ParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Test simple short message
+     * Data provider
+     *
+     * @return array
      */
-    public function testFilterShortMessageWithoutVerb()
+    public function dataProvider()
     {
-        $summary       = 'Test summary!!!';
-        $issueKey      = 'TEST-123';
-        $key           = '123';
-        $type          = 'task';
-        $originalType  = 'Task';
-        $userBody      = "My test 1!\nTest 2.";
-        $commitMessage = $key . ' ' . $userBody;
-
-        $message       = new Message();
-        $message->body = $commitMessage;
-
-        $issue = $this->_getIssueMock($summary, $key, $type, $originalType);
-
-        /** @var ShortCommitMsg\Parser|\PHPUnit_Framework_MockObject_MockObject $parser */
-        $parser = $this->getMock('PreCommit\Filter\ShortCommitMsg\Parser', array('_initIssue', '_getIssue'));
-        $parser->method('_initIssue')
-            ->willReturnSelf();
-        $parser->method('_getIssue')
-            ->willReturn($issue);
-
-        $result = $parser->interpret($message);
-
-        $this->assertEquals($message, $result);
-        $this->assertEquals($issue, $message->issue);
-        $this->assertEquals($summary, $message->summary);
-        $this->assertEquals($issueKey, $message->issueKey);
-        $this->assertEquals($userBody, $message->userBody);
-        $this->assertEquals('Implemented', $message->verb);
-        $this->assertEquals('', $message->shortVerb);
+        return array(
+            /**
+             * Test getting default verb by issue type
+             */
+            array(
+                'TEST-123', //issue key
+                'Test summary!!!', //issue summary
+                'task', //issue type
+                'Task', //original issue type
+                "My test 1!\nTest 2.", //user message
+                "123 My test 1!\nTest 2.", //full commit message
+                'Implemented', //verb
+                '', //short verb
+            ),
+            /**
+             * Test getting verb by short verb
+             */
+            array(
+                'TEST-123', //issue key
+                'Test summary!!!', //issue summary
+                'task', //issue type
+                'Task', //original issue type
+                "My test 1!\nTest 2.", //user message
+                "F 123 My test 1!\nTest 2.", //full commit message
+                'Fixed', //verb
+                'F', //short verb
+            ),
+            /**
+             * Test working with full issue key
+             */
+            array(
+                'TEST-123', //issue key
+                'Test summary!!!', //issue summary
+                'task', //issue type
+                'Task', //original issue type
+                "My test 1!\nTest 2.", //user message
+                "F TEST-123 My test 1!\nTest 2.", //full commit message
+                'Fixed', //verb
+                'F', //short verb
+            ),
+        );
     }
 
     /**
-     * Test simple short message with short verb
+     * Test simple short message
+     *
+     * @param string $issueKey
+     * @param string $summary
+     * @param string $type
+     * @param string $originalType
+     * @param string $userBody
+     * @param string $commitMessage
+     * @param string $verb
+     * @param string $shortVerb
+     * @dataProvider dataProvider
      */
-    public function testFilterShortMessageVerb()
+    public function testFilterShortMessageWithoutVerb(
+        $issueKey, $summary, $type, $originalType, $userBody, $commitMessage, $verb, $shortVerb
+    )
     {
-        $summary       = 'Test summary!!!';
-        $issueKey      = 'TEST-123';
-        $key           = '123';
-        $type          = 'task';
-        $originalType  = 'Task';
-        $userBody      = "My test 1!\nTest 2.";
-        $commitMessage = "I $key\n$userBody";
-
         $message       = new Message();
         $message->body = $commitMessage;
 
-        $issue = $this->_getIssueMock($summary, $key, $type, $originalType);
+        $issue = $this->_getIssueMock($summary, $issueKey, $type, $originalType);
 
         /** @var ShortCommitMsg\Parser|\PHPUnit_Framework_MockObject_MockObject $parser */
         $parser = $this->getMock('PreCommit\Filter\ShortCommitMsg\Parser', array('_initIssue', '_getIssue'));
@@ -80,8 +98,8 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($summary, $message->summary);
         $this->assertEquals($issueKey, $message->issueKey);
         $this->assertEquals($userBody, $message->userBody);
-        $this->assertEquals('Implemented', $message->verb);
-        $this->assertEquals('I', $message->shortVerb);
+        $this->assertEquals($verb, $message->verb);
+        $this->assertEquals($shortVerb, $message->shortVerb);
     }
 
     /**
