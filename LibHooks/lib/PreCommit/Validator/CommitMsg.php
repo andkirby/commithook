@@ -4,6 +4,8 @@ namespace PreCommit\Validator;
 use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Interpreter\InterpreterInterface;
+use PreCommit\Issue;
+use PreCommit\Message;
 
 /**
  * Class validator for check commit message format
@@ -24,20 +26,46 @@ class CommitMsg extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_BAD_COMMIT_MESSAGE => 'Your commit message "%value%" has improper form.',
+        self::CODE_BAD_COMMIT_MESSAGE => 'Head of commit message "%value%" has improper form.',
     );
+
+    /**
+     * Message interpreting type
+     *
+     * @var string
+     */
+    protected $_type;
+
+    /**
+     * Set type
+     *
+     * @param array $options
+     * @throws \PreCommit\Exception
+     */
+    public function __construct(array $options)
+    {
+        parent::__construct($options);
+        if (isset($options['type'])) {
+            $this->_type = $options['type'];
+        } else {
+            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+        }
+        if (!$this->_type) {
+            throw new Exception('Type is not set.');
+        }
+    }
 
     /**
      * Checking for interpreter errors
      *
-     * @param string $content  Absolute path
+     * @param Message $message
      * @param string $file
      * @return bool
      */
-    public function validate($content, $file)
+    public function validate($message, $file)
     {
-        if (!$this->_matchMessage($content)) {
-            $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $content);
+        if (!$this->_matchMessage($message)) {
+            $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $message->head);
         }
         return !$this->_errorCollector->hasErrors();
     }
@@ -45,18 +73,18 @@ class CommitMsg extends AbstractValidator
     /**
      * Match commit message
      *
-     * @param string $content
+     * @param Message $message
      * @return bool
      * @throws \PreCommit\Exception
      */
-    protected function _matchMessage($content)
+    protected function _matchMessage($message)
     {
-        foreach ($this->_getExpressions() as $expression) {
+        foreach ($this->_getExpressions() as $name => $expression) {
             if (is_array($expression)) {
-                if ($this->_getInterpreterResult($content, $expression)) {
+                if ($this->_getInterpreterResult($message, $expression)) {
                     return true;
                 }
-            } elseif (preg_match($expression, $content)) {
+            } elseif (preg_match($expression, $message->head)) {
                 //here should match at least one of plenty
                 return true;
             }
@@ -67,16 +95,50 @@ class CommitMsg extends AbstractValidator
     /**
      * Get result by external matching
      *
-     * @param string $content
+     * @param Message $message
      * @param array $config
      * @return bool
      * @throws \PreCommit\Exception
      */
-    protected function _getInterpreterResult($content, array $config)
+    protected function _getInterpreterResult($message, array $config)
     {
-        $result = $this->_getInterpreter($config)
-            ->interpret(array('message' => $content));
+        if (!$message->verb) {
+            $result = $this->_getInterpreter($config)
+                ->interpret(array('message' => $message));
 
+            /**
+             * Set interpreted keys to message object
+             */
+            if (!empty($result['verb'])) {
+                $message->verb = $result['verb'];
+            }
+            if (!empty($result['issue_key'])) {
+                $message->issueKey = $result['issue_key'];
+            }
+            if (!empty($result['summary'])) {
+                $message->summary = $result['summary'];
+            }
+        }
+
+        //Initialize issue adapter
+        if (!$message->issue && $message->issueKey) {
+            $message->issue = Issue::factory($message->issueKey);
+        }
+
+        /**
+         * Check verb is allowed for issue type
+         */
+        $key = array_search($message->verb, $this->_getVerbs());
+        if (false === $key) {
+            return false;
+        }
+        if ($message->issue && !in_array($key, $this->_getAllowedVerbs($message->issue->getType()))) {
+            return false;
+        }
+
+        /**
+         * Check empty required keys
+         */
         foreach ($this->_getRequiredKeys() as $name => $enabled) {
             if (!$enabled) {
                 continue;
@@ -86,6 +148,31 @@ class CommitMsg extends AbstractValidator
             }
         }
         return true;
+    }
+
+    /**
+     * Get verbs map
+     *
+     * @param string $type
+     * @return array
+     */
+    protected function _getAllowedVerbs($type)
+    {
+        return (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/'
+                                                        . $this->_type . '/' . $type)
+            ?: (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/default/'
+                                                        . $type);
+    }
+
+    /**
+     * Get verbs map
+     *
+     * @return array
+     */
+    protected function _getVerbs()
+    {
+        return (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->_type)
+            ?: (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
     /**

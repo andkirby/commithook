@@ -132,7 +132,7 @@ abstract class AbstractAdapter
      *
      * @param string $name
      * @param array  $options
-     * @return \PreCommit\Filter\InterfaceFilter
+     * @return \PreCommit\Message\InterfaceFilter
      */
     protected function _loadFilter($name, array $options = array())
     {
@@ -166,6 +166,8 @@ abstract class AbstractAdapter
     }
 
     /**
+     * Get error collector
+     *
      * @return ErrorCollector
      */
     protected function _getErrorCollector()

@@ -55,16 +55,13 @@ class Parser implements InterpreterInterface
      */
     public function interpret($message)
     {
-        list($head, $userBody) = $this->_explodeMessage($message->body);
-
         //interpret first row to get summary
-        $interpretResult = $this->_interpretShortMessage($head);
+        $interpretResult = $this->_interpretShortMessage($message->head);
         if (!$interpretResult) {
             return $message;
         }
         list($verb, $issueKey, $userBodyInline) = $interpretResult;
-        $userBody = $this->_mergeComment($userBody, $userBodyInline);
-        //$userBody = $this->_addHyphen($userBody); //TODO move to another filter
+        $userBody = $this->_mergeComment($message->userBody, $userBodyInline);
 
         $this->_initIssue($issueKey);
 
@@ -73,7 +70,6 @@ class Parser implements InterpreterInterface
             return false;
         }
 
-        $message->head      = $head;
         $message->shortVerb = $verb;
         $message->issueKey  = $issueKey;
         $message->userBody  = $userBody;
@@ -232,34 +228,6 @@ class Parser implements InterpreterInterface
             $comment = $commentInline . "\n" . $comment;
         } elseif ($commentInline) {
             $comment = $commentInline;
-        }
-        return $comment;
-    }
-
-    /**
-     * Explode message
-     *
-     * @param string $inputMessage
-     * @return array
-     */
-    protected function _explodeMessage($inputMessage)
-    {
-        $arr      = explode("\n", $inputMessage);
-        $head     = array_shift($arr);
-        $userBody = trim(str_replace($head, '', $inputMessage));
-        return array($head, $userBody);
-    }
-
-    /**
-     * Add "-" to comment row
-     *
-     * @param string $comment
-     * @return string
-     */
-    protected function _addHyphen($comment)
-    {
-        if ($comment && 0 !== strpos(trim($comment), '-')) {
-            $comment = ' - ' . $comment;
         }
         return $comment;
     }

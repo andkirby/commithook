@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Processor;
 use \PreCommit\Exception as Exception;
+use PreCommit\Message;
 
 /**
  * Class abstract process adapter
@@ -48,8 +49,19 @@ class CommitMsg extends AbstractAdapter
      */
     public function process()
     {
+        $message = new Message();
+        \Zend_Registry::set('message', $message);
+
+        $message->body = $this->_getCommitMessage();
+
+        $message = $this->_loadFilter('Explode')
+            ->filter($message);
+
         $message = $this->_loadFilter('ShortCommitMsg')
-            ->filter($this->_getCommitMessage());
+            ->filter($message);
+
+        $message = $this->_loadFilter('Hyphen')
+            ->filter($message);
 
         $this->_loadValidator('CommitMsg')
             ->validate($message, null);

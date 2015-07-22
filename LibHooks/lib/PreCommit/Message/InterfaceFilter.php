@@ -14,7 +14,7 @@ interface InterfaceFilter
      * Filer message
      *
      * @param \PreCommit\Message $message
-     * @return string Message body
+     * @return Message
      */
     public function filter(Message $message);
 }

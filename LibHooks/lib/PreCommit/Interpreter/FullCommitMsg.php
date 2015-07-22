@@ -3,6 +3,7 @@ namespace PreCommit\Interpreter;
 
 use PreCommit\Config;
 use PreCommit\Exception;
+use PreCommit\Message;
 
 /**
  * Class FullCommitMsg
@@ -49,15 +50,21 @@ class FullCommitMsg implements InterpreterInterface
     public function interpret($data)
     {
         if (empty($data['message'])) {
-            throw new Exception('commit_message key data is not set.');
+            throw new Exception('Message data object is not set.');
+        }
+        $message = $data['message'];
+        if (!($message instanceof Message)) {
+            throw new Exception('Wrong message data object instance set.');
         }
 
-        preg_match($this->_getRegular(), $data['message'], $matches);
+        preg_match($this->_getRegular(), $message->body, $matches);
 
         $result = array();
         array_shift($matches); //ignore match all
         foreach ($this->_getKeys() as $name => $regular) {
-            $result[$name] = array_shift($matches);
+            if ($matches) {
+                $result[$name] = array_shift($matches);
+            }
         }
         return $result;
     }
