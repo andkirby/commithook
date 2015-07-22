@@ -46,7 +46,7 @@ class FullCommitMsg implements InterpreterInterface
      * @return array
      * @throws \PreCommit\Exception
      */
-    public function interpret(array $data)
+    public function interpret($data)
     {
         if (empty($data['message'])) {
             throw new Exception('commit_message key data is not set.');

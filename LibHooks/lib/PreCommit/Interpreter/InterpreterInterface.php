@@ -14,5 +14,5 @@ interface InterpreterInterface
      * @param array $data
      * @return $this
      */
-    public function interpret(array $data);
+    public function interpret($data);
 }
