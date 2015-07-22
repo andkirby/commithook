@@ -16,7 +16,4 @@
         <test>test.xml</test>
     </additional_config>
     <cache_dir>tests/tmp/cache</cache_dir>
-    <jira>
-        <project>TEST</project>
-    </jira>
 </config>
