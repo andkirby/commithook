@@ -3,47 +3,46 @@ namespace PreCommit\Filter;
 
 use PreCommit\Config;
 use PreCommit\Exception;
+use PreCommit\Issue;
+use PreCommit\Message;
 
 /**
  * Class ShortCommitMsg filter
  *
  * @package PreCommit\Filter
  */
-class ShortCommitMsg implements InterfaceFilter
+class ShortCommitMsg implements Message\InterfaceFilter
 {
     /**
      * Filter short commit message
      *
-     * @param string $inputMessage
-     * @param string|null   $file
+     * @param \PreCommit\Message $message
      * @return string
      */
-    public function filter($inputMessage, $file = null)
+    public function filter(Message $message)
     {
-        $inputMessage = trim($inputMessage);
+        $message->body = trim($message->body);
         //JIRA is the one issue tracker so far
         //TODO implement factory loading
-        $jira = new ShortCommitMsg\Parser();
-        $options = $jira->filter($inputMessage, $file);
-        if (!$options) {
-            return $inputMessage;
+        $result = $this->_getParser()->interpret($message);
+        if (!$result) {
+            return $message;
         }
-        return $this->_buildMessage(
-            $options
-        );
+        $this->_buildMessage($message);
+        return $message;
     }
 
     /**
      * Build message
      *
-     * @param array $options
-     * @return string
+     * @param Message $message
+     * @return $this
      * @throws \PreCommit\Exception
      */
-    protected function _buildMessage($options)
+    protected function _buildMessage(Message $message)
     {
-        return $this->_getFormatter()
-            ->filter($options);
+        $this->_getFormatter()->filter($message);
+        return $this;
     }
 
     /**
@@ -54,6 +53,16 @@ class ShortCommitMsg implements InterfaceFilter
     protected function _getFormatterConfig()
     {
         return $this->_getConfig()->getNodeArray('filters/ShortCommitMsg/issue/formatter');
+    }
+
+    /**
+     * Get parser
+     *
+     * @return \PreCommit\Filter\ShortCommitMsg\Parser
+     */
+    protected function _getParser()
+    {
+        return new ShortCommitMsg\Parser();
     }
 
     /**
