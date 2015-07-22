@@ -6,13 +6,14 @@ use PreCommit\Exception;
 use PreCommit\Filter\InterfaceFilter;
 use PreCommit\Issue;
 use PreCommit\Jira\Api;
+use PreCommit\Message;
 
 /**
  * Formatter prepare commit message according to format
  *
  * @package PreCommit\Validator
  */
-class Formatter implements InterfaceFilter
+class Formatter implements Message\InterfaceFilter
 {
     /**
      * Message interpreting type
@@ -42,14 +43,13 @@ class Formatter implements InterfaceFilter
     /**
      * Build commit message
      *
-     * @param array       $options
-     * @param null|string $file Ignored param
+     * @param Message $message
      * @return string
      */
-    public function filter($options, $file = null)
+    public function filter(Message $message)
     {
         return $this->_buildMessage(
-            $this->_getFormatConfig(), $options
+            $this->_getFormatConfig(), $message
         );
     }
 
@@ -57,15 +57,19 @@ class Formatter implements InterfaceFilter
      * Build message
      *
      * @param array $config  Config for formatting
-     * @param array $options key-value parsed data
+     * @param Message $message
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _buildMessage($config, $options)
+    protected function _buildMessage($config, $message)
     {
         $output = $config['format'];
-        $keys   = $options['keys'];
-        $output = $this->_putKeys($keys, $output);
+        //make default keys list
+        $keys   = array(
+            'summary'   => $message->summary,
+            'issue_key' => $message->issueKey,
+            'verb'      => $message->verb,
+        );
 
         /**
          * Put extra static keys
@@ -73,15 +77,13 @@ class Formatter implements InterfaceFilter
         if (!empty($config['key']) && is_array($config['key'])) {
             foreach ($config['key'] as $name => $keyConfig) {
                 if (isset($keyConfig['xpath'])) {
-                    $keyValue = $this->_getConfig()->getNode($keyConfig['xpath']);
-                    $output   = $this->_putKeys(
-                        array($name => $keyValue), $output
-                    );
+                    $keys[$name] = $this->_getConfig()->getNode($keyConfig['xpath']);
                 } else {
                     throw new Exception("Please set 'xpath' node with a path to a local value.");
                 }
             }
         }
+        $output = $this->_putKeys($keys, $output);
         return $output;
     }
 
