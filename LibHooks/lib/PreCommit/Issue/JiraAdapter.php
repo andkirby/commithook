@@ -218,9 +218,13 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      *
      * @param string $issueKey
      * @return \chobie\Jira\Api\Result
+     * @throws Api\Exception
      */
     protected function _loadIssueData($issueKey)
     {
+        if (!$this->_canRequest()) {
+            throw new Api\Exception('Connection params not fully set.');
+        }
         return $this->_getApi()->api(
             Api::REQUEST_GET,
             sprintf($this->_getApiUri(), $issueKey),
@@ -274,6 +278,18 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getIssueRequestFields()
     {
         return array('summary', 'issuetype');
+    }
+
+    /**
+     * Check if can make a request
+     *
+     * @return bool
+     */
+    protected function _canRequest()
+    {
+        return $this->_getConfig()->getNode('jira/url')
+               && $this->_getConfig()->getNode('jira/username')
+               && $this->_getConfig()->getNode('jira/password');
     }
     //endregion
 }
