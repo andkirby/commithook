@@ -3,16 +3,17 @@ namespace PreCommit\Filter\ShortCommitMsg;
 
 use PreCommit\Config;
 use PreCommit\Exception;
-use PreCommit\Filter\InterfaceFilter;
+use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Issue;
 use PreCommit\Jira\Api;
+use PreCommit\Message;
 
 /**
  * Class filter to parse short message
  *
  * @package PreCommit\Validator
  */
-class Parser implements InterfaceFilter
+class Parser implements InterpreterInterface
 {
     /**
      * Issue adapter
@@ -49,38 +50,38 @@ class Parser implements InterfaceFilter
     /**
      * Filter commit message
      *
-     * @param string $inputMessage
-     * @param string $file
+     * @param \PreCommit\Message $message
      * @return string
      */
-    public function filter($inputMessage, $file = null)
+    public function interpret($message)
     {
-        list($mainLine, $comment) = $this->_explodeMessage($inputMessage);
+        list($head, $userBody) = $this->_explodeMessage($message->body);
 
         //interpret first row to get summary
-        $interpretResult = $this->_interpretShortMessage($mainLine);
+        $interpretResult = $this->_interpretShortMessage($head);
         if (!$interpretResult) {
-            return $inputMessage;
+            return $message;
         }
-        list($verb, $issueKey, $commentInline) = $interpretResult;
-
-        $comment = $this->_mergeComment($comment, $commentInline);
-        $comment = $this->_addHyphen($comment); //TODO move to another filter
+        list($verb, $issueKey, $userBodyInline) = $interpretResult;
+        $userBody = $this->_mergeComment($userBody, $userBodyInline);
+        //$userBody = $this->_addHyphen($userBody); //TODO move to another filter
 
         $this->_initIssue($issueKey);
+
         if (!$this->_getIssue()) {
             //ignore when could not get an issue to build a full message
             return false;
         }
 
-        return array(
-            'keys' => array(
-                'verb'      => $this->_getVerb($verb),
-                'issue_key' => $this->_getIssue()->getKey(),
-                'summary'   => $this->_getIssue()->getSummary(),
-            ),
-            'comment' => $comment
-        );
+        $message->head      = $head;
+        $message->shortVerb = $verb;
+        $message->issueKey  = $issueKey;
+        $message->userBody  = $userBody;
+        $message->issue     = $this->_getIssue();
+        $message->summary   = $this->_getIssue()->getSummary();
+        $message->verb      = $this->_getVerb($verb);
+
+        return $message;
     }
 
     /**
@@ -101,7 +102,7 @@ class Parser implements InterfaceFilter
      */
     protected function _getIssueTypeDefaultVerb()
     {
-        $generalType = $this->_issue->getType();
+        $generalType = $this->_getIssue()->getType();
         if ($generalType) {
             return $this->_interpretShortVerb(
                 $this->_getDefaultShortVerb($generalType)
@@ -160,6 +161,7 @@ class Parser implements InterfaceFilter
      * @param string $issueNo
      * @return string
      * @throws \PreCommit\Exception
+     * @todo Refactor this 'cos it belongs to JIRA only
      */
     protected function _normalizeIssueKey($issueNo)
     {
@@ -185,6 +187,8 @@ class Parser implements InterfaceFilter
         $verbs = array_keys($this->_getVerbs());
         $verbs = implode('|', $verbs);
         $verbs = "($verbs)";
+        //read format [SHORT_VERB] [ISSUE_KEY] [SUMMARY]
+        //TODO get tracker issue key format
         preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+)( [^\n]+)?/", trim($message), $m);
         if (!$m) {
             return false;
@@ -208,7 +212,7 @@ class Parser implements InterfaceFilter
      * Get default short verb by general issue type
      *
      * @param string $generalType
-     * @return array|null
+     * @return string|null
      */
     protected function _getDefaultShortVerb($generalType)
     {
@@ -240,10 +244,10 @@ class Parser implements InterfaceFilter
      */
     protected function _explodeMessage($inputMessage)
     {
-        $arr         = explode("\n", $inputMessage);
-        $firstLine   = array_shift($arr);
-        $description = trim(str_replace($firstLine, '', $inputMessage));
-        return array($firstLine, $description);
+        $arr      = explode("\n", $inputMessage);
+        $head     = array_shift($arr);
+        $userBody = trim(str_replace($head, '', $inputMessage));
+        return array($head, $userBody);
     }
 
     /**
