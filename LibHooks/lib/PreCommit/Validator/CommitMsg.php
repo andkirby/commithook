@@ -18,6 +18,9 @@ class CommitMsg extends AbstractValidator
      * Error codes
      */
     const CODE_BAD_COMMIT_MESSAGE = 'badCommitMessage';
+    const CODE_VERB_INCORRECT = 'badCommitVerb';
+    const CODE_VERB_NOT_FOUND = 'commitVerbNotFound';
+    const CODE_KEY_NOT_SET = 'commitKeyNotSet';
     /**#@-*/
 
     /**
@@ -27,6 +30,9 @@ class CommitMsg extends AbstractValidator
      */
     protected $_errorMessages = array(
         self::CODE_BAD_COMMIT_MESSAGE => 'Head of commit message "%value%" has improper form.',
+        self::CODE_VERB_INCORRECT     => 'Commit verb "%value%" is not suitable for the issue.',
+        self::CODE_VERB_NOT_FOUND     => 'Commit verb "%value%" not found.',
+        self::CODE_KEY_NOT_SET        => 'Required commit key "%value%" is not set.',
     );
 
     /**
@@ -102,6 +108,7 @@ class CommitMsg extends AbstractValidator
      */
     protected function _getInterpreterResult($message, array $config)
     {
+        $result = null;
         if (!$message->verb) {
             $result = $this->_getInterpreter($config)
                 ->interpret(array('message' => $message));
@@ -126,24 +133,35 @@ class CommitMsg extends AbstractValidator
         }
 
         /**
-         * Check verb is allowed for issue type
+         * Check empty required keys from interpreted result
          */
-        $key = array_search($message->verb, $this->_getVerbs());
-        if (false === $key) {
-            return false;
-        }
-        if ($message->issue && !in_array($key, $this->_getAllowedVerbs($message->issue->getType()))) {
-            return false;
+        if ($result) {
+            foreach ($this->_getRequiredKeys() as $name => $enabled) {
+                if (!$enabled) {
+                    continue;
+                }
+                if (!isset($result[$name]) || !$result[$name]) {
+                    //$this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $name);
+                    return false;
+                }
+            }
         }
 
         /**
-         * Check empty required keys
+         * Check verb is allowed for issue type
          */
-        foreach ($this->_getRequiredKeys() as $name => $enabled) {
-            if (!$enabled) {
-                continue;
+        if ($message->verb) {
+            //find verb key
+            $key = array_search($message->verb, $this->_getVerbs());
+            if (false === $key) {
+                //$this->_addError('Commit Message', self::CODE_VERB_NOT_FOUND, $message->verb);
+                return false;
             }
-            if (!isset($result[$name]) || !$result[$name]) {
+
+            //check allowed verb by issue type
+            $allowed = $this->_getAllowedVerbs($message->issue->getType());
+            if ($message->issue && (!isset($allowed[$key]) || !$allowed[$key])) {
+                //$this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
                 return false;
             }
         }
