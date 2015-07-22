@@ -9,6 +9,7 @@
 /** stub */
 
 !defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', __DIR__);
+!defined('TEST_MODE') && define('TEST_MODE', false);
 set_include_path(
     implode(
         PATH_SEPARATOR,
