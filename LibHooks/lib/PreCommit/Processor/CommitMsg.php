@@ -85,11 +85,11 @@ class CommitMsg extends AbstractAdapter
     /**
      * Set commit message
      *
-     * @param string $message
+     * @param \PreCommit\Message $message
      * @return string
      */
-    protected function _setCommitMessage($message)
+    protected function _setCommitMessage(Message $message)
     {
-        return $this->_vcsAdapter->setCommitMessage($message);
+        return $this->_vcsAdapter->setCommitMessage($message->body);
     }
 }
