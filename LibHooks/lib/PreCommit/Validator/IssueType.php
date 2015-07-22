@@ -1,6 +1,9 @@
 <?php
 namespace PreCommit\Validator;
 
+use PreCommit\Config;
+use PreCommit\Message;
+
 /**
  * Class code style validator
  *
@@ -8,36 +11,43 @@ namespace PreCommit\Validator;
  */
 class IssueType extends AbstractValidator
 {
-    /**
-     * Adopted tracker validator
-     *
-     * @var AbstractValidator
+    /**#@+
+     * Error codes
      */
-    protected $_adoptedValidator;
+    const CODE_WRONG_ISSUE_TYPE = 'wrongIssueType';
+    /**#@-*/
 
     /**
-     * Init adopted validator
+     * Error messages
      *
-     * @param array $options
-     * @throws \PreCommit\Exception
+     * @var array
      */
-    public function __construct(array $options)
+    protected $_errorMessages = array(
+        self::CODE_WRONG_ISSUE_TYPE => 'Issue type "%value%" is suitable to have commits.',
+    );
+
+    /**
+     * Checking for interpreter errors
+     *
+     * @param Message $message Absolute path
+     * @param string  $file    Omitted parameter
+     * @return bool
+     */
+    public function validate($message, $file)
     {
-        $this->_adoptedValidator = new IssueType\Jira($options);
-        parent::__construct($options);
+        if ($message->issue && !$message->issue->getType()) {
+            $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_TYPE, $message->issue->getOriginalType());
+        }
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
-     * Validate issue type
+     * Get config model
      *
-     * Actually call to adopted validator
-     *
-     * @param string $content
-     * @param string $file
-     * @return bool
+     * @return Config
      */
-    public function validate($content, $file)
+    protected function _getConfig()
     {
-        return $this->_adoptedValidator->validate($content, $file);
+        return Config::getInstance();
     }
 }
