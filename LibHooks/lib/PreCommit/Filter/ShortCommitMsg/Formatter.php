@@ -110,10 +110,14 @@ class Formatter implements Message\InterfaceFilter
      * @param array  $keys
      * @param string $output
      * @return string
+     * @throws \PreCommit\Exception
      */
     protected function _putKeys(array $keys, $output)
     {
         foreach ($keys as $name => $value) {
+            if (!$value) {
+                throw new Exception("Variable '$name' cannot be empty.");
+            }
             $output = str_replace("__{$name}__", $value, $output);
         }
         return $output;
