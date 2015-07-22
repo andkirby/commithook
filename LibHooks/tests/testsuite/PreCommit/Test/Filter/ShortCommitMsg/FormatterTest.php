@@ -30,28 +30,4 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($message->body, "SomeVerb TEST-234: My summary!\nline 1\n line 2");
         $this->assertEquals($message->head, "SomeVerb TEST-234: My summary!");
     }
-
-    /**
-     * Get issue mock
-     *
-     * @param string $summary
-     * @param string $key
-     * @param string $type
-     * @param string $originalType
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function _getIssueMock($summary, $key, $type, $originalType)
-    {
-        /** @var Issue\AdapterAbstract|\PHPUnit_Framework_MockObject_MockObject $filter */
-        $issue = $this->getMock('PreCommit\Issue\AdapterAbstract', array(), array(), '', false);
-        $issue->method('getSummary')
-            ->willReturn($summary);
-        $issue->method('getKey')
-            ->willReturn($key);
-        $issue->method('getType')
-            ->willReturn($type);
-        $issue->method('getOriginalType')
-            ->willReturn($originalType);
-        return $issue;
-    }
 }
