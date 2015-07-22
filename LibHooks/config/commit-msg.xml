@@ -34,6 +34,7 @@
             <match>
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
+                <git_flow_finish>/^Finish /</git_flow_finish>
                 <full>
                     <interpreter>
                         <class>\PreCommit\Interpreter\FullCommitMsg</class>
