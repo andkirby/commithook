@@ -48,9 +48,11 @@ class Formatter implements Message\InterfaceFilter
      */
     public function filter(Message $message)
     {
-        return $this->_buildMessage(
+        $this->_buildHead(
             $this->_getFormatConfig(), $message
         );
+        $this->_buildBody($message);
+        return $message;
     }
 
     /**
@@ -61,7 +63,7 @@ class Formatter implements Message\InterfaceFilter
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _buildMessage($config, $message)
+    protected function _buildHead($config, Message $message)
     {
         $output = $config['format'];
         //make default keys list
@@ -83,8 +85,8 @@ class Formatter implements Message\InterfaceFilter
                 }
             }
         }
-        $output = $this->_putKeys($keys, $output);
-        return $output;
+        $message->head = $this->_putKeys($keys, $output);
+        return $this;
     }
 
     /**
@@ -115,6 +117,18 @@ class Formatter implements Message\InterfaceFilter
             $output = str_replace("__{$name}__", $value, $output);
         }
         return $output;
+    }
+
+    /**
+     * Build message body
+     *
+     * @param \PreCommit\Message $message
+     * @return $this
+     */
+    protected function _buildBody(Message $message)
+    {
+        $message->body = $message->head . "\n" . $message->userBody;
+        return $this;
     }
 
     /**

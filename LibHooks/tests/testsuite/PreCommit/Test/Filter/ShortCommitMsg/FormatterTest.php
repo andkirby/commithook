@@ -13,59 +13,22 @@ use PreCommit\Message;
 class FormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Data provider
-     *
-     * @return array
-     */
-    public function dataProvider()
-    {
-        return array(
-            /**
-             * Test getting default verb by issue type
-             */
-            array(
-                'TEST-123', //issue key
-                'Test summary!!!', //issue summary
-                'task', //issue type
-                'Task', //original issue type
-                "My test 1!\nTest 2.", //user message
-                "123 My test 1!\nTest 2.", //full commit message
-                'Implemented', //verb
-                '', //short verb
-                "Implemented TEST-123: Test summary!!!"
-            )
-        );
-    }
-
-    /**
      * Test simple short message
-     *
-     * @param string $issueKey
-     * @param string $summary
-     * @param string $type
-     * @param string $originalType
-     * @param string $userBody
-     * @param string $commitMessage
-     * @param string $verb
-     * @param string $shortVerb
-     * @param string $expected
-     * @dataProvider dataProvider
      */
-    public function testMessageBodyFormatting(
-        $issueKey, $summary, $type, $originalType, $userBody, $commitMessage, $verb, $shortVerb, $expected
-    ) {
+    public function testMessageBodyFormatting()
+    {
         $message            = new Message();
-        $message->body      = $commitMessage;
-        $message->issueKey  = $issueKey;
-        $message->summary   = $summary;
-        $message->userBody  = $userBody;
-        $message->verb      = $verb;
-        $message->shortVerb = $shortVerb;
-        $message->issue     = $this->_getIssueMock($summary, $issueKey, $type, $originalType);
+        $message->body      = '234 some test';
+        $message->issueKey  = 'TEST-234';
+        $message->summary   = 'My summary!';
+        $message->userBody  = "line 1\n line 2";
+        $message->verb      = 'SomeVerb';
 
         /** @var ShortCommitMsg\Formatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
         $formatter = new ShortCommitMsg\Formatter();
-        $this->assertEquals($expected, $formatter->filter($message));
+        $this->assertEquals($message, $formatter->filter($message));
+        $this->assertEquals($message->body, "SomeVerb TEST-234: My summary!\nline 1\n line 2");
+        $this->assertEquals($message->head, "SomeVerb TEST-234: My summary!");
     }
 
     /**
