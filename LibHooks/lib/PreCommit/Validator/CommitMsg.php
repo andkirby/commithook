@@ -127,6 +127,11 @@ class CommitMsg extends AbstractValidator
             }
         }
 
+        if (!$message->issueKey) {
+            //cannot recognize message format
+            return false;
+        }
+
         //Initialize issue adapter
         if (!$message->issue && $message->issueKey) {
             $message->issue = Issue::factory($message->issueKey);
@@ -134,6 +139,8 @@ class CommitMsg extends AbstractValidator
 
         /**
          * Check empty required keys from interpreted result
+         *
+         * At least issue key should be set after interpreting
          */
         if ($result) {
             foreach ($this->_getRequiredKeys() as $name => $enabled) {
@@ -141,7 +148,7 @@ class CommitMsg extends AbstractValidator
                     continue;
                 }
                 if (!isset($result[$name]) || !$result[$name]) {
-                    //$this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $name);
+                    $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $name);
                     return false;
                 }
             }
@@ -150,18 +157,18 @@ class CommitMsg extends AbstractValidator
         /**
          * Check verb is allowed for issue type
          */
-        if ($message->verb) {
+        if ($message->issue) {
             //find verb key
             $key = array_search($message->verb, $this->_getVerbs());
             if (false === $key) {
-                //$this->_addError('Commit Message', self::CODE_VERB_NOT_FOUND, $message->verb);
+                $this->_addError('Commit Message', self::CODE_VERB_NOT_FOUND, $message->verb);
                 return false;
             }
 
             //check allowed verb by issue type
             $allowed = $this->_getAllowedVerbs($message->issue->getType());
             if ($message->issue && (!isset($allowed[$key]) || !$allowed[$key])) {
-                //$this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
+                $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
                 return false;
             }
         }
