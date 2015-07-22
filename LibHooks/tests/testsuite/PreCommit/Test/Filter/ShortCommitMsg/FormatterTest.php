@@ -13,7 +13,7 @@ use PreCommit\Message;
 class FormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Test simple short message
+     * Test formatting full commit message
      */
     public function testMessageBodyFormatting()
     {
