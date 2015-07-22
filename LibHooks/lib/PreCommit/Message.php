@@ -74,4 +74,14 @@ class Message
     {
         return null;
     }
+
+    /**
+     * Get body on to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->body;
+    }
 }
