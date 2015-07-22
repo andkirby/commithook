@@ -7,7 +7,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * CommitHooks files remover
+ * CommitHooks command tester
+ *
+ * It will test all modified files
  *
  * @package PreCommit\Composer
  */
