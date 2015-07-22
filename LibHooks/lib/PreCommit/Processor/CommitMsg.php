@@ -60,9 +60,6 @@ class CommitMsg extends AbstractAdapter
         $message = $this->_loadFilter('ShortCommitMsg')
             ->filter($message);
 
-        $message = $this->_loadFilter('Hyphen')
-            ->filter($message);
-
         $this->_loadValidator('CommitMsg')
             ->validate($message, null);
 

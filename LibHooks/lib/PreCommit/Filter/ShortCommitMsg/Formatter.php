@@ -131,8 +131,23 @@ class Formatter implements Message\InterfaceFilter
      */
     protected function _buildBody(Message $message)
     {
+        $message->userBody = $this->_addHyphen($message->userBody);
         $message->body = $message->head . "\n" . $message->userBody;
         return $this;
+    }
+
+    /**
+     * Add "-" to comment row
+     *
+     * @param string $comment
+     * @return string
+     */
+    protected function _addHyphen($comment)
+    {
+        if ($comment && 0 !== strpos(trim($comment), '-')) {
+            $comment = ' - ' . $comment;
+        }
+        return $comment;
     }
 
     /**
