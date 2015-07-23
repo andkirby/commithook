@@ -34,7 +34,9 @@ $ commithook install
 ### [Ignoring Code Validators](doc/ignore-validator.md)
 
 ## Release notes
-- v1.7.0b JIRA integration. (Removed blocking by the code validation for multiline 'if' conditions in PHTML)
+- v2.x-dev Added ability to check changed files by pre-commit hook (`commithook test` in GIT directory). Refactored validation commit message. Added an ability to customize the commit message format. Added supporting automatic commit messages made by GitFlow process from SourceTree (it starts with word 'Finish'). 
+- v1.8.0 Improved recognizing short commit message format.
+- v1.7.0b JIRA integration. Integrated short commit message format. Removed blocking by the code validation for multi-line 'if' conditions in PHTML.
 - v1.6.9 Fixed generating paths on install hook files into a project.
 - v1.6.8 Improved skipping methods name validation. Added new tag `@skipCommitHookMethodNaming`.
 - v1.6.7 Added supporting numbers in the issue project key in commit message.
