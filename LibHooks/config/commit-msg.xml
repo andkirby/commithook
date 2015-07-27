@@ -77,8 +77,6 @@
                         <allowed>
                             <!--Commit message type: default-->
                             <default>
-                                <Open>1</Open>
-                                <Reopened>1</Reopened>
                                 <In_Progress>1</In_Progress>
                             </default>
                         </allowed>

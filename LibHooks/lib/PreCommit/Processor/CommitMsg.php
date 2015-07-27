@@ -66,6 +66,9 @@ class CommitMsg extends AbstractAdapter
         $this->_loadValidator('IssueType')
             ->validate($message, null);
 
+        $this->_loadValidator('IssueStatus')
+            ->validate($message, null);
+
         if (!$this->_errorCollector->hasErrors()) {
             $this->_setCommitMessage($message);
         }
