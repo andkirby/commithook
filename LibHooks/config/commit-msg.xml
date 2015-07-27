@@ -70,6 +70,19 @@
                 </verb>
             </issue>
         </IssueType>
+        <IssueStatus>
+            <issue>
+                <status>
+                    <allowed>
+                        <default>
+                            <Open>1</Open>
+                            <Reopened>1</Reopened>
+                            <In_Progress>1</In_Progress>
+                        </default>
+                    </allowed>
+                </status>
+            </issue>
+        </IssueStatus>
     </validators>
 
     <filters>
