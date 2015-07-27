@@ -53,7 +53,7 @@ class IssueStatus extends AbstractValidator
     public function validate($message, $file)
     {
         if ($message->issue && $message->issue->getStatus()
-            && $this->_isAllowed($message->issue->getStatus())
+            && !$this->_isAllowed($message->issue->getStatus())
         ) {
             $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
         }
