@@ -16,7 +16,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     /**
      * Cache schema version
      */
-    const CACHE_SCHEMA_VERSION = 1;
+    const CACHE_SCHEMA_VERSION = 2;
 
     /**
      * Exception code when issue not found
@@ -210,6 +210,17 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     {
         return $this->_getIssue()->getIssueType();
     }
+
+    /**
+     * Get status name
+     *
+     * @return string
+     * @throws \PreCommit\Jira\Api\Exception
+     */
+    public function getStatus()
+    {
+        return $this->_normalizeName($this->_getIssue()->getStatusName());
+    }
     //endregion
 
     //region API methods
@@ -277,7 +288,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _getIssueRequestFields()
     {
-        return array('summary', 'issuetype');
+        return array('summary', 'issuetype', 'status');
     }
 
     /**

@@ -49,4 +49,11 @@ interface AdapterInterface
      * @return $this
      */
     public function getOriginalType();
+
+    /**
+     * Get issue status
+     *
+     * @return string
+     */
+    public function getStatus();
 }
