@@ -9,5 +9,5 @@ Also you may use following template to create commit-msg and pre-commit files:
 ```php
 #!/usr/bin/env /your/php
 <?php
-\$hookName = __FILE__;
+$hookName = __FILE__;
 require_once '/path/to/commithook/bin/runner.php';
