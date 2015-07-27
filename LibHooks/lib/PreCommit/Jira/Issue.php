@@ -72,6 +72,19 @@ class Issue extends JiraLib\Issue
     }
 
     /**
+     * get issue status
+     *
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        if (isset($this->fields['status'])) {
+            return $this->fields['status'];
+        }
+        return null;
+    }
+
+    /**
      * Get issue type name
      *
      * @return string
