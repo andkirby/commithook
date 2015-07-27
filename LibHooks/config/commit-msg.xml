@@ -73,13 +73,16 @@
         <IssueStatus>
             <issue>
                 <status>
-                    <allowed>
-                        <default>
-                            <Open>1</Open>
-                            <Reopened>1</Reopened>
-                            <In_Progress>1</In_Progress>
-                        </default>
-                    </allowed>
+                    <jira>
+                        <allowed>
+                            <!--Commit message type: default-->
+                            <default>
+                                <Open>1</Open>
+                                <Reopened>1</Reopened>
+                                <In_Progress>1</In_Progress>
+                            </default>
+                        </allowed>
+                    </jira>
                 </status>
             </issue>
         </IssueStatus>
