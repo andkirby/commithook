@@ -52,13 +52,10 @@ class IssueStatus extends AbstractValidator
      */
     public function validate($message, $file)
     {
-        if ($message->issue && $message->issue->getStatus()) {
-            $allowedStatuses = $this->_getStatuses();
-            if (isset($allowedStatuses[$message->issue->getStatus()])
-                && $allowedStatuses[$message->issue->getStatus()]
-            ) {
-                $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
-            }
+        if ($message->issue && $message->issue->getStatus()
+            && $this->_isAllowed($message->issue->getStatus())
+        ) {
+            $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
         }
         return !$this->_errorCollector->hasErrors();
     }
@@ -93,5 +90,18 @@ class IssueStatus extends AbstractValidator
     protected function _getConfig()
     {
         return Config::getInstance();
+    }
+
+    /**
+     * Is status allowed
+     *
+     * @param string $status
+     * @return bool
+     */
+    protected function _isAllowed($status)
+    {
+        $allowedStatuses = $this->_getStatuses();
+        return isset($allowedStatuses[$status])
+               && $allowedStatuses[$status];
     }
 }
