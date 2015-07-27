@@ -12,7 +12,7 @@
         <main>config/commithook.xml</main>
         <pre-commit>config/pre-commit.xml</pre-commit>
         <commit-msg>config/commit-msg.xml</commit-msg>
-        <magento>config/commithook-magento.xml</magento>
+        <magento>config/pre-commit-magento.xml</magento>
         <local>../commithook-local.xml</local>
         <userprofile>HOME/.commithook/commithook.xml</userprofile>
         <userprofile-pre-commit>HOME/.commithook/pre-commit.xml</userprofile-pre-commit>

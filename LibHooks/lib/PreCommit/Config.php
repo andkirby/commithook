@@ -126,6 +126,7 @@ class Config extends \SimpleXMLElement
         $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
         $files = self::getInstance()->getNodeArray('additional_config');
 
+        self::_mergeFiles($merger, array('HOME/user-root.xml'), $allowed);
         self::_mergeFiles($merger, $files, $allowed);
 
         //write cached config file
@@ -152,13 +153,8 @@ class Config extends \SimpleXMLElement
             if (!is_file($file)) {
                 continue;
             }
-            try {
-                $xml = self::_loadXmlFileToMerge($file);
-                $merger->merge(self::getInstance(), $xml);
-            } catch (\Exception $e) {
-                echo 'XML ERROR: Could not load additional config file ' . $file;
-                echo PHP_EOL;
-            }
+            $xml = self::_loadXmlFileToMerge($file);
+            $merger->merge(self::getInstance(), $xml);
         }
     }
 
