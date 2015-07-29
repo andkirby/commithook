@@ -2,7 +2,7 @@
   "name": "andkirby/commithook",
   "description": "PHP Commit Hooks",
   "minimum-stability": "dev",
-  "license": "proprietary",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "Andrew Roslik",
