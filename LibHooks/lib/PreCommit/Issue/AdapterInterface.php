@@ -56,4 +56,13 @@ interface AdapterInterface
      * @return string
      */
     public function getStatus();
+
+    /**
+     * Ignore issue on failed validation
+     *
+     * It should be removed from cache at least to make new request in future.
+     *
+     * @return string
+     */
+    public function ignoreIssue();
 }

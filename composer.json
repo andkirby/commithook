@@ -9,10 +9,12 @@
       "email": "bizkirby@gmail.com"
     }
   ],
+  "prefer-stable": true,
   "require": {
     "php": ">=5.3.2",
     "symfony/console": "~2.5@stable",
     "chobie/jira-api-restclient": "2.0.x-dev",
+    "zendframework/zend-cache": "~2.5@stable",
     "zf1/zend-registry": "~1.12"
   },
   "require-dev": {

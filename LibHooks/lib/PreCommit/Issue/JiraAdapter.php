@@ -2,9 +2,9 @@
 namespace PreCommit\Issue;
 
 use chobie\Jira\Api\Authentication\Basic;
-use PreCommit\Config;
 use PreCommit\Jira\Api;
 use PreCommit\Jira\Issue;
+use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
 
 /**
  * Class JiraAdapter
@@ -101,11 +101,14 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _cacheResult($issueKey, $result)
     {
-        list($project, $number) = $this->_interpretIssueKey($issueKey);
-        $file = $this->_getCacheFile($project);
-        $cacheString = $this->_getCacheStringKey($number)
-                       . serialize($result);
-        file_put_contents($file, $cacheString . PHP_EOL, FILE_APPEND);
+        $cache = $this->_getCache();
+        list($project, ) = $this->_interpretIssueKey($issueKey);
+        $cache->setTags($issueKey, array($project));
+        if ($result) {
+            $cache->setItem($issueKey, serialize($result));
+        } else {
+            $cache->removeItem($issueKey);
+        }
         return $this;
     }
 
@@ -118,55 +121,8 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _getCachedResult($issueKey)
     {
-        list($project, $number) = $this->_interpretIssueKey($issueKey);
-        $cacheFile = $this->_getCacheFile($project);
-
-        if (!is_file($cacheFile)) {
-            //no cache file
-            return false;
-        }
-        $cacheContent = file_get_contents($cacheFile);
-        $cacheKey = $this->_getCacheStringKey($number);
-        $position = strpos($cacheContent, $cacheKey);
-
-        if (false === $position) {
-            //cache not found
-            return false;
-        }
-
-        //find cache data
-        $dataStr = substr($cacheContent, $position + strlen($cacheKey));
-        $position = strpos($dataStr, "\n");
-        if (false !== $position) {
-            //cut target string if it's not in the beginning
-            $dataStr = substr($dataStr, 0, $position);
-        }
-
-        return unserialize($dataStr);
-    }
-
-    /**
-     * Get cache point key
-     *
-     * @param string $number
-     * @return string
-     */
-    protected function _getCacheStringKey($number)
-    {
-        return '|' . $number . ': ';
-    }
-
-    /**
-     * Get cache file
-     *
-     * @param string $project
-     * @return string
-     */
-    protected function _getCacheFile($project)
-    {
-        $project = strtolower($project);
-        return $this->_getCacheDir()
-               . "/issues-$project-v" . self::CACHE_SCHEMA_VERSION;
+        $data = $this->_getCache()->getItem($issueKey);
+        return $data ? unserialize($data) : null;
     }
 
     /**
@@ -177,6 +133,18 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getCacheDir()
     {
         return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
+    }
+
+    /**
+     * Get cache adapter
+     *
+     * @return \Zend\Cache\Storage\Adapter\Filesystem
+     */
+    protected function _getCache()
+    {
+        return new CacheAdapter(
+            array('cache_dir' => $this->_getCacheDir())
+        );
     }
     //endregion
 
@@ -220,6 +188,18 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     public function getStatus()
     {
         return $this->_normalizeName($this->_getIssue()->getStatusName());
+    }
+
+    /**
+     * Cache issue
+     *
+     * @return $this
+     * @throws \PreCommit\Jira\Api\Exception
+     */
+    public function ignoreIssue()
+    {
+        $this->_cacheResult($this->_issueKey, array());
+        return $this;
     }
     //endregion
 

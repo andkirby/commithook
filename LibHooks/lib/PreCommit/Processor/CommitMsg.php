@@ -54,22 +54,34 @@ class CommitMsg extends AbstractAdapter
 
         $message->body = $this->_getCommitMessage();
 
-        $message = $this->_loadFilter('Explode')
-            ->filter($message);
+        try {
+            $message = $this->_loadFilter('Explode')
+                ->filter($message);
 
-        $message = $this->_loadFilter('ShortCommitMsg')
-            ->filter($message);
+            $message = $this->_loadFilter('ShortCommitMsg')
+                ->filter($message);
 
-        $this->_loadValidator('CommitMsg')
-            ->validate($message, null);
+            $this->_loadValidator('CommitMsg')
+                ->validate($message, null);
 
-        $this->_loadValidator('IssueType')
-            ->validate($message, null);
+            $this->_loadValidator('IssueType')
+                ->validate($message, null);
 
-        $this->_loadValidator('IssueStatus')
-            ->validate($message, null);
+            $this->_loadValidator('IssueStatus')
+                ->validate($message, null);
+        } catch (\Exception $e) {
+            //TODO refactor ignore issue approach
+            if ($message->issue) {
+                //ignore issue caching on failed validation
+                $message->issue->ignoreIssue();
+            }
+            throw $e;
+        }
 
-        if (!$this->_errorCollector->hasErrors()) {
+        if ($this->_errorCollector->hasErrors() && $message->issue) {
+            //ignore issue caching on failed validation
+            $message->issue->ignoreIssue();
+        } else {
             $this->_setCommitMessage($message);
         }
         return !$this->_errorCollector->hasErrors();
