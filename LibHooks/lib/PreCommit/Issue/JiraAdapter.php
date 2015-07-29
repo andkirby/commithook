@@ -143,7 +143,11 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getCache()
     {
         return new CacheAdapter(
-            array('cache_dir' => $this->_getCacheDir())
+            array(
+                'cache_dir' => $this->_getCacheDir(),
+                'ttl'       => 7200,
+                'namespace' => 'issue-' . self::CACHE_SCHEMA_VERSION
+            )
         );
     }
     //endregion
