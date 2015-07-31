@@ -19,6 +19,7 @@ class CommitMsg extends AbstractValidator
      */
     const CODE_BAD_COMMIT_MESSAGE = 'badCommitMessage';
     const CODE_VERB_INCORRECT = 'badCommitVerb';
+    const CODE_ISSUE_TYPE_INCORRECT = 'badIssueType';
     const CODE_VERB_NOT_FOUND = 'commitVerbNotFound';
     const CODE_KEY_NOT_SET = 'commitKeyNotSet';
     /**#@-*/
@@ -29,10 +30,11 @@ class CommitMsg extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_BAD_COMMIT_MESSAGE => 'Head of commit message "%value%" has improper form.',
-        self::CODE_VERB_INCORRECT     => 'Commit verb "%value%" is not suitable for the issue.',
-        self::CODE_VERB_NOT_FOUND     => 'Commit verb "%value%" not found.',
-        self::CODE_KEY_NOT_SET        => 'Required commit key "%value%" is not set.',
+        self::CODE_BAD_COMMIT_MESSAGE   => 'Head of commit message "%value%" has improper form.',
+        self::CODE_VERB_INCORRECT       => 'Commit verb "%value%" is not suitable for the issue.',
+        self::CODE_ISSUE_TYPE_INCORRECT => 'Issue type "%value%" is not suitable to check verb properly. Please take a look your configuration.',
+        self::CODE_VERB_NOT_FOUND       => 'Commit verb "%value%" not found.',
+        self::CODE_KEY_NOT_SET          => 'Required commit key "%value%" is not set.',
     );
 
     /**
@@ -166,10 +168,19 @@ class CommitMsg extends AbstractValidator
             }
 
             //check allowed verb by issue type
-            $allowed = $this->_getAllowedVerbs($message->issue->getType());
-            if ($message->issue && (!isset($allowed[$key]) || !$allowed[$key])) {
-                $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
-                return false;
+            if (!$this->_errorCollector->hasErrors()) {
+                if (!$message->issue->getType()) {
+                    $this->_addError(
+                        'Commit Message', self::CODE_ISSUE_TYPE_INCORRECT, $message->issue->getOriginalType()
+                    );
+                    return false;
+                }
+                //it's cannot be processed if issue type is not valid
+                $allowed = $this->_getAllowedVerbs($message->issue->getType());
+                if (!isset($allowed[$key]) || !$allowed[$key]) {
+                    $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
+                    return false;
+                }
             }
         }
         return true;
@@ -180,6 +191,7 @@ class CommitMsg extends AbstractValidator
      *
      * @param string $type
      * @return array
+     * @throws \PreCommit\Exception
      */
     protected function _getAllowedVerbs($type)
     {
