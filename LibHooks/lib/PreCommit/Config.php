@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit;
 
+use PreCommit\Jira\Api\Exception;
+
 /**
  * Class for get config
  */
@@ -262,6 +264,22 @@ class Config extends \SimpleXMLElement
         //remove XML comments (hack) TODO investigate a problem
         unset($result['comment']);
         return $result;
+    }
+
+    /**
+     * Catch exception and show failed XPath
+     *
+     * @param string $path
+     * @return \SimpleXMLElement[]
+     * @throws \PreCommit\Jira\Api\Exception
+     */
+    public function xpath($path)
+    {
+        try {
+            return parent::xpath($path);
+        } catch (\Exception $e) {
+            throw new Exception("Invalid XPath '$path'");
+        }
     }
 
     /**
