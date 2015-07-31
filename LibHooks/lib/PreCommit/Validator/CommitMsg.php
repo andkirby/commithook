@@ -183,6 +183,9 @@ class CommitMsg extends AbstractValidator
      */
     protected function _getAllowedVerbs($type)
     {
+        if (!$type) {
+            throw new Exception('Empty issue type.');
+        }
         return (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/'
                                                         . $this->_type . '/' . $type)
             ?: (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/default/'
