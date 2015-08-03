@@ -68,8 +68,8 @@ class IssueStatus extends AbstractValidator
     protected function _getStatuses()
     {
         return (array)$this->_getConfig()->getNodeArray(
-            'validators/IssueStatus/issue/status/' . $this->_getTrackerName() . '/allowed/' . $this->_type)
-            ?: (array)$this->_getConfig()->getNodeArray('validators/IssueStatus/issue/status/' . $this->_getTrackerName() . '/allowed/' . $this->_type);
+            'validators/IssueStatus/issue/status/' . $this->_getTrackerType() . '/allowed/' . $this->_type)
+            ?: (array)$this->_getConfig()->getNodeArray('validators/IssueStatus/issue/status/' . $this->_getTrackerType() . '/allowed/' . $this->_type);
     }
 
     /**
@@ -77,9 +77,9 @@ class IssueStatus extends AbstractValidator
      *
      * @return string
      */
-    protected function _getTrackerName()
+    protected function _getTrackerType()
     {
-        return (string)$this->_getConfig()->getNode('tracker_name');
+        return (string)$this->_getConfig()->getNode('tracker/type');
     }
 
     /**
