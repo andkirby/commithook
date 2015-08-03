@@ -13,4 +13,12 @@
             </filter>
         </FileFilter>
     </validators>
+
+    <tracker>
+        <type>github</type>
+        <github>
+            <name>andkirby</name>
+            <repository>commithook</repository>
+        </github>
+    </tracker>
 </config>
