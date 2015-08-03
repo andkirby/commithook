@@ -27,7 +27,7 @@ class Issue
     static public function factory($key)
     {
         if (!isset(self::$_adapters[$key])) {
-            $tracker = self::_getTrackerName();
+            $tracker = self::_getTrackerType();
             if (!$tracker) {
                 return null;
             }
@@ -47,9 +47,9 @@ class Issue
      *
      * @return string
      */
-    static protected function _getTrackerName()
+    static protected function _getTrackerType()
     {
-        return (string)self::_getConfig()->getNode('tracker_name');
+        return (string)self::_getConfig()->getNode('tracker/type');
     }
 
     /**
