@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
 <config>
+    <tracker>
+        <!--Tasks tracker type. Default: JIRA-->
+        <type>jira</type>
+
+        <jira>
+            <issue>
+                <adapter>
+                    <class>\PreCommit\Issue\JiraAdapter</class>
+                </adapter>
+            </issue>
+        </jira>
+    </tracker>
+
     <interpreters>
         <FullCommitMsg>
             <formatting>
