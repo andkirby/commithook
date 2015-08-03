@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- This is a local configuration file. It is not used in external projects.-->
 <config>
     <!--Validators setup-->
     <validators>
