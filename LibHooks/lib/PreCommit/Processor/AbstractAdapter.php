@@ -108,7 +108,7 @@ abstract class AbstractAdapter
     protected function _loadValidator($name, array $options = array())
     {
         if (empty($this->_validators[$name])) {
-            $class                    = "\\PreCommit\\Validator\\$name";
+            $class                    = '\\PreCommit\\Validator\\' . str_replace('-', '\\', $name);
             $options                  = array_merge($this->_getValidatorDefaultOptions(), $options);
             $this->_validators[$name] = new $class($options);
         }

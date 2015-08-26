@@ -35,6 +35,7 @@
                 <php>
                     <validators>
                         <CodingStandardMagento>1</CodingStandardMagento>
+                        <Magento-ModelEventFields>1</Magento-ModelEventFields>
                     </validators>
                 </php>
             </filetype>
