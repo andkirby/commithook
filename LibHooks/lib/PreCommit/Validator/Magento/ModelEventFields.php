@@ -18,6 +18,7 @@
 
 namespace PreCommit\Validator\Magento;
 
+use PreCommit\Config;
 use PreCommit\Validator\AbstractValidator;
 
 /**
@@ -115,9 +116,17 @@ class ModelEventFields extends AbstractValidator
      */
     protected function _getAbstractDataModelClasses()
     {
-        return array(
-            'Mage_Core_Model_Abstract',
-            'Mage_Core_Model_Resource_Db_Collection_Abstract',
-        );
+        return $this->_getConfig()->getNodeArray('validators/Magento-ModelEventFields/abstract_class');
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     * @throws \PreCommit\Exception
+     */
+    protected function _getConfig()
+    {
+        return Config::getInstance();
     }
 }

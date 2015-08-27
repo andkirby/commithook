@@ -27,6 +27,13 @@
                 </protect>
             </filter>
         </FileFilter>
+        <Magento-ModelEventFields>
+            <!-- Possible data model abstract classes -->
+            <abstract_class>
+                <core_abstract>Mage_Core_Model_Abstract</core_abstract>
+                <core_abstract_resource>Mage_Core_Model_Resource_Db_Collection_Abstract</core_abstract_resource>
+            </abstract_class>
+        </Magento-ModelEventFields>
     </validators>
     <!--Hooks process setup-->
     <hooks>
