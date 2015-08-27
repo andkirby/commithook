@@ -57,9 +57,23 @@ class ModelEventFields extends AbstractValidator
         if (!$this->_isDataModel($content)) {
             return true;
         }
+        if ($this->_isAbstractClass($content)) {
+            return true;
+        }
         $this->_checkEventPrefix($content, $file);
         $this->_checkEventObject($content, $file);
         return !$this->_errorCollector->hasErrors();
+    }
+
+    /**
+     * Check if class is abstract
+     *
+     * @param string $content
+     * @return bool
+     */
+    protected function _isAbstractClass($content)
+    {
+        return (bool)strpos($content, 'abstract class');
     }
 
     /**
