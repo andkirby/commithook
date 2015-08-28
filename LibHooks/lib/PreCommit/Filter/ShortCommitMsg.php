@@ -26,7 +26,7 @@ class ShortCommitMsg implements Message\InterfaceFilter
         //TODO implement factory parser loading
         $result = $this->_getParser()->interpret($message);
 
-        if (!$result || $message->issueKey) {
+        if (!$result || !$message->issueKey) {
             //the message wasn't parsed correctly
             return $message;
         }
