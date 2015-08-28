@@ -73,7 +73,7 @@ class ModelEventFields extends AbstractValidator
      */
     protected function _isAbstractClass($content)
     {
-        return (bool)strpos($content, 'abstract class');
+        return (bool)strpos($content, 'abstract class ');
     }
 
     /**
