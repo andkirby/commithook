@@ -23,9 +23,11 @@ class ShortCommitMsg implements Message\InterfaceFilter
     {
         $message->body = trim($message->body);
         //JIRA is the one issue tracker so far
-        //TODO implement factory loading
+        //TODO implement factory parser loading
         $result = $this->_getParser()->interpret($message);
-        if (!$result) {
+
+        if (!$result || empty($result['issueKey'])) {
+            //the message wasn't parsed correctly
             return $message;
         }
         $this->_buildMessage($message);
