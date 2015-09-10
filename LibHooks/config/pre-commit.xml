@@ -67,6 +67,7 @@
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
                         <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
                     </validators>
                 </php>
                 <phtml>
