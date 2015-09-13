@@ -68,6 +68,6 @@ class ParentThis extends AbstractValidator
     {
         $matches = array();
         preg_match('/ extends[ ]+([A-z0-9_\x92]+)/', $content, $matches);
-        return $matches[1] ?: null;
+        return isset($matches[1]) ? $matches[1] : null;
     }
 }
