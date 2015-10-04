@@ -75,11 +75,11 @@ $processor = \PreCommit\Processor::factory($hookName, $vcs);
 $processor->process();
 
 if (!$processor->getErrors()) {
-    echo 'Good job! Have successes! ;)';
+    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/success");
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
-    echo 'Something wrong in the code. Please fix issues below:';
+    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/error");
     echo PHP_EOL . PHP_EOL;
     echo $processor->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;
