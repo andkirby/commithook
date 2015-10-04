@@ -95,6 +95,7 @@
             </filetype>
             <message>
                 <success>Your code is valid.</success>
+                <error>Ooops! Something wrong in your files for commit.</error>
             </message>
         </pre-commit>
     </hooks>
