@@ -1,13 +1,9 @@
 <?php
 namespace PreCommit\Composer\Command\Install;
 
-use PreCommit\Config;
 use PreCommit\Composer\Command;
-use PreCommit\Composer\Command\Helper\ProjectDir;
 use PreCommit\Composer\Exception;
 
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
