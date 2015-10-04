@@ -6,10 +6,11 @@ use PreCommit\Composer\Exception;
 use PreCommit\Config;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\DialogHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Base command abstract class
@@ -125,11 +126,44 @@ abstract class CommandAbstract extends Command
     /**
      * Get question helper
      *
-     * @return DialogHelper
+     * @return QuestionHelper
      */
-    protected function getDialog()
+    protected function getQuestionHelper()
     {
-        return $this->getHelperSet()->get('dialog');
+        return $this->getHelperSet()->get('question');
+    }
+
+    /**
+     * Get the question object with a formatted question
+     *
+     * @param string $question
+     * @param string|int|null   $default
+     * @param array  $options
+     * @return \Symfony\Component\Console\Question\Question
+     */
+    protected function getQuestion($question, $default = null, array $options = array())
+    {
+        if ($options) {
+            $question .= ' (' . implode('/', $options) . ')';
+        }
+        if ($default) {
+            $question .= ' [' . $default . ']';
+        }
+        $question .= ': ';
+        return new Question($question, $default);
+    }
+
+    /**
+     * Get the question object with a formatted question
+     *
+     * @param string $question
+     * @param string|int|null   $default
+     * @param array  $options
+     * @return \Symfony\Component\Console\Question\Question
+     */
+    protected function getQuestionConfirm($question, $default = 'y', array $options = array('y', 'n'))
+    {
+        return $this->getQuestion($question, $default, $options);
     }
 
     /**
