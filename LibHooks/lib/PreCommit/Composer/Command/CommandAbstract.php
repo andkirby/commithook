@@ -160,15 +160,20 @@ abstract class CommandAbstract extends Command
     protected function getQuestion(
         $question, $default = null, array $options = array(), $maxAttempts = null
     ) {
-        if ($options) {
-            $question .= ' (' . implode('/', $options) . ')';
-        }
-        $question .= '%s: ';
-        $question = sprintf($question, ($default ? ' [' . $default . ']' : ''));
-        $question = sprintf($question, ($options ? ' (' . implode('/', $options) . ')' : ''));
+        /**
+         * Format question
+         */
+        $question .= '%s%s: ';
+        $question = sprintf(
+            $question,
+            ($options ? ' (' . implode('/', $options) . ')' : ''),
+            ($default ? ' [' . $default . ']' : '')
+        );
 
         $instance = new Question($question, $default);
-        $instance->setMaxAttempts($maxAttempts ?: 3);
+
+        //set max attempts
+        $instance->setMaxAttempts($maxAttempts ?: 3); //TODO move to constant
 
         //set validator
         if ($options) {
