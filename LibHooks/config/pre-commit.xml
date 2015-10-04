@@ -93,10 +93,10 @@
                     </validators>
                 </after_all>
             </filetype>
-            <message>
+            <end_message>
                 <success>Your code is valid.</success>
                 <error>Ooops! Something wrong in your files for commit.</error>
-            </message>
+            </end_message>
         </pre-commit>
     </hooks>
 </config>
