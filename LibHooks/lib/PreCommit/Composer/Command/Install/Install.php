@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Composer\Command\Install;
 
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;

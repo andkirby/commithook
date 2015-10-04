@@ -1,29 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kirby
- * Date: 18.01.2015
- * Time: 17:49
- */
+namespace PreCommit\Composer\Command\Install;
 
-namespace PreCommit\Composer\Command;
-
+use PreCommit\Config;
+use PreCommit\Composer\Command;
 use PreCommit\Composer\Command\Helper\ProjectDir;
+use PreCommit\Composer\Exception;
+
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\DialogHelper;
-use PreCommit\Composer\Exception;
-use PreCommit\Config;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CommandAbstract
+ * Base "install" command abstract class
  *
  * @package PreCommit\Composer\Command
  */
-abstract class CommandAbstract extends Command
+abstract class CommandAbstract extends \Symfony\Component\Console\Command\Command
 {
     /**
      * Base commithook directory
