@@ -136,34 +136,51 @@ abstract class CommandAbstract extends Command
     /**
      * Get the question object with a formatted question
      *
-     * @param string $question
-     * @param string|int|null   $default
-     * @param array  $options
+     * @param string          $question
+     * @param string|int|null $default
+     * @param array           $options
+     * @param int|null        $maxAttempts
      * @return \Symfony\Component\Console\Question\Question
      */
-    protected function getQuestion($question, $default = null, array $options = array())
-    {
-        if ($options) {
-            $question .= ' (' . implode('/', $options) . ')';
-        }
-        if ($default) {
-            $question .= ' [' . $default . ']';
-        }
-        $question .= ': ';
-        return new Question($question, $default);
+    protected function getQuestionConfirm(
+        $question, $default = 'y', array $options = array('y', 'n'), $maxAttempts = null
+    ) {
+        return $this->getQuestion($question, $default, $options, $maxAttempts);
     }
 
     /**
      * Get the question object with a formatted question
      *
-     * @param string $question
-     * @param string|int|null   $default
-     * @param array  $options
+     * @param string          $question
+     * @param string|int|null $default
+     * @param array           $options
+     * @param int             $maxAttempts
      * @return \Symfony\Component\Console\Question\Question
      */
-    protected function getQuestionConfirm($question, $default = 'y', array $options = array('y', 'n'))
-    {
-        return $this->getQuestion($question, $default, $options);
+    protected function getQuestion(
+        $question, $default = null, array $options = array(), $maxAttempts = null
+    ) {
+        if ($options) {
+            $question .= ' (' . implode('/', $options) . ')';
+        }
+        $question .= '%s: ';
+        $question = sprintf($question, ($default ? ' [' . $default . ']' : ''));
+        $question = sprintf($question, ($options ? ' (' . implode('/', $options) . ')' : ''));
+
+        $instance = new Question($question, $default);
+        $instance->setMaxAttempts($maxAttempts ?: 3);
+
+        //set validator
+        if ($options) {
+            $validator = function ($value) use ($options) {
+                if (!in_array($value, $options, true)) {
+                    throw new Exception('Incorrect value.');
+                }
+                return $value;
+            };
+            $instance->setValidator($validator);
+        }
+        return $instance;
     }
 
     /**
