@@ -20,84 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class CommandAbstract extends Command\CommandAbstract
 {
     /**
-     * Base commithook directory
-     *
-     * @var null|string
-     */
-    protected $commithookDir;
-
-    /**
-     * Construct
-     *
-     * @param string $commithookDir
-     */
-    public function __construct($commithookDir)
-    {
-        $this->commithookDir = $commithookDir;
-        parent::__construct();
-    }
-
-    /**
-     * Sets the application instance for this command.
-     *
-     * Set extra helper ProjectDir
-     *
-     * @param Application $application An Application instance
-     * @throws \PreCommit\Composer\Exception
-     * @api
-     */
-    public function setApplication(Application $application = null)
-    {
-        parent::setApplication($application);
-        if (!$this->getHelperSet()) {
-            throw new Exception('Helper set is not set.');
-        }
-        $this->getHelperSet()->set(new ProjectDir());
-    }
-
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->configureCommand();
-        $this->configureInput();
-    }
-
-    /**
-     * Init command
-     *
-     * Set name, description, help
-     *
-     * @return $this
-     */
-    abstract protected function configureCommand();
-
-    /**
-     * Init input definitions
-     *
-     * @return $this
-     */
-    protected function configureInput()
-    {
-        $this->addOption(
-            'project-dir', '-d', InputOption::VALUE_REQUIRED,
-            'Path to project (VCS) root directory.'
-        );
-        $this->addOption(
-            'hook', null, InputOption::VALUE_REQUIRED,
-            $this->getCustomHookOptionDescription()
-        );
-        foreach ($this->getAvailableHooks() as $hook) {
-            $this->addOption(
-                $hook, null, InputOption::VALUE_NONE,
-                $this->getHookOptionDescription($hook)
-            );
-        }
-        return $this;
-    }
-
-    /**
      * Get custom hook option description
      *
      * @return string
@@ -175,7 +97,6 @@ abstract class CommandAbstract extends Command\CommandAbstract
         if ($this->isVeryVerbose($output)) {
             $output->writeln('Specific files mode.');
         }
-
         $files = array();
         foreach ($this->getAvailableHooks() as $hook) {
             if ($input->getOption($hook)) {
@@ -215,70 +136,23 @@ abstract class CommandAbstract extends Command\CommandAbstract
     }
 
     /**
-     * Ask about GIT project root dir
+     * Init input definitions
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return array
-     * @throws Exception
+     * @return $this
      */
-    protected function askProjectDir(InputInterface $input, OutputInterface $output)
+    protected function configureInput()
     {
-        return $this->getProjectDirHelper()->getProjectDir($input, $output);
-    }
-
-    /**
-     * Get project dir helper
-     *
-     * @return ProjectDir
-     */
-    protected function getProjectDirHelper()
-    {
-        return $this->getHelperSet()->get('project_dir');
-    }
-
-    /**
-     * Get dialog helper
-     *
-     * @return DialogHelper
-     */
-    protected function getDialog()
-    {
-        return $this->getHelperSet()->get('dialog');
-    }
-
-    /**
-     * Is output very verbose
-     *
-     * @param OutputInterface $output
-     * @return bool
-     */
-    protected function isVeryVerbose(OutputInterface $output)
-    {
-        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
-    }
-
-    /**
-     * Is output verbose
-     *
-     * @param OutputInterface $output
-     * @return bool
-     */
-    protected function isVerbose(OutputInterface $output)
-    {
-        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
-    }
-
-    /**
-     * Get config
-     *
-     * @param OutputInterface $output
-     * @param bool            $cached
-     * @return Config
-     */
-    public function getConfig(OutputInterface $output, $cached = true)
-    {
-        return Config::getInstance(array('file' => $this->commithookDir
-            . DIRECTORY_SEPARATOR . 'LibHooks' . DIRECTORY_SEPARATOR . 'config.xml'));
+        parent::configureInput();
+        $this->addOption(
+            'hook', null, InputOption::VALUE_REQUIRED,
+            $this->getCustomHookOptionDescription()
+        );
+        foreach ($this->getAvailableHooks() as $hook) {
+            $this->addOption(
+                $hook, null, InputOption::VALUE_NONE,
+                $this->getHookOptionDescription($hook)
+            );
+        }
+        return $this;
     }
 }
