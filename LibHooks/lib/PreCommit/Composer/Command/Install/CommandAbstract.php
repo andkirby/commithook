@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit\Composer\Command
  */
-abstract class CommandAbstract extends \Symfony\Component\Console\Command\Command
+abstract class CommandAbstract extends Command\CommandAbstract
 {
     /**
      * Base commithook directory
