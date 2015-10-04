@@ -161,6 +161,10 @@
                     </type>
                 </issue>
             </message>
+            <end_message>
+                <success>Commit message is valid.</success>
+                <error>You cannot commit. Please see errors.</error>
+            </end_message>
         </commit-msg>
     </hooks>
 </config>
