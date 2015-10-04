@@ -93,6 +93,9 @@
                     </validators>
                 </after_all>
             </filetype>
+            <message>
+                <success>Your code is valid.</success>
+            </message>
         </pre-commit>
     </hooks>
 </config>
