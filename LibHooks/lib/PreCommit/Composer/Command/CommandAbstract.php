@@ -8,6 +8,8 @@
 
 namespace PreCommit\Composer\Command;
 
+use PreCommit\Composer\Command\Helper\ProjectDir;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
 use PreCommit\Config;
@@ -39,6 +41,24 @@ abstract class CommandAbstract extends Command
     {
         $this->commithookDir = $commithookDir;
         parent::__construct();
+    }
+
+    /**
+     * Sets the application instance for this command.
+     *
+     * Set extra helper ProjectDir
+     *
+     * @param Application $application An Application instance
+     * @throws \PreCommit\Composer\Exception
+     * @api
+     */
+    public function setApplication(Application $application = null)
+    {
+        parent::setApplication($application);
+        if (!$this->getHelperSet()) {
+            throw new Exception('Helper set is not set.');
+        }
+        $this->getHelperSet()->set(new ProjectDir());
     }
 
     /**
@@ -210,56 +230,17 @@ abstract class CommandAbstract extends Command
      */
     protected function askProjectDir(InputInterface $input, OutputInterface $output)
     {
-        $dir = $input->getOption('project-dir');
-        if (!$dir) {
-            $dir = $this->getVcsDir();
-        }
-        if (!$dir) {
-            $dir = $this->getCommandDir();
-        }
-
-        $validator = function ($dir) {
-            $dir = rtrim($dir, '\\/');
-            return is_dir($dir . '/.git');
-        };
-
-        $max = 3;
-        $i = 0;
-        while (!$dir || !$validator($dir)) {
-            if ($dir) {
-                $output->writeln(
-                    'Sorry, selected directory does not contain ".git" directory.'
-                );
-            }
-            $dir = $this->getDialog()->ask(
-                $output, "Please set your root project directory [$dir]: ", $dir
-            );
-            if (++$i > $max) {
-                throw new Exception('Project directory is not set.');
-            }
-        }
-
-        return rtrim($dir, '\\/');
+        return $this->getProjectDirHelper()->getProjectDir($input, $output);
     }
 
     /**
-     * Get CLI directory (pwd)
+     * Get project dir helper
      *
-     * @return string
+     * @return ProjectDir
      */
-    protected function getCommandDir()
+    protected function getProjectDirHelper()
     {
-        return $_SERVER['PWD'];
-    }
-
-    /**
-     * Get VCS directory (GIT)
-     *
-     * @return string
-     */
-    protected function getVcsDir()
-    {
-        return realpath(trim(`git rev-parse --show-toplevel 2>&1`));
+        return $this->getHelperSet()->get('project_dir');
     }
 
     /**
