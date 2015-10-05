@@ -155,13 +155,13 @@ abstract class CommandAbstract extends Command
      * @param string          $question
      * @param string|int|null $default
      * @param array           $options
-     * @param int|null        $maxAttempts
+     * @param bool            $required
      * @return \Symfony\Component\Console\Question\Question
      */
     protected function getQuestionConfirm(
-        $question, $default = 'y', array $options = array('y', 'n'), $maxAttempts = null
+        $question, $default = 'y', array $options = array('y', 'n'), $required = true
     ) {
-        return $this->getQuestion($question, $default, $options, $maxAttempts);
+        return $this->getQuestion($question, $default, $options, $required);
     }
 
     /**
@@ -170,11 +170,11 @@ abstract class CommandAbstract extends Command
      * @param string          $question
      * @param string|int|null $default
      * @param array           $options
-     * @param int             $maxAttempts
+     * @param bool            $required
      * @return \Symfony\Component\Console\Question\Question
      */
     protected function getQuestion(
-        $question, $default = null, array $options = array(), $maxAttempts = null
+        $question, $default = null, array $options = array(), $required = true
     ) {
         if (!$options || isset($options[0])) {
             /**
@@ -206,11 +206,11 @@ abstract class CommandAbstract extends Command
         $instance = new Question($question, $default);
 
         //set max attempts
-        $instance->setMaxAttempts($maxAttempts ?: 3); //TODO move to constant
+        $instance->setMaxAttempts(3); //TODO move to constant
 
         //set validator
         if ($options) {
-            $validator = function ($value) use ($options, $isList) {
+            $validator = function ($value) use ($options, $isList, $required) {
                 if ($isList && !array_key_exists($value, $options)
                     || !$isList && !in_array($value, $options, true)
                 ) {
@@ -218,8 +218,15 @@ abstract class CommandAbstract extends Command
                 }
                 return $isList ? $options[$value] : $value;
             };
-            $instance->setValidator($validator);
+        } else {
+            $validator = function ($value) use ($options, $isList, $required) {
+                if ($required && '' === $value) {
+                    throw new Exception("Empty value.");
+                }
+                return $value;
+            };
         }
+        $instance->setValidator($validator);
         return $instance;
     }
 
