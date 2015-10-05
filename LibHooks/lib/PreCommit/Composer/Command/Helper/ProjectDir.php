@@ -65,7 +65,11 @@ class ProjectDir extends Helper
             $dir = $this->getCommandDir();
         }
         $validator = $this->getValidator();
-        return $validator($dir) ? $dir : $this->askProjectDir($input, $output, $dir);
+        try {
+            return $validator($dir);
+        } catch (\Exception $e) {
+        }
+        return $this->askProjectDir($input, $output, $dir);
     }
 
     /**
@@ -100,7 +104,10 @@ class ProjectDir extends Helper
     {
         return function ($dir) {
             $dir = rtrim($dir, '\\/');
-            return is_dir($dir . '/.git');
+            if (!is_dir($dir . '/.git')) {
+                throw new Exception("Directory '$dir' does not contain '.git' subdirectory.");
+            }
+            return $dir;
         };
     }
 
@@ -117,24 +124,16 @@ class ProjectDir extends Helper
      */
     public function askProjectDir(InputInterface $input, OutputInterface $output, $dir = null)
     {
-        $validator = $this->getValidator();
+        $question = $this->getSimpleQuestion()
+            ->getQuestion('Please set your root project directory.', $dir);
+        $question->setValidator(
+            $this->getValidator()
+        );
 
-        $max = 3;
-        $i   = 0;
-        while (!$dir || !$validator($dir)) {
-            if ($dir) {
-                $output->writeln(
-                    'Sorry, selected directory does not contain ".git" directory.'
-                );
-            }
-            $dir = $this->getDialog()->ask(
-                $input, $output,
-                new Question("Please set your root project directory [$dir]: ", $dir)
-            );
-            if (++$i > $max) {
-                throw new Exception('Project directory is not set.');
-            }
-        }
+        $dir = $this->getQuestionHelper()->ask(
+            $input, $output,
+            $question
+        );
 
         return rtrim($dir, '\\/');
     }
@@ -144,8 +143,18 @@ class ProjectDir extends Helper
      *
      * @return QuestionHelper
      */
-    protected function getDialog()
+    protected function getQuestionHelper()
     {
         return $this->getHelperSet()->get('question');
+    }
+
+    /**
+     * Get question helper
+     *
+     * @return SimpleQuestion
+     */
+    protected function getSimpleQuestion()
+    {
+        return $this->getHelperSet()->get('simple_question');
     }
 }
