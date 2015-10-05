@@ -65,6 +65,9 @@ class Config extends \SimpleXMLElement
         if (!file_exists($options['file'])) {
             $options['file'] = $options['file'] . '.dist';
         }
+        if (!file_exists($options['file'])) {
+            throw new \PreCommit\Exception("File '{$options['file']}' not found.");
+        }
         return simplexml_load_file($options['file'], '\\PreCommit\\Config');
     }
 
