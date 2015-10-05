@@ -75,8 +75,6 @@ abstract class CommandAbstract extends Command
                             . 'config' . DIRECTORY_SEPARATOR
                             . 'root.xml')
         );
-        //set work directories
-        Config::setSrcRootDir($this->commithookDir . '/LibHooks');
         if (!Config::loadCache()) {
             Config::mergeExtraConfig();
         }
