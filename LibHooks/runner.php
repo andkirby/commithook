@@ -8,14 +8,14 @@
  */
 /** stub */
 
-!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', __DIR__);
+!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', realpath(__DIR__ . '/..'));
 !defined('TEST_MODE') && define('TEST_MODE', false);
 set_include_path(
     implode(
         PATH_SEPARATOR,
         array(
             get_include_path(),
-            COMMIT_HOOKS_ROOT . '/lib',
+            COMMIT_HOOKS_ROOT . '/LibHooks/lib',
         )
     )
 );
@@ -30,7 +30,7 @@ $vcs = isset($vcs) ? $vcs : 'git';
 
 //load config
 if (!isset($rootConfigFile)) {
-    $rootConfigFile = COMMIT_HOOKS_ROOT . DIRECTORY_SEPARATOR . 'config/root.xml';
+    $rootConfigFile = COMMIT_HOOKS_ROOT . '/LibHooks/config/root.xml';
 }
 $config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
 
@@ -64,7 +64,7 @@ if (!in_array($hookName, $supportedHooks)) {
 
 //set work directories
 PreCommit\Config::setProjectDir($hookFile);
-PreCommit\Config::setRootDir(COMMIT_HOOKS_ROOT);
+PreCommit\Config::setRootDir(COMMIT_HOOKS_ROOT . '/LibHooks');
 
 if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
