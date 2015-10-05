@@ -75,7 +75,7 @@ class Config extends \SimpleXMLElement
      */
     public static function getCacheFile()
     {
-        return self::getCacheDir(static::$_rootDir)
+        return self::getCacheDir()
             . DIRECTORY_SEPARATOR
             . md5(self::getInstance()->getNode('version') . static::getProjectDir())
             . '.xml';
