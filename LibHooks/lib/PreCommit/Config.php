@@ -231,7 +231,7 @@ class Config extends \SimpleXMLElement
      * @param string $dir
      * @return string
      */
-    public static function setRootDir($dir)
+    public static function setSrcRootDir($dir)
     {
         static::$_rootDir = rtrim($dir, '\\/');
     }

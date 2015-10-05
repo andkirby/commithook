@@ -15,6 +15,6 @@ $autoloader->addPsr4('PreCommit\\Test\\', array(realpath(PROJECT_ROOT . '/tests/
 set_error_handler('\PHPUnit_Util_ErrorHandler::handleError');
 
 //load config
-\PreCommit\Config::setRootDir(__DIR__ . '/../../');
+\PreCommit\Config::setSrcRootDir(__DIR__ . '/../../');
 $config = \PreCommit\Config::getInstance(array('file' => __DIR__ . '/root.xml'));
 \PreCommit\Config::mergeExtraConfig();

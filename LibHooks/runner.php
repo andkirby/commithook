@@ -66,7 +66,7 @@ if (!in_array($hookName, $supportedHooks)) {
 PreCommit\Config::setProjectDir(
     realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..')
 );
-PreCommit\Config::setRootDir(COMMIT_HOOKS_ROOT . '/LibHooks');
+PreCommit\Config::setSrcRootDir(COMMIT_HOOKS_ROOT . '/LibHooks');
 
 if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
