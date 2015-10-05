@@ -126,9 +126,16 @@ class Config extends \SimpleXMLElement
         $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
-        $files = self::getInstance()->getNodeArray('additional_config');
 
-        self::_mergeFiles($merger, array('HOME/user-root.xml'), $allowed);
+        /**
+         * Try to get user root file
+         */
+        self::_mergeFiles($merger, array('HOME/.commithook/user-root.xml'), $allowed);
+
+        /**
+         * Merge configuration files
+         */
+        $files = self::getInstance()->getNodeArray('additional_config');
         self::_mergeFiles($merger, $files, $allowed);
 
         //write cached config file
@@ -309,11 +316,20 @@ class Config extends \SimpleXMLElement
      */
     protected static function _readPath($path)
     {
+        $updated = false;
         if (0 === strpos($path, 'PROJECT_DIR')) {
+            $updated = true;
             $path = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
-        } elseif (0 === strpos($path, 'HOME')) {
+        }
+        if (0 === strpos($path, 'PROJECT_NAME')) {
+            $updated = true;
+            $path = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
+        }
+        if (0 === strpos($path, 'HOME')) {
+            $updated = true;
             $path = str_replace('HOME', self::_getHomeUserDir(), $path);
-        } else {
+        }
+        if (!$updated) {
             $path = static::$_rootDir . DIRECTORY_SEPARATOR . $path;
         }
         return $path;
