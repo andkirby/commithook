@@ -62,10 +62,26 @@ abstract class CommandAbstract extends Command
      */
     public function getConfig()
     {
-        return Config::getInstance(
+        static $config;
+        if (null !== $config) {
+            return $config;
+        }
+
+        //TODO Make single load
+        $config = Config::getInstance(
             array('file' => $this->commithookDir
-                            . DIRECTORY_SEPARATOR . 'LibHooks' . DIRECTORY_SEPARATOR . 'config.xml')
+                            . DIRECTORY_SEPARATOR
+                            . 'LibHooks' . DIRECTORY_SEPARATOR
+                            . 'config' . DIRECTORY_SEPARATOR
+                            . 'root.xml')
         );
+        //set work directories
+        Config::setSrcRootDir($this->commithookDir . '/LibHooks');
+        if (!Config::loadCache()) {
+            Config::mergeExtraConfig();
+        }
+
+        return $config;
     }
 
     /**
@@ -160,15 +176,38 @@ abstract class CommandAbstract extends Command
     protected function getQuestion(
         $question, $default = null, array $options = array(), $maxAttempts = null
     ) {
-        /**
-         * Format question
-         */
-        $question .= '%s%s: ';
-        $question = sprintf(
-            $question,
-            ($options ? ' (' . implode('/', $options) . ')' : ''),
-            ($default ? ' [' . $default . ']' : '')
-        );
+        if (!$options || isset($options[0])) {
+            /**
+             * Simple options list mode
+             */
+            //format question
+            $question .= '%s%s: ';
+            $question = sprintf(
+                $question,
+                ($options ? ' (' . implode('/', $options) . ')' : ''),
+                ($default ? ' [' . $default . ']' : '')
+            );
+        } else {
+            /**
+             * Options list mode
+             */
+            //format question
+            $question .= '%s: ';
+            $question = sprintf(
+                $question,
+                ($default ? ' [' . $default . ']' : '')
+            );
+
+            //options list
+            $list = 'Options:' . "\n";
+            foreach ($options as $key => $title) {
+                $list .= "$key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n" . $question;
+            }
+            $question = $list . $question;
+
+            //use keys for input value
+            $options = array_keys($options);
+        }
 
         $instance = new Question($question, $default);
 
