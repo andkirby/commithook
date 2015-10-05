@@ -194,18 +194,13 @@ abstract class CommandAbstract extends Command
              */
             $isList = true;
             //format question
-            $question .= '%s: ';
-            $question = sprintf(
-                $question,
-                ($default ? ' [' . $default . ']' : '')
-            );
 
             //options list
             $list = 'Options:' . "\n";
             foreach ($options as $key => $title) {
                 $list .= " $key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n";
             }
-            $question = $list . $question;
+            $question .= $list . ($default ? ' [' . $default . ']: ' : ': ');
         }
 
         $instance = new Question($question, $default);
