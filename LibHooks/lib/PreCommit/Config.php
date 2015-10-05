@@ -216,12 +216,12 @@ class Config extends \SimpleXMLElement
      * Set project dir by hook file
      *
      * @todo It should be removed from Config
-     * @param string $hookFile
+     * @param string $dir
      * @return string
      */
-    public static function setProjectDir($hookFile)
+    public static function setProjectDir($dir)
     {
-        static::$_projectDir = realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..');
+        static::$_projectDir = $dir;
     }
 
     /**
