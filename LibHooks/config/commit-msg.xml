@@ -4,6 +4,13 @@
         <!--Tasks tracker type. Default: JIRA-->
         <type>jira</type>
 
+        <!-- Available type -->
+        <available_type>
+            <jira>jira</jira>
+            <github>github</github>
+            <redmine>redmine</redmine>
+        </available_type>
+
         <jira>
             <issue>
                 <adapter>
@@ -11,6 +18,14 @@
                 </adapter>
             </issue>
         </jira>
+
+        <github>
+            <not_implemented />
+        </github>
+
+        <redmine>
+            <not_implemented />
+        </redmine>
     </tracker>
 
     <interpreters>
