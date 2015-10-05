@@ -220,7 +220,7 @@ abstract class CommandAbstract extends Command
             };
         } else {
             $validator = function ($value) use ($options, $isList, $required) {
-                if ($required && '' === $value) {
+                if ($required && (null === $value || '' === $value)) {
                     throw new Exception("Empty value.");
                 }
                 return $value;
