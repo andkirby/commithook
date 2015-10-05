@@ -2,6 +2,7 @@
 namespace PreCommit\Composer\Command;
 
 use PreCommit\Composer\Command\Helper\ProjectDir;
+use PreCommit\Composer\Command\Helper\SimpleQuestion;
 use PreCommit\Composer\Exception;
 use PreCommit\Config;
 use Symfony\Component\Console\Application;
@@ -67,6 +68,7 @@ abstract class CommandAbstract extends Command
             throw new Exception('Helper set is not set.');
         }
         $this->getHelperSet()->set(new ProjectDir());
+        $this->getHelperSet()->set(new SimpleQuestion());
     }
 
     /**
@@ -147,7 +149,7 @@ abstract class CommandAbstract extends Command
     protected function askProjectDir(InputInterface $input, OutputInterface $output)
     {
         static $dir;
-        if ($dir) {
+        if (!$dir) {
             $dir = $this->getProjectDirHelper()->getProjectDir($input, $output);
         }
         return $dir;
@@ -174,84 +176,13 @@ abstract class CommandAbstract extends Command
     }
 
     /**
-     * Get the question object with a formatted question
+     * Get question helper
      *
-     * @param string          $question
-     * @param string|int|null $default
-     * @param array           $options
-     * @param bool            $required
-     * @return \Symfony\Component\Console\Question\Question
+     * @return SimpleQuestion
      */
-    protected function getQuestionConfirm(
-        $question, $default = 'y', array $options = array('y', 'n'), $required = true
-    ) {
-        return $this->getQuestion($question, $default, $options, $required);
-    }
-
-    /**
-     * Get the question object with a formatted question
-     *
-     * @param string          $question
-     * @param string|int|null $default
-     * @param array           $options
-     * @param bool            $required
-     * @return \Symfony\Component\Console\Question\Question
-     */
-    protected function getQuestion(
-        $question, $default = null, array $options = array(), $required = true
-    ) {
-        if (!$options || isset($options[0])) {
-            /**
-             * Simple options list mode
-             */
-            $isList = false;
-            //format question
-            $question .= '%s%s: ';
-            $question = sprintf(
-                $question,
-                ($options ? ' (' . implode('/', $options) . ')' : ''),
-                ($default ? ' [' . $default . ']' : '')
-            );
-        } else {
-            /**
-             * Options list mode
-             */
-            $isList = true;
-            //format question
-
-            //options list
-            $list = '';
-            foreach ($options as $key => $title) {
-                $list .= " $key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n";
-            }
-            $question .= ":\n" . $list . ($default ? ' [' . $default . ']: ' : ' : ');
-        }
-
-        $instance = new Question($question, $default);
-
-        //set max attempts
-        $instance->setMaxAttempts(3); //TODO move to constant
-
-        //set validator
-        if ($options) {
-            $validator = function ($value) use ($options, $isList, $required) {
-                if ($isList && !array_key_exists($value, $options)
-                    || !$isList && !in_array($value, $options, true)
-                ) {
-                    throw new Exception("Incorrect value '$value'.");
-                }
-                return $isList ? $options[$value] : $value;
-            };
-        } else {
-            $validator = function ($value) use ($options, $isList, $required) {
-                if ($required && (null === $value || '' === $value)) {
-                    throw new Exception("Empty value.");
-                }
-                return $value;
-            };
-        }
-        $instance->setValidator($validator);
-        return $instance;
+    protected function getSimpleQuestion()
+    {
+        return $this->getHelperSet()->get('simple_question');
     }
 
     /**

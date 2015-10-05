@@ -131,7 +131,7 @@ class Install extends CommandAbstract
         if (!$input->getOption('overwrite') && file_exists($file)
             && 'y' !== $this->getQuestionHelper()->ask(
                 $input, $output,
-                $this->getQuestionConfirm("File '$file' already exists. Overwrite it?")
+                $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
             $output->writeln('Could not overwrite file ' . $file);
@@ -172,7 +172,7 @@ class Install extends CommandAbstract
             }
             $file = $this->getQuestionHelper()->ask(
                 $input, $output,
-                $this->getQuestion("Please set your PHP executable file", $file)
+                $this->getSimpleQuestion()->getQuestion("Please set your PHP executable file", $file)
             );
             if (++$i > $max) {
                 throw new Exception('Path to PHP executable file is not set.');
