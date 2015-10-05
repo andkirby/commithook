@@ -55,7 +55,8 @@ class Config extends \SimpleXMLElement
      *
      * @param array $options
      * @return $this
-     * @throws Exception
+     * @throws \PreCommit\Exception
+     * @throws \PreCommit\Jira\Api\Exception
      */
     public static function loadInstance(array $options)
     {
