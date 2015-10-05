@@ -180,6 +180,7 @@ abstract class CommandAbstract extends Command
             /**
              * Simple options list mode
              */
+            $isList = false;
             //format question
             $question .= '%s%s: ';
             $question = sprintf(
@@ -191,6 +192,7 @@ abstract class CommandAbstract extends Command
             /**
              * Options list mode
              */
+            $isList = true;
             //format question
             $question .= '%s: ';
             $question = sprintf(
@@ -201,12 +203,9 @@ abstract class CommandAbstract extends Command
             //options list
             $list = 'Options:' . "\n";
             foreach ($options as $key => $title) {
-                $list .= "$key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n" . $question;
+                $list .= " $key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n";
             }
             $question = $list . $question;
-
-            //use keys for input value
-            $options = array_keys($options);
         }
 
         $instance = new Question($question, $default);
@@ -216,11 +215,13 @@ abstract class CommandAbstract extends Command
 
         //set validator
         if ($options) {
-            $validator = function ($value) use ($options) {
-                if (!in_array($value, $options, true)) {
-                    throw new Exception('Incorrect value.');
+            $validator = function ($value) use ($options, $isList) {
+                if ($isList && !array_key_exists($value, $options)
+                    || !$isList && !in_array($value, $options, true)
+                ) {
+                    throw new Exception("Incorrect value '$value'.");
                 }
-                return $value;
+                return $isList ? $options[$value] : $value;
             };
             $instance->setValidator($validator);
         }
