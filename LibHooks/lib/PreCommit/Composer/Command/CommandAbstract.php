@@ -124,7 +124,11 @@ abstract class CommandAbstract extends Command
      */
     protected function askProjectDir(InputInterface $input, OutputInterface $output)
     {
-        return $this->getProjectDirHelper()->getProjectDir($input, $output);
+        static $dir;
+        if ($dir) {
+            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output);
+        }
+        return $dir;
     }
 
     /**
