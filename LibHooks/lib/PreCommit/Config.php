@@ -35,6 +35,13 @@ class Config extends \SimpleXMLElement
     protected static $_projectDir;
 
     /**
+     * CommitHook config files
+     *
+     * @var array
+     */
+    protected static $_configFiles = array();
+
+    /**
      * Get config instance
      *
      * @param array $options
@@ -46,6 +53,15 @@ class Config extends \SimpleXMLElement
         if (!self::$_instance || !empty($options['file'])) {
             $config = self::loadInstance($options);
             self::$_instance = $config;
+            if (empty($options['root_dir'])) {
+                self::setSrcRootDir(realpath(__DIR__ . '/../../'));
+            }
+            if (!empty($options['project_dir'])) {
+                self::setProjectDir($options['project_dir']);
+            }
+            if (self::getProjectDir() && self::$_rootDir && !self::loadCache()) {
+                self::mergeExtraConfig();
+            }
         }
         return self::$_instance;
     }
@@ -69,6 +85,7 @@ class Config extends \SimpleXMLElement
         if (!file_exists($options['file'])) {
             throw new \PreCommit\Exception("File '{$options['file']}' not found.");
         }
+        self::$_configFiles['root'] = $options['file'];
         return simplexml_load_file($options['file'], '\\PreCommit\\Config');
     }
 
@@ -134,13 +151,14 @@ class Config extends \SimpleXMLElement
         /**
          * Try to get user root file
          */
-        self::_mergeFiles($merger, array('HOME/.commithook/user-root.xml'), $allowed);
+        self::_mergeFiles($merger, array('user-root' => 'HOME/.commithook/user-root.xml'), $allowed);
 
         /**
          * Merge configuration files
          */
-        $files = self::getInstance()->getNodeArray('additional_config');
-        self::_mergeFiles($merger, $files, $allowed);
+        self::_mergeFiles($merger,
+            self::getInstance()->getNodeArray('additional_config'),
+            $allowed);
 
         //write cached config file
         $cacheFile = self::getCacheFile();
@@ -166,6 +184,7 @@ class Config extends \SimpleXMLElement
             if (!is_file($file)) {
                 continue;
             }
+            self::$_configFiles[$key] = $file;
             $xml = self::_loadXmlFileToMerge($file);
             $merger->merge(self::getInstance(), $xml);
         }
