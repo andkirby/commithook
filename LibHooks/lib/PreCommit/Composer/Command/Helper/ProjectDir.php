@@ -73,7 +73,7 @@ class ProjectDir extends Helper
      *
      * @return string
      */
-    protected function getVcsDir()
+    public function getVcsDir()
     {
         //TODO Move to adapter
         return realpath(trim(`git rev-parse --show-toplevel 2>&1`));
@@ -84,7 +84,7 @@ class ProjectDir extends Helper
      *
      * @return string
      */
-    protected function getCommandDir()
+    public function getCommandDir()
     {
         //@startSkipCommitHooks
         return $_SERVER['PWD'];

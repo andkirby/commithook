@@ -27,6 +27,20 @@ abstract class CommandAbstract extends Command
     protected $commithookDir;
 
     /**
+     * Output
+     *
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
+     * Input
+     *
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
      * Construct
      *
      * @param string $commithookDir
@@ -56,6 +70,15 @@ abstract class CommandAbstract extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->input  = $input;
+        $this->output = $output;
+    }
+
+    /**
      * Get config
      *
      * @return Config
@@ -63,22 +86,21 @@ abstract class CommandAbstract extends Command
     public function getConfig()
     {
         static $config;
-        if (null !== $config) {
-            return $config;
+        if (null === $config) {
+            //TODO Make single load
+            $config = Config::getInstance(
+                array('file' => $this->commithookDir
+                                . DIRECTORY_SEPARATOR
+                                . 'LibHooks' . DIRECTORY_SEPARATOR
+                                . 'config' . DIRECTORY_SEPARATOR
+                                . 'root.xml')
+            );
+            Config::setProjectDir($this->askProjectDir($this->input, $this->output));
+            if (!Config::loadCache()) {
+                Config::mergeExtraConfig();
+            }
+            $config = Config::getInstance();
         }
-
-        //TODO Make single load
-        $config = Config::getInstance(
-            array('file' => $this->commithookDir
-                            . DIRECTORY_SEPARATOR
-                            . 'LibHooks' . DIRECTORY_SEPARATOR
-                            . 'config' . DIRECTORY_SEPARATOR
-                            . 'root.xml')
-        );
-        if (!Config::loadCache()) {
-            Config::mergeExtraConfig();
-        }
-
         return $config;
     }
 

@@ -59,6 +59,7 @@ class Install extends CommandAbstract
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
                 $output, $this->askProjectDir($input, $output)

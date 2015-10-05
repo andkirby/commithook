@@ -13,14 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit\Composer
  */
-class Test extends Command
+class Test extends CommandAbstract
 {
     /**
      * Init default helpers
      *
      * @return $this
      */
-    protected function configure()
+    protected function configureCommand()
     {
         $this->setName('test');
         $this->setHelp(
@@ -42,10 +42,10 @@ class Test extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         !defined('TEST_MODE') && define('TEST_MODE', true);
-        $hookFile = '/pre-commit';
+        $hookFile = $this->askProjectDir($input, $output) . '/.git/hooks/pre-commit';
         require_once __DIR__ . '/../../../../runner.php';
-
         return 0;
     }
 }
