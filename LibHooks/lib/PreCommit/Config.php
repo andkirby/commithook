@@ -142,11 +142,7 @@ class Config extends \SimpleXMLElement
      */
     public static function mergeExtraConfig(array $allowed = null)
     {
-        $merger = new XmlMerger();
-        $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
-        $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
-        $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
-        $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
+        $merger = self::getXmlMerger();
 
         /**
          * Try to get user root file
@@ -165,6 +161,21 @@ class Config extends \SimpleXMLElement
         if (!self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
             self::getInstance()->asXML($cacheFile);
         }
+    }
+
+    /**
+     * Get XML merger
+     *
+     * @return \PreCommit\XmlMerger
+     */
+    public static function getXmlMerger()
+    {
+        $merger = new XmlMerger();
+        $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
+        $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
+        $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
+        $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
+        return $merger;
     }
 
     /**
