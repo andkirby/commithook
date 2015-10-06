@@ -92,7 +92,7 @@ class Set extends CommandAbstract
                 $this->connectionWizard($input, $output);
 
                 if ($this->_updated) {
-                    $output->writeln('Configuration updated. Share project commithook.xml file with your team.');
+                    $output->writeln('Configuration updated.');
                     $output->writeln('Do not forget to share project commithook.xml file with your team.');
                     $output->writeln('Enjoy!');
                 }
@@ -102,7 +102,7 @@ class Set extends CommandAbstract
 
                 if ($this->_updated) {
                     $output->writeln(
-                        "Configuration updated."
+                        'Configuration updated.'
                     );
                 }
             }
