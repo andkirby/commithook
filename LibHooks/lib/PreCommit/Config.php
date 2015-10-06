@@ -1,8 +1,6 @@
 <?php
 namespace PreCommit;
 
-use PreCommit\Jira\Api\Exception;
-
 /**
  * Class for get config
  */
@@ -82,7 +80,7 @@ class Config extends \SimpleXMLElement
             $options['file'] = $options['file'] . '.dist';
         }
         if (!file_exists($options['file'])) {
-            throw new \PreCommit\Exception("File '{$options['file']}' not found.");
+            throw new Exception("File '{$options['file']}' not found.");
         }
         /** @var Config $config */
         $config = simplexml_load_file($options['file'], '\\PreCommit\\Config');
