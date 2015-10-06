@@ -35,6 +35,13 @@ class Set extends CommandAbstract
     const XPATH_TRACKER_TYPE = 'tracker/type';
 
     /**
+     * Default options
+     *
+     * @var array
+     */
+    protected $defaultOptions = array('password', 'username', 'url', 'tracker');
+
+    /**
      * Execute command
      *
      * @param InputInterface  $input
@@ -45,27 +52,64 @@ class Set extends CommandAbstract
     public function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $xpath = $this->getXpath($input, $output);
+
+        $this->writeKeyValueOption($input, $output);
+        $this->writeDefaultOptions($input, $output);
+        return 0;
+    }
+
+    /**
+     * Write key-value option
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @throws \PreCommit\Composer\Exception
+     */
+    protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
+    {
+        if (!$input->getOption('name')) {
+            return;
+        }
+        $xpath = $this->getXpath($input, $output, $input->getOption('name'));
         $value = $this->getValue(
             $input, $output,
             $xpath
         );
         $scope = $this->getScope($input, $output, $xpath);
         $this->writeConfig($input, $output, $xpath, $scope, $value);
-        return 0;
+    }
+
+    /**
+     * Write default options
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @throws \PreCommit\Composer\Exception
+     */
+    protected function writeDefaultOptions(InputInterface $input, OutputInterface $output, $readAll = false)
+    {
+        foreach ($this->defaultOptions as $name) {
+            $value = $input->getOption($name);
+            if (!$readAll && null === $value) {
+                continue;
+            }
+            $xpath = $this->getXpath($input, $output, $name);
+            $scope = $this->getScope($input, $output, $xpath);
+            $this->writeConfig($input, $output, $xpath, $scope, $value);
+        }
     }
 
     /**
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string                                            $name
      * @return string
      * @throws \PreCommit\Composer\Exception
      */
-    protected function getXpath(InputInterface $input, OutputInterface $output)
+    protected function getXpath(InputInterface $input, OutputInterface $output, $name)
     {
-        $name = $input->getOption('name');
         if (!$name) {
-            throw new Exception('Please set name option.');
+            throw new Exception('Empty config name.');
         }
         if ($this->isNameXpath($input)) {
             return $name;
@@ -223,7 +267,7 @@ class Set extends CommandAbstract
         return $this->getQuestionHelper()->ask(
             $input, $output,
             $this->getSimpleQuestion()->getQuestion(
-                'Set config scope', $default,
+                "Set config scope ($xpath)", $default,
                 $questionOptions
             )
         );
@@ -265,7 +309,7 @@ class Set extends CommandAbstract
         $file   = $this->getConfigFile($scope);
         $config = $this->loadConfig($file);
         if ($config->getNode($xpath) == $value) {
-            throw new Exception("The same value '$value' already defined for XPath '$xpath'.");
+            $output->writeln("Omitted $xpath. The same value '$value' already defined for XPath '$xpath'.");
         }
         Config::getXmlMerger()->merge(
             $config,
@@ -316,6 +360,48 @@ XML;
         }
         $config = Config::loadInstance(array('file' => $file), false);
         return $config;
+    }
+
+    /**
+     * Get XML object with value
+     *
+     * @param string $xpath
+     * @param string $value
+     * @return \SimpleXMLElement
+     */
+    protected function getXmlUpdate($xpath, $value)
+    {
+        $nodes    = explode('/', $xpath);
+        $startXml = '';
+        $endXml   = '';
+        $total    = count($nodes);
+        foreach ($nodes as $level => $node) {
+            $level += 1; //set real level because start from zero
+
+            //sent indent
+            $indent = str_repeat('    ', $level);
+            $startXml .= $indent;
+            $endXml .= $indent;
+
+            if ($total === $level) {
+                $startXml .= "<$node>$value</$node>\n";
+            } else {
+                $startXml .= "<$node>\n";
+                $endXml .= "</$node>\n";
+            }
+        }
+        $startXml = rtrim($startXml);
+        $endXml   = rtrim($endXml);
+
+        $xml
+            = <<<XML
+<?xml version="1.0"?>
+<config>
+{$startXml}
+{$endXml}
+</config>
+XML;
+        return simplexml_load_string($xml);
     }
 
     /**
@@ -411,48 +497,14 @@ XML;
             'project', '-P', InputOption::VALUE_NONE,
             'Save config in project configuration file. PROJECT_DIR/commithook.xml'
         );
-        return $this;
-    }
 
-    /**
-     * Get XML object with value
-     *
-     * @param string $xpath
-     * @param string $value
-     * @return \SimpleXMLElement
-     */
-    protected function getXmlUpdate($xpath, $value)
-    {
-        $nodes    = explode('/', $xpath);
-        $startXml = '';
-        $endXml   = '';
-        $total    = count($nodes);
-        foreach ($nodes as $level => $node) {
-            $level += 1; //set real level because start from zero
-
-            //sent indent
-            $indent = str_repeat('    ', $level);
-            $startXml .= $indent;
-            $endXml .= $indent;
-
-            if ($total === $level) {
-                $startXml .= "<$node>$value</$node>\n";
-            } else {
-                $startXml .= "<$node>\n";
-                $endXml .= "</$node>\n";
-            }
+        foreach ($this->defaultOptions as $name) {
+            $this->addOption(
+                $name, null, InputOption::VALUE_OPTIONAL,
+                "Tracker connection '$name' option."
+            );
         }
-        $startXml = rtrim($startXml);
-        $endXml   = rtrim($endXml);
 
-        $xml
-            = <<<XML
-<?xml version="1.0"?>
-<config>
-{$startXml}
-{$endXml}
-</config>
-XML;
-        return simplexml_load_string($xml);
+        return $this;
     }
 }
