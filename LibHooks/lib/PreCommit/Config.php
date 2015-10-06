@@ -266,10 +266,15 @@ class Config extends \SimpleXMLElement
      *
      * @param string $file
      * @return \SimpleXMLElement
+     * @throws \PreCommit\Exception
      */
     protected static function _loadXmlFileToMerge($file)
     {
-        return simplexml_load_file($file);
+        try {
+            return simplexml_load_file($file);
+        } catch (\Exception $e) {
+            throw new Exception("Cannot load XML file '$file'");
+        }
     }
 
     /**
