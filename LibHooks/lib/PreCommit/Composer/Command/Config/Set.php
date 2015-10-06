@@ -42,6 +42,15 @@ class Set extends CommandAbstract
     protected $defaultOptions = array('password', 'username', 'url', 'tracker');
 
     /**
+     * Update status
+     *
+     * It will true if some file updated
+     *
+     * @var bool
+     */
+    protected $_updated = false;
+
+    /**
      * Execute command
      *
      * @param InputInterface  $input
@@ -53,8 +62,23 @@ class Set extends CommandAbstract
     {
         parent::execute($input, $output);
 
-        $this->writeDefaultOptions($input, $output);
-        $this->writeKeyValueOption($input, $output);
+        try {
+            $this->writeDefaultOptions($input, $output);
+            $this->writeKeyValueOption($input, $output);
+        } catch (Exception $e) {
+            if ($this->isDebug($output)) {
+                throw $e;
+            } else {
+                $output->writeln($e->getMessage());
+                return 1;
+            }
+        }
+
+        if ($this->_updated) {
+            $output->writeln(
+                "Configuration updated."
+            );
+        }
         return 0;
     }
 
@@ -236,17 +260,14 @@ class Set extends CommandAbstract
                 break;
 
             case self::XPATH_TRACKER_TYPE:
+            case '' . $type . '/url':
+            case '' . $type . '/username':
+            case '' . $type . '/password':
                 $default         = 2;
                 $questionOptions = array(
                     1 => self::OPTION_LEVEL_GLOBAL,
                     2 => self::OPTION_LEVEL_PROJECT,
                 );
-                break;
-
-            case '' . $type . '/url':
-            case '' . $type . '/username':
-            case '' . $type . '/password':
-                return self::OPTION_LEVEL_GLOBAL;
                 break;
 
             default:
@@ -316,6 +337,7 @@ class Set extends CommandAbstract
             $this->getXmlUpdate($xpath, $value)
         );
         $config->asXML($file);
+        $this->_updated = true;
     }
 
     /**
