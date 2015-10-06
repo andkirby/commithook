@@ -132,7 +132,7 @@ class SimpleQuestion extends Helper
     {
         $list = '';
         foreach ($options as $key => $title) {
-            $list .= " $key - $title" . ($default == $key ? ' (Recommended)' : '') . "\n";
+            $list .= " $key - $title" . ($default == $key ? ' (Default)' : '') . "\n";
         }
         $question .= ":\n" . $list . ($default ? ' [' . $default . ']: ' : ' : ');
         return $question;
