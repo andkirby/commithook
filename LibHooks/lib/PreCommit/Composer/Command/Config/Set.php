@@ -4,10 +4,12 @@ namespace PreCommit\Composer\Command\Config;
 use PreCommit\Composer\Command\CommandAbstract;
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use PreCommit\Composer\Command\Helper;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * CommitHooks command tester
@@ -18,6 +20,13 @@ use PreCommit\Composer\Command\Helper;
  */
 class Set extends CommandAbstract
 {
+    protected $scopeOptions
+        = array(
+            1 => self::OPTION_SCOPE_GLOBAL,
+            2 => self::OPTION_SCOPE_PROJECT,
+            3 => self::OPTION_SCOPE_PROJECT_SELF,
+        );
+
     /**#@+
      * Option scopes
      *
@@ -77,8 +86,24 @@ class Set extends CommandAbstract
         parent::execute($input, $output);
 
         try {
-            $this->writeDefaultOptions($input, $output);
-            $this->writeKeyValueOption($input, $output);
+            if ($input->getArgument('key') === 'wizard') {
+                $this->connectionWizard($input, $output);
+
+                if ($this->_updated) {
+                    $output->writeln('Configuration updated. Share project commithook.xml file with your team.');
+                    $output->writeln('Do not forget to share project commithook.xml file with your team.');
+                    $output->writeln('Enjoy!');
+                }
+            } else {
+                $this->writeDefaultOptions($input, $output);
+                $this->writeKeyValueOption($input, $output);
+
+                if ($this->_updated) {
+                    $output->writeln(
+                        "Configuration updated."
+                    );
+                }
+            }
         } catch (Exception $e) {
             if ($this->isDebug($output)) {
                 throw $e;
@@ -87,13 +112,104 @@ class Set extends CommandAbstract
                 return 1;
             }
         }
-
-        if ($this->_updated) {
-            $output->writeln(
-                "Configuration updated."
-            );
-        }
         return 0;
+    }
+
+    /**
+     * Connection tracker wizard
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return $this
+     */
+    protected function connectionWizard(InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('Set up issue tracker connection.');
+
+        //type
+        $options            = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
+        $this->_trackerType = $this->getQuestionHelper()->ask(
+            $input, $output,
+            $this->getSimpleQuestion()->getQuestion(
+                'Tracker type',
+                array_search(
+                    $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE),
+                    $options
+                ),
+                $options
+            )
+        );
+
+        //URL
+        $url      = $this->getQuestionHelper()->ask(
+            $input, $output,
+            $this->getSimpleQuestion()->getQuestion(
+                "'{$this->_trackerType}' URL",
+                $this->getConfig()->getNode($this->getXpath('url'))
+            )
+        );
+
+        //username
+        $username = $this->getQuestionHelper()->ask(
+            $input, $output,
+            $this->getSimpleQuestion()->getQuestion(
+                "'{$this->_trackerType}' username",
+                $this->getConfig()->getNode($this->getXpath('username'))
+            )
+        );
+
+        //password
+        $question = $this->getSimpleQuestion()->getQuestion(
+            "'{$this->_trackerType}' password",
+            $this->getConfig()->getNode($this->getXpath('password'))
+                ? '*****' : null
+        );
+        $question->setHiddenFallback(false);
+        $question->setHiddenFallback(true);
+        $password = $this->getQuestionHelper()->ask($input, $output, $question);
+        $password = '*****' === $password ? null : $password;
+
+        //project key
+        $prjKey = $this->getQuestionHelper()->ask(
+            $input, $output,
+            $this->getSimpleQuestion()->getQuestion(
+                "Current '{$this->_trackerType}' project key",
+                $this->getConfig()->getNode($this->getXpath('project'))
+            )
+        );
+
+        $scope = $this->getScope($input, $output, self::XPATH_TRACKER_TYPE);
+
+        $scopeCredentials = self::OPTION_SCOPE_PROJECT == $scope
+            ? $this->getCredentialsScope($input, $output) : $scope;
+
+        $this->writeConfig(self::XPATH_TRACKER_TYPE, $scope, $this->_trackerType);
+        $this->writeConfig($this->getXpath('url'), $scope, $url);
+        $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
+        $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
+        $this->writeConfig($this->getXpath('project'), self::OPTION_SCOPE_PROJECT, $prjKey);
+        return $this;
+    }
+
+    /**
+     * Get credentials scope
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return array
+     */
+    protected function getCredentialsScope(InputInterface $input, OutputInterface $output)
+    {
+        $scopeOptions = $this->scopeOptions;
+        unset($scopeOptions[1]);
+        return $this->getScope(
+            $input, $output,
+            $this->_trackerType . '/username',
+            $this->getSimpleQuestion()->getQuestion(
+                "Set config scope credentials", 1,
+                $scopeOptions
+            )
+        );
     }
 
     /**
@@ -110,33 +226,30 @@ class Set extends CommandAbstract
             if (!$readAll && null === $value) {
                 continue;
             }
-            $xpath = $this->getXpath($input, $output, $name);
+            $xpath = $this->isNameXpath($input) ? $name : $this->getXpath($name);
             $scope = $this->getScope($input, $output, $xpath);
-            $this->writeConfig($input, $output, $xpath, $scope, $value);
+            $this->writeConfig($xpath, $scope, $value);
         }
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param string                                            $name
+     * Get XML path by name
+     *
+     * @param string $name
      * @return string
      * @throws \PreCommit\Composer\Exception
      */
-    protected function getXpath(InputInterface $input, OutputInterface $output, $name)
+    protected function getXpath($name)
     {
         if (!$name) {
             throw new Exception('Empty config name.');
-        }
-        if ($this->isNameXpath($input)) {
-            return $name;
         }
         switch ($name) {
             case 'password':
             case 'username':
             case 'project':
             case 'url':
-                $name = $this->getTrackerType($input, $output, false) . '/' . $name;
+                $name = 'tracker/' . $this->getTrackerType() . '/' . $name;
                 break;
 
             case 'tracker':
@@ -154,7 +267,7 @@ class Set extends CommandAbstract
                 break;
 
             case 'task':
-                $name = 'tracker/' . $this->getTrackerType($input, $output) . '/active_task';
+                $name = 'tracker/' . $this->getTrackerType() . '/active_task';
                 break;
 
             default:
@@ -175,36 +288,16 @@ class Set extends CommandAbstract
     }
 
     /**
-     * Get tracker type
+     * Get issues tracker type
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @param bool            $ask
-     * @return null|string
+     * @return string
      */
-    protected function getTrackerType(InputInterface $input, OutputInterface $output, $ask = true)
+    protected function getTrackerType()
     {
         if ($this->_trackerType) {
             return $this->_trackerType;
         }
-        if ($ask) {
-            $this->_trackerType = $this->getQuestionHelper()->ask(
-                $input, $output,
-                $this->getSimpleQuestion()->getQuestion(
-                    'Set issue tracker', null,
-                    $this->getXpathOptions($input, $output, self::XPATH_TRACKER_TYPE)
-                )
-            );
-            $url                = $this->getQuestionHelper()->ask(
-                $input, $output,
-                $this->getSimpleQuestion()->getQuestion(
-                    "Set tracker URL ({$this->_trackerType})", null
-                )
-            );
-            $scope              = $this->getScope($input, $output, self::XPATH_TRACKER_TYPE);
-            $this->writeConfig($input, $output, self::XPATH_TRACKER_TYPE, $scope, $this->_trackerType);
-            $this->writeConfig($input, $output, $this->_trackerType . '/url', $scope, $url);
-        }
+        $this->_trackerType = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
         if (!$this->_trackerType) {
             new Exception('Tracker type is not set. Please use command: commithook config --tracker [TRACKER]');
         }
@@ -214,12 +307,10 @@ class Set extends CommandAbstract
     /**
      * Get XML path input options
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param string                                            $xpath
+     * @param string $xpath
      * @return array
      */
-    protected function getXpathOptions(InputInterface $input, OutputInterface $output, $xpath)
+    protected function getXpathOptions($xpath)
     {
         switch ($xpath) {
             case self::XPATH_TRACKER_TYPE:
@@ -239,40 +330,34 @@ class Set extends CommandAbstract
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param string                                            $xpath
+     * @param Question|null                                              $question
      * @return array
      */
-    protected function getScope(InputInterface $input, OutputInterface $output, $xpath)
+    protected function getScope(
+        InputInterface $input, OutputInterface $output, $xpath, $question = null)
     {
         $type = null;
         if (self::XPATH_TRACKER_TYPE !== $xpath) {
-            $type = $this->getTrackerType($input, $output, false);
+            $type = $this->getTrackerType();
         }
-        $options = array(
-            1 => self::OPTION_SCOPE_GLOBAL,
-            2 => self::OPTION_SCOPE_PROJECT,
-            3 => self::OPTION_SCOPE_PROJECT_SELF,
-        );
+        $options = $this->scopeOptions;
         switch ($xpath) {
             case 'tracker/' . $type . '/active_task':
                 return self::OPTION_SCOPE_PROJECT_SELF;
                 break;
-            case '' . $type . '/project':
+            case 'tracker/' . $type . '/project':
                 return self::OPTION_SCOPE_PROJECT;
                 break;
 
             case self::XPATH_TRACKER_TYPE:
-            case '' . $type . '/url':
+            case 'tracker/' . $type . '/url':
                 $default = 1;
-
                 break;
 
-            case '' . $type . '/username':
-            case '' . $type . '/password':
+            case 'tracker/' . $type . '/username':
+            case 'tracker/' . $type . '/password':
                 $default = 1;
-                $options = array(
-                    1 => self::OPTION_SCOPE_GLOBAL,
-                    3 => self::OPTION_SCOPE_PROJECT_SELF,
-                );
+                unset($options[2]);
                 break;
 
             default:
@@ -287,7 +372,7 @@ class Set extends CommandAbstract
 
         return $this->getQuestionHelper()->ask(
             $input, $output,
-            $this->getSimpleQuestion()->getQuestion(
+            $question ?: $this->getSimpleQuestion()->getQuestion(
                 "Set config scope ($xpath)", $default,
                 $options
             )
@@ -318,15 +403,13 @@ class Set extends CommandAbstract
     /**
      * Write config
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param string                                            $xpath
      * @param string                                            $scope
      * @param string                                            $value
      * @return $this
      * @throws Exception
      */
-    protected function writeConfig(InputInterface $input, OutputInterface $output, $xpath, $scope, $value)
+    protected function writeConfig($xpath, $scope, $value)
     {
         $result = $this->getConfigHelper()->writeValue(
             $this->getConfigFile($scope), $xpath, $value
@@ -379,13 +462,21 @@ class Set extends CommandAbstract
      */
     protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->getOption('name')) {
+        if (!$input->getArgument('key')) {
+            /**
+             * Ignore if nothing to write
+             */
             return $this;
         }
-        $xpath = $this->getXpath($input, $output, $input->getOption('name'));
+
+        $xpath = $this->isNameXpath($input)
+            ? $input->getArgument('key')
+            : $this->getXpath($input->getArgument('key'));
+
         $value = $this->getValue($input, $output, $xpath);
         $scope = $this->getScope($input, $output, $xpath);
-        $this->writeConfig($input, $output, $xpath, $scope, $value);
+
+        $this->writeConfig($xpath, $scope, $value);
         return $this;
     }
 
@@ -399,7 +490,7 @@ class Set extends CommandAbstract
      */
     protected function getValue(InputInterface $input, OutputInterface $output, $xpath)
     {
-        if (!$input->getOption('value')) {
+        if (!$input->getArgument('value')) {
             $question = $this->getSimpleQuestion()->getQuestion(
                 "Set value for XPath '$xpath'",
                 false === strpos($xpath, 'password') ?
@@ -418,7 +509,7 @@ class Set extends CommandAbstract
                 $input, $output, $question
             );
         }
-        return $input->getOption('value');
+        return $input->getArgument('value');
     }
 
     /**
@@ -457,17 +548,8 @@ class Set extends CommandAbstract
     protected function configureInput()
     {
         parent::configureInput();
-        $this->addOption(
-            'name', '-k', InputOption::VALUE_REQUIRED,
-            'Config name/XPath.'
-        );
-        /**
-         * It will asked if it's omitted
-         */
-        $this->addOption(
-            'value', '-l', InputOption::VALUE_OPTIONAL,
-            'Config value.'
-        );
+        $this->addArgument('key', InputArgument::OPTIONAL);
+        $this->addArgument('value', InputArgument::OPTIONAL);
 
         /**
          * When this parameter set key must be an XML path
@@ -499,7 +581,6 @@ class Set extends CommandAbstract
                 "Tracker connection '$name' option."
             );
         }
-
         return $this;
     }
 }

@@ -58,7 +58,7 @@ class SimpleQuestion extends Helper
     public function getQuestion(
         $message, $default = null, array $options = array(), $required = true, $useOptionValue = true
     ) {
-        $default = ($useOptionValue && $this->isList($options) && $default !== null)
+        $default = (!$useOptionValue && $this->isList($options) && $default !== null)
             ? $options[$default] : $default;
 
         $question = new Question(

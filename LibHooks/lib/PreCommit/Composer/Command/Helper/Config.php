@@ -157,7 +157,7 @@ class Config extends Helper
                 $startXml .= "<$node>$value</$node>\n";
             } else {
                 $startXml .= "<$node>\n";
-                $endXml .= "</$node>\n";
+                $endXml = "</$node>\n" . $endXml;
             }
         }
         $startXml = rtrim($startXml);
