@@ -37,7 +37,7 @@ class Config extends \SimpleXMLElement
      *
      * @var array
      */
-    protected $_configFiles = array();
+    protected static $_configFiles = array();
 
     /**
      * Get config instance
@@ -67,11 +67,11 @@ class Config extends \SimpleXMLElement
      * Load config instance
      *
      * @param array $options
+     * @param bool  $setFile
      * @return $this
      * @throws \PreCommit\Exception
-     * @throws \PreCommit\Jira\Api\Exception
      */
-    public static function loadInstance(array $options)
+    public static function loadInstance(array $options, $setFile = true)
     {
         if (!isset($options['file'])) {
             throw new Exception('Options parameter "file" is required.');
@@ -85,7 +85,9 @@ class Config extends \SimpleXMLElement
         /** @var Config $config */
         $config = simplexml_load_file($options['file'], '\\PreCommit\\Config');
 
-        $config->setConfigFile('root', $options['file']);
+        if ($setFile) {
+            self::setConfigFile('root', $options['file']);
+        }
         return $config;
     }
 
@@ -197,7 +199,7 @@ class Config extends \SimpleXMLElement
             $file = self::_readPath($file);
 
             $targetConfig = $targetConfig ?: self::getInstance();
-            $targetConfig->setConfigFile($key, $file);
+            self::setConfigFile($key, $file);
             if (!is_file($file)) {
                 continue;
             }
@@ -212,9 +214,9 @@ class Config extends \SimpleXMLElement
      * @param string $name
      * @return null|string
      */
-    public function getConfigFile($name)
+    public static function getConfigFile($name)
     {
-        return isset($this->_configFiles[$name]) ? $this->_configFiles[$name] : null;
+        return isset(self::$_configFiles[$name]) ? self::$_configFiles[$name] : null;
     }
 
     /**
@@ -222,9 +224,9 @@ class Config extends \SimpleXMLElement
      *
      * @return null|string
      */
-    public function getConfigFiles()
+    public static function getConfigFiles()
     {
-        return $this->_configFiles;
+        return self::$_configFiles;
     }
 
     /**
@@ -234,9 +236,9 @@ class Config extends \SimpleXMLElement
      * @param string $file
      * @return null|string
      */
-    public function setConfigFile($name, $file)
+    public static function setConfigFile($name, $file)
     {
-        return $this->_configFiles[$name] = $file;
+        return self::$_configFiles[$name] = $file;
     }
 
     /**
