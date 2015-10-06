@@ -259,6 +259,9 @@ class Set extends CommandAbstract
             $type = $this->getTrackerType($input, $output, false);
         }
         switch ($xpath) {
+            case 'tracker/' . $type . '/active_task':
+                return self::OPTION_LEVEL_PROJECT_SELF;
+                break;
             case '' . $type . '/project':
                 return self::OPTION_LEVEL_PROJECT;
                 break;
