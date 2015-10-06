@@ -395,7 +395,7 @@ class Config extends \SimpleXMLElement
             $updated = true;
             $path    = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
         }
-        if (0 === strpos($path, 'PROJECT_NAME')) {
+        if (false !== strpos($path, 'PROJECT_NAME')) {
             $updated = true;
             $path    = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
         }
