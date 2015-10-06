@@ -49,6 +49,10 @@ class Writer extends Helper
      */
     public function writeContent($file, $content)
     {
+        $dir = pathinfo($file, PATHINFO_DIRNAME);
+        if (!is_dir($dir) && !mkdir($dir, 770, true)) {
+            throw new Exception('Cannot create directory \'' . $dir . '\'.');
+        }
         if (!file_put_contents($file, $content)) {
             throw new Exception("Cannot write file '$file'.");
         }
