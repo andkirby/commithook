@@ -162,7 +162,7 @@ class Parser implements InterpreterInterface
     protected function _normalizeIssueKey($issueNo)
     {
         if ((string)(int)$issueNo === $issueNo) {
-            $project = $this->_getConfig()->getNode('jira/project');
+            $project = $this->_getConfig()->getNode('tracker/jira/project');
             if (!$project) {
                 throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook.xml" within current project.');
             }

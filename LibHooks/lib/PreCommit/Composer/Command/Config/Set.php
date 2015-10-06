@@ -366,7 +366,7 @@ class Set extends CommandAbstract
         unset($scopeOptions[1]);
         return $this->getScope(
             $input, $output,
-            $this->_trackerType . '/username',
+            $this->getXpath('username'),
             $this->getSimpleQuestion()->getQuestion(
                 "Set config scope credentials", 1,
                 $scopeOptions

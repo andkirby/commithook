@@ -235,10 +235,10 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getApi()
     {
         return new Api(
-            $this->_getConfig()->getNode('jira/url'),
+            $this->_getConfig()->getNode('tracker/jira/url'),
             new Basic(
-                $this->_getConfig()->getNode('jira/username'),
-                $this->_getConfig()->getNode('jira/password')
+                $this->_getConfig()->getNode('tracker/jira/username'),
+                $this->_getConfig()->getNode('tracker/jira/password')
             )
         );
     }
@@ -282,9 +282,9 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _canRequest()
     {
-        return $this->_getConfig()->getNode('jira/url')
-               && $this->_getConfig()->getNode('jira/username')
-               && $this->_getConfig()->getNode('jira/password');
+        return $this->_getConfig()->getNode('tracker/jira/url')
+               && $this->_getConfig()->getNode('tracker/jira/username')
+               && $this->_getConfig()->getNode('tracker/jira/password');
     }
     //endregion
 }
