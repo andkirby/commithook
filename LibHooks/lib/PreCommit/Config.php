@@ -85,7 +85,7 @@ class Config extends \SimpleXMLElement
         /** @var Config $config */
         $config = simplexml_load_file($options['file'], '\\PreCommit\\Config');
 
-        $config->_configFiles['root'] = $options['file'];
+        $config->setConfigFile('root', $options['file']);
         return $config;
     }
 
