@@ -195,13 +195,14 @@ class Config extends \SimpleXMLElement
                 continue;
             }
             $file = self::_readPath($file);
+
+            $targetConfig = $targetConfig ?: self::getInstance();
+            $targetConfig->setConfigFile($key, $file);
             if (!is_file($file)) {
                 continue;
             }
-            $targetConfig = $targetConfig ?: self::getInstance();
-            $xml          = self::_loadXmlFileToMerge($file);
+            $xml = self::_loadXmlFileToMerge($file);
             $merger->merge($targetConfig, $xml);
-            $targetConfig->setConfigFile($key, $file);
         }
     }
 
