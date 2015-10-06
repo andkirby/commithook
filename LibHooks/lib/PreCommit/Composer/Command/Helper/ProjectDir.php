@@ -52,12 +52,12 @@ class ProjectDir extends Helper
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param null|string                                       $optionDir
      * @return string
-     * @throws \PreCommit\Composer\Exception
      */
-    public function getProjectDir(InputInterface $input, OutputInterface $output)
+    public function getProjectDir(InputInterface $input, OutputInterface $output, $optionDir = null)
     {
-        $dir = $input->getOption('project-dir');
+        $dir = $optionDir;
         if (!$dir) {
             $dir = $this->getVcsDir();
         }
@@ -67,7 +67,7 @@ class ProjectDir extends Helper
         $validator = $this->getValidator();
         try {
             return $validator($dir);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         return $this->askProjectDir($input, $output, $dir);
     }
@@ -139,16 +139,6 @@ class ProjectDir extends Helper
     }
 
     /**
-     * Get dialog helper
-     *
-     * @return QuestionHelper
-     */
-    protected function getQuestionHelper()
-    {
-        return $this->getHelperSet()->get('question');
-    }
-
-    /**
      * Get question helper
      *
      * @return SimpleQuestion
@@ -156,5 +146,15 @@ class ProjectDir extends Helper
     protected function getSimpleQuestion()
     {
         return $this->getHelperSet()->get('simple_question');
+    }
+
+    /**
+     * Get dialog helper
+     *
+     * @return QuestionHelper
+     */
+    protected function getQuestionHelper()
+    {
+        return $this->getHelperSet()->get('question');
     }
 }

@@ -150,7 +150,8 @@ abstract class CommandAbstract extends Command
     {
         static $dir;
         if (!$dir) {
-            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output);
+            $option = $input->getOption('project-dir');
+            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
         }
         return $dir;
     }
