@@ -154,6 +154,20 @@ class Parser implements InterpreterInterface
      *
      * Add project key to issue number when it did not set.
      *
+     * @return string
+     * @throws \PreCommit\Exception
+     * @todo Refactor this 'cos it belongs to JIRA only
+     */
+    protected function _getActiveIssueKey()
+    {
+        return $this->_getConfig()->getNode('tracker/jira/active_task');
+    }
+
+    /**
+     * Convert issue number to issue key
+     *
+     * Add project key to issue number when it did not set.
+     *
      * @param string $issueNo
      * @return string
      * @throws \PreCommit\Exception
@@ -185,7 +199,7 @@ class Parser implements InterpreterInterface
         $verbs = "($verbs)";
         //read format [SHORT_VERB] [ISSUE_KEY] [SUMMARY]
         //TODO get tracker issue key format
-        preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+)( [^\n]+)?/", trim($message), $m);
+        preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+ )?([^\n]+)?/", trim($message), $m);
         if (!$m) {
             return false;
         }
@@ -194,7 +208,17 @@ class Parser implements InterpreterInterface
         array_shift($m);
 
         $commitVerb  = trim(array_shift($m));
-        $issueKey    = $this->_normalizeIssueKey(array_shift($m));
+
+        //get issue key
+        $issueNo     = array_shift($m);
+        if (!$issueNo) {
+            $issueNo = $this->_getActiveIssueKey();
+            if (!$issueNo) {
+                return false;
+            }
+        }
+        $issueKey    = $this->_normalizeIssueKey($issueNo);
+
         $userMessage = null;
         if ($m) {
             //skip empty
