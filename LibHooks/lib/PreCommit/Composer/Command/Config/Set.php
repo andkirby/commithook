@@ -39,12 +39,13 @@ class Set extends CommandAbstract
      *
      * @var array
      */
-    protected $defaultOptions = array(
-        'tracker',
-        'url',
-        'username',
-        'password',
-    );
+    protected $defaultOptions
+        = array(
+            'tracker',
+            'url',
+            'username',
+            'password',
+        );
 
     /**
      * Update status
@@ -242,6 +243,11 @@ class Set extends CommandAbstract
         if (self::XPATH_TRACKER_TYPE !== $xpath) {
             $type = $this->getTrackerType($input, $output, false);
         }
+        $options = array(
+            1 => self::OPTION_LEVEL_GLOBAL,
+            2 => self::OPTION_LEVEL_PROJECT,
+            3 => self::OPTION_LEVEL_PROJECT_SELF,
+        );
         switch ($xpath) {
             case 'tracker/' . $type . '/active_task':
                 return self::OPTION_LEVEL_PROJECT_SELF;
@@ -252,35 +258,26 @@ class Set extends CommandAbstract
 
             case self::XPATH_TRACKER_TYPE:
             case '' . $type . '/url':
-                $default         = 1;
-                $questionOptions = array(
-                    1 => self::OPTION_LEVEL_GLOBAL,
-                    2 => self::OPTION_LEVEL_PROJECT,
-                    3 => self::OPTION_LEVEL_PROJECT_SELF,
-                );
+                $default = 1;
+
                 break;
 
             case '' . $type . '/username':
             case '' . $type . '/password':
-                $default         = 1;
-                $questionOptions = array(
+                $default = 1;
+                $options = array(
                     1 => self::OPTION_LEVEL_GLOBAL,
                     3 => self::OPTION_LEVEL_PROJECT_SELF,
                 );
                 break;
 
             default:
-                $default         = 3;
-                $questionOptions = array(
-                    1 => self::OPTION_LEVEL_GLOBAL,
-                    2 => self::OPTION_LEVEL_PROJECT,
-                    3 => self::OPTION_LEVEL_PROJECT_SELF,
-                );
+                $default = 3;
                 break;
         }
 
         $scope = $this->getScopeOption($input, $output);
-        if ($scope && in_array($scope, $questionOptions)) {
+        if ($scope && in_array($scope, $options)) {
             return $scope;
         }
 
@@ -288,7 +285,7 @@ class Set extends CommandAbstract
             $input, $output,
             $this->getSimpleQuestion()->getQuestion(
                 "Set config scope ($xpath)", $default,
-                $questionOptions
+                $options
             )
         );
     }
