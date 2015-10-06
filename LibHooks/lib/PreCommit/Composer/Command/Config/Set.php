@@ -524,6 +524,7 @@ class Set extends CommandAbstract
     {
         parent::setApplication($application);
         $this->getHelperSet()->set(new Helper\Config());
+        $this->getHelperSet()->set(new Helper\Config\Set());
         $this->getHelperSet()->set(new Helper\Config\Writer());
     }
 
