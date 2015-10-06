@@ -23,8 +23,6 @@ set_include_path(
 //init autoloader
 require_once __DIR__ . '/../bin/autoload-init.php';
 
-set_error_handler('\PreCommit\ErrorHandler::handleError');
-
 //Get VCS type
 $vcs = isset($vcs) ? $vcs : 'git';
 
