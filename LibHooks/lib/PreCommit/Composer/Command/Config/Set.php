@@ -160,6 +160,10 @@ class Set extends CommandAbstract
                 $name = 'validators/FileFilter/filter/skip/extensions';
                 break;
 
+            case 'task':
+                $name = 'tracker/' . $this->getTrackerType($input, $output) . '/active_task';
+                break;
+
             default:
                 throw new Exception("Unknown config name '$name'.");
         }
@@ -212,7 +216,7 @@ class Set extends CommandAbstract
                 $this->writeConfig($input, $output, $type . '/url', $scope, $url);
             }
             if (!$type) {
-                new Exception('Tracker type is not set. Please use command: commithook config --name type');
+                new Exception('Tracker type is not set. Please use command: commithook config --tracker');
             }
         }
         return $type;
