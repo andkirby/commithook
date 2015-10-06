@@ -83,27 +83,6 @@ class Set extends CommandAbstract
     }
 
     /**
-     * Write key-value option
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @throws \PreCommit\Composer\Exception
-     */
-    protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
-    {
-        if (!$input->getOption('name')) {
-            return;
-        }
-        $xpath = $this->getXpath($input, $output, $input->getOption('name'));
-        $value = $this->getValue(
-            $input, $output,
-            $xpath
-        );
-        $scope = $this->getScope($input, $output, $xpath);
-        $this->writeConfig($input, $output, $xpath, $scope, $value);
-    }
-
-    /**
      * Write default options
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
@@ -431,6 +410,26 @@ XML;
 </config>
 XML;
         return simplexml_load_string($xml);
+    }
+
+    /**
+     * Write key-value option
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return $this
+     * @throws \PreCommit\Composer\Exception
+     */
+    protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
+    {
+        if (!$input->getOption('name')) {
+            return $this;
+        }
+        $xpath = $this->getXpath($input, $output, $input->getOption('name'));
+        $value = $this->getValue($input, $output, $xpath);
+        $scope = $this->getScope($input, $output, $xpath);
+        $this->writeConfig($input, $output, $xpath, $scope, $value);
+        return $this;
     }
 
     /**
