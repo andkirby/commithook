@@ -167,7 +167,7 @@ class Set extends CommandAbstract
         $question->setHiddenFallback(false);
         $question->setHiddenFallback(true);
         $password = $this->getQuestionHelper()->ask($input, $output, $question);
-        $password = '*****' === $password ? null : $password;
+        $password = '*****' !== $password ? $password : null;
 
         //project key
         $prjKey = $this->getQuestionHelper()->ask(
@@ -186,7 +186,9 @@ class Set extends CommandAbstract
         $this->writeConfig(self::XPATH_TRACKER_TYPE, $scope, $this->_trackerType);
         $this->writeConfig($this->getXpath('url'), $scope, $url);
         $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
-        $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
+        if (null !== $password) {
+            $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
+        }
         $this->writeConfig($this->getXpath('project'), self::OPTION_SCOPE_PROJECT, $prjKey);
         return $this;
     }
