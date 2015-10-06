@@ -207,4 +207,15 @@ abstract class CommandAbstract extends Command
     {
         return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
     }
+
+    /**
+     * Is output verbose
+     *
+     * @param OutputInterface $output
+     * @return bool
+     */
+    protected function isDebug(OutputInterface $output)
+    {
+        return $output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG;
+    }
 }
