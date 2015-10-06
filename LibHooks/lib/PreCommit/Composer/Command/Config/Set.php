@@ -247,12 +247,20 @@ class Set extends CommandAbstract
 
             case self::XPATH_TRACKER_TYPE:
             case '' . $type . '/url':
-            case '' . $type . '/username':
-            case '' . $type . '/password':
                 $default         = 2;
                 $questionOptions = array(
                     1 => self::OPTION_LEVEL_GLOBAL,
                     2 => self::OPTION_LEVEL_PROJECT,
+                    3 => self::OPTION_LEVEL_PROJECT_SELF,
+                );
+                break;
+
+            case '' . $type . '/username':
+            case '' . $type . '/password':
+                $default         = 1;
+                $questionOptions = array(
+                    1 => self::OPTION_LEVEL_GLOBAL,
+                    2 => self::OPTION_LEVEL_PROJECT_SELF,
                 );
                 break;
 
