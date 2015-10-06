@@ -53,8 +53,8 @@ class Set extends CommandAbstract
     {
         parent::execute($input, $output);
 
-        $this->writeKeyValueOption($input, $output);
         $this->writeDefaultOptions($input, $output);
+        $this->writeKeyValueOption($input, $output);
         return 0;
     }
 
