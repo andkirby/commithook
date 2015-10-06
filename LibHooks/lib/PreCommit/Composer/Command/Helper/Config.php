@@ -96,7 +96,7 @@ class Config extends Helper
     {
         if (!file_exists($file)) {
             $this->getWriter()->writeContent(
-                $file, '<?xml version="1.0"?><config></config>'
+                $file, '<?xml version="1.0" encoding="UTF-8"?><config></config>'
             );
         }
         return ConfigInstance::loadInstance(array('file' => $file), false);
@@ -165,7 +165,7 @@ class Config extends Helper
 
         $xml
             = <<<XML
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <config>
 {$startXml}
 {$endXml}
