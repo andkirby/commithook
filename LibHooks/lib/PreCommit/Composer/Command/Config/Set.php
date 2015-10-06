@@ -20,13 +20,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class Set extends CommandAbstract
 {
-    protected $scopeOptions
-        = array(
-            1 => self::OPTION_SCOPE_GLOBAL,
-            2 => self::OPTION_SCOPE_PROJECT,
-            3 => self::OPTION_SCOPE_PROJECT_SELF,
-        );
-
     /**#@+
      * Option scopes
      *
@@ -35,14 +28,23 @@ class Set extends CommandAbstract
      * global:       ~/.commithook/commithook.xml
      */
     const OPTION_SCOPE_GLOBAL = 'global';
+
     const OPTION_SCOPE_PROJECT = 'project';
+
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
-    /**#@-*/
 
     /**
      * Tracker type XML path
      */
     const XPATH_TRACKER_TYPE = 'tracker/type';
+    /**#@-*/
+
+    protected $scopeOptions
+        = array(
+            1 => self::OPTION_SCOPE_GLOBAL,
+            2 => self::OPTION_SCOPE_PROJECT,
+            3 => self::OPTION_SCOPE_PROJECT_SELF,
+        );
 
     /**
      * Default options
@@ -141,7 +143,7 @@ class Set extends CommandAbstract
         );
 
         //URL
-        $url      = $this->getQuestionHelper()->ask(
+        $url = $this->getQuestionHelper()->ask(
             $input, $output,
             $this->getSimpleQuestion()->getQuestion(
                 "'{$this->_trackerType}' URL",
@@ -194,44 +196,23 @@ class Set extends CommandAbstract
     }
 
     /**
-     * Get credentials scope
+     * Get XML path input options
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string $xpath
      * @return array
      */
-    protected function getCredentialsScope(InputInterface $input, OutputInterface $output)
+    protected function getXpathOptions($xpath)
     {
-        $scopeOptions = $this->scopeOptions;
-        unset($scopeOptions[1]);
-        return $this->getScope(
-            $input, $output,
-            $this->_trackerType . '/username',
-            $this->getSimpleQuestion()->getQuestion(
-                "Set config scope credentials", 1,
-                $scopeOptions
-            )
-        );
-    }
+        switch ($xpath) {
+            case self::XPATH_TRACKER_TYPE:
+                $values = array_values($this->getConfig()->getNodeArray('tracker/available_type'));
+                break;
 
-    /**
-     * Write default options
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @throws \PreCommit\Composer\Exception
-     */
-    protected function writeDefaultOptions(InputInterface $input, OutputInterface $output, $readAll = false)
-    {
-        foreach ($this->defaultOptions as $name) {
-            $value = $input->getOption($name);
-            if (!$readAll && null === $value) {
-                continue;
-            }
-            $xpath = $this->isNameXpath($input) ? $name : $this->getXpath($name);
-            $scope = $this->getScope($input, $output, $xpath);
-            $this->writeConfig($xpath, $scope, $value);
+            default:
+                return array();
         }
+        $keys = array_keys(array_fill(1, count($values), 1));
+        return array_combine($keys, $values);
     }
 
     /**
@@ -279,17 +260,6 @@ class Set extends CommandAbstract
     }
 
     /**
-     * Check if name option is XML path
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @return mixed
-     */
-    protected function isNameXpath(InputInterface $input)
-    {
-        return (bool)$input->getOption('xpath');
-    }
-
-    /**
      * Get issues tracker type
      *
      * @return string
@@ -309,35 +279,15 @@ class Set extends CommandAbstract
     /**
      * Get XML path input options
      *
-     * @param string $xpath
-     * @return array
-     */
-    protected function getXpathOptions($xpath)
-    {
-        switch ($xpath) {
-            case self::XPATH_TRACKER_TYPE:
-                $values = array_values($this->getConfig()->getNodeArray('tracker/available_type'));
-                break;
-
-            default:
-                return array();
-        }
-        $keys = array_keys(array_fill(1, count($values), 1));
-        return array_combine($keys, $values);
-    }
-
-    /**
-     * Get XML path input options
-     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param string                                            $xpath
-     * @param Question|null                                              $question
+     * @param Question|null                                     $question
      * @return array
      */
     protected function getScope(
-        InputInterface $input, OutputInterface $output, $xpath, $question = null)
-    {
+        InputInterface $input, OutputInterface $output, $xpath, $question = null
+    ) {
         $type = null;
         if (self::XPATH_TRACKER_TYPE !== $xpath) {
             $type = $this->getTrackerType();
@@ -374,7 +324,8 @@ class Set extends CommandAbstract
 
         return $this->getQuestionHelper()->ask(
             $input, $output,
-            $question ?: $this->getSimpleQuestion()->getQuestion(
+            $question
+                ?: $this->getSimpleQuestion()->getQuestion(
                 "Set config scope ($xpath)", $default,
                 $options
             )
@@ -403,11 +354,32 @@ class Set extends CommandAbstract
     }
 
     /**
+     * Get credentials scope
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return array
+     */
+    protected function getCredentialsScope(InputInterface $input, OutputInterface $output)
+    {
+        $scopeOptions = $this->scopeOptions;
+        unset($scopeOptions[1]);
+        return $this->getScope(
+            $input, $output,
+            $this->_trackerType . '/username',
+            $this->getSimpleQuestion()->getQuestion(
+                "Set config scope credentials", 1,
+                $scopeOptions
+            )
+        );
+    }
+
+    /**
      * Write config
      *
-     * @param string                                            $xpath
-     * @param string                                            $scope
-     * @param string                                            $value
+     * @param string $xpath
+     * @param string $scope
+     * @param string $value
      * @return $this
      * @throws Exception
      */
@@ -452,6 +424,37 @@ class Set extends CommandAbstract
             return $this->getConfig()->getConfigFile('project_local');
         }
         throw new \PreCommit\Exception("Unknown scope '$scope'.");
+    }
+
+    /**
+     * Write default options
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @throws \PreCommit\Composer\Exception
+     */
+    protected function writeDefaultOptions(InputInterface $input, OutputInterface $output, $readAll = false)
+    {
+        foreach ($this->defaultOptions as $name) {
+            $value = $input->getOption($name);
+            if (!$readAll && null === $value) {
+                continue;
+            }
+            $xpath = $this->isNameXpath($input) ? $name : $this->getXpath($name);
+            $scope = $this->getScope($input, $output, $xpath);
+            $this->writeConfig($xpath, $scope, $value);
+        }
+    }
+
+    /**
+     * Check if name option is XML path
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @return mixed
+     */
+    protected function isNameXpath(InputInterface $input)
+    {
+        return (bool)$input->getOption('xpath');
     }
 
     /**
