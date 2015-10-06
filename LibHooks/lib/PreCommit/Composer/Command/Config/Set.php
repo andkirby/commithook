@@ -3,10 +3,11 @@ namespace PreCommit\Composer\Command\Config;
 
 use PreCommit\Composer\Command\CommandAbstract;
 use PreCommit\Composer\Exception;
-use PreCommit\Config;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use PreCommit\Composer\Command\Helper;
 
 /**
  * CommitHooks command tester
@@ -18,15 +19,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Set extends CommandAbstract
 {
     /**#@+
-     * Options levels
+     * Option scopes
      *
      * project-self: ~/.commithook/projects/PROJECT_NAME/commithook.xml
      * project:      PROJECT_DIR/commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
-    const OPTION_LEVEL_PROJECT_SELF = 'project-self';
-    const OPTION_LEVEL_GLOBAL = 'global';
-    const OPTION_LEVEL_PROJECT = 'project';
+    const OPTION_SCOPE_GLOBAL = 'global';
+    const OPTION_SCOPE_PROJECT = 'project';
+    const OPTION_SCOPE_PROJECT_SELF = 'project-self';
     /**#@-*/
 
     /**
@@ -46,6 +47,13 @@ class Set extends CommandAbstract
             'username',
             'password',
         );
+
+    /**
+     * Issues tracker type
+     *
+     * @var
+     */
+    protected $_trackerType;
 
     /**
      * Update status
@@ -128,7 +136,7 @@ class Set extends CommandAbstract
             case 'username':
             case 'project':
             case 'url':
-                $name = $this->getTrackerType($input, $output) . '/' . $name;
+                $name = $this->getTrackerType($input, $output, false) . '/' . $name;
                 break;
 
             case 'tracker':
@@ -176,35 +184,31 @@ class Set extends CommandAbstract
      */
     protected function getTrackerType(InputInterface $input, OutputInterface $output, $ask = true)
     {
-        static $type;
-        if ($type) {
-            return $type;
+        if ($this->_trackerType) {
+            return $this->_trackerType;
         }
-        $type = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
-        if (!$type) {
-            if ($ask) {
-                $type  = $this->getQuestionHelper()->ask(
-                    $input, $output,
-                    $this->getSimpleQuestion()->getQuestion(
-                        'Set issue tracker', null,
-                        $this->getXpathOptions($input, $output, self::XPATH_TRACKER_TYPE)
-                    )
-                );
-                $url   = $this->getQuestionHelper()->ask(
-                    $input, $output,
-                    $this->getSimpleQuestion()->getQuestion(
-                        "Set tracker URL ($type)", null
-                    )
-                );
-                $scope = $this->getScope($input, $output, self::XPATH_TRACKER_TYPE);
-                $this->writeConfig($input, $output, self::XPATH_TRACKER_TYPE, $scope, $type);
-                $this->writeConfig($input, $output, $type . '/url', $scope, $url);
-            }
-            if (!$type) {
-                new Exception('Tracker type is not set. Please use command: commithook config --tracker');
-            }
+        if ($ask) {
+            $this->_trackerType = $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestion(
+                    'Set issue tracker', null,
+                    $this->getXpathOptions($input, $output, self::XPATH_TRACKER_TYPE)
+                )
+            );
+            $url                = $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestion(
+                    "Set tracker URL ({$this->_trackerType})", null
+                )
+            );
+            $scope              = $this->getScope($input, $output, self::XPATH_TRACKER_TYPE);
+            $this->writeConfig($input, $output, self::XPATH_TRACKER_TYPE, $scope, $this->_trackerType);
+            $this->writeConfig($input, $output, $this->_trackerType . '/url', $scope, $url);
         }
-        return $type;
+        if (!$this->_trackerType) {
+            new Exception('Tracker type is not set. Please use command: commithook config --tracker [TRACKER]');
+        }
+        return $this->_trackerType;
     }
 
     /**
@@ -244,16 +248,16 @@ class Set extends CommandAbstract
             $type = $this->getTrackerType($input, $output, false);
         }
         $options = array(
-            1 => self::OPTION_LEVEL_GLOBAL,
-            2 => self::OPTION_LEVEL_PROJECT,
-            3 => self::OPTION_LEVEL_PROJECT_SELF,
+            1 => self::OPTION_SCOPE_GLOBAL,
+            2 => self::OPTION_SCOPE_PROJECT,
+            3 => self::OPTION_SCOPE_PROJECT_SELF,
         );
         switch ($xpath) {
             case 'tracker/' . $type . '/active_task':
-                return self::OPTION_LEVEL_PROJECT_SELF;
+                return self::OPTION_SCOPE_PROJECT_SELF;
                 break;
             case '' . $type . '/project':
-                return self::OPTION_LEVEL_PROJECT;
+                return self::OPTION_SCOPE_PROJECT;
                 break;
 
             case self::XPATH_TRACKER_TYPE:
@@ -266,8 +270,8 @@ class Set extends CommandAbstract
             case '' . $type . '/password':
                 $default = 1;
                 $options = array(
-                    1 => self::OPTION_LEVEL_GLOBAL,
-                    3 => self::OPTION_LEVEL_PROJECT_SELF,
+                    1 => self::OPTION_SCOPE_GLOBAL,
+                    3 => self::OPTION_SCOPE_PROJECT_SELF,
                 );
                 break;
 
@@ -299,14 +303,14 @@ class Set extends CommandAbstract
      */
     protected function getScopeOption(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getOption(self::OPTION_LEVEL_GLOBAL)) {
-            return self::OPTION_LEVEL_GLOBAL;
+        if ($input->getOption(self::OPTION_SCOPE_GLOBAL)) {
+            return self::OPTION_SCOPE_GLOBAL;
         }
-        if ($input->getOption(self::OPTION_LEVEL_PROJECT)) {
-            return self::OPTION_LEVEL_PROJECT;
+        if ($input->getOption(self::OPTION_SCOPE_PROJECT)) {
+            return self::OPTION_SCOPE_PROJECT;
         }
-        if ($input->getOption(self::OPTION_LEVEL_PROJECT_SELF)) {
-            return self::OPTION_LEVEL_PROJECT_SELF;
+        if ($input->getOption(self::OPTION_SCOPE_PROJECT_SELF)) {
+            return self::OPTION_SCOPE_PROJECT_SELF;
         }
         return null;
     }
@@ -318,22 +322,32 @@ class Set extends CommandAbstract
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param string                                            $xpath
      * @param string                                            $scope
-     * @param string|null                                       $value
+     * @param string                                            $value
+     * @return $this
      * @throws Exception
      */
-    protected function writeConfig(InputInterface $input, OutputInterface $output, $xpath, $scope, $value = null)
+    protected function writeConfig(InputInterface $input, OutputInterface $output, $xpath, $scope, $value)
     {
-        $file   = $this->getConfigFile($scope);
-        $config = $this->loadConfig($file);
-        if ($config->getNode($xpath) == $value) {
-            $output->writeln("Omitted $xpath. The same value '$value' already defined for XPath '$xpath'.");
-        }
-        Config::getXmlMerger()->merge(
-            $config,
-            $this->getXmlUpdate($xpath, $value)
+        $result = $this->getConfigHelper()->writeValue(
+            $this->getConfigFile($scope), $xpath, $value
         );
-        $config->asXML($file);
-        $this->_updated = true;
+
+        if (self::XPATH_TRACKER_TYPE === $xpath) {
+            $this->_trackerType = $value;
+        }
+
+        $this->_updated = $result ?: $this->_updated;
+        return $this;
+    }
+
+    /**
+     * Get config helper
+     *
+     * @return Helper\Config
+     */
+    protected function getConfigHelper()
+    {
+        return $this->getHelperSet()->get(Helper\Config::NAME);
     }
 
     /**
@@ -345,81 +359,14 @@ class Set extends CommandAbstract
      */
     protected function getConfigFile($scope)
     {
-        if (self::OPTION_LEVEL_GLOBAL == $scope) {
+        if (self::OPTION_SCOPE_GLOBAL == $scope) {
             return $this->getConfig()->getConfigFile('userprofile');
-        } elseif (self::OPTION_LEVEL_PROJECT == $scope) {
+        } elseif (self::OPTION_SCOPE_PROJECT == $scope) {
             return $this->getConfig()->getConfigFile('project');
-        } elseif (self::OPTION_LEVEL_PROJECT_SELF == $scope) {
+        } elseif (self::OPTION_SCOPE_PROJECT_SELF == $scope) {
             return $this->getConfig()->getConfigFile('project_local');
-        } else {
-            throw new \PreCommit\Exception("Unknown scope '$scope'.");
         }
-    }
-
-    /**
-     * Load config
-     *
-     * @param string $file
-     * @return Config
-     * @throws \PreCommit\Exception
-     */
-    protected function loadConfig($file)
-    {
-        if (!file_exists($file)) {
-            $xml
-                = <<<XML
-<?xml version="1.0"?>
-<config>
-</config>
-XML;
-            if (!file_put_contents($file, $xml)) {
-                throw new Exception("Cannot write config file '$file'.");
-            }
-        }
-        $config = Config::loadInstance(array('file' => $file), false);
-        return $config;
-    }
-
-    /**
-     * Get XML object with value
-     *
-     * @param string $xpath
-     * @param string $value
-     * @return \SimpleXMLElement
-     */
-    protected function getXmlUpdate($xpath, $value)
-    {
-        $nodes    = explode('/', $xpath);
-        $startXml = '';
-        $endXml   = '';
-        $total    = count($nodes);
-        foreach ($nodes as $level => $node) {
-            $level += 1; //set real level because start from zero
-
-            //sent indent
-            $indent = str_repeat('    ', $level);
-            $startXml .= $indent;
-            $endXml .= $indent;
-
-            if ($total === $level) {
-                $startXml .= "<$node>$value</$node>\n";
-            } else {
-                $startXml .= "<$node>\n";
-                $endXml .= "</$node>\n";
-            }
-        }
-        $startXml = rtrim($startXml);
-        $endXml   = rtrim($endXml);
-
-        $xml
-            = <<<XML
-<?xml version="1.0"?>
-<config>
-{$startXml}
-{$endXml}
-</config>
-XML;
-        return simplexml_load_string($xml);
+        throw new \PreCommit\Exception("Unknown scope '$scope'.");
     }
 
     /**
@@ -475,6 +422,16 @@ XML;
     }
 
     /**
+     * @inheritDoc
+     */
+    public function setApplication(Application $application = null)
+    {
+        parent::setApplication($application);
+        $this->getHelperSet()->set(new Helper\Config());
+        $this->getHelperSet()->set(new Helper\Config\Writer());
+    }
+
+    /**
      * Init default helpers
      *
      * @return $this
@@ -495,7 +452,7 @@ XML;
     /**
      * Init input definitions
      *
-     * @return CommandAbstract
+     * @return $this
      */
     protected function configureInput()
     {

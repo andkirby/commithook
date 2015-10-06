@@ -22,9 +22,6 @@ namespace PreCommit\Composer\Command\Helper;
 
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -34,11 +31,15 @@ use Symfony\Component\Console\Question\Question;
  */
 class SimpleQuestion extends Helper
 {
-    const MAX_ATTEMPTS = 3;
     /**
      * Helper name
      */
     const NAME = 'simple_question';
+
+    /**
+     * Max attempts
+     */
+    const MAX_ATTEMPTS = 3;
 
     /**
      * @inheritDoc
@@ -66,24 +67,28 @@ class SimpleQuestion extends Helper
     /**
      * Get the question object with a formatted question
      *
-     * @param string          $question
+     * @param string          $message  Question message
      * @param string|int|null $default
      * @param array           $options
      * @param bool            $required
+     * @param bool            $optionValueIsAnswer Value from options should be considered as an answer
      * @return \Symfony\Component\Console\Question\Question
      */
     public function getQuestion(
-        $question, $default = null, array $options = array(), $required = true
+        $message, $default = null, array $options = array(), $required = true, $optionValueIsAnswer = true
     ) {
-        $instance = new Question(
-            $this->getFormattedQuestion($question, $default, $options),
+        $default = ($optionValueIsAnswer && $this->isList($options) && $default !== null)
+            ? $options[$default] : $default;
+
+        $question = new Question(
+            $this->getFormattedQuestion($message, $default, $options),
             $default
         );
-        $instance->setMaxAttempts(self::MAX_ATTEMPTS);
-        $instance->setValidator(
-            $this->getValidator($options, $required)
+        $question->setMaxAttempts(self::MAX_ATTEMPTS);
+        $question->setValidator(
+            $this->getValidator($options, $required, $optionValueIsAnswer)
         );
-        return $instance;
+        return $question;
     }
 
     /**
@@ -162,19 +167,20 @@ class SimpleQuestion extends Helper
      *
      * @param array $options
      * @param bool  $required
+     * @param bool  $optionValueIsAnswer Value from options should be considered as an answer
      * @return \Closure
      */
-    protected function getValidator(array $options, $required)
+    protected function getValidator(array $options, $required, $optionValueIsAnswer)
     {
         if ($options) {
-            $isList = $this->isList($options);
-            return function ($value) use ($options, $isList, $required) {
-                if ($isList && !array_key_exists($value, $options)
-                    || !$isList && !in_array($value, $options, true)
+            $useValue = $this->isList($options) && $optionValueIsAnswer;
+            return function ($value) use ($options, $useValue) {
+                if ($useValue && !array_key_exists($value, $options)
+                    || !$useValue && !in_array($value, $options, true)
                 ) {
                     throw new Exception("Incorrect value '$value'.");
                 }
-                return $isList ? $options[$value] : $value;
+                return $useValue ? $options[$value] : $value;
             };
         } else {
             return function ($value) use ($required) {
