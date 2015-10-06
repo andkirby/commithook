@@ -39,7 +39,12 @@ class Set extends CommandAbstract
      *
      * @var array
      */
-    protected $defaultOptions = array('password', 'username', 'url', 'tracker');
+    protected $defaultOptions = array(
+        'tracker',
+        'url',
+        'username',
+        'password',
+    );
 
     /**
      * Update status
@@ -247,7 +252,7 @@ class Set extends CommandAbstract
 
             case self::XPATH_TRACKER_TYPE:
             case '' . $type . '/url':
-                $default         = 2;
+                $default         = 1;
                 $questionOptions = array(
                     1 => self::OPTION_LEVEL_GLOBAL,
                     2 => self::OPTION_LEVEL_PROJECT,
@@ -260,7 +265,7 @@ class Set extends CommandAbstract
                 $default         = 1;
                 $questionOptions = array(
                     1 => self::OPTION_LEVEL_GLOBAL,
-                    2 => self::OPTION_LEVEL_PROJECT_SELF,
+                    3 => self::OPTION_LEVEL_PROJECT_SELF,
                 );
                 break;
 
