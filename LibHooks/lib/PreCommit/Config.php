@@ -39,7 +39,7 @@ class Config extends \SimpleXMLElement
      *
      * @var array
      */
-    protected static $_configFiles = array();
+    protected $_configFiles = array();
 
     /**
      * Get config instance
@@ -51,8 +51,7 @@ class Config extends \SimpleXMLElement
     static public function getInstance(array $options = array())
     {
         if (!self::$_instance || !empty($options['file'])) {
-            $config = self::loadInstance($options);
-            self::$_instance = $config;
+            self::$_instance = self::loadInstance($options);
             if (empty($options['root_dir'])) {
                 self::setSrcRootDir(realpath(__DIR__ . '/../../'));
             }
@@ -85,8 +84,11 @@ class Config extends \SimpleXMLElement
         if (!file_exists($options['file'])) {
             throw new \PreCommit\Exception("File '{$options['file']}' not found.");
         }
-        self::$_configFiles['root'] = $options['file'];
-        return simplexml_load_file($options['file'], '\\PreCommit\\Config');
+        /** @var Config $config */
+        $config = simplexml_load_file($options['file'], '\\PreCommit\\Config');
+
+        $config->_configFiles['root'] = $options['file'];
+        return $config;
     }
 
     /**
@@ -97,9 +99,9 @@ class Config extends \SimpleXMLElement
     public static function getCacheFile()
     {
         return self::getCacheDir()
-            . DIRECTORY_SEPARATOR
-            . md5(self::getInstance()->getNode('version') . static::getProjectDir())
-            . '.xml';
+               . DIRECTORY_SEPARATOR
+               . md5(self::getInstance()->getNode('version') . static::getProjectDir())
+               . '.xml';
     }
 
     /**
@@ -152,9 +154,11 @@ class Config extends \SimpleXMLElement
         /**
          * Merge configuration files
          */
-        self::_mergeFiles($merger,
+        self::_mergeFiles(
+            $merger,
             self::getInstance()->getNodeArray('additional_config'),
-            $allowed);
+            $allowed
+        );
 
         //write cached config file
         $cacheFile = self::getCacheFile();
@@ -181,11 +185,12 @@ class Config extends \SimpleXMLElement
     /**
      * Merge files
      *
-     * @param XmlMerger $merger
-     * @param array     $files
-     * @param array     $allowed
+     * @param XmlMerger   $merger
+     * @param array       $files
+     * @param array       $allowed
+     * @param Config|null $targetConfig
      */
-    protected static function _mergeFiles($merger, $files, array $allowed = null)
+    protected static function _mergeFiles($merger, $files, array $allowed = null, $targetConfig = null)
     {
         foreach ($files as $key => $file) {
             if ($allowed && !in_array($key, $allowed)) {
@@ -195,10 +200,44 @@ class Config extends \SimpleXMLElement
             if (!is_file($file)) {
                 continue;
             }
-            self::$_configFiles[$key] = $file;
-            $xml = self::_loadXmlFileToMerge($file);
-            $merger->merge(self::getInstance(), $xml);
+            $targetConfig = $targetConfig ?: self::getInstance();
+            $xml          = self::_loadXmlFileToMerge($file);
+            $merger->merge($targetConfig, $xml);
+            $targetConfig->setConfigFile($key, $file);
         }
+    }
+
+    /**
+     * Get config file
+     *
+     * @param string $name
+     * @return null|string
+     */
+    public function getConfigFile($name)
+    {
+        return isset($this->_configFiles[$name]) ? $this->_configFiles[$name] : null;
+    }
+
+    /**
+     * Get config file
+     *
+     * @return null|string
+     */
+    public function getConfigFiles()
+    {
+        return $this->_configFiles;
+    }
+
+    /**
+     * Get config file
+     *
+     * @param string $name
+     * @param string $file
+     * @return null|string
+     */
+    public function setConfigFile($name, $file)
+    {
+        return $this->_configFiles[$name] = $file;
     }
 
     /**
@@ -332,7 +371,7 @@ class Config extends \SimpleXMLElement
     public static function getCacheDir()
     {
         $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
-        $dir = self::_readPath($path);
+        $dir  = self::_readPath($path);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0750, true)) {
                 throw new Exception("Unable to create cache directory by path '$dir'");
@@ -353,15 +392,15 @@ class Config extends \SimpleXMLElement
         $updated = false;
         if (0 === strpos($path, 'PROJECT_DIR')) {
             $updated = true;
-            $path = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
+            $path    = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
         }
         if (0 === strpos($path, 'PROJECT_NAME')) {
             $updated = true;
-            $path = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
+            $path    = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
         }
         if (0 === strpos($path, 'HOME')) {
             $updated = true;
-            $path = str_replace('HOME', self::_getHomeUserDir(), $path);
+            $path    = str_replace('HOME', self::_getHomeUserDir(), $path);
         }
         if (!$updated) {
             $path = static::$_rootDir . DIRECTORY_SEPARATOR . $path;
@@ -379,14 +418,14 @@ class Config extends \SimpleXMLElement
      */
     public function getMultiNode($xpath)
     {
-        $last = null;
-        $arr = explode('/', $xpath);
-        $last = array_pop($arr);
+        $last  = null;
+        $arr   = explode('/', $xpath);
+        $last  = array_pop($arr);
         $xpath = implode('/', $arr);
 
         $result = $this->getNodeArray($xpath);
 
-        $result = isset($result[$last]) ? (array) $result[$last] : array();
+        $result = isset($result[$last]) ? (array)$result[$last] : array();
         return $result;
     }
 }
