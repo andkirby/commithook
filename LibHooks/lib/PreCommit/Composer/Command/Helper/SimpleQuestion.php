@@ -67,17 +67,17 @@ class SimpleQuestion extends Helper
     /**
      * Get the question object with a formatted question
      *
-     * @param string          $message  Question message
+     * @param string          $message        Question message
      * @param string|int|null $default
      * @param array           $options
      * @param bool            $required
-     * @param bool            $optionValueIsAnswer Value from options should be considered as an answer
+     * @param bool            $useOptionValue Value from options should be considered as an answer
      * @return \Symfony\Component\Console\Question\Question
      */
     public function getQuestion(
-        $message, $default = null, array $options = array(), $required = true, $optionValueIsAnswer = true
+        $message, $default = null, array $options = array(), $required = true, $useOptionValue = true
     ) {
-        $default = ($optionValueIsAnswer && $this->isList($options) && $default !== null)
+        $default = ($useOptionValue && $this->isList($options) && $default !== null)
             ? $options[$default] : $default;
 
         $question = new Question(
@@ -86,7 +86,7 @@ class SimpleQuestion extends Helper
         );
         $question->setMaxAttempts(self::MAX_ATTEMPTS);
         $question->setValidator(
-            $this->getValidator($options, $required, $optionValueIsAnswer)
+            $this->getValidator($options, $required, $useOptionValue)
         );
         return $question;
     }
