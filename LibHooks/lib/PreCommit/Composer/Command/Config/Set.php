@@ -28,15 +28,13 @@ class Set extends CommandAbstract
      * global:       ~/.commithook/commithook.xml
      */
     const OPTION_SCOPE_GLOBAL = 'global';
-
     const OPTION_SCOPE_PROJECT = 'project';
-
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
-
     /**
      * Tracker type XML path
      */
     const XPATH_TRACKER_TYPE = 'tracker/type';
+
     /**#@-*/
 
     protected $scopeOptions
@@ -246,7 +244,12 @@ class Set extends CommandAbstract
 
             case 'exclude-path':
             case 'skip-path':
-                $name = 'validators/FileFilter/filter/skip/extensions';
+                $name = 'validators/FileFilter/filter/skip/paths/path';
+                break;
+
+            case 'exclude-file':
+            case 'skip-file':
+                $name = 'validators/FileFilter/filter/skip/files/file';
                 break;
 
             case 'task':

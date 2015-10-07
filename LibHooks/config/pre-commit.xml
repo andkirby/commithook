@@ -27,12 +27,12 @@
                         <eot>eot</eot>
                         <woff>woff</woff>
                     </extensions>
-                    <!--<paths>-->
+                    <paths>
                         <!--<path>libs/</path>-->
-                    <!--</paths>-->
-                    <!--<files>-->
+                    </paths>
+                    <files>
                         <!--<file>index.php</file>-->
-                    <!--</files>-->
+                    </files>
                 </skip>
                 <protect>
                     <files>
