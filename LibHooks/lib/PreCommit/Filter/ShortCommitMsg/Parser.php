@@ -197,33 +197,52 @@ class Parser implements InterpreterInterface
         $verbs = array_keys($this->_getVerbs());
         $verbs = implode('|', $verbs);
         $verbs = "($verbs)";
-        //read format [SHORT_VERB] [ISSUE_KEY] [SUMMARY]
-        //TODO get tracker issue key format
-        preg_match("/^($verbs )?(([A-Z0-9]+[-])?[0-9]+ )?([^\n]+)?/", trim($message), $m);
+        $issueKeyRegular = $this->_getIssueKeyRegular();
+        preg_match("/^($verbs )?({$issueKeyRegular} )?([^\n]+)?/", trim($message), $m);
         if (!$m) {
             return false;
         }
         //skip first match
         array_shift($m);
         array_shift($m);
+        array_shift($m);
 
         $commitVerb  = trim(array_shift($m));
 
-        //get issue key
-        $issueNo     = trim(array_shift($m));
+        //region Get issue key from matches
+        $issueNo = trim(array_shift($m));
         if (!$issueNo) {
+            /**
+             * Try to get it from user message match (last one)
+             *
+             * This case possible for such format:
+             *     R PRJ-123
+             *     user-message
+             */
+            end($m);
+            $issueNo = trim(current($m));
+            if (preg_match("/^$issueKeyRegular$/", $issueNo)) {
+                $m = array(); //no user message in first row, only issue key.
+            } else {
+                $issueNo = null;
+            }
+        }
+        if (!$issueNo) {
+            /**
+             * Issue not found. Try to get one from defined configuration
+             */
             $issueNo = $this->_getActiveIssueKey();
-            if (!$issueNo) {
+            if (!preg_match("/^$issueKeyRegular$/", $issueNo)) {
+                //no chances to find an issue
                 return false;
             }
         }
-        $issueKey    = $this->_normalizeIssueKey($issueNo);
+        $issueKey = $this->_normalizeIssueKey($issueNo);
+        //endregion
 
         $userMessage = null;
         if ($m) {
-            //skip empty
-            array_shift($m);
-            $userMessage = trim(array_shift($m));
+            $userMessage = trim(array_pop($m));
         }
         return array($commitVerb, $issueKey, $userMessage);
     }
@@ -277,5 +296,15 @@ class Parser implements InterpreterInterface
     protected function _getIssue()
     {
         return $this->_issue;
+    }
+
+    /**
+     * Get issue key regular expression
+     *
+     * @return string
+     */
+    protected function _getIssueKeyRegular()
+    {
+        return '(([A-Z0-9]+[-])?[0-9]+)';
     }
 }
