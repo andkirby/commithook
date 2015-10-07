@@ -10,3 +10,4 @@ if (realpath($internal)) {
 $autoloader = require $dir . 'autoload.php';
 
 set_error_handler('\PreCommit\ErrorHandler::handleError');
+return $autoloader;
