@@ -210,7 +210,7 @@ class Parser implements InterpreterInterface
         $commitVerb  = trim(array_shift($m));
 
         //get issue key
-        $issueNo     = array_shift($m);
+        $issueNo     = trim(array_shift($m));
         if (!$issueNo) {
             $issueNo = $this->_getActiveIssueKey();
             if (!$issueNo) {
