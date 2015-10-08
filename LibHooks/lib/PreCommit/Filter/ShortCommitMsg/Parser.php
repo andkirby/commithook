@@ -196,21 +196,57 @@ class Parser implements InterpreterInterface
     {
         $verbs = array_keys($this->_getVerbs());
         $verbs = implode('|', $verbs);
-        $verbs = "($verbs)";
+        $verbs = "$verbs";
         $issueKeyRegular = $this->_getIssueKeyRegular();
-        preg_match("/^($verbs )?({$issueKeyRegular} )?([^\n]+)?/", trim($message), $m);
-        if (!$m) {
-            return false;
-        }
-        //skip first match
-        array_shift($m);
-        array_shift($m);
-        array_shift($m);
+        preg_match("/^(($verbs) ?)?(($issueKeyRegular) ?)?([^\n]{2,})?/", trim($message), $m);
 
-        $commitVerb  = trim(array_shift($m));
+        if (!$m || !$m[0]) {
+            /**
+             * Issue not found. Try to get one from defined configuration
+             */
+            $issueNo = $this->_getActiveIssueKey();
+            if (!$issueNo || !preg_match("/^$issueKeyRegular$/", $issueNo)) {
+                //no chances to find an issue
+                return false;
+            }
+            return array(null, $this->_normalizeIssueKey($issueNo), null);
+        }
+
+        $commitVerb  = trim($m[2]);
+        if ($commitVerb && $commitVerb . end($m) === $m[0]) {
+            //only user message or issue set
+            $commitVerb = null;
+        }
+        if ($commitVerb && strlen($m[0]) > 1 && strlen($m[1]) == strlen($m[2])) {
+            //"verb" letter is a part of word
+            $commitVerb = null;
+        }
+        if ($commitVerb && strlen($m[0]) == 1) {
+            /**
+             * Issue not found. Try to get one from defined configuration
+             */
+            $issueNo = $this->_getActiveIssueKey();
+            if (!$issueNo || !preg_match("/^$issueKeyRegular$/", $issueNo)) {
+                //no chances to find an issue
+                return false;
+            }
+            return array($commitVerb, $this->_normalizeIssueKey($issueNo), null);
+        }
+
+        //TODO Fix this hardcoded logic
+        if (null === $commitVerb && $m[2] && $m[4] && trim($m[2]) == $m[2]) {
+            //recover issue key
+            $m[4] = $m[2] . $m[4];
+        } elseif (null === $commitVerb && $m[6] && !$m[4] && trim($m[2]) == $m[2]) {
+            //recover user message
+            $m[6] = $m[2] . $m[6];
+        }
+//        qqq1($commitVerb,1);
+//        qqq1($m,1);
+
 
         //region Get issue key from matches
-        $issueNo = trim(array_shift($m));
+        $issueNo = trim(@$m[4]);
         if (!$issueNo) {
             /**
              * Try to get it from user message match (last one)
@@ -305,6 +341,6 @@ class Parser implements InterpreterInterface
      */
     protected function _getIssueKeyRegular()
     {
-        return '(([A-Z0-9]+[-])?[0-9]+)';
+        return '([A-Z0-9]+[-])?[0-9]+';
     }
 }
