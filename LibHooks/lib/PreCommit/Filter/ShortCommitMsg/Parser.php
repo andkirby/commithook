@@ -191,6 +191,7 @@ class Parser implements InterpreterInterface
      * @param string $message
      * @return array
      * @throws \PreCommit\Exception
+     * @todo Too long and complex code
      */
     protected function _interpretShortMessage($message)
     {
@@ -245,7 +246,10 @@ class Parser implements InterpreterInterface
         //region Get issue key from matches
         $issueNo = trim(@$m[4]);
         if (!$issueNo && preg_match("/[A-Z0-9]+[-][0-9]+/", $m[0])) {
-            //case when issue key already set
+            /**
+             * Case when issue key already set
+             * This case should be considered as a complete commit message
+             */
             return false;
         }
         if (!$issueNo) {
@@ -281,8 +285,6 @@ class Parser implements InterpreterInterface
         if ($m) {
             $userMessage = trim(array_pop($m));
         }
-        qqq($issueKey);
-        qqq1($userMessage);
         return array($commitVerb, $issueKey, $userMessage);
     }
 
