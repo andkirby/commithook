@@ -241,12 +241,13 @@ class Parser implements InterpreterInterface
             //recover user message
             $m[6] = $m[2] . $m[6];
         }
-//        qqq1($commitVerb,1);
-//        qqq1($m,1);
-
 
         //region Get issue key from matches
         $issueNo = trim(@$m[4]);
+        if (!$issueNo && preg_match("/[A-Z0-9]+[-][0-9]+/", $m[0])) {
+            //case when issue key already set
+            return false;
+        }
         if (!$issueNo) {
             /**
              * Try to get it from user message match (last one)
@@ -280,6 +281,8 @@ class Parser implements InterpreterInterface
         if ($m) {
             $userMessage = trim(array_pop($m));
         }
+        qqq($issueKey);
+        qqq1($userMessage);
         return array($commitVerb, $issueKey, $userMessage);
     }
 
@@ -342,5 +345,15 @@ class Parser implements InterpreterInterface
     protected function _getIssueKeyRegular()
     {
         return '([A-Z0-9]+[-])?[0-9]+';
+    }
+
+    /**
+     * Get issue key regular expression
+     *
+     * @return string
+     */
+    protected function _getIssueKeyCompleteRegular()
+    {
+        return '[A-Z0-9]+[-][0-9]+';
     }
 }
