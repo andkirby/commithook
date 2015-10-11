@@ -19,9 +19,10 @@ class ParentThis extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHP_RETURN_NOT_THIS => '@return PHPDoc tag uses parent class %value%. Probably it should be replaced with "@return $this".',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHP_RETURN_NOT_THIS => '@return PHPDoc tag uses parent class %value%. Probably it should be replaced with "@return $this".',
+        );
 
     /**
      * Validate PhpDocs
@@ -43,6 +44,19 @@ class ParentThis extends AbstractValidator
     }
 
     /**
+     * Get parent class name
+     *
+     * @param string $content
+     * @return string|null
+     */
+    protected function _getExtendClass($content)
+    {
+        $matches = array();
+        preg_match('/ extends[ ]+([A-z0-9_\x92]+)/', $content, $matches);
+        return isset($matches[1]) ? $matches[1] : null;
+    }
+
+    /**
      * Check if parent class matches with
      *
      * @param string $parentClass
@@ -56,18 +70,5 @@ class ParentThis extends AbstractValidator
             $this->_addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
         }
         return $this;
-    }
-
-    /**
-     * Get parent class name
-     *
-     * @param string $content
-     * @return string|null
-     */
-    protected function _getExtendClass($content)
-    {
-        $matches = array();
-        preg_match('/ extends[ ]+([A-z0-9_\x92]+)/', $content, $matches);
-        return isset($matches[1]) ? $matches[1] : null;
     }
 }
