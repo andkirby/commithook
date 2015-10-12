@@ -241,9 +241,17 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
         )) {
-            foreach ($matches[0] as $match) {
-                $lines[] = $this->_findLines(trim($match), $content, true);
+            $lines = array();
+            $findings = array(
+                ' * @var null ',
+                ' * @param null ',
+                ' * @var null' . "\n",
+                ' * @param null' . "\n",
+            );
+            foreach ($findings as $find) {
+                $lines = array_merge($lines, $this->_findLines($find, $content));
             }
+            sort($lines);
             $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]), $lines);
         }
         return $this;

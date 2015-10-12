@@ -36,7 +36,7 @@ class ErrorCollector
         }
 
         if ($line) {
-            $lineValue = is_array($line) ? implode(', ', $line) : $line;
+            $lineValue = is_array($line) ? implode(',', $line) : $line;
             $message = "Line: $lineValue. " . $message;
             $this->_errors[$file][$type][] = array(
                 'line'    => $line,
