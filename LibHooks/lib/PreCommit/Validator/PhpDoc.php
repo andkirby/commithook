@@ -150,12 +150,29 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//', $content, $matches
         )) {
+            $findings = array();
             foreach ($matches[0] as $match) {
                 if (stripos($match, ' * @inheritdoc')) {
                     continue;
                 }
-                $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, $match);
+                $findings[] = $match;
             }
+
+            if (!$findings) {
+                return $this;
+            }
+
+            //region Find lines
+            sort($findings);
+            $findings = array_unique($findings);
+            $lines = array();
+            foreach ($findings as $find) {
+                $lines = array_merge($lines, $this->_findLines($find, $content));
+            }
+            sort($lines);
+            //endregion
+
+            $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, null, $lines);
         }
         return $this;
     }
