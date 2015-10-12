@@ -202,7 +202,8 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]));
+            $lines = $this->_findLines(rtrim($matches[0][0]), $content);
+            $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]), $lines);
         }
         return $this;
     }
