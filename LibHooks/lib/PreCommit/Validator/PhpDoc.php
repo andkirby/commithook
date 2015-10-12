@@ -217,9 +217,13 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocVarEmptyType($content, $file)
     {
         if (preg_match_all(
-            '/\x0D?\x0A\x20+\*\x20@(param|var)((\x20+\$.+)|(\x0D?\x0A))/', $content, $matches
+            '/\x0D?\x0A\x20+\*\x20(@(param|var)((\x20+\$.+)|(\x0D?\x0A)))/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]));
+            $lines = array();
+            foreach ($matches[0] as $match) {
+                $lines = array_merge($lines, $this->_findLines(trim($match), $content, true));
+            }
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]), $lines);
         }
         return $this;
     }
@@ -264,17 +268,22 @@ class PhpDoc extends AbstractValidator
      *
      * @param string $find
      * @param string $content
+     * @param bool   $once
      * @return array
      */
-    protected function _findLines($find, $content)
+    protected function _findLines($find, $content, $once = false)
     {
         $offset = 0;
         $lines = array();
         $targetLength = strlen($find);
+        str_replace("\n", '', $find, $lineShift);
         while ($position = strpos($content, $find, $offset)) {
             str_replace("\n", '', substr($content, 0, $position), $line);
+            $lines[] = $line + 1 + $lineShift;
+            if ($once) {
+                break;
+            }
             $offset = $position + $targetLength;
-            $lines[] = $line + 1;
         }
         return $lines;
     }
