@@ -115,7 +115,10 @@ class PhpDoc extends AbstractValidator
             . '|function|const|public|protected|private)[^\x0A]*)/i';
         if (preg_match_all($reg, $content, $matches)) {
             foreach ($matches[1] as $match) {
-                $this->_addError($file, self::CODE_PHP_DOC_MISSED, $match);
+                $this->_addError(
+                    $file, self::CODE_PHP_DOC_MISSED, $match,
+                    $this->_findLines($match, $content, true)
+                );
             }
         }
         return $this;
