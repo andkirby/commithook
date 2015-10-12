@@ -37,7 +37,8 @@ class ErrorCollector
         }
 
         if ($line) {
-            $message = "Line: $line. " . $message;
+            $lineValue = ($line === (array)$line) ? implode(', ', $line) : $line;
+            $message = "Line: $lineValue. " . $message;
             $this->_errors[$file][$type][] = array(
                 'line'    => $line,
                 'value'   => $value['value'],
