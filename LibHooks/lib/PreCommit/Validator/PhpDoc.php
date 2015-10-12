@@ -32,7 +32,7 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in uppercase.\n\t%value%',
+        self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in uppercase.\t%value%",
         self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
         self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
         self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
@@ -221,7 +221,7 @@ class PhpDoc extends AbstractValidator
         )) {
             $lines = array();
             foreach ($matches[0] as $match) {
-                $lines = array_merge($lines, $this->_findLines(trim($match), $content, true));
+                $lines[] = $this->_findLines(trim($match), $content, true);
             }
             $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]), $lines);
         }
@@ -240,7 +240,10 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]));
+            foreach ($matches[0] as $match) {
+                $lines[] = $this->_findLines(trim($match), $content, true);
+            }
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]), $lines);
         }
         return $this;
     }
@@ -269,7 +272,7 @@ class PhpDoc extends AbstractValidator
      * @param string $find
      * @param string $content
      * @param bool   $once
-     * @return array
+     * @return array|int
      */
     protected function _findLines($find, $content, $once = false)
     {
@@ -279,10 +282,11 @@ class PhpDoc extends AbstractValidator
         str_replace("\n", '', $find, $lineShift);
         while ($position = strpos($content, $find, $offset)) {
             str_replace("\n", '', substr($content, 0, $position), $line);
-            $lines[] = $line + 1 + $lineShift;
+            $line = $line + 1 + $lineShift;
             if ($once) {
-                break;
+                return $line;
             }
+            $lines[] = $line;
             $offset = $position + $targetLength;
         }
         return $lines;
