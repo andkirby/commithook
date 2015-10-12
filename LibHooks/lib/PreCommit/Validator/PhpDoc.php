@@ -1,5 +1,7 @@
 <?php
 namespace PreCommit\Validator;
+use PreCommit\Validator\Helper\LineFinder;
+use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Class XML validator
@@ -305,19 +307,6 @@ class PhpDoc extends AbstractValidator
      */
     protected function _findLines($find, $content, $once = false)
     {
-        $offset = 0;
-        $lines = array();
-        $targetLength = strlen($find);
-        str_replace("\n", '', $find, $lineShift);
-        while ($position = strpos($content, $find, $offset)) {
-            str_replace("\n", '', substr($content, 0, $position), $line);
-            $line = $line + 1 + $lineShift;
-            if ($once) {
-                return $line;
-            }
-            $lines[] = $line;
-            $offset = $position + $targetLength;
-        }
-        return $lines;
+        return LineFinder::findLines($find, $content, $once);
     }
 }
