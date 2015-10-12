@@ -19,6 +19,7 @@ class PhpDoc extends AbstractValidator
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
     const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
     const CODE_PHP_DOC_VAR_EMPTY         = 'phpDocVarEmpty';
+    const CODE_PHP_DOC_SINGLE_ASTERISK   = 'phpDocSingleAsterisk';
     /**#@-*/
 
     /**
@@ -31,10 +32,11 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%',
+        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in uppercase.\n\t%value%',
         self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
         self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
         self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
+        self::CODE_PHP_DOC_SINGLE_ASTERISK   => 'There are found inline PHPDoc with single asterisk (*) at least %value% times. Please use double asterisk (e.g.: /** @var $this */).',
     );
 
     /**
@@ -63,6 +65,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocExtraGap($content, $file);
         $this->_validateExistPhpDocVarEmptyType($content, $file);
         $this->_validateExistPhpDocVarNull($content, $file);
+        $this->_validateSingleAsterisk($content, $file);
 
         return !$this->_errorCollector->hasErrors();
     }
@@ -236,5 +239,43 @@ class PhpDoc extends AbstractValidator
             $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]));
         }
         return $this;
+    }
+
+    /**
+     * Validate single asterisk in inline PHPDoc block
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    protected function _validateSingleAsterisk($content, $file)
+    {
+        $target = '/* @var ';
+        str_replace($target, '|||', $content, $count);
+        if ($count) {
+            $lines = $this->_findLines($target, $content);
+            $this->_addError($file, self::CODE_PHP_DOC_SINGLE_ASTERISK, $count, $lines);
+        }
+        return $this;
+    }
+
+    /**
+     * Find lines for a string
+     *
+     * @param string $find
+     * @param string $content
+     * @return array
+     */
+    protected function _findLines($find, $content)
+    {
+        $offset = 0;
+        $lines = array();
+        $targetLength = strlen($find);
+        while ($position = strpos($content, $find, $offset)) {
+            str_replace("\n", '', substr($content, 0, $position), $line);
+            $offset = $position + $targetLength;
+            $lines[] = $line + 1;
+        }
+        return $lines;
     }
 }
