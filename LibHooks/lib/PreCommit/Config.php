@@ -357,7 +357,7 @@ class Config extends \SimpleXMLElement
      *
      * @param string $path
      * @return \SimpleXMLElement[]
-     * @throws \PreCommit\Jira\Api\Exception
+     * @throws \PreCommit\Exception
      */
     public function xpath($path)
     {
