@@ -30,13 +30,20 @@ class Set extends CommandAbstract
     const OPTION_SCOPE_GLOBAL = 'global';
     const OPTION_SCOPE_PROJECT = 'project';
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
+    /**#@-*/
+
     /**
      * Tracker type XML path
      */
     const XPATH_TRACKER_TYPE = 'tracker/type';
 
-    /**#@-*/
-
+    /**
+     * Scope options
+     *
+     * A scope is associated with a particular configuration file.
+     *
+     * @var array
+     */
     protected $scopeOptions
         = array(
             1 => self::OPTION_SCOPE_GLOBAL,
