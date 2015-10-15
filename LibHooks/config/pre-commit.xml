@@ -7,7 +7,9 @@
         </PhpClass>
         <FileFilter>
             <filter>
+                <!-- "skip" validation list -->
                 <skip>
+                    <!-- Skip validation for files with such extensions -->
                     <extensions>
                         <!--Images-->
                         <jpg>jpg</jpg>
@@ -27,9 +29,13 @@
                         <eot>eot</eot>
                         <woff>woff</woff>
                     </extensions>
+
+                    <!-- Skip validation by these paths -->
                     <paths>
                         <!--<path>libs/</path>-->
                     </paths>
+
+                    <!-- Skip validation by these file paths -->
                     <files>
                         <!--<file>index.php</file>-->
                     </files>
@@ -42,6 +48,13 @@
                         <!--<path>libs/</path>-->
                     <!--</paths>-->
                 </protect>
+
+                <!-- "allow" layer has priority over protect -->
+                <allow>
+                    <paths>
+                        <!--<path>some/path</path>-->
+                    </paths>
+                </allow>
             </filter>
         </FileFilter>
     </validators>
