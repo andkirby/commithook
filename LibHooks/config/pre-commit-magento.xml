@@ -21,6 +21,7 @@
                         <path>downloader/</path>
                         <path>lib/</path>
                         <path>app/code/core/</path>
+                        <path>app/code/community/</path>
                         <path>app/code/local/Mage/</path>
                         <path>app/design/install/</path>
                     </paths>
