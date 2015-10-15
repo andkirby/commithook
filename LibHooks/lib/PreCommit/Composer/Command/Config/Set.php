@@ -259,6 +259,22 @@ class Set extends CommandAbstract
                 $name = 'validators/FileFilter/filter/skip/files/file';
                 break;
 
+            case 'protect-path':
+                $name = 'validators/FileFilter/filter/protect/paths/path';
+                break;
+
+            case 'protect-file':
+                $name = 'validators/FileFilter/filter/protect/files/file';
+                break;
+
+            case 'allow-path':
+                $name = 'validators/FileFilter/filter/allow/paths/path';
+                break;
+
+            case 'allow-file':
+                $name = 'validators/FileFilter/filter/allow/files/file';
+                break;
+
             case 'task':
                 $name = 'tracker/' . $this->getTrackerType() . '/active_task';
                 break;
