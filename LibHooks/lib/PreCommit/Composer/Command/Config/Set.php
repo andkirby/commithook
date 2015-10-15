@@ -584,6 +584,14 @@ Files:
         Ignore validation for file by path.
     exclude-file, skip-file
         Ignore validation for file.
+    protect-path
+        Protect path from committing.
+    protect-file
+        Protect file from committing.
+    allow-path
+        Protect path from committing.
+    allow-file
+        Protect file from committing.
 Issue:
     task
         Active task key. After setting issue key/No can be omitted.
