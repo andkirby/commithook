@@ -540,9 +540,33 @@ class Set extends CommandAbstract
     {
         $this->setName('config');
 
-        $this->setHelp(
-            'This command can set CommitHook configuration.'
-        );
+        $help = <<<HELP
+This command can set CommitHook configuration.
+Allowed predefined keys:
+Tracker:
+    tracker
+        Issue tracker type code (jira, github etc).
+    url
+        Issue tracker API URL.
+    username
+        Username for issue tracker authorization.
+    password
+        Password for issue tracker authorization.
+    project
+        Project key in selected issue tracker.
+Files:
+    exclude-extension, skip-ext
+        Ignore validation for selected files with extension.
+    exclude-path, skip-path
+        Ignore validation for file by path.
+    exclude-file, skip-file
+        Ignore validation for file.
+Issue:
+    task
+        Active task key. After setting issue key/No can be omitted.
+HELP;
+
+        $this->setHelp($help);
         $this->setDescription(
             'This command can set CommitHook configuration.'
         );
@@ -565,7 +589,7 @@ class Set extends CommandAbstract
          */
         $this->addOption(
             'xpath', '-x', InputOption::VALUE_NONE,
-            'XPath mode.'
+            'XPath mode. "key" parameter will be considered as a full XML path.'
         );
 
         /**
