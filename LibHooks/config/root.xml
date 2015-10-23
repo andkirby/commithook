@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
     <!--Please update also PreCommit\Composer\Application::VERSION-->
-    <version>v2.0.0-beta.3</version>
+    <version>2.0.0-dev</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
