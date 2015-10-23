@@ -60,7 +60,7 @@ class CommitMsgTest extends \PHPUnit_Framework_TestCase
     protected function _prepareModelAndProcess($message)
     {
         Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
-        Config::setRootDir(PROJECT_ROOT);
+        Config::setSrcRootDir(PROJECT_ROOT);
         $vcsAdapter = $this->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects($this->once())
             ->method('getCommitMessage')

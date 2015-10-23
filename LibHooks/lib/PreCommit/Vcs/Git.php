@@ -25,6 +25,9 @@ class Git implements AdapterInterface
      */
     public function getAffectedFiles()
     {
+        if (defined('TEST_MODE') && TEST_MODE) {
+            return array_filter(explode("\n", `git ls-files -m`));
+        }
         return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
     }
 

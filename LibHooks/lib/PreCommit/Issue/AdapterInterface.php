@@ -16,6 +16,13 @@ interface AdapterInterface
     /**#@-*/
 
     /**
+     * Set issue key
+     *
+     * @param string $issueKey
+     */
+    public function __construct($issueKey);
+
+    /**
      * Get issue summary
      *
      * @return $this
@@ -30,23 +37,32 @@ interface AdapterInterface
     public function getKey();
 
     /**
-     * Get issue summary
+     * Get issue type
      *
      * @return $this
      */
     public function getType();
 
     /**
-     * Check type "bug"
+     * Get original issue type
      *
-     * @return bool
+     * @return $this
      */
-    public function isBug();
+    public function getOriginalType();
 
     /**
-     * Check type "task"
+     * Get issue status
      *
-     * @return bool
+     * @return string
      */
-    public function isTask();
+    public function getStatus();
+
+    /**
+     * Ignore issue on failed validation
+     *
+     * It should be removed from cache at least to make new request in future.
+     *
+     * @return string
+     */
+    public function ignoreIssue();
 }

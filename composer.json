@@ -2,17 +2,19 @@
   "name": "andkirby/commithook",
   "description": "PHP Commit Hooks",
   "minimum-stability": "dev",
-  "license": "proprietary",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "Andrew Roslik",
       "email": "bizkirby@gmail.com"
     }
   ],
+  "prefer-stable": true,
   "require": {
     "php": ">=5.3.2",
-    "symfony/console": "2.*||3.*@stable",
-    "chobie/jira-api-restclient": "@dev"
+    "symfony/console": "~2.5@stable",
+    "chobie/jira-api-restclient": "2.0.x-dev",
+    "zendframework/zend-cache": "~2.5@stable"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0@stable"
@@ -25,6 +27,11 @@
     "psr-4": {
       "PreCommit\\": "LibHooks/lib/PreCommit",
       "PreCommit\\Test\\": "LibHooks/tests/testsuite/PreCommit/Test"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-develop": "2.x-dev"
     }
   }
 }

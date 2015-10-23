@@ -32,7 +32,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
     {
         //init config object
         Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
-        Config::setRootDir(PROJECT_ROOT);
+        Config::setSrcRootDir(PROJECT_ROOT);
         Config::mergeExtraConfig();
 
         $vcsAdapter = self::_getVcsAdapterMock();

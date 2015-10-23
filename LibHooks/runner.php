@@ -6,14 +6,16 @@
  *             All code will be pushed to use /bin/runner.php
  * @see /bin/runner.php
  */
-$rootPath = __DIR__;
-!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', $rootPath);
+/** stub */
+
+!defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', realpath(__DIR__ . '/..'));
+!defined('TEST_MODE') && define('TEST_MODE', false);
 set_include_path(
     implode(
         PATH_SEPARATOR,
         array(
             get_include_path(),
-            $rootPath . '/lib',
+            COMMIT_HOOKS_ROOT . '/LibHooks/lib',
         )
     )
 );
@@ -21,17 +23,14 @@ set_include_path(
 //init autoloader
 require_once __DIR__ . '/../bin/autoload-init.php';
 
-//Deprecated autoloader since v1.6.10
-//require_once 'lib/PreCommit/Autoloader.php';
-//\PreCommit\Autoloader::register();
-
-set_error_handler('\PreCommit\ErrorHandler::handleError');
-
 //Get VCS type
 $vcs = isset($vcs) ? $vcs : 'git';
 
 //load config
-$config = \PreCommit\Config::getInstance(array('file' => $rootPath . DIRECTORY_SEPARATOR . 'config.xml'));
+if (!isset($rootConfigFile)) {
+    $rootConfigFile = COMMIT_HOOKS_ROOT . '/LibHooks/config/root.xml';
+}
+$config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
 
 echo PHP_EOL;
 echo 'PHP CommitHooks v' . $config->getNode('version');
@@ -62,8 +61,10 @@ if (!in_array($hookName, $supportedHooks)) {
 }
 
 //set work directories
-PreCommit\Config::setProjectDir($hookFile);
-PreCommit\Config::setRootDir($rootPath);
+PreCommit\Config::setProjectDir(
+    realpath(pathinfo($hookFile, PATHINFO_DIRNAME) . '/../..')
+);
+PreCommit\Config::setSrcRootDir(COMMIT_HOOKS_ROOT . '/LibHooks');
 
 if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
@@ -74,11 +75,11 @@ $processor = \PreCommit\Processor::factory($hookName, $vcs);
 $processor->process();
 
 if (!$processor->getErrors()) {
-    echo 'Good job! Have successes! ;)';
+    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/success");
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
-    echo 'Something wrong in the code. Please fix issues below:';
+    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/error");
     echo PHP_EOL . PHP_EOL;
     echo $processor->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;

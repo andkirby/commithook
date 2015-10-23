@@ -1,33 +1,15 @@
 <?xml version="1.0"?>
 <config>
-    <!--Tasks tracker name. Default: JIRA-->
-    <tracker_name>jira</tracker_name>
-
-    <tracker>
-        <jira>
-            <adapter>
-                <issue>
-                    <class>\PreCommit\Issue\JiraAdapter</class>
-                </issue>
-            </adapter>
-        </jira>
-    </tracker>
-
     <!--Validators setup-->
     <validators>
         <PhpClass>
             <interpret>c:/xampp/php/php.exe</interpret>
         </PhpClass>
-        <CommitMessage>
-            <match>
-                <merge>/^Merge /</merge>
-                <revert>/^Revert /</revert>
-                <full>/^(Implemented|Fixed|CR Changes?|Refactored) [A-Z0-9]{2,}-[0-9]+: /</full>
-            </match>
-        </CommitMessage>
         <FileFilter>
             <filter>
+                <!-- "skip" validation list -->
                 <skip>
+                    <!-- Skip validation for files with such extensions -->
                     <extensions>
                         <!--Images-->
                         <jpg>jpg</jpg>
@@ -47,12 +29,16 @@
                         <eot>eot</eot>
                         <woff>woff</woff>
                     </extensions>
-                    <!--<paths>-->
+
+                    <!-- Skip validation by these paths -->
+                    <paths>
                         <!--<path>libs/</path>-->
-                    <!--</paths>-->
-                    <!--<files>-->
+                    </paths>
+
+                    <!-- Skip validation by these file paths -->
+                    <files>
                         <!--<file>index.php</file>-->
-                    <!--</files>-->
+                    </files>
                 </skip>
                 <protect>
                     <files>
@@ -62,48 +48,16 @@
                         <!--<path>libs/</path>-->
                     <!--</paths>-->
                 </protect>
+
+                <!-- "allow" layer has priority over protect -->
+                <allow>
+                    <paths>
+                        <!--<path>some/path</path>-->
+                    </paths>
+                </allow>
             </filter>
         </FileFilter>
     </validators>
-
-    <filters>
-        <ShortCommitMsg>
-            <issue>
-                <tracker>
-                    <!--JIRA specific types-->
-                    <jira>
-                        <!--JIRA issue-type map to general issue-type-->
-                        <type>
-                            <!-- Tasks -->
-                            <Task>task</Task>
-                            <Sub_Task_Task>task</Sub_Task_Task>
-                            <Change_Request>task</Change_Request>
-                            <!-- Bugs -->
-                            <Bug>bug</Bug>
-                        </type>
-                    </jira>
-                </tracker>
-
-                <!--Short verb version for quick message-->
-                <short_verb>
-                    <!--For tasks at all-->
-                    <I>Implemented</I>
-                    <!--Functionality wasn't changed - refactoring only-->
-                    <R>Refactored</R>
-                    <!--Something was fixed. For bugs only-->
-                    <F>Fixed</F>
-                    <!--Applying Code Review Changes-->
-                    <C>CR Changes</C>
-                </short_verb>
-
-                <!--If the verb was omitted-->
-                <default_type_verb>
-                    <task>I</task>
-                    <bug>F</bug>
-                </default_type_verb>
-            </issue>
-        </ShortCommitMsg>
-    </filters>
 
     <!--Hooks process setup-->
     <hooks>
@@ -126,6 +80,7 @@
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
                         <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
                     </validators>
                 </php>
                 <phtml>
@@ -151,6 +106,10 @@
                     </validators>
                 </after_all>
             </filetype>
+            <end_message>
+                <success>Your code is valid.</success>
+                <error>Ooops! Something wrong in your files for commit.</error>
+            </end_message>
         </pre-commit>
     </hooks>
 </config>

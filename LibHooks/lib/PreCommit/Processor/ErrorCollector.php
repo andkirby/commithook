@@ -27,8 +27,7 @@ class ErrorCollector
      */
     public function addError($file, $type, $message, $value = null, $line = null)
     {
-        $line = (int) $line;
-        if (!is_array($value)) {
+        if ($value !== (array)$value) {
             $value = array('value' => $value);
         }
         foreach ($value as $key => $val) {
@@ -37,7 +36,8 @@ class ErrorCollector
         }
 
         if ($line) {
-            $message = "Line: $line. " . $message;
+            $lineValue = is_array($line) ? implode(',', $line) : $line;
+            $message = "Line: $lineValue. " . $message;
             $this->_errors[$file][$type][] = array(
                 'line'    => $line,
                 'value'   => $value['value'],

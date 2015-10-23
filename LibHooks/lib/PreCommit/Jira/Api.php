@@ -63,10 +63,12 @@ class Api extends JiraLib\Api
         $isFile = false,
         $debug = false)
     {
-        $result = (array)parent::api($method, $url, $data, true, $isFile, $debug);
+        $result = parent::api($method, $url, $data, true, $isFile, $debug);
         if ($result) {
             $this->_processErrors($result);
-            $result = new Api\Result($result);
+            if (!$asJson) {
+                $result = new Api\Result($result);
+            }
         }
         return $result;
     }

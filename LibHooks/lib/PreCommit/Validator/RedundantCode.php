@@ -57,6 +57,7 @@ class RedundantCode extends AbstractValidator
             return true;
         }
 
+        $content     = preg_replace('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', "\n", $content);
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         $parsedArr   = CodingStandard::splitContent($content);
         foreach ($parsedArr as $line => $str) {

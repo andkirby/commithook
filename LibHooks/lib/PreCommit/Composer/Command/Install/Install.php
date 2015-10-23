@@ -1,7 +1,6 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Composer\Command\Install;
 
-use Symfony\Component\Console\Helper\DialogHelper;
 use PreCommit\Composer\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -51,16 +50,6 @@ class Install extends CommandAbstract
     }
 
     /**
-     * Get dialog helper
-     *
-     * @return DialogHelper
-     */
-    protected function getDialog()
-    {
-        return $this->getHelperSet()->get('dialog');
-    }
-
-    /**
      * Execute command
      *
      * @param InputInterface  $input
@@ -70,6 +59,7 @@ class Install extends CommandAbstract
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
                 $output, $this->askProjectDir($input, $output)
@@ -139,15 +129,18 @@ class Install extends CommandAbstract
     protected function createHookFile(OutputInterface $output, InputInterface $input, $file, $body)
     {
         if (!$input->getOption('overwrite') && file_exists($file)
-            && !$this->getDialog()->askConfirmation(
-                $output, "File '$file' already exists. Overwrite it? [yes]: "
+            && 'y' !== $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
-            throw new Exception('Could not overwrite file ' . $file);
+            $output->writeln('Could not overwrite file ' . $file);
+            return $this;
         }
         if (!file_put_contents($file, $body)) {
             throw new Exception('Could not create file ' . $file);
         }
+        chmod($file, 0777);
         if ($this->isVerbose($output)) {
             $output->writeln("CommitHook file set to '$file'.");
         }
@@ -160,6 +153,7 @@ class Install extends CommandAbstract
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
+     * @throws \PreCommit\Composer\Exception
      */
     protected function askPhpPath(InputInterface $input, OutputInterface $output)
     {
@@ -176,8 +170,9 @@ class Install extends CommandAbstract
             if ($file) {
                 $output->writeln('Given PHP executable file is not valid.');
             }
-            $file = $this->getDialog()->ask(
-                $output, "Please set your PHP executable file [$file]: ", $file
+            $file = $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestion("Please set your PHP executable file", $file)
             );
             if (++$i > $max) {
                 throw new Exception('Path to PHP executable file is not set.');

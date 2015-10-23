@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Processor;
 use \PreCommit\Exception as Exception;
+use PreCommit\Message;
 
 /**
  * Class abstract process adapter
@@ -44,17 +45,42 @@ class CommitMsg extends AbstractAdapter
      * Process commit message
      *
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function process()
     {
-        $message = $this->_loadFilter('ShortCommitMsg')
-            ->filter($this->_getCommitMessage());
+        $message = new Message();
 
-        $this->_loadValidator('CommitMsg')
-            ->validate($message, null);
+        $message->body = $this->_getCommitMessage();
 
-        if (!$this->_errorCollector->hasErrors()) {
+        try {
+            $message = $this->_loadFilter('Explode')
+                ->filter($message);
+
+            $message = $this->_loadFilter('ShortCommitMsg')
+                ->filter($message);
+
+            $this->_loadValidator('IssueType')
+                ->validate($message, null);
+
+            $this->_loadValidator('CommitMsg')
+                ->validate($message, null);
+
+            $this->_loadValidator('IssueStatus')
+                ->validate($message, null);
+        } catch (\Exception $e) {
+            //TODO refactor ignore issue approach
+            if ($message->issue) {
+                //ignore issue caching on failed validation
+                $message->issue->ignoreIssue();
+            }
+            throw $e;
+        }
+
+        if ($this->_errorCollector->hasErrors() && $message->issue) {
+            //ignore issue caching on failed validation
+            $message->issue->ignoreIssue();
+        } else {
             $this->_setCommitMessage($message);
         }
         return !$this->_errorCollector->hasErrors();
@@ -73,11 +99,11 @@ class CommitMsg extends AbstractAdapter
     /**
      * Set commit message
      *
-     * @param string $message
+     * @param \PreCommit\Message $message
      * @return string
      */
-    protected function _setCommitMessage($message)
+    protected function _setCommitMessage(Message $message)
     {
-        return $this->_vcsAdapter->setCommitMessage($message);
+        return $this->_vcsAdapter->setCommitMessage($message->body);
     }
 }

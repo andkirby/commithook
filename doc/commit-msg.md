@@ -18,7 +18,7 @@ There are available commit verbs:
 - `Refactored` (for commits which contains refactoring only)
 - `CR Change(s)` ("changes" or "change", for applying code review changes)
 
-*NOTE:* Actually this validation is hardcoded. It will be moved to configuration to be flexible later.
+*NOTE:* Actually this can be extended. Please take a look [some specific customization of commit message format](https://gist.github.com/andkirby/12175e1a46d2a9e6f2bb).
 
 #### JIRA Integration
 Since v1.7.0b an integration with JIRA issues tracker is available.
@@ -120,17 +120,11 @@ There is predefined configuration:
 </config>
 ```
 
-
 Please do not forget check issue numbers always!! It's just to be more ~~lazy~~ productive! ;D
 
 ###### Caching
 Information about JIRA issues cached in file `HOME/.commithook/cache/issues-prjnm-v0` where
 - `prjnm` is your JIRA project key,
 - `v0` version of cache schema.
-
-###### Future Features with JIRA Integration
-- Protect commits into issues with not appropriate status.
-- Protect commits with verb Fixed/Implemented into an issue Task/Bug (or auto set it).
-.travis.yml
 
 [Back](../README.md)
