@@ -1,6 +1,6 @@
 <?php
 
-namespace PreCommit\Composer\Command\Helper;
+namespace PreCommit\Command\Command\Helper;
 
 use PreCommit\Config as ConfigInstance;
 use Symfony\Component\Console\Helper\Helper;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Helper\Helper;
 /**
  * Helper for writing config
  *
- * @package PreCommit\Composer\Command\Helper
+ * @package PreCommit\Command\Command\Helper
  */
 class Config extends Helper
 {
@@ -181,7 +181,7 @@ XML;
      * @param string $xpath
      * @param string $value
      * @return bool
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     public function writeValue($configFile, $xpath, $value)
     {

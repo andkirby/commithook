@@ -1,14 +1,14 @@
 <?php
-namespace PreCommit\Composer\Command\Helper;
+namespace PreCommit\Command\Command\Helper;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Question\Question;
 
 /**
  * Simple version of question helper
  *
- * @package PreCommit\Composer\Command\Helper
+ * @package PreCommit\Command\Command\Helper
  */
 class SimpleQuestion extends Helper
 {

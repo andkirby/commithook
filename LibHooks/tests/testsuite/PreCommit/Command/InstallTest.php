@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Command;
 
-use PreCommit\Composer\Command\Install;
+use PreCommit\Command\Command\Install;
 
 /**
  * Test CLI install command

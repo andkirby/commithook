@@ -1,12 +1,12 @@
 <?php
-namespace PreCommit\Composer;
+namespace PreCommit\Command;
 
 use \PreCommit\Exception as TopException;
 
 /**
  * Class Exception
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Exception extends TopException
 {

@@ -1,14 +1,14 @@
 <?php
-namespace PreCommit\Composer\Command\Install;
+namespace PreCommit\Command\Command\Install;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * CommitHooks files remover
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Remove extends CommandAbstract
 {

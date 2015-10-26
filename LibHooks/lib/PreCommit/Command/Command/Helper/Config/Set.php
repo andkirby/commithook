@@ -1,14 +1,14 @@
 <?php
-namespace PreCommit\Composer\Command\Helper\Config;
+namespace PreCommit\Command\Command\Helper\Config;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use PreCommit\Config;
 use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Helper for writing config
  *
- * @package PreCommit\Composer\Command\Helper
+ * @package PreCommit\Command\Command\Helper
  */
 class Set extends Helper
 {

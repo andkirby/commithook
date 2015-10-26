@@ -1,8 +1,8 @@
 <?php
-namespace PreCommit\Composer\Command\Install;
+namespace PreCommit\Command\Command\Install;
 
-use PreCommit\Composer\Command;
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Command;
+use PreCommit\Command\Exception;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Base "install" command abstract class
  *
- * @package PreCommit\Composer\Command
+ * @package PreCommit\Command\Command
  */
 abstract class CommandAbstract extends Command\CommandAbstract
 {

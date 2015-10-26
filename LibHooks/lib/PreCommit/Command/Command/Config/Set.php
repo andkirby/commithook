@@ -1,14 +1,14 @@
 <?php
-namespace PreCommit\Composer\Command\Config;
+namespace PreCommit\Command\Command\Config;
 
-use PreCommit\Composer\Command\CommandAbstract;
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Command\CommandAbstract;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use PreCommit\Composer\Command\Helper;
+use PreCommit\Command\Command\Helper;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * It will test all modified files
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Set extends CommandAbstract
 {
@@ -225,7 +225,7 @@ class Set extends CommandAbstract
      *
      * @param string $name
      * @return string
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     protected function getXpath($name)
     {
@@ -457,7 +457,7 @@ class Set extends CommandAbstract
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     protected function writeDefaultOptions(InputInterface $input, OutputInterface $output, $readAll = false)
     {
@@ -489,7 +489,7 @@ class Set extends CommandAbstract
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return $this
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
     {

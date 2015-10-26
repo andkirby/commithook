@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer\Command\Helper;
+namespace PreCommit\Command\Command\Helper;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Helper for getting project directory
  *
- * @package PreCommit\Composer\Command\Helper
+ * @package PreCommit\Command\Command\Helper
  */
 class ProjectDir extends Helper
 {
@@ -100,7 +100,7 @@ class ProjectDir extends Helper
      * @param OutputInterface $output
      * @param string|null     $dir
      * @return string
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     public function askProjectDir(InputInterface $input, OutputInterface $output, $dir = null)
     {

@@ -1,9 +1,9 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Command\Command;
 
-use PreCommit\Composer\Command\Helper\ProjectDir;
-use PreCommit\Composer\Command\Helper\SimpleQuestion;
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Command\Helper\ProjectDir;
+use PreCommit\Command\Command\Helper\SimpleQuestion;
+use PreCommit\Command\Exception;
 use PreCommit\Config;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Base command abstract class
  *
- * @package PreCommit\Composer\Command
+ * @package PreCommit\Command\Command
  */
 abstract class CommandAbstract extends Command
 {
@@ -58,7 +58,7 @@ abstract class CommandAbstract extends Command
      * Set extra helper ProjectDir
      *
      * @param Application $application An Application instance
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      * @api
      */
     public function setApplication(Application $application = null)

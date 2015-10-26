@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer\Command\Install;
+namespace PreCommit\Command\Command\Install;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -153,7 +153,7 @@ class Install extends CommandAbstract
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     protected function askPhpPath(InputInterface $input, OutputInterface $output)
     {

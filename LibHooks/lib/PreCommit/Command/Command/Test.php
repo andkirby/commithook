@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Command\Command;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * It will test all modified files
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Test extends CommandAbstract
 {
