@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Processor;
 
+use PreCommit\Command\Command\Config\IgnoreCommit;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\InterfaceFilter as InterfaceFilter;
@@ -34,6 +35,13 @@ class PreCommit extends AbstractAdapter
      * @var string
      */
     protected $_phpInterpreterPath;
+
+    /**
+     * Validators list which should be omitted
+     *
+     * @var array
+     */
+    protected $_omittedValidators;
     //endregion
 
     /**
@@ -119,6 +127,49 @@ class PreCommit extends AbstractAdapter
             $this->runValidators('after_all', $content, $file, $filePath);
         }
         return !$this->_errorCollector->hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _loadValidator($name, array $options = array())
+    {
+        $omitted = $this->_getOmittedValidators();
+        if (isset($omitted[$name])) {
+            $name = 'Stub';
+        }
+        return parent::_loadValidator($name, $options);
+    }
+
+    /**
+     * Get validators which should be ignored
+     *
+     * @return array
+     */
+    protected function _getOmittedValidators()
+    {
+        if (null === $this->_omittedValidators) {
+            $this->_omittedValidators = array();
+            //get validators set for file protection
+            if ($this->_getConfig()->getNode(IgnoreCommit::XPATH_IGNORE_PROTECTION)) {
+                $this->_omittedValidators = array_merge(
+                    $this->_omittedValidators,
+                    $this->_getConfig()->getNodesExpr(
+                        sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, 'protection')
+                    )
+                );
+            }
+            //get validators set for code validation
+            if ($this->_getConfig()->getNode(IgnoreCommit::XPATH_IGNORE_CODE)) {
+                $this->_omittedValidators = array_merge(
+                    $this->_omittedValidators,
+                    $this->_getConfig()->getNodesExpr(
+                        sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, 'code')
+                    )
+                );
+            }
+        }
+        return $this->_omittedValidators;
     }
 
     /**

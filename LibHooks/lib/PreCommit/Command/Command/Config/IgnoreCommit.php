@@ -23,7 +23,7 @@ class IgnoreCommit extends Set
     /**
      * XML path to status of ignoring of next commit
      */
-    const XPATH_IGNORE_VALIDATION = 'hooks/pre-commit/ignore/disable/code';
+    const XPATH_IGNORE_CODE = 'hooks/pre-commit/ignore/disable/code';
 
     /**
      * XML path to status of ignoring FileFilter for the next commit
@@ -137,7 +137,7 @@ class IgnoreCommit extends Set
     {
         if ($input->getOption('code')) {
             $this->writeConfig(
-                self::XPATH_IGNORE_VALIDATION,
+                self::XPATH_IGNORE_CODE,
                 static::OPTION_SCOPE_PROJECT_SELF, !$remove
             );
         }
