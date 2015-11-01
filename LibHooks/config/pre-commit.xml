@@ -63,22 +63,33 @@
     <hooks>
         <pre-commit>
             <ignore>
-                <!-- Set to 1 in your configuration XML file to skip code validation for the next commit -->
-                <next_commit>0</next_commit>
-                <validators>
-                    <!-- PHP, JS -->
-                    <PhpClass>1</PhpClass>
-                    <PhpDoc>1</PhpDoc>
-                    <CodingStandard>1</CodingStandard>
-                    <RedundantCode>1</RedundantCode>
-                    <ParentThis>1</ParentThis>
+                <disable>
+                    <!-- Set to 1 in your configuration XML file to skip code validation for the next commit -->
+                    <code>0</code>
+                    <!-- Set to 1 in your configuration XML file to ignore file/dir protection as well for the next commit -->
+                    <protection>0</protection>
+                </disable>
 
-                    <!-- PHTML -->
-                    <CodingStandardPhtml>1</CodingStandardPhtml>
+                <validator>
+                    <!-- Validators list-->
+                    <code>
+                        <!-- PHP, JS -->
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
 
-                    <!-- Tabs, BOM, line separators-->
-                    <FileStyle>1</FileStyle>
-                </validators>
+                        <!-- PHTML -->
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
+
+                        <!-- Tabs, BOM, line separators-->
+                        <FileStyle>1</FileStyle>
+                    </code>
+                    <protection>
+                        <FileFilter>1</FileFilter>
+                    </protection>
+                </validator>
             </ignore>
             <filetype>
                 <!--Run validators before any filter because filters run always before validators-->

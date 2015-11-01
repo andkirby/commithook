@@ -18,12 +18,17 @@ class IgnoreCommit extends Set
     /**
      * XML path to omitted validators on ignore next commit
      */
-    const XPATH_IGNORED_VALIDATORS = "hooks/pre-commit/ignore/validators/*[text() = '1' or text() = 'true']";
+    const XPATH_IGNORED_VALIDATORS = "hooks/pre-commit/ignore/validator/%s/*[text() = '1' or text() = 'true']";
 
     /**
-     * XML path to status of ignoring next commit
+     * XML path to status of ignoring of next commit
      */
-    const XPATH_IGNORE_NEXT_COMMIT = 'hooks/pre-commit/ignore/next_commit';
+    const XPATH_IGNORE_VALIDATION = 'hooks/pre-commit/ignore/disable/code';
+
+    /**
+     * XML path to status of ignoring FileFilter for the next commit
+     */
+    const XPATH_IGNORE_PROTECTION = 'hooks/pre-commit/ignore/disable/protection';
 
     /**
      * Issues tracker type
@@ -54,24 +59,23 @@ class IgnoreCommit extends Set
         CommandAbstract::execute($input, $output);
 
         try {
-            if ($input->getOption('show-ignored-validators')) {
+            if ($input->getOption('show')) {
                 $output->writeln(
-                    $this->_getValidators()
+                    $this->_getValidators($input)
                 );
             } else {
-                $this->writeConfig(
-                    self::XPATH_IGNORE_NEXT_COMMIT,
-                    static::OPTION_SCOPE_PROJECT_SELF, 1
-                );
+                $this->checkOptions($input);
+                $this->disableCodeValidation($input, $input->getOption('disable'));
+                $this->disableProtection($input, $input->getOption('disable'));
 
                 if ($this->isVerbose($output)) {
                     if ($this->_updated) {
                         $output->writeln(
-                            'Code validation will be ignored for the next commit.'
+                            'Validation will be ignored for the next commit.'
                         );
                     } else {
                         $output->writeln(
-                            'You already defined this configuration before.'
+                            'You already defined this before.'
                         );
                     }
                 }
@@ -89,27 +93,73 @@ class IgnoreCommit extends Set
     /**
      * Get validators list which will be ignored
      *
+     * @param InputInterface $input
      * @return array|null|string
      */
-    protected function _getValidators()
+    protected function _getValidators(InputInterface $input)
     {
-        $list = $this->getConfig()->getNodesExpr(
-            self::XPATH_IGNORED_VALIDATORS
+        $xpath = self::XPATH_IGNORED_VALIDATORS;
+        if ($input->getOption('code')) {
+            $xpath = sprintf($xpath, 'code');
+        } elseif ($input->getOption('protection')) {
+            $xpath = sprintf($xpath, 'protection');
+        } else {
+            $xpath = sprintf($xpath, '*');
+        }
+        return array_keys(
+            $this->getConfig()->getNodesExpr($xpath)
         );
-        $list = array_keys($list);
-        return $list;
     }
 
     /**
-     * Get scope option
+     * Set TRUE to all if none set
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @return null|string
+     * @param InputInterface $input
+     * @return $this
      */
-    protected function getScopeOption(InputInterface $input, OutputInterface $output)
+    protected function checkOptions(InputInterface $input)
     {
-        return static::OPTION_SCOPE_PROJECT_SELF;
+        if (!$input->getOption('code') && !$input->getOption('protection')) {
+            $input->setOption('code', true);
+            $input->setOption('protection', true);
+        }
+        return $this;
+    }
+
+    /**
+     * Set config for ignoring code validation
+     *
+     * @param InputInterface $input
+     * @param bool           $remove
+     * @return $this
+     */
+    protected function disableCodeValidation(InputInterface $input, $remove = false)
+    {
+        if ($input->getOption('code')) {
+            $this->writeConfig(
+                self::XPATH_IGNORE_VALIDATION,
+                static::OPTION_SCOPE_PROJECT_SELF, !$remove
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Set config for ignoring file protection
+     *
+     * @param InputInterface $input
+     * @param bool           $remove
+     * @return $this
+     */
+    protected function disableProtection(InputInterface $input, $remove = false)
+    {
+        if ($input->getOption('protection')) {
+            $this->writeConfig(
+                self::XPATH_IGNORE_PROTECTION,
+                static::OPTION_SCOPE_PROJECT_SELF, !$remove
+            );
+        }
+        return $this;
     }
 
     /**
@@ -140,8 +190,20 @@ HELP;
     {
         CommandAbstract::configureInput();
         $this->addOption(
-            'show-ignored-validators', 's', InputOption::VALUE_NONE,
-            'This option will show validator names which will not be used in code validation.'
+            'show', 's', InputOption::VALUE_NONE,
+            'Show validator names which will be omitted.'
+        );
+        $this->addOption(
+            'code', 'c', InputOption::VALUE_NONE,
+            'Ignore code validation.'
+        );
+        $this->addOption(
+            'protection', 't', InputOption::VALUE_NONE,
+            'Ignore file protection.'
+        );
+        $this->addOption(
+            'disable', 'r', InputOption::VALUE_NONE,
+            'Disable ignoring of the next commit.'
         );
         return $this;
     }
