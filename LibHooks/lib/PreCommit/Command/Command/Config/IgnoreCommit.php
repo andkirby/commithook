@@ -2,11 +2,11 @@
 namespace PreCommit\Command\Command\Config;
 
 use PreCommit\Command\Command\CommandAbstract;
+use PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use PreCommit\Command\Command\Helper;
 
 /**
  * CommitHooks command disable code validation for the next commit
@@ -87,6 +87,20 @@ class IgnoreCommit extends Set
     }
 
     /**
+     * Get validators list which will be ignored
+     *
+     * @return array|null|string
+     */
+    protected function _getValidators()
+    {
+        $list = $this->getConfig()->getNodesExpr(
+            self::XPATH_IGNORED_VALIDATORS
+        );
+        $list = array_keys($list);
+        return $list;
+    }
+
+    /**
      * Get scope option
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
@@ -107,7 +121,8 @@ class IgnoreCommit extends Set
     {
         $this->setName('blind-commit');
 
-        $help = <<<HELP
+        $help
+            = <<<HELP
 Ignore code validation for the next commit.
 HELP;
 
@@ -129,19 +144,5 @@ HELP;
             'This option will show validator names which will not be used in code validation.'
         );
         return $this;
-    }
-
-    /**
-     * Get validators list which will be ignored
-     *
-     * @return array|null|string
-     */
-    protected function _getValidators()
-    {
-        $list = $this->getConfig()->getNodesExpr(
-            self::XPATH_IGNORED_VALIDATORS
-        );
-        $list = array_keys($list);
-        return $list;
     }
 }
