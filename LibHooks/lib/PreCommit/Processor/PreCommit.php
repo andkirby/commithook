@@ -1,12 +1,15 @@
 <?php
 namespace PreCommit\Processor;
-use \PreCommit\Exception as Exception;
-use \PreCommit\Config as Config;
+
+use PreCommit\Config as Config;
+use PreCommit\Exception as Exception;
+use PreCommit\Filter\InterfaceFilter as InterfaceFilter;
 
 /**
  * Class abstract process adapter
  *
  * @package PreCommit\Processor
+ * @method InterfaceFilter _loadFilter
  */
 class PreCommit extends AbstractAdapter
 {
@@ -48,18 +51,6 @@ class PreCommit extends AbstractAdapter
 
     //region GettersSetters
     /**
-     * Set files for validation
-     *
-     * @param array $files
-     * @return $this
-     */
-    public function setFiles(array $files)
-    {
-        $this->_files = $files;
-        return $this;
-    }
-
-    /**
      * Set code path
      *
      * @param string $codePath
@@ -68,6 +59,18 @@ class PreCommit extends AbstractAdapter
     public function setCodePath($codePath)
     {
         $this->_codePath = $codePath;
+        return $this;
+    }
+
+    /**
+     * Set files for validation
+     *
+     * @param array $files
+     * @return $this
+     */
+    public function setFiles(array $files)
+    {
+        $this->_files = $files;
         return $this;
     }
     //endregion
@@ -84,7 +87,7 @@ class PreCommit extends AbstractAdapter
             return true;
         }
 
-        if (!$this->_canProcessed()) {
+        if (!$this->_canProcess()) {
             return true;
         }
 
@@ -100,7 +103,7 @@ class PreCommit extends AbstractAdapter
 
             $filePath = $this->_getFilePath($file);
             $content  = $this->_getFileContent($filePath);
-            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            $ext      = pathinfo($file, PATHINFO_EXTENSION);
 
             //run validators for non-filtered content
             $this->runValidators('before_all_original', $content, $file, $filePath);
@@ -119,14 +122,16 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * Get file content
+     * Can files processed
      *
-     * @param string $filePath
+     * In this method added checking commit message.
+     * We need no to check "Revert" commits and "Merge branch".
+     *
      * @return string
      */
-    protected function _getFileContent($filePath)
+    protected function _canProcess()
     {
-        return file_get_contents($filePath);
+        return !$this->_vcsAdapter->isMergeInProgress();
     }
 
     /**
@@ -146,27 +151,53 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * Can files processed
+     * Get file content
      *
-     * In this method added checking commit message.
-     * We need no to check "Revert" commits and "Merge branch".
-     *
+     * @param string $filePath
      * @return string
      */
-    protected function _canProcessed()
+    protected function _getFileContent($filePath)
     {
-        return !$this->_vcsAdapter->isMergeInProgress();
+        return file_get_contents($filePath);
     }
 
     /**
-     * Get config model
+     * Run validators gotten by file extension or some key
      *
-     * @return Config
-     * @throws \PreCommit\Exception
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return void             Returns nothing
      */
-    protected function _getConfig()
+    public function runValidators($ext, $content, $file, $filePath)
     {
-        return Config::getInstance();
+        foreach ($this->getValidators($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                $this->_loadValidator($validatorName)
+                    ->validate($content, $file, $filePath);
+            }
+        }
+    }
+
+    /**
+     * Run filters gotten by file extension or some key
+     *
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return string           Return filtered content
+     */
+    public function runFilters($ext, $content, $file, $filePath)
+    {
+        foreach ($this->getFilters($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                $content = $this->_loadFilter($validatorName)
+                    ->filter($content, $file, $filePath);
+            }
+        }
+        return $content;
     }
 
     /**
@@ -192,41 +223,13 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * Run filters gotten by file extension or some key
+     * Get config model
      *
-     * @param string $ext
-     * @param string $content
-     * @param string $file
-     * @param string $filePath
-     * @return string           Return filtered content
+     * @return Config
+     * @throws \PreCommit\Exception
      */
-    public function runFilters($ext, $content, $file, $filePath)
+    protected function _getConfig()
     {
-        foreach ($this->getFilters($ext) as $validatorName => $status) {
-            if ($status && $status !== 'false') {
-                $content = $this->_loadFilter($validatorName)
-                    ->filter($content, $file, $filePath);
-            }
-        }
-        return $content;
-    }
-
-    /**
-     * Run validators gotten by file extension or some key
-     *
-     * @param string $ext
-     * @param string $content
-     * @param string $file
-     * @param string $filePath
-     * @return void             Returns nothing
-     */
-    public function runValidators($ext, $content, $file, $filePath)
-    {
-        foreach ($this->getValidators($ext) as $validatorName => $status) {
-            if ($status && $status !== 'false') {
-                $this->_loadValidator($validatorName)
-                    ->validate($content, $file, $filePath);
-            }
-        }
+        return Config::getInstance();
     }
 }
