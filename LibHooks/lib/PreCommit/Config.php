@@ -353,6 +353,50 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Get node/s by expression
+     *
+     * @param string $xpath
+     * @return array|null|string
+     * @throws Exception
+     */
+    public function getNodesExpr($xpath)
+    {
+        $result = $this->xpath($xpath);
+        if (is_array($result)) {
+            //TODO looks like it's always an array
+            $data = array();
+            foreach ($result as $node) {
+                /** @var Config $node */
+                $data[$node->getName()] = $this->_getNodeValue($node);
+            }
+            return $data;
+        } elseif ($result instanceof Config) {
+            return $this->_getNodeValue($result);
+        }
+        return null;
+    }
+
+    /**
+     * Get node value
+     *
+     * @param Config $node
+     * @return string|array
+     */
+    protected function _getNodeValue($node)
+    {
+        if ($node->count()) {
+            $data = array();
+            /** @var Config $child */
+            foreach ($node->children() as $child) {
+                $data[$child->getName()] = $this->_getNodeValue($child);
+            }
+            return $data;
+        } else {
+            return (string)$node;
+        }
+    }
+
+    /**
      * Catch exception and show failed XPath
      *
      * @param string $path
