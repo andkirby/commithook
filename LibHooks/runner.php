@@ -76,10 +76,14 @@ $processor->process();
 
 if (!$processor->getErrors()) {
     echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/success");
+    $processor->dispatchEvent('success_end');
+    $processor->dispatchEvent('end', 0);
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
     echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/error");
+    $processor->dispatchEvent('error_end');
+    $processor->dispatchEvent('end', 1);
     echo PHP_EOL . PHP_EOL;
     echo $processor->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;
