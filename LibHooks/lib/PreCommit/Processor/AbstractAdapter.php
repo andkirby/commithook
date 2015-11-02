@@ -40,6 +40,15 @@ abstract class AbstractAdapter
      */
     protected $_filters = array();
 
+    /**
+     * Event observers
+     *
+     * 'event_name' => array(observer..n)
+     *
+     * @var array
+     */
+    protected $_eventObservers = array();
+
     //endregion
 
     /**
@@ -130,6 +139,37 @@ abstract class AbstractAdapter
     public function getErrors()
     {
         return $this->_errorCollector->getErrors();
+    }
+
+    /**
+     * Add "end"
+     *
+     * @param string   $event
+     * @param \Closure $observer
+     * @return $this
+     */
+    public function addObserver($event, \Closure $observer)
+    {
+        $this->_eventObservers[$event][] = $observer;
+        return $this;
+    }
+
+    /**
+     * Dispatch event
+     *
+     * @param string       $event
+     * @param array|string|null $params
+     * @return $this
+     */
+    public function dispatchEvent($event, $params = null)
+    {
+        if (!empty($this->_eventObservers[$event])) {
+            /** @var \Closure $observer */
+            foreach ($this->_eventObservers[$event] as $observer) {
+                $observer($this, $params);
+            }
+        }
+        return $this;
     }
 
     /**
