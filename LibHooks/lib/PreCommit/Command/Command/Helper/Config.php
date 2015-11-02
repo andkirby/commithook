@@ -13,6 +13,13 @@ use Symfony\Component\Console\Helper\Helper;
 class Config extends Helper
 {
     /**
+     * Writer
+     *
+     * @var Config\Writer
+     */
+    protected $writer;
+
+    /**
      * Helper name
      */
     const NAME = 'commithook_config';
@@ -109,7 +116,22 @@ class Config extends Helper
      */
     protected function getWriter()
     {
-        return $this->getHelperSet()->get(Config\Writer::NAME);
+        if ($this->writer === null) {
+            $this->writer = $this->getHelperSet()->get(Config\Writer::NAME);
+        }
+        return $this->writer;
+    }
+
+    /**
+     * Set writer
+     *
+     * @param Config\Writer $writer
+     * @return $this
+     */
+    public function setWriter(Config\Writer $writer)
+    {
+        $this->writer = $writer;
+        return $this;
     }
 
     /**
