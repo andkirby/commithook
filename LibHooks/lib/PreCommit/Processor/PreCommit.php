@@ -2,6 +2,8 @@
 namespace PreCommit\Processor;
 
 use PreCommit\Command\Command\Config\IgnoreCommit;
+use PreCommit\Command\Command\Config\Set;
+use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\InterfaceFilter as InterfaceFilter;
@@ -130,49 +132,6 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function _loadValidator($name, array $options = array())
-    {
-        $omitted = $this->_getOmittedValidators();
-        if (isset($omitted[$name])) {
-            $name = 'Stub';
-        }
-        return parent::_loadValidator($name, $options);
-    }
-
-    /**
-     * Get validators which should be ignored
-     *
-     * @return array
-     */
-    protected function _getOmittedValidators()
-    {
-        if (null === $this->_omittedValidators) {
-            $this->_omittedValidators = array();
-            //get validators set for file protection
-            if ($this->_getConfig()->getNode(IgnoreCommit::XPATH_IGNORE_PROTECTION)) {
-                $this->_omittedValidators = array_merge(
-                    $this->_omittedValidators,
-                    $this->_getConfig()->getNodesExpr(
-                        sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, 'protection')
-                    )
-                );
-            }
-            //get validators set for code validation
-            if ($this->_getConfig()->getNode(IgnoreCommit::XPATH_IGNORE_CODE)) {
-                $this->_omittedValidators = array_merge(
-                    $this->_omittedValidators,
-                    $this->_getConfig()->getNodesExpr(
-                        sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, 'code')
-                    )
-                );
-            }
-        }
-        return $this->_omittedValidators;
-    }
-
-    /**
      * Can files processed
      *
      * In this method added checking commit message.
@@ -183,6 +142,18 @@ class PreCommit extends AbstractAdapter
     protected function _canProcess()
     {
         return !$this->_vcsAdapter->isMergeInProgress();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _loadValidator($name, array $options = array())
+    {
+        $omitted = $this->_getOmittedValidators();
+        if (isset($omitted[$name])) {
+            $name = 'Stub';
+        }
+        return parent::_loadValidator($name, $options);
     }
 
     /**
@@ -252,6 +223,45 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
+     * Get validators which should be ignored
+     *
+     * @return array
+     */
+    protected function _getOmittedValidators()
+    {
+        if (null === $this->_omittedValidators) {
+            /** @var ConfigHelper $configHelper */
+            $configHelper             = $this->getConfigHelper();
+            $configFile               = $this->_getConfigFile(Set::OPTION_SCOPE_PROJECT_SELF);
+            $this->_omittedValidators = array();
+            $types                    = array(
+                'code'       => IgnoreCommit::XPATH_IGNORE_CODE,
+                'protection' => IgnoreCommit::XPATH_IGNORE_PROTECTION,
+            );
+
+            foreach ($types as $type => $xpath) {
+                //get validators set
+                $validators = $this->_getOmittedTypeValidators($xpath, $type);
+                if ($validators) {
+                    //add observer to remove disable ignoring
+                    $this->addObserver(
+                        'success_end',
+                        function () use ($configHelper, $configFile, $xpath) {
+                            $configHelper->writeValue($configFile, $xpath, false);
+                        }
+                    );
+
+                    $this->_omittedValidators = array_merge(
+                        $this->_omittedValidators,
+                        $validators
+                    );
+                }
+            }
+        }
+        return $this->_omittedValidators;
+    }
+
+    /**
      * Get validators by file type
      *
      * @param string $fileType
@@ -271,6 +281,55 @@ class PreCommit extends AbstractAdapter
     public function getFilters($fileType)
     {
         return $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/' . $fileType . '/filters');
+    }
+
+    /**
+     * Get config helper
+     *
+     * @return ConfigHelper
+     */
+    public function getConfigHelper()
+    {
+        $helper = new ConfigHelper();
+        $helper->setWriter(new ConfigHelper\Writer());
+        return $helper;
+    }
+
+    /**
+     * Get config file related to scope
+     *
+     * @param $scope
+     * @return null|string
+     * @throws \PreCommit\Exception
+     */
+    protected function _getConfigFile($scope)
+    {
+        if (Set::OPTION_SCOPE_GLOBAL == $scope) {
+            return $this->_getConfig()->getConfigFile('userprofile');
+        } elseif (Set::OPTION_SCOPE_PROJECT == $scope) {
+            return $this->_getConfig()->getConfigFile('project');
+        } elseif (Set::OPTION_SCOPE_PROJECT_SELF == $scope) {
+            return $this->_getConfig()->getConfigFile('project_local');
+        }
+        throw new Exception("Unknown scope '$scope'.");
+    }
+
+    /**
+     * Get omitted type validators
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return array
+     */
+    protected function _getOmittedTypeValidators($xpath, $type)
+    {
+        $validators = array();
+        if ($this->_getConfig()->getNode($xpath)) {
+            $validators = $this->_getConfig()->getNodesExpr(
+                sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, $type)
+            );
+        }
+        return $validators;
     }
 
     /**
