@@ -1,12 +1,12 @@
 <?php
-namespace PreCommit\Composer;
+namespace PreCommit\Command;
 
 use Symfony\Component\Console\Application as BaseApplication;
 
 /**
  * Class Application
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Application extends BaseApplication
 {

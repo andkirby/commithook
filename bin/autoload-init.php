@@ -8,3 +8,6 @@ if (realpath($internal)) {
 }
 /** @var Composer\Autoload\ClassLoader $autoloader */
 $autoloader = require $dir . 'autoload.php';
+
+set_error_handler('\PreCommit\ErrorHandler::handleError');
+return $autoloader;

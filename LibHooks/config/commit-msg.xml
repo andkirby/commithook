@@ -2,7 +2,14 @@
 <config>
     <tracker>
         <!--Tasks tracker type. Default: JIRA-->
-        <type>jira</type>
+        <!--<type>jira</type>-->
+
+        <!-- Available type -->
+        <available_type>
+            <jira>jira</jira>
+            <github>github</github>
+            <redmine>redmine</redmine>
+        </available_type>
 
         <jira>
             <issue>
@@ -11,6 +18,14 @@
                 </adapter>
             </issue>
         </jira>
+
+        <github>
+            <not_implemented />
+        </github>
+
+        <redmine>
+            <not_implemented />
+        </redmine>
     </tracker>
 
     <interpreters>
@@ -161,6 +176,10 @@
                     </type>
                 </issue>
             </message>
+            <end_message>
+                <success>Commit message is valid.</success>
+                <error>You cannot commit. Please see errors.</error>
+            </end_message>
         </commit-msg>
     </hooks>
 </config>

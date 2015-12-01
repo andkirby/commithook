@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit\Validator;
 
+use PreCommit\Validator\Helper\LineFinder;
+
 /**
  * Class CodingStandard validator
  *
@@ -55,7 +57,7 @@ class CodingStandard extends AbstractValidator
         self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
         self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
         self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
-        self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gaps after opened bracket/brace or before closed bracket/brace %value% time(s).',
+        self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
         self::CODE_PHP_UNDERSCORE_IN_VAR => 'Underscore in variable(s): %vars%. Original line: %value%',
     );
 
@@ -92,7 +94,18 @@ class CodingStandard extends AbstractValidator
 
         preg_match_all('/(\{|\()\n\n.*|.*\n\n[ ]*(\}|\))/', $content, $match);
         if ($match[0]) {
-            $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]));
+            //region Find lines
+            $findings = $match[0];
+            sort($findings);
+            $findings = array_unique($findings);
+            $lines = array();
+            foreach ($findings as $find) {
+                $lines = array_merge($lines, $this->_findLines($find, $content));
+            }
+            sort($lines);
+            //endregion
+
+            $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]), $lines);
         }
         return $this;
     }
@@ -358,5 +371,18 @@ class CodingStandard extends AbstractValidator
             }
         }
         return false;
+    }
+
+    /**
+     * Find lines for a string
+     *
+     * @param string $find
+     * @param string $content
+     * @param bool   $once
+     * @return array|int
+     */
+    protected function _findLines($find, $content, $once = false)
+    {
+        return LineFinder::findLines($find, $content, $once);
     }
 }

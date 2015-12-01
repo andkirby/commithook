@@ -7,7 +7,9 @@
         </PhpClass>
         <FileFilter>
             <filter>
+                <!-- "skip" validation list -->
                 <skip>
+                    <!-- Skip validation for files with such extensions -->
                     <extensions>
                         <!--Images-->
                         <jpg>jpg</jpg>
@@ -27,12 +29,16 @@
                         <eot>eot</eot>
                         <woff>woff</woff>
                     </extensions>
-                    <!--<paths>-->
+
+                    <!-- Skip validation by these paths -->
+                    <paths>
                         <!--<path>libs/</path>-->
-                    <!--</paths>-->
-                    <!--<files>-->
+                    </paths>
+
+                    <!-- Skip validation by these file paths -->
+                    <files>
                         <!--<file>index.php</file>-->
-                    <!--</files>-->
+                    </files>
                 </skip>
                 <protect>
                     <files>
@@ -42,6 +48,13 @@
                         <!--<path>libs/</path>-->
                     <!--</paths>-->
                 </protect>
+
+                <!-- "allow" layer has priority over protect -->
+                <allow>
+                    <paths>
+                        <!--<path>some/path</path>-->
+                    </paths>
+                </allow>
             </filter>
         </FileFilter>
     </validators>
@@ -49,6 +62,35 @@
     <!--Hooks process setup-->
     <hooks>
         <pre-commit>
+            <ignore>
+                <disable>
+                    <!-- Set to 1 in your configuration XML file to skip code validation for the next commit -->
+                    <code>0</code>
+                    <!-- Set to 1 in your configuration XML file to ignore file/dir protection as well for the next commit -->
+                    <protection>0</protection>
+                </disable>
+
+                <validator>
+                    <!-- Validators list-->
+                    <code>
+                        <!-- PHP, JS -->
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
+
+                        <!-- PHTML -->
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
+
+                        <!-- Tabs, BOM, line separators-->
+                        <FileStyle>1</FileStyle>
+                    </code>
+                    <protection>
+                        <FileFilter>1</FileFilter>
+                    </protection>
+                </validator>
+            </ignore>
             <filetype>
                 <!--Run validators before any filter because filters run always before validators-->
                 <before_all_original />
@@ -67,6 +109,7 @@
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
                         <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
                     </validators>
                 </php>
                 <phtml>
@@ -92,6 +135,10 @@
                     </validators>
                 </after_all>
             </filetype>
+            <end_message>
+                <success>Your code is valid.</success>
+                <error>Ooops! Something wrong in your files for commit.</error>
+            </end_message>
         </pre-commit>
     </hooks>
 </config>

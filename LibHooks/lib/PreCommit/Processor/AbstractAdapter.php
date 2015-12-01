@@ -1,5 +1,6 @@
 <?php
 namespace PreCommit\Processor;
+
 use PreCommit\Exception;
 use PreCommit\Processor\ErrorCollector as Error;
 
@@ -38,6 +39,16 @@ abstract class AbstractAdapter
      * @var array
      */
     protected $_filters = array();
+
+    /**
+     * Event observers
+     *
+     * 'event_name' => array(observer..n)
+     *
+     * @var array
+     */
+    protected $_eventObservers = array();
+
     //endregion
 
     /**
@@ -53,7 +64,7 @@ abstract class AbstractAdapter
         } elseif (is_object($options) && $options instanceof \PreCommit\Vcs\AdapterInterface) {
             $this->_vcsAdapter = $options;
         } elseif (isset($options['vcs']) && is_object($options['vcs'])
-            && $options['vcs'] instanceof \PreCommit\Vcs\AdapterInterface
+                  && $options['vcs'] instanceof \PreCommit\Vcs\AdapterInterface
         ) {
             $this->_vcsAdapter = $options['vcs'];
         } else {
@@ -75,9 +86,49 @@ abstract class AbstractAdapter
      */
     protected function _getVcsAdapter($type)
     {
-        $type = ucfirst($type);
+        $type  = ucfirst($type);
         $class = 'PreCommit\\Vcs\\' . $type;
         return new $class();
+    }
+
+    /**
+     * Get error collector
+     *
+     * @return ErrorCollector
+     */
+    protected function _getErrorCollector()
+    {
+        return new Error();
+    }
+
+    /**
+     * Process method
+     *
+     * @return mixed
+     * @throws \PreCommit\Exception
+     */
+    abstract public function process();
+
+    /**
+     * Get errors output
+     *
+     * @return string
+     */
+    public function getErrorsOutput()
+    {
+        $output = '';
+        foreach ($this->getErrors() as $file => $fileErrors) {
+            $decorLength = 30 - strlen($file) / 2;
+            $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
+            $output .= str_repeat('=', round($decorLength - 0.1))
+                       . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;
+            foreach ($fileErrors as $errorsType) {
+                foreach ($errorsType as $error) {
+                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message']) . "\n";
+                }
+            }
+        }
+        return $output;
     }
 
     /**
@@ -91,12 +142,35 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Process method
+     * Add "end"
      *
-     * @return mixed
-     * @throws \PreCommit\Exception
+     * @param string   $event
+     * @param \Closure $observer
+     * @return $this
      */
-    abstract public function process();
+    public function addObserver($event, \Closure $observer)
+    {
+        $this->_eventObservers[$event][] = $observer;
+        return $this;
+    }
+
+    /**
+     * Dispatch event
+     *
+     * @param string       $event
+     * @param array|string|null $params
+     * @return $this
+     */
+    public function dispatchEvent($event, $params = null)
+    {
+        if (!empty($this->_eventObservers[$event])) {
+            /** @var \Closure $observer */
+            foreach ($this->_eventObservers[$event] as $observer) {
+                $observer($this, $params);
+            }
+        }
+        return $this;
+    }
 
     /**
      * Load validator
@@ -108,7 +182,7 @@ abstract class AbstractAdapter
     protected function _loadValidator($name, array $options = array())
     {
         if (empty($this->_validators[$name])) {
-            $class                    = "\\PreCommit\\Validator\\$name";
+            $class                    = '\\PreCommit\\Validator\\' . str_replace('-', '\\', $name);
             $options                  = array_merge($this->_getValidatorDefaultOptions(), $options);
             $this->_validators[$name] = new $class($options);
         }
@@ -141,37 +215,5 @@ abstract class AbstractAdapter
             $this->_filters[$name] = new $class($options);
         }
         return $this->_filters[$name];
-    }
-
-    /**
-     * Get errors output
-     *
-     * @return string
-     */
-    public function getErrorsOutput()
-    {
-        $output = '';
-        foreach ($this->getErrors() as $file => $fileErrors) {
-            $decorLength = 30 - strlen($file) / 2;
-            $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
-            $output .= str_repeat('=', round($decorLength - 0.1))
-                . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;
-            foreach ($fileErrors as $errorsType) {
-                foreach ($errorsType as $error) {
-                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message']) . "\n";
-                }
-            }
-        }
-        return $output;
-    }
-
-    /**
-     * Get error collector
-     *
-     * @return ErrorCollector
-     */
-    protected function _getErrorCollector()
-    {
-        return new Error();
     }
 }

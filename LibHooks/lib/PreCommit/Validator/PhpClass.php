@@ -75,7 +75,7 @@ class PhpClass extends AbstractValidator
      */
     protected function _validatePhpOpenedTag($content, $file)
     {
-        if ($content[0] != '<') {
+        if (0 !== strpos($content, '<?')) {
             $this->_addError($file, self::CODE_PHP_TAG);
         }
         return $this;

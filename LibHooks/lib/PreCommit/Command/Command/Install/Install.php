@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Command\Command\Install;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,6 +59,7 @@ class Install extends CommandAbstract
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
                 $output, $this->askProjectDir($input, $output)
@@ -128,11 +129,13 @@ class Install extends CommandAbstract
     protected function createHookFile(OutputInterface $output, InputInterface $input, $file, $body)
     {
         if (!$input->getOption('overwrite') && file_exists($file)
-            && !$this->getDialog()->askConfirmation(
-                $output, "File '$file' already exists. Overwrite it? [yes]: "
+            && 'y' !== $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
-            throw new Exception('Could not overwrite file ' . $file);
+            $output->writeln('Could not overwrite file ' . $file);
+            return $this;
         }
         if (!file_put_contents($file, $body)) {
             throw new Exception('Could not create file ' . $file);
@@ -150,7 +153,7 @@ class Install extends CommandAbstract
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
-     * @throws \PreCommit\Composer\Exception
+     * @throws \PreCommit\Command\Exception
      */
     protected function askPhpPath(InputInterface $input, OutputInterface $output)
     {
@@ -167,8 +170,9 @@ class Install extends CommandAbstract
             if ($file) {
                 $output->writeln('Given PHP executable file is not valid.');
             }
-            $file = $this->getDialog()->ask(
-                $output, "Please set your PHP executable file [$file]: ", $file
+            $file = $this->getQuestionHelper()->ask(
+                $input, $output,
+                $this->getSimpleQuestion()->getQuestion("Please set your PHP executable file", $file)
             );
             if (++$i > $max) {
                 throw new Exception('Path to PHP executable file is not set.');

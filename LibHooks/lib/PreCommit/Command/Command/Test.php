@@ -1,7 +1,7 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Command\Command;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,16 +11,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * It will test all modified files
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
-class Test extends Command
+class Test extends CommandAbstract
 {
     /**
      * Init default helpers
      *
      * @return $this
      */
-    protected function configure()
+    protected function configureCommand()
     {
         $this->setName('test');
         $this->setHelp(
@@ -42,10 +42,10 @@ class Test extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         !defined('TEST_MODE') && define('TEST_MODE', true);
-        $hookFile = '/pre-commit';
+        $hookFile = $this->askProjectDir($input, $output) . '/.git/hooks/pre-commit';
         require_once __DIR__ . '/../../../../runner.php';
-
         return 0;
     }
 }

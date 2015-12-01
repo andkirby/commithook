@@ -45,12 +45,11 @@ class CommitMsg extends AbstractAdapter
      * Process commit message
      *
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function process()
     {
         $message = new Message();
-        \Zend_Registry::set('message', $message);
 
         $message->body = $this->_getCommitMessage();
 

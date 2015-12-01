@@ -18,7 +18,7 @@
         <userprofile-pre-commit>HOME/.commithook/pre-commit.xml</userprofile-pre-commit>
         <userprofile-commit-msg>HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
         <project>PROJECT_DIR/commithook.xml</project>
-        <project_local>PROJECT_DIR/commithook-self.xml</project_local>
+        <project_local>HOME/.commithook/projects/PROJECT_NAME/commithook.xml</project_local>
     </additional_config>
     <cache_dir>HOME/.commithook/cache</cache_dir>
 </config>

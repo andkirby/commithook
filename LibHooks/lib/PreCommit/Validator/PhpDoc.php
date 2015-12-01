@@ -1,5 +1,7 @@
 <?php
 namespace PreCommit\Validator;
+use PreCommit\Validator\Helper\LineFinder;
+use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Class XML validator
@@ -19,6 +21,7 @@ class PhpDoc extends AbstractValidator
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
     const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
     const CODE_PHP_DOC_VAR_EMPTY         = 'phpDocVarEmpty';
+    const CODE_PHP_DOC_SINGLE_ASTERISK   = 'phpDocSingleAsterisk';
     /**#@-*/
 
     /**
@@ -31,10 +34,11 @@ class PhpDoc extends AbstractValidator
         self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
         self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
         self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => 'There is PHPDoc message missed or first letter is not in upppercase.\n\t%value%',
+        self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in uppercase.\t%value%",
         self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
         self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
         self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
+        self::CODE_PHP_DOC_SINGLE_ASTERISK   => 'There are found inline PHPDoc with single asterisk (*) at least %value% times. Please use double asterisk (e.g.: /** @var $this */).',
     );
 
     /**
@@ -63,6 +67,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocExtraGap($content, $file);
         $this->_validateExistPhpDocVarEmptyType($content, $file);
         $this->_validateExistPhpDocVarNull($content, $file);
+        $this->_validateSingleAsterisk($content, $file);
 
         return !$this->_errorCollector->hasErrors();
     }
@@ -112,7 +117,10 @@ class PhpDoc extends AbstractValidator
             . '|function|const|public|protected|private)[^\x0A]*)/i';
         if (preg_match_all($reg, $content, $matches)) {
             foreach ($matches[1] as $match) {
-                $this->_addError($file, self::CODE_PHP_DOC_MISSED, $match);
+                $this->_addError(
+                    $file, self::CODE_PHP_DOC_MISSED, $match,
+                    $this->_findLines($match, $content, true)
+                );
             }
         }
         return $this;
@@ -147,9 +155,29 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//', $content, $matches
         )) {
+            $findings = array();
             foreach ($matches[0] as $match) {
-                $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, $match);
+                if (stripos($match, ' * @inheritdoc')) {
+                    continue;
+                }
+                $findings[] = $match;
             }
+
+            if (!$findings) {
+                return $this;
+            }
+
+            //region Find lines
+            sort($findings);
+            $findings = array_unique($findings);
+            $lines = array();
+            foreach ($findings as $find) {
+                $lines = array_merge($lines, $this->_findLines($find, $content));
+            }
+            sort($lines);
+            //endregion
+
+            $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, null, $lines);
         }
         return $this;
     }
@@ -196,7 +224,8 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]));
+            $lines = $this->_findLines(rtrim($matches[0][0]), $content);
+            $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]), $lines);
         }
         return $this;
     }
@@ -211,9 +240,13 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocVarEmptyType($content, $file)
     {
         if (preg_match_all(
-            '/\x0D?\x0A\x20+\*\x20@(param|var)((\x20+\$.+)|(\x0D?\x0A))/', $content, $matches
+            '/\x0D?\x0A\x20+\*\x20(@(param|var)((\x20+\$.+)|(\x0D?\x0A)))/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]));
+            $lines = array();
+            foreach ($matches[0] as $match) {
+                $lines[] = $this->_findLines(trim($match), $content, true);
+            }
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]), $lines);
         }
         return $this;
     }
@@ -230,8 +263,50 @@ class PhpDoc extends AbstractValidator
         if (preg_match_all(
             '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
         )) {
-            $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]));
+            $lines = array();
+            $findings = array(
+                ' * @var null ',
+                ' * @param null ',
+                ' * @var null' . "\n",
+                ' * @param null' . "\n",
+            );
+            foreach ($findings as $find) {
+                $lines = array_merge($lines, $this->_findLines($find, $content));
+            }
+            sort($lines);
+            $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]), $lines);
         }
         return $this;
+    }
+
+    /**
+     * Validate single asterisk in inline PHPDoc block
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    protected function _validateSingleAsterisk($content, $file)
+    {
+        $target = '/* @var ';
+        str_replace($target, '|||', $content, $count);
+        if ($count) {
+            $lines = $this->_findLines($target, $content);
+            $this->_addError($file, self::CODE_PHP_DOC_SINGLE_ASTERISK, $count, $lines);
+        }
+        return $this;
+    }
+
+    /**
+     * Find lines for a string
+     *
+     * @param string $find
+     * @param string $content
+     * @param bool   $once
+     * @return array|int
+     */
+    protected function _findLines($find, $content, $once = false)
+    {
+        return LineFinder::findLines($find, $content, $once);
     }
 }

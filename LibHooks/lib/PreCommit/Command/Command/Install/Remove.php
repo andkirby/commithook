@@ -1,14 +1,14 @@
 <?php
-namespace PreCommit\Composer\Command;
+namespace PreCommit\Command\Command\Install;
 
-use PreCommit\Composer\Exception;
+use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * CommitHooks files remover
  *
- * @package PreCommit\Composer
+ * @package PreCommit\Command
  */
 class Remove extends CommandAbstract
 {
@@ -39,6 +39,7 @@ class Remove extends CommandAbstract
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
                 $output, $this->askProjectDir($input, $output)
@@ -59,7 +60,7 @@ class Remove extends CommandAbstract
             } else {
                 $output->writeln('Existed CommitHook file(s) has been removed.');
             }
-        } elseif ($this->isVerbose($output)) {
+        } else {
             $output->writeln('No CommitHook file(s) to remove.');
         }
         return 0;

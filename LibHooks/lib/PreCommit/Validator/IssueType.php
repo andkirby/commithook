@@ -23,7 +23,7 @@ class IssueType extends AbstractValidator
      * @var array
      */
     protected $_errorMessages = array(
-        self::CODE_WRONG_ISSUE_TYPE => 'Issue type "%value%" is suitable to have commits.',
+        self::CODE_WRONG_ISSUE_TYPE => 'Issue type "%value%" is not suitable to have commits.',
     );
 
     /**

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <config>
-    <jira>
-        <project>TEST</project>
-    </jira>
+    <tracker>
+        <jira>
+            <project>TEST</project>
+        </jira>
+    </tracker>
 </config>
