@@ -123,6 +123,14 @@
                             </default>
                         </allowed>
                     </jira>
+                    <github>
+                        <allowed>
+                            <!--Commit message type: default-->
+                            <default>
+                                <open>1</open>
+                            </default>
+                        </allowed>
+                    </github>
                 </status>
             </issue>
         </IssueStatus>
@@ -186,6 +194,15 @@
                                     <Bug>bug</Bug>
                                 </default>
                             </jira>
+                            <github>
+                                <default>
+                                    <!--JIRA issue-type map to general issue-type-->
+                                    <!-- Tasks -->
+                                    <enhancement>task</enhancement>
+                                    <!-- Bugs -->
+                                    <bug>bug</bug>
+                                </default>
+                            </github>
                         </tracker>
                     </type>
                 </issue>
