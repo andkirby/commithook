@@ -60,11 +60,11 @@ class ShortCommitMsg implements Message\InterfaceFilter
     /**
      * Get parser
      *
-     * @return \PreCommit\Filter\ShortCommitMsg\Parser
+     * @return \PreCommit\Filter\ShortCommitMsg\Jira\Parser
      */
     protected function _getParser()
     {
-        return new ShortCommitMsg\Parser();
+        return new ShortCommitMsg\Jira\Parser();
     }
 
     /**

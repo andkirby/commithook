@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Filter\ShortCommitMsg;
+namespace PreCommit\Filter\ShortCommitMsg\Jira;
 
 use PreCommit\Config;
 use PreCommit\Exception;
