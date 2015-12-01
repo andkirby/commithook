@@ -13,4 +13,17 @@ class Parser
     extends ShortCommitMsg\Jira\Parser
     implements InterpreterInterface
 {
+    /**
+     * Convert issue number to issue key
+     *
+     * Add project key to issue number when it did not set.
+     *
+     * @param string $issueNo
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    protected function _normalizeIssueKey($issueNo)
+    {
+        return "#" . ltrim($issueNo, '#');
+    }
 }
