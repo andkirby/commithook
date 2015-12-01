@@ -35,7 +35,7 @@ $ commithook install
 
 ## Release notes
 - v2.x-dev
-    - (#13) Added an integration with GitHub (for short commit message).
+    - ([#13](/../../issues/13)) Added an integration with GitHub (for short commit message).
     - Added an ability to test project files before commit via `commithook test` in GIT directory.
     - Refactored validation commit message.
     - Added an ability to customize the commit message format.
