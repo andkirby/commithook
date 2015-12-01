@@ -64,7 +64,10 @@ class ShortCommitMsg implements Message\InterfaceFilter
      */
     protected function _getParser()
     {
-        return new ShortCommitMsg\Jira\Parser();
+        $class = $this->_getConfig()->getNode(
+            'tracker/' . $this->_getTrackerType() . '/message/parser/class'
+        );
+        return new $class;
     }
 
     /**
@@ -97,5 +100,15 @@ class ShortCommitMsg implements Message\InterfaceFilter
     protected function _getConfig()
     {
         return Config::getInstance();
+    }
+
+    /**
+     * Get tracker type
+     *
+     * @return string
+     */
+    protected function _getTrackerType()
+    {
+        return (string)$this->_getConfig()->getNode('tracker/type');
     }
 }
