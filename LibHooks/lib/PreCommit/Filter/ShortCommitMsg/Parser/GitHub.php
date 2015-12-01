@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Filter\ShortCommitMsg\GitHub;
+namespace PreCommit\Filter\ShortCommitMsg\Parser;
 
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Filter\ShortCommitMsg;
@@ -9,8 +9,8 @@ use PreCommit\Filter\ShortCommitMsg;
  *
  * @package PreCommit\Filter\ShortCommitMsg\GitHub
  */
-class Parser
-    extends ShortCommitMsg\Jira\Parser
+class GitHub
+    extends ShortCommitMsg\Parser\Jira
     implements InterpreterInterface
 {
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace PreCommit\Filter\ShortCommitMsg\Jira;
+namespace PreCommit\Filter\ShortCommitMsg\Parser;
 
 use PreCommit\Config;
 use PreCommit\Exception;
@@ -12,7 +12,7 @@ use PreCommit\Message;
  *
  * @package PreCommit\Filter\ShortCommitMsg\Jira
  */
-class Parser implements InterpreterInterface
+class Jira implements InterpreterInterface
 {
     /**
      * Issue adapter

@@ -19,7 +19,7 @@
             </issue>
             <message>
                 <parser>
-                    <class>\PreCommit\Filter\ShortCommitMsg\Jira\Parser</class>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Parser\Jira</class>
                 </parser>
             </message>
         </jira>
@@ -32,7 +32,7 @@
             </issue>
             <message>
                 <parser>
-                    <class>\PreCommit\Filter\ShortCommitMsg\GitHub\Parser</class>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Parser\GitHub</class>
                 </parser>
             </message>
         </github>
