@@ -17,10 +17,24 @@
                     <class>\PreCommit\Issue\JiraAdapter</class>
                 </adapter>
             </issue>
+            <message>
+                <parser>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Parser\Jira</class>
+                </parser>
+            </message>
         </jira>
 
         <github>
-            <not_implemented />
+            <issue>
+                <adapter>
+                    <class>\PreCommit\Issue\GitHubAdapter</class>
+                </adapter>
+            </issue>
+            <message>
+                <parser>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Parser\GitHub</class>
+                </parser>
+            </message>
         </github>
 
         <redmine>
@@ -109,6 +123,14 @@
                             </default>
                         </allowed>
                     </jira>
+                    <github>
+                        <allowed>
+                            <!--Commit message type: default-->
+                            <default>
+                                <open>1</open>
+                            </default>
+                        </allowed>
+                    </github>
                 </status>
             </issue>
         </IssueStatus>
@@ -172,6 +194,15 @@
                                     <Bug>bug</Bug>
                                 </default>
                             </jira>
+                            <github>
+                                <default>
+                                    <!--JIRA issue-type map to general issue-type-->
+                                    <!-- Tasks -->
+                                    <enhancement>task</enhancement>
+                                    <!-- Bugs -->
+                                    <bug>bug</bug>
+                                </default>
+                            </github>
                         </tracker>
                     </type>
                 </issue>

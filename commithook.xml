@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- This is a local configuration file. It is not used in external projects.-->
 <config>
     <!--Validators setup-->
     <validators>
@@ -12,4 +13,12 @@
             </filter>
         </FileFilter>
     </validators>
+
+    <tracker>
+        <type>github</type>
+        <github>
+            <name>andkirby</name>
+            <repository>commithook</repository>
+        </github>
+    </tracker>
 </config>

@@ -1,19 +1,18 @@
 <?php
-namespace PreCommit\Filter\ShortCommitMsg;
+namespace PreCommit\Filter\ShortCommitMsg\Parser;
 
 use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Issue;
-use PreCommit\Jira\Api;
 use PreCommit\Message;
 
 /**
  * Class filter to parse short message
  *
- * @package PreCommit\Validator
+ * @package PreCommit\Filter\ShortCommitMsg\Jira
  */
-class Parser implements InterpreterInterface
+class Jira implements InterpreterInterface
 {
     /**
      * Issue adapter
@@ -156,11 +155,10 @@ class Parser implements InterpreterInterface
      *
      * @return string
      * @throws \PreCommit\Exception
-     * @todo Refactor this 'cos it belongs to JIRA only
      */
     protected function _getActiveIssueKey()
     {
-        return $this->_getConfig()->getNode('tracker/jira/active_task');
+        return $this->_getConfig()->getNode('tracker/' . $this->_getTrackerType() . '/active_task');
     }
 
     /**
@@ -171,14 +169,13 @@ class Parser implements InterpreterInterface
      * @param string $issueNo
      * @return string
      * @throws \PreCommit\Exception
-     * @todo Refactor this 'cos it belongs to JIRA only
      */
     protected function _normalizeIssueKey($issueNo)
     {
         if ((string)(int)$issueNo === $issueNo) {
-            $project = $this->_getConfig()->getNode('tracker/jira/project');
+            $project = $this->_getConfig()->getNode('tracker/' . $this->_getTrackerType() . '/project');
             if (!$project) {
-                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "jira/project" in project configuration file "commithook.xml" within current project.');
+                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file "commithook.xml" within current project.');
             }
             $issueNo = "$project-$issueNo";
         }
@@ -357,5 +354,15 @@ class Parser implements InterpreterInterface
     protected function _getIssueKeyCompleteRegular()
     {
         return '[A-Z0-9]+[-][0-9]+';
+    }
+
+    /**
+     * Get tracker type
+     *
+     * @return string
+     */
+    protected function _getTrackerType()
+    {
+        return (string)$this->_getConfig()->getNode('tracker/type');
     }
 }
