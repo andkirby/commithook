@@ -17,10 +17,24 @@
                     <class>\PreCommit\Issue\JiraAdapter</class>
                 </adapter>
             </issue>
+            <message>
+                <parser>
+                    <class>\PreCommit\Filter\ShortCommitMsg\Jira\Parser</class>
+                </parser>
+            </message>
         </jira>
 
         <github>
-            <not_implemented />
+            <issue>
+                <adapter>
+                    <class>\PreCommit\Issue\GitHubAdapter</class>
+                </adapter>
+            </issue>
+            <message>
+                <parser>
+                    <class>\PreCommit\Filter\ShortCommitMsg\GitHub\Parser</class>
+                </parser>
+            </message>
         </github>
 
         <redmine>
