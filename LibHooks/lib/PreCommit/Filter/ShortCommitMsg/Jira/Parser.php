@@ -5,7 +5,6 @@ use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Issue;
-use PreCommit\Jira\Api;
 use PreCommit\Message;
 
 /**
