@@ -169,7 +169,6 @@ class Parser implements InterpreterInterface
      * @param string $issueNo
      * @return string
      * @throws \PreCommit\Exception
-     * @todo Refactor this 'cos it belongs to JIRA only
      */
     protected function _normalizeIssueKey($issueNo)
     {
