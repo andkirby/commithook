@@ -36,7 +36,7 @@ class PhpClass extends AbstractValidator
      *
      * @var string
      */
-    protected $_interpreterPath;
+    protected $interpreterPath;
 
     /**
      * Constructor. Set path to PHP interpreter
@@ -50,7 +50,7 @@ class PhpClass extends AbstractValidator
         if (empty($interpreter)) {
             throw new Exception('Path to PHP interpreter is not set.');
         }
-        $this->_interpreterPath = $interpreter;
+        $this->interpreterPath = $interpreter;
 
         parent::__construct($options);
     }
@@ -64,9 +64,9 @@ class PhpClass extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validatePhpOpenedTag($content, $file);
+        $this->validatePhpOpenedTag($content, $file);
         $filePath = func_get_arg(2);
-        $this->_validatePhpByInterpret($filePath, $file);
+        $this->validatePhpByInterpret($filePath, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -78,7 +78,7 @@ class PhpClass extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validatePhpOpenedTag($content, $file)
+    protected function validatePhpOpenedTag($content, $file)
     {
         if (0 !== strpos($content, '<?')) {
             $this->_addError($file, self::CODE_PHP_TAG);
@@ -94,9 +94,9 @@ class PhpClass extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validatePhpByInterpret($filePath, $file)
+    protected function validatePhpByInterpret($filePath, $file)
     {
-        $exe = "{$this->_interpreterPath} -l $filePath 2>&1";
+        $exe = "{$this->interpreterPath} -l $filePath 2>&1";
         exec($exe, $output, $code);
         if ($code != 0) {
             $value = trim(implode(" ", str_replace($filePath, $file, $output)));
@@ -104,7 +104,7 @@ class PhpClass extends AbstractValidator
                 $file,
                 self::CODE_PHP_INTERPRET,
                 array(
-                    'path'  => $this->_interpreterPath,
+                    'path'  => $this->interpreterPath,
                     'value' => $value,
                 )
             );

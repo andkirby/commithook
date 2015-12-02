@@ -35,19 +35,19 @@ class ModelEventFields extends AbstractValidator
      * Validate method
      *
      * @param string $content
-     * @param string $file Validated file
+     * @param string $file    Validated file
      * @return bool
      */
     public function validate($content, $file)
     {
-        if (!$this->_isDataModel($content)) {
+        if (!$this->isDataModel($content)) {
             return true;
         }
-        if ($this->_isAbstractClass($content)) {
+        if ($this->isAbstractClass($content)) {
             return true;
         }
-        $this->_checkEventPrefix($content, $file);
-        $this->_checkEventObject($content, $file);
+        $this->checkEventPrefix($content, $file);
+        $this->checkEventObject($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -58,9 +58,9 @@ class ModelEventFields extends AbstractValidator
      * @param string $content
      * @return bool
      */
-    protected function _isDataModel($content)
+    protected function isDataModel($content)
     {
-        foreach ($this->_getAbstractDataModelClasses() as $class) {
+        foreach ($this->getAbstractDataModelClasses() as $class) {
             if (strpos($content, 'extends '.$class)) {
                 return true;
             }
@@ -75,7 +75,7 @@ class ModelEventFields extends AbstractValidator
      * @param string $content
      * @return bool
      */
-    protected function _isAbstractClass($content)
+    protected function isAbstractClass($content)
     {
         return (bool) strpos($content, 'abstract class ');
     }
@@ -87,7 +87,7 @@ class ModelEventFields extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _checkEventPrefix($content, $file)
+    protected function checkEventPrefix($content, $file)
     {
         if (!preg_match('/_eventPrefix[ ]+=[ ]/', $content)) {
             $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_PREFIX);
@@ -103,7 +103,7 @@ class ModelEventFields extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _checkEventObject($content, $file)
+    protected function checkEventObject($content, $file)
     {
         if (!preg_match('/_eventObject[ ]+=[ ]/', $content)) {
             $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_OBJECT);
@@ -118,9 +118,9 @@ class ModelEventFields extends AbstractValidator
      * @return array
      * @todo Add an ability to extend the classes list - read from configuration
      */
-    protected function _getAbstractDataModelClasses()
+    protected function getAbstractDataModelClasses()
     {
-        return $this->_getConfig()->getNodeArray('validators/Magento-ModelEventFields/abstract_class');
+        return $this->getConfig()->getNodeArray('validators/Magento-ModelEventFields/abstract_class');
     }
 
     /**
@@ -129,7 +129,7 @@ class ModelEventFields extends AbstractValidator
      * @return Config
      * @throws \PreCommit\Exception
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
