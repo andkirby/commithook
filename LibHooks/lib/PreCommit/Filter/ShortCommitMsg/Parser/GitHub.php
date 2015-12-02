@@ -9,9 +9,7 @@ use PreCommit\Filter\ShortCommitMsg;
  *
  * @package PreCommit\Filter\ShortCommitMsg\GitHub
  */
-class GitHub
-    extends ShortCommitMsg\Parser\Jira
-    implements InterpreterInterface
+class GitHub extends ShortCommitMsg\Parser\Jira implements InterpreterInterface
 {
     /**
      * Convert issue number to issue key
@@ -22,7 +20,7 @@ class GitHub
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _normalizeIssueKey($issueNo)
+    protected function normalizeIssueKey($issueNo)
     {
         return "#" . ltrim($issueNo, '#');
     }
