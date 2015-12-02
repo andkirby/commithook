@@ -15,7 +15,7 @@ class Issue
      *
      * @var AdapterInterface[]
      */
-    static protected $adapters = array();
+    protected static $adapters = array();
 
     /**
      * Get config instance

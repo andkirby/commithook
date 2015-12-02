@@ -16,7 +16,7 @@ class Config extends \SimpleXMLElement
      *
      * @var Config
      */
-    static protected $instance;
+    protected static $instance;
 
     /**
      * Project directory

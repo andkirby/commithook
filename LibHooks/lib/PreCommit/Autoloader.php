@@ -36,7 +36,7 @@ class Autoloader
      * @param string $file
      * @return bool
      */
-    static protected function _isExist($file)
+    protected static function _isExist($file)
     {
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
             $path = rtrim($path, '\\/');
