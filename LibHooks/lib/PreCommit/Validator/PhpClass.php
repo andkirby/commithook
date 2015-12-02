@@ -25,7 +25,7 @@ class PhpClass extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_TAG       => 'File does not start with php opening tag. Any preceding rows may start output.',
             self::CODE_PHP_INTERPRET => "PHP interpreter (%path%) has found run-time errors! Check this: \n %value%",
@@ -68,7 +68,7 @@ class PhpClass extends AbstractValidator
         $filePath = func_get_arg(2);
         $this->_validatePhpByInterpret($filePath, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

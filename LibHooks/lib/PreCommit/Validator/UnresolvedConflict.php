@@ -20,7 +20,7 @@ class UnresolvedConflict extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::MERGE_CONFLICT => 'File contains unresolved VCS conflict.',
         );
@@ -36,7 +36,7 @@ class UnresolvedConflict extends AbstractValidator
     {
         $this->_validateGitConflict($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

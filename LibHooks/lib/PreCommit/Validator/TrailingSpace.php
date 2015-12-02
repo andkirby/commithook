@@ -22,7 +22,7 @@ class TrailingSpace extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_REDUNDANT_TRAILING_SPACES => 'Contains trailing space(s) at lease %value% times.',
             self::CODE_PHP_NO_END_TRAILING_LINE      => 'Missing trailing line in the end of file.',
@@ -40,7 +40,7 @@ class TrailingSpace extends AbstractValidator
         $this->_validateRedundantTrailingSpaces($content, $file);
         $this->_validateTrailingLine($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

@@ -28,7 +28,7 @@ class RedundantCode extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_IS_NULL   => 'Redundant usage is_null() function. Use null === $a construction. Original line: %value%',
             self::JS_CONSOLE     => 'Redundant usage JS console.log() function. Original line: %value%',
@@ -92,7 +92,7 @@ class RedundantCode extends AbstractValidator
             }
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

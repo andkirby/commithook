@@ -24,7 +24,7 @@ class FileStyle extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_TAB_CHAR       => 'Contains tab character. Total Amount of tabs: %value%.',
             self::CODE_WIN_LINE_BREAK => 'Windows line breaks found: %value%',
@@ -46,7 +46,7 @@ class FileStyle extends AbstractValidator
         $this->_validateLineBreaks($content, $file);
         $this->_validateBom($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

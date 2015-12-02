@@ -24,7 +24,7 @@ class IssueStatus extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_WRONG_ISSUE_STATUS => 'The issue status "%value%" does not support to add new commit.',
         );
@@ -60,7 +60,7 @@ class IssueStatus extends AbstractValidator
             $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

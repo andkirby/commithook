@@ -20,7 +20,7 @@ class CodingStandardMagento extends CodingStandard
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_DEPRECATED_THROW_EXCEPTION => 'Used deprecated method Mage::throwException(). Use: throw new Mage_Core_Exception("Translated message.")',
         );
@@ -49,6 +49,6 @@ class CodingStandardMagento extends CodingStandard
             }
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 }

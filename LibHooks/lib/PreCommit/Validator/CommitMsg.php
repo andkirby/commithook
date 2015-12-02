@@ -34,7 +34,7 @@ class CommitMsg extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_BAD_COMMIT_MESSAGE   => 'Head of commit message "%value%" has improper form.',
             self::CODE_VERB_INCORRECT       => 'Commit verb "%value%" is not suitable for the issue.',
@@ -82,7 +82,7 @@ class CommitMsg extends AbstractValidator
             $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $message->head);
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
@@ -178,7 +178,7 @@ class CommitMsg extends AbstractValidator
             }
 
             //check allowed verb by issue type
-            if (!$this->_errorCollector->hasErrors()) {
+            if (!$this->errorCollector->hasErrors()) {
                 if (!$message->issue->getType()) {
                     $this->_addError(
                         'Commit Message',

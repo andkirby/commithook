@@ -25,7 +25,7 @@ class ModelEventFields extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_MODEL_MISSED_EVENT_PREFIX => "Missed declaring \$this->_eventPrefix in data model. Please declare it in _construct() method. E.g.: 'namespace_module_name_export_order' for class Namespace_ModuleName_Export_Order.",
             self::CODE_MODEL_MISSED_EVENT_OBJECT => "Missed declaring \$this->_eventObject in data model. Please declare it in _construct() method. E.g.: 'export_order' for class Namespace_ModuleName_Export_Order.",
@@ -49,7 +49,7 @@ class ModelEventFields extends AbstractValidator
         $this->_checkEventPrefix($content, $file);
         $this->_checkEventObject($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

@@ -20,7 +20,7 @@ class XmlParser extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_XML_ERROR => '%value%',
         );
@@ -63,6 +63,6 @@ class XmlParser extends AbstractValidator
             );
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 }

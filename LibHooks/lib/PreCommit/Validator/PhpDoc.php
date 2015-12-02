@@ -38,7 +38,7 @@ class PhpDoc extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc has incomplete info: Enter description here... - Please, write a reasonable description.',
             self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
@@ -79,7 +79,7 @@ class PhpDoc extends AbstractValidator
         $this->_validateExistPhpDocVarNull($content, $file);
         $this->_validateSingleAsterisk($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

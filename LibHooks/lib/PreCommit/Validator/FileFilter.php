@@ -43,7 +43,7 @@ class FileFilter extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::PROTECTED_PATH => 'This file cannot be updated or added because it located in the protected path "%value%".',
             self::PROTECTED_FILE => 'This file cannot be updated or added because it protected.',

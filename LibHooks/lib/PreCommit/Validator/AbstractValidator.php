@@ -16,21 +16,21 @@ abstract class AbstractValidator
      *
      * @var array
      */
-    protected $_options = array();
+    protected $options = array();
 
     /**
      * Error collector
      *
      * @var Error
      */
-    protected $_errorCollector = array();
+    protected $errorCollector = array();
 
     /**
      * Error messages
      *
      * @var array
      */
-    protected $_errorMessages = array();
+    protected $errorMessages = array();
 
     /**
      * @param array $options
@@ -39,19 +39,19 @@ abstract class AbstractValidator
     public function __construct(array $options)
     {
         if (isset($options['errorCollector']) && $options['errorCollector'] instanceof Error) {
-            $this->_errorCollector = $options['errorCollector'];
+            $this->errorCollector = $options['errorCollector'];
             unset($options['errorCollector']);
         } else {
             throw new Exception('Error collector undefined.');
         }
-        $this->_options = $options;
+        $this->options = $options;
     }
 
     /**
      * Validate method
      *
      * @param string $content
-     * @param string $file Validated file
+     * @param string $file    Validated file
      * @return bool
      */
     abstract public function validate($content, $file);
@@ -67,6 +67,6 @@ abstract class AbstractValidator
      */
     protected function _addError($file, $type, $value = null, $line = null)
     {
-        $this->_errorCollector->addError($file, $type, $this->_errorMessages[$type], $value, $line);
+        $this->errorCollector->addError($file, $type, $this->errorMessages[$type], $value, $line);
     }
 }

@@ -28,7 +28,7 @@ class CodingStandardPhtml extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHTML_ALTERNATIVE_SYNTAX => 'No ability to use braces in the PHTML code. Please use alternative syntax as if..endif. Original line: %value%',
             self::CODE_PHTML_GAPS               => 'File contain at least two gaps in succession %value% time(s).',
@@ -49,7 +49,7 @@ class CodingStandardPhtml extends AbstractValidator
         $this->_validateGaps($content, $file);
         $this->_validateCodeStyleByLines($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

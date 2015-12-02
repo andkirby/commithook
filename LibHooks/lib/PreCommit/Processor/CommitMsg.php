@@ -15,7 +15,7 @@ class CommitMsg extends AbstractAdapter
      *
      * @var string
      */
-    protected $_codePath;
+    protected $codePath;
 
     /**
      * Set adapter data from config
@@ -37,7 +37,7 @@ class CommitMsg extends AbstractAdapter
      */
     public function setCodePath($codePath)
     {
-        $this->_codePath = $codePath;
+        $this->codePath = $codePath;
 
         return $this;
     }

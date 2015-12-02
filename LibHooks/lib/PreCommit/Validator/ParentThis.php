@@ -20,7 +20,7 @@ class ParentThis extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_RETURN_NOT_THIS => '@return PHPDoc tag uses parent class %value%. Probably it should be replaced with "@return $this".',
         );
@@ -45,7 +45,7 @@ class ParentThis extends AbstractValidator
             $this->_validateParentClassInReturn($parentClassAlias, $content, $file);
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**

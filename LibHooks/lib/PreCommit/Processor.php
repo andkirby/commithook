@@ -16,7 +16,7 @@ class Processor
      * @return Processor\AbstractAdapter
      * @throws Exception
      */
-    static public function factory($adapter, $vcsType)
+    public static function factory($adapter, $vcsType)
     {
         if (!$adapter) {
             throw new Exception('Adapter name cannot be empty.');

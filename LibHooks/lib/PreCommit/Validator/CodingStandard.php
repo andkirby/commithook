@@ -61,7 +61,7 @@ class CodingStandard extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages
+    protected $errorMessages
         = array(
             self::CODE_PHP_TRY                             => "Syntax in TRY instruction is wrong. Original line: %value%",
             self::CODE_PHP_CATCH                           => "Syntax in CATCH instruction is wrong. Original line: %value%",
@@ -92,7 +92,7 @@ class CodingStandard extends AbstractValidator
         $this->_validateGaps($content, $file);
         $this->_validateCodeStyleByLines($content, $file);
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
