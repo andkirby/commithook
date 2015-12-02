@@ -16,7 +16,7 @@ class Set extends Helper
     const NAME = 'commithook_config_set';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {

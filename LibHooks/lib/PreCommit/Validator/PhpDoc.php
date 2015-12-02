@@ -157,7 +157,7 @@ class PhpDoc extends AbstractValidator
         )) {
             $findings = array();
             foreach ($matches[0] as $match) {
-                if (stripos($match, ' * @inheritdoc')) {
+                if (stripos($match, ' * {@inheritdoc}')) {
                     continue;
                 }
                 $findings[] = $match;

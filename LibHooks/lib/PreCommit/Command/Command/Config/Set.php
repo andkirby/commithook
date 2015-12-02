@@ -571,7 +571,7 @@ class Set extends AbstractCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setApplication(Application $application = null)
     {

@@ -34,7 +34,7 @@ class Config extends Helper
     protected $values = array();
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -106,9 +106,10 @@ class Config extends Helper
     protected function loadConfig($file)
     {
         if (!file_exists($file)) {
+            $xml = '<?xml version="1.0" encoding="UTF-8"?><config></config>';
             $this->getWriter()->writeContent(
                 $file,
-                '<?xml version="1.0" encoding="UTF-8"?><config></config>'
+                $xml
             );
         }
 

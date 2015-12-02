@@ -145,7 +145,7 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function _loadValidator($name, array $options = array())
     {
