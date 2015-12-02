@@ -48,7 +48,7 @@ class CommitMsg extends AbstractValidator
      *
      * @var string
      */
-    protected $_type;
+    protected $type;
 
     /**
      * Set type
@@ -60,11 +60,11 @@ class CommitMsg extends AbstractValidator
     {
         parent::__construct($options);
         if (isset($options['type'])) {
-            $this->_type = $options['type'];
+            $this->type = $options['type'];
         } else {
-            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+            $this->type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
         }
-        if (!$this->_type) {
+        if (!$this->type) {
             throw new Exception('Type is not set.');
         }
     }
@@ -78,7 +78,7 @@ class CommitMsg extends AbstractValidator
      */
     public function validate($message, $file)
     {
-        if (!$this->_matchMessage($message)) {
+        if (!$this->matchMessage($message)) {
             $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $message->head);
         }
 
@@ -92,11 +92,11 @@ class CommitMsg extends AbstractValidator
      * @return bool
      * @throws \PreCommit\Exception
      */
-    protected function _matchMessage($message)
+    protected function matchMessage($message)
     {
-        foreach ($this->_getExpressions() as $name => $expression) {
+        foreach ($this->getExpressions() as $name => $expression) {
             if (is_array($expression)) {
-                if ($this->_getInterpreterResult($message, $expression)) {
+                if ($this->getInterpreterResult($message, $expression)) {
                     return true;
                 }
             } elseif (preg_match($expression, $message->head)) {
@@ -116,11 +116,11 @@ class CommitMsg extends AbstractValidator
      * @return bool
      * @throws \PreCommit\Exception
      */
-    protected function _getInterpreterResult($message, array $config)
+    protected function getInterpreterResult($message, array $config)
     {
         $result = null;
         if (!$message->verb) {
-            $result = $this->_getInterpreter($config)
+            $result = $this->getInterpreter($config)
                 ->interpret(array('message' => $message));
 
             /**
@@ -153,7 +153,7 @@ class CommitMsg extends AbstractValidator
          * At least issue key should be set after interpreting
          */
         if ($result) {
-            foreach ($this->_getRequiredKeys() as $name => $enabled) {
+            foreach ($this->getRequiredKeys() as $name => $enabled) {
                 if (!$enabled) {
                     continue;
                 }
@@ -170,7 +170,7 @@ class CommitMsg extends AbstractValidator
          */
         if ($message->issue) {
             //find verb key
-            $key = array_search($message->verb, $this->_getVerbs());
+            $key = array_search($message->verb, $this->getVerbs());
             if (false === $key) {
                 $this->_addError('Commit Message', self::CODE_VERB_NOT_FOUND, $message->verb);
 
@@ -189,7 +189,7 @@ class CommitMsg extends AbstractValidator
                     return false;
                 }
                 //it's cannot be processed if issue type is not valid
-                $allowed = $this->_getAllowedVerbs($message->issue->getType());
+                $allowed = $this->getAllowedVerbs($message->issue->getType());
                 if (!isset($allowed[$key]) || !$allowed[$key]) {
                     $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
 
@@ -208,17 +208,17 @@ class CommitMsg extends AbstractValidator
      * @return array
      * @throws \PreCommit\Exception
      */
-    protected function _getAllowedVerbs($type)
+    protected function getAllowedVerbs($type)
     {
         if (!$type) {
             throw new Exception('Empty issue type.');
         }
 
-        return (array) $this->_getConfig()->getNodeArray(
+        return (array) $this->getConfig()->getNodeArray(
             'validators/IssueType/issue/verb/allowed/'
-            .$this->_type.'/'.$type
+            .$this->type.'/'.$type
         )
-            ?: (array) $this->_getConfig()->getNodeArray(
+            ?: (array) $this->getConfig()->getNodeArray(
                 'validators/IssueType/issue/verb/allowed/default/'
                 .$type
             );
@@ -229,10 +229,10 @@ class CommitMsg extends AbstractValidator
      *
      * @return array
      */
-    protected function _getVerbs()
+    protected function getVerbs()
     {
-        return (array) $this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->_type)
-            ?: (array) $this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
+        return (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->type)
+            ?: (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
     /**
@@ -240,9 +240,9 @@ class CommitMsg extends AbstractValidator
      *
      * @return array|null
      */
-    protected function _getExpressions()
+    protected function getExpressions()
     {
-        return $this->_getConfig()->getNodeArray('validators/CommitMessage/match');
+        return $this->getConfig()->getNodeArray('validators/CommitMessage/match');
     }
 
     /**
@@ -250,9 +250,9 @@ class CommitMsg extends AbstractValidator
      *
      * @return array|null
      */
-    protected function _getRequiredKeys()
+    protected function getRequiredKeys()
     {
-        return $this->_getConfig()->getNodeArray('validators/CommitMessage/match/full/required');
+        return $this->getConfig()->getNodeArray('validators/CommitMessage/match/full/required');
     }
 
     /**
@@ -262,16 +262,17 @@ class CommitMsg extends AbstractValidator
      * @return \PreCommit\Interpreter\InterpreterInterface
      * @throws Exception
      */
-    protected function _getInterpreter(array $config)
+    protected function getInterpreter(array $config)
     {
         if (empty($config['interpreter']['class'])) {
             throw new Exception('Interpreter class is not set.');
         }
+        $class = $config['interpreter']['class'];
         /** @var InterpreterInterface $interpreter */
         if (empty($config['interpreter']['options'])) {
-            return new $config['interpreter']['class'];
+            return new $class();
         } else {
-            return new $config['interpreter']['class'](
+            return new $class(
                 $config['interpreter']['options']
             );
         }
@@ -282,7 +283,7 @@ class CommitMsg extends AbstractValidator
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
