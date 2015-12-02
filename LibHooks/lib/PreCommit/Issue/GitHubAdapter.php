@@ -26,14 +26,14 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @var array
      */
-    protected $_issue;
+    protected $issue;
 
     /**
      * Issue key
      *
      * @var string
      */
-    protected $_issueKey;
+    protected $issueKey;
 
     /**
      * Allowed labels which can be used to determine issue type
@@ -68,7 +68,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     public function __construct($issueKey)
     {
         parent::__construct($issueKey);
-        $this->_issueKey = (string) $issueKey;
+        $this->issueKey = (string) $issueKey;
     }
 
     /**
@@ -91,26 +91,26 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getIssue()
     {
-        if (null === $this->_issue) {
-            $this->_issue = $this->_getCachedResult(
+        if (null === $this->issue) {
+            $this->issue = $this->_getCachedResult(
                 $this->_getCacheKey()
             );
-            if (!$this->_issue) {
-                $this->_issue = $this->_loadIssueData();
-                if (!$this->_issue) {
+            if (!$this->issue) {
+                $this->issue = $this->_loadIssueData();
+                if (!$this->issue) {
                     throw new Exception(
-                        "Issue not {$this->_issueKey} found.",
+                        "Issue not {$this->issueKey} found.",
                         self::EXCEPTION_CODE_ISSUE_NOT_FOUND
                     );
                 }
                 $this->_cacheResult(
                     $this->_getCacheKey(),
-                    $this->_issue
+                    $this->issue
                 );
             }
         }
 
-        return $this->_issue;
+        return $this->issue;
     }
 
     //region Caching methods
@@ -202,7 +202,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getVendorName()
     {
-        return $this->_getConfig()->getNode('tracker/github/name');
+        return $this->getConfig()->getNode('tracker/github/name');
     }
 
     /**
@@ -212,7 +212,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getRepositoryName()
     {
-        return $this->_getConfig()->getNode('tracker/github/repository');
+        return $this->getConfig()->getNode('tracker/github/repository');
     }
 
     /**
@@ -222,7 +222,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getIssueNumber()
     {
-        return (int) ltrim($this->_issueKey, '#');
+        return (int) ltrim($this->issueKey, '#');
     }
 
     /**
@@ -261,7 +261,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getCacheDir()
     {
-        return $this->_getConfig()->getCacheDir();
+        return $this->getConfig()->getCacheDir();
     }
 
     /**
@@ -305,7 +305,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     {
         $issue = $this->_getIssue();
 
-        return $this->_normalizeName($issue['state']);
+        return $this->normalizeName($issue['state']);
     }
 
     /**

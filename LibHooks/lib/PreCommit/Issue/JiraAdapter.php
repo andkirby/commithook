@@ -28,14 +28,14 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @var Issue
      */
-    protected $_issue;
+    protected $issue;
 
     /**
      * Issue API object
      *
      * @var Issue
      */
-    protected $_issueKey;
+    protected $issueKey;
 
     /**
      * Set issue key
@@ -44,7 +44,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function __construct($issueKey)
     {
-        $this->_issueKey = (string) $issueKey;
+        $this->issueKey = (string) $issueKey;
         parent::__construct($issueKey);
     }
 
@@ -56,26 +56,26 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getIssue()
     {
-        if (null !== $this->_issue) {
-            return $this->_issue;
+        if (null !== $this->issue) {
+            return $this->issue;
         }
 
-        $result = $this->_getCachedResult($this->_issueKey);
+        $result = $this->_getCachedResult($this->issueKey);
         if (!$result) {
             /** @var Api\Result $result */
-            $result = $this->_loadIssueData($this->_issueKey);
+            $result = $this->_loadIssueData($this->issueKey);
             if (!$result) {
                 throw new Api\Exception(
-                    "Issue not {$this->_issueKey} found.", self::EXCEPTION_CODE_ISSUE_NOT_FOUND
+                    "Issue not {$this->issueKey} found.", self::EXCEPTION_CODE_ISSUE_NOT_FOUND
                 );
             }
-            $this->_cacheResult($this->_issueKey, $result->getResult());
+            $this->_cacheResult($this->issueKey, $result->getResult());
         } else {
             $result = new Api\Result($result);
         }
-        $this->_issue = new Issue($result->getResult());
+        $this->issue = new Issue($result->getResult());
 
-        return $this->_issue;
+        return $this->issue;
     }
 
     /**
@@ -137,7 +137,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _getCacheDir()
     {
-        return $this->_getConfig()->getCacheDir();
+        return $this->getConfig()->getCacheDir();
     }
 
     /**
@@ -196,7 +196,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getStatus()
     {
-        return $this->_normalizeName($this->_getIssue()->getStatusName());
+        return $this->normalizeName($this->_getIssue()->getStatusName());
     }
 
     /**
@@ -207,7 +207,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function ignoreIssue()
     {
-        $this->_cacheResult($this->_issueKey, array());
+        $this->_cacheResult($this->issueKey, array());
 
         return $this;
     }
@@ -242,10 +242,10 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
     protected function _getApi()
     {
         return new Api(
-            $this->_getConfig()->getNode('tracker/jira/url'),
+            $this->getConfig()->getNode('tracker/jira/url'),
             new Basic(
-                $this->_getConfig()->getNode('tracker/jira/username'),
-                $this->_getConfig()->getNode('tracker/jira/password')
+                $this->getConfig()->getNode('tracker/jira/username'),
+                $this->getConfig()->getNode('tracker/jira/password')
             )
         );
     }
@@ -289,9 +289,9 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function _canRequest()
     {
-        return $this->_getConfig()->getNode('tracker/jira/url')
-               && $this->_getConfig()->getNode('tracker/jira/username')
-               && $this->_getConfig()->getNode('tracker/jira/password');
+        return $this->getConfig()->getNode('tracker/jira/url')
+               && $this->getConfig()->getNode('tracker/jira/username')
+               && $this->getConfig()->getNode('tracker/jira/password');
     }
     //endregion
 }
