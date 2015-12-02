@@ -113,7 +113,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      */
     protected function _getIssueMock($summary, $key, $type, $originalType)
     {
-        /** @var Issue\AdapterAbstract|\PHPUnit_Framework_MockObject_MockObject $filter */
+        /** @var Issue\AbstractAdapter|\PHPUnit_Framework_MockObject_MockObject $filter */
         $issue = $this->getMock('PreCommit\Issue\AdapterAbstract', array(), array(), '', false);
         $issue->method('getSummary')
             ->willReturn($summary);

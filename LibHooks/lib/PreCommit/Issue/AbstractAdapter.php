@@ -10,7 +10,7 @@ use PreCommit\Jira\Api;
  *
  * @package PreCommit\Issue
  */
-abstract class AdapterAbstract implements AdapterInterface
+abstract class AbstractAdapter implements AdapterInterface
 {
     /**
      * Message interpreting type

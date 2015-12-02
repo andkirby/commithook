@@ -11,7 +11,7 @@ use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
  *
  * @package PreCommit\Issue
  */
-class JiraAdapter extends AdapterAbstract implements AdapterInterface
+class JiraAdapter extends AbstractAdapter implements AdapterInterface
 {
     /**
      * Cache schema version

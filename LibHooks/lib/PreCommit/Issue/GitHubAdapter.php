@@ -9,7 +9,7 @@ use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
  *
  * @package PreCommit\Issue
  */
-class GitHubAdapter extends AdapterAbstract implements AdapterInterface
+class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 {
     /**
      * Cache schema version
