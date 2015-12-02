@@ -34,7 +34,7 @@ class UnresolvedConflict extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validateGitConflict($content, $file);
+        $this->validateGitConflict($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -46,7 +46,7 @@ class UnresolvedConflict extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateGitConflict($content, $file)
+    protected function validateGitConflict($content, $file)
     {
         //checking for windows line breaks
         if (strpos($content, '<<<<<<<'.' HEAD') || strpos($content, "\n>>>>>>> ")) {

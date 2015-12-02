@@ -41,7 +41,7 @@ class RedundantCode extends AbstractValidator
      *
      * @var array
      */
-    protected $_fileTypes
+    protected $fileTypes
         = array(
             self::CODE_IS_NULL   => array('php', 'phtml'),
             self::JS_CONSOLE     => array('php', 'phtml', 'js'),
@@ -75,19 +75,19 @@ class RedundantCode extends AbstractValidator
             $currentString = trim($originalArr[$line - 1]);
 
             //find console.log()
-            if ($this->_canCheckType($ext, self::JS_CONSOLE) && false !== strpos($str, 'console.log(')) {
+            if ($this->canCheckType($ext, self::JS_CONSOLE) && false !== strpos($str, 'console.log(')) {
                 $this->_addError($file, self::JS_CONSOLE, $currentString, $line);
             }
             //find is_null() function
-            if ($this->_canCheckType($ext, self::CODE_IS_NULL) && false !== strpos($str, 'is_null(')) {
+            if ($this->canCheckType($ext, self::CODE_IS_NULL) && false !== strpos($str, 'is_null(')) {
                 $this->_addError($file, self::CODE_IS_NULL, $currentString, $line);
             }
             //find qqq()
-            if ($this->_canCheckType($ext, self::DEBUG_QQQ) && false !== strpos($str, 'qqq')) {
+            if ($this->canCheckType($ext, self::DEBUG_QQQ) && false !== strpos($str, 'qqq')) {
                 $this->_addError($file, self::DEBUG_QQQ, $currentString, $line);
             }
             //find var_dump()
-            if ($this->_canCheckType($ext, self::DEBUG_VAR_DUMP) && false !== strpos($str, 'var_dump(')) {
+            if ($this->canCheckType($ext, self::DEBUG_VAR_DUMP) && false !== strpos($str, 'var_dump(')) {
                 $this->_addError($file, self::DEBUG_VAR_DUMP, $currentString, $line);
             }
         }
@@ -103,12 +103,12 @@ class RedundantCode extends AbstractValidator
      * @return bool
      * @throws \PreCommit\Exception
      */
-    protected function _canCheckType($extension, $code)
+    protected function canCheckType($extension, $code)
     {
-        if (!isset($this->_fileTypes[$code])) {
+        if (!isset($this->fileTypes[$code])) {
             throw new Exception("Unknown code $code.");
         }
 
-        return in_array($extension, $this->_fileTypes[$code]);
+        return in_array($extension, $this->fileTypes[$code]);
     }
 }
