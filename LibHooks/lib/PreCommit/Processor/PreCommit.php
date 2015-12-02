@@ -22,28 +22,28 @@ class PreCommit extends AbstractAdapter
      *
      * @var array
      */
-    protected $_files = array();
+    protected $files = array();
 
     /**
      * Path to root of code
      *
      * @var string
      */
-    protected $_codePath;
+    protected $codePath;
 
     /**
      * Path to PHP interpreter
      *
      * @var string
      */
-    protected $_phpInterpreterPath;
+    protected $phpInterpreterPath;
 
     /**
      * Validators list which should be omitted
      *
      * @var array
      */
-    protected $_omittedValidators;
+    protected $omittedValidators;
 
     //endregion
 
@@ -69,7 +69,7 @@ class PreCommit extends AbstractAdapter
      */
     public function setCodePath($codePath)
     {
-        $this->_codePath = $codePath;
+        $this->codePath = $codePath;
 
         return $this;
     }
@@ -82,7 +82,7 @@ class PreCommit extends AbstractAdapter
      */
     public function setFiles(array $files)
     {
-        $this->_files = $files;
+        $this->files = $files;
 
         return $this;
     }
@@ -96,17 +96,17 @@ class PreCommit extends AbstractAdapter
      */
     public function process()
     {
-        if (!$this->_files) {
+        if (!$this->files) {
             return true;
         }
 
-        if (!$this->_canProcess()) {
+        if (!$this->canProcess()) {
             return true;
         }
 
         $fileFilter = $this->loadValidator('FileFilter');
 
-        foreach ($this->_files as $file) {
+        foreach ($this->files as $file) {
             $file = trim($file);
 
             if (!$fileFilter->validate('', $file)) {
@@ -114,8 +114,8 @@ class PreCommit extends AbstractAdapter
                 continue;
             }
 
-            $filePath = $this->_getFilePath($file);
-            $content  = $this->_getFileContent($filePath);
+            $filePath = $this->getFilePath($file);
+            $content  = $this->getFileContent($filePath);
             $ext      = pathinfo($file, PATHINFO_EXTENSION);
 
             //run validators for non-filtered content
@@ -143,7 +143,7 @@ class PreCommit extends AbstractAdapter
      *
      * @return string
      */
-    protected function _canProcess()
+    protected function canProcess()
     {
         return !$this->vcsAdapter->isMergeInProgress();
     }
@@ -153,7 +153,7 @@ class PreCommit extends AbstractAdapter
      */
     protected function loadValidator($name, array $options = array())
     {
-        $omitted = $this->_getOmittedValidators();
+        $omitted = $this->getOmittedValidators();
         if (isset($omitted[$name])) {
             $name = 'Stub';
         }
@@ -168,9 +168,9 @@ class PreCommit extends AbstractAdapter
      * @return string
      * @throws Exception
      */
-    protected function _getFilePath($file)
+    protected function getFilePath($file)
     {
-        $filePath = $this->_codePath.DIRECTORY_SEPARATOR.$file;
+        $filePath = $this->codePath.DIRECTORY_SEPARATOR.$file;
         if (!file_exists($filePath)) {
             throw new Exception("File '$filePath' does not exist.");
         }
@@ -184,7 +184,7 @@ class PreCommit extends AbstractAdapter
      * @param string $filePath
      * @return string
      */
-    protected function _getFileContent($filePath)
+    protected function getFileContent($filePath)
     {
         return file_get_contents($filePath);
     }
@@ -236,39 +236,41 @@ class PreCommit extends AbstractAdapter
      *
      * @return array
      */
-    protected function _getOmittedValidators()
+    protected function getOmittedValidators()
     {
-        if (null === $this->_omittedValidators) {
+        if (null === $this->omittedValidators) {
             /** @var ConfigHelper $configHelper */
-            $configHelper             = $this->getConfigHelper();
-            $configFile               = $this->_getConfigFile(Set::OPTION_SCOPE_PROJECT_SELF);
-            $this->_omittedValidators = array();
-            $types                    = array(
+            $configHelper            = $this->getConfigHelper();
+            $configFile              = $this->getConfigFile(Set::OPTION_SCOPE_PROJECT_SELF);
+            $this->omittedValidators = array();
+            $types                   = array(
                 'code'       => IgnoreCommit::XPATH_IGNORE_CODE,
                 'protection' => IgnoreCommit::XPATH_IGNORE_PROTECTION,
             );
 
             foreach ($types as $type => $xpath) {
                 //get validators set
-                $validators = $this->_getOmittedTypeValidators($xpath, $type);
+                $validators = $this->getOmittedTypeValidators($xpath, $type);
                 if ($validators) {
                     //add observer to remove disable ignoring
                     $this->addObserver(
                         'success_end',
+                        //@startSkipCommitHooks
                         function () use ($configHelper, $configFile, $xpath) {
                             $configHelper->writeValue($configFile, $xpath, false);
                         }
+                        //@finishSkipCommitHooks
                     );
 
-                    $this->_omittedValidators = array_merge(
-                        $this->_omittedValidators,
+                    $this->omittedValidators = array_merge(
+                        $this->omittedValidators,
                         $validators
                     );
                 }
             }
         }
 
-        return $this->_omittedValidators;
+        return $this->omittedValidators;
     }
 
     /**
@@ -279,7 +281,7 @@ class PreCommit extends AbstractAdapter
      */
     public function getValidators($fileType)
     {
-        return $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/validators');
+        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/validators');
     }
 
     /**
@@ -290,7 +292,7 @@ class PreCommit extends AbstractAdapter
      */
     public function getFilters($fileType)
     {
-        return $this->_getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/filters');
+        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/filters');
     }
 
     /**
@@ -309,18 +311,18 @@ class PreCommit extends AbstractAdapter
     /**
      * Get config file related to scope
      *
-     * @param $scope
+     * @param string $scope
      * @return null|string
      * @throws \PreCommit\Exception
      */
-    protected function _getConfigFile($scope)
+    protected function getConfigFile($scope)
     {
         if (Set::OPTION_SCOPE_GLOBAL == $scope) {
-            return $this->_getConfig()->getConfigFile('userprofile');
+            return $this->getConfig()->getConfigFile('userprofile');
         } elseif (Set::OPTION_SCOPE_PROJECT == $scope) {
-            return $this->_getConfig()->getConfigFile('project');
+            return $this->getConfig()->getConfigFile('project');
         } elseif (Set::OPTION_SCOPE_PROJECT_SELF == $scope) {
-            return $this->_getConfig()->getConfigFile('project_local');
+            return $this->getConfig()->getConfigFile('project_local');
         }
         throw new Exception("Unknown scope '$scope'.");
     }
@@ -332,11 +334,11 @@ class PreCommit extends AbstractAdapter
      * @param string $type
      * @return array
      */
-    protected function _getOmittedTypeValidators($xpath, $type)
+    protected function getOmittedTypeValidators($xpath, $type)
     {
         $validators = array();
-        if ($this->_getConfig()->getNode($xpath)) {
-            $validators = $this->_getConfig()->getNodesExpr(
+        if ($this->getConfig()->getNode($xpath)) {
+            $validators = $this->getConfig()->getNodesExpr(
                 sprintf(IgnoreCommit::XPATH_IGNORED_VALIDATORS, $type)
             );
         }
@@ -350,7 +352,7 @@ class PreCommit extends AbstractAdapter
      * @return Config
      * @throws \PreCommit\Exception
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }

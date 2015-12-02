@@ -16,10 +16,14 @@ class Git implements AdapterInterface
     public function getAffectedFiles()
     {
         if (defined('TEST_MODE') && TEST_MODE) {
+            //@startSkipCommitHooks
             return array_filter(explode("\n", `git ls-files -m`));
+            //@finishSkipCommitHooks
         }
 
+        //@startSkipCommitHooks
         return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
+        //@finishSkipCommitHooks
     }
 
     /**
@@ -30,7 +34,7 @@ class Git implements AdapterInterface
      */
     public function getCommitMessage()
     {
-        $file = $this->_getCommitMessageFile();
+        $file = $this->getCommitMessageFile();
         if (!file_exists($file)) {
             throw new Exception("Commit message file '$file' not found.");
         }
@@ -43,7 +47,7 @@ class Git implements AdapterInterface
      *
      * @return string
      */
-    protected function _getCommitMessageFile()
+    protected function getCommitMessageFile()
     {
         return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'
                .DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
@@ -56,7 +60,9 @@ class Git implements AdapterInterface
      */
     public function getCodePath()
     {
+        //@startSkipCommitHooks
         return trim(`git rev-parse --show-toplevel`);
+        //@finishSkipCommitHooks
     }
 
     /**
@@ -68,7 +74,7 @@ class Git implements AdapterInterface
      */
     public function setCommitMessage($message)
     {
-        $file = $this->_getCommitMessageFile();
+        $file = $this->getCommitMessageFile();
         if (false === file_put_contents($file, $message)) {
             throw new Exception("Commit message file '$file' cannot be updated.");
         }
