@@ -39,7 +39,7 @@ class IssueStatus extends AbstractValidator
     {
         parent::__construct($options);
 
-        $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+        $this->_type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
         if (!$this->_type) {
             throw new Exception('Type is not set.');
         }
@@ -55,9 +55,9 @@ class IssueStatus extends AbstractValidator
     public function validate($message, $file)
     {
         if ($message->issue && $message->issue->getStatus()
-            && !$this->_isAllowed($message->issue->getStatus())
+            && !$this->isAllowed($message->issue->getStatus())
         ) {
-            $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
+            $this->addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
         }
 
         return !$this->errorCollector->hasErrors();
@@ -68,13 +68,13 @@ class IssueStatus extends AbstractValidator
      *
      * @return array
      */
-    protected function _getStatuses()
+    protected function getStatuses()
     {
-        return (array) $this->_getConfig()->getNodeArray(
-            'validators/IssueStatus/issue/status/'.$this->_getTrackerType().'/allowed/'.$this->_type
+        return (array) $this->getConfig()->getNodeArray(
+            'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->_type
         )
-            ?: (array) $this->_getConfig()->getNodeArray(
-                'validators/IssueStatus/issue/status/'.$this->_getTrackerType().'/allowed/'.$this->_type
+            ?: (array) $this->getConfig()->getNodeArray(
+                'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->_type
             );
     }
 
@@ -83,9 +83,9 @@ class IssueStatus extends AbstractValidator
      *
      * @return string
      */
-    protected function _getTrackerType()
+    protected function getTrackerType()
     {
-        return (string) $this->_getConfig()->getNode('tracker/type');
+        return (string) $this->getConfig()->getNode('tracker/type');
     }
 
     /**
@@ -93,7 +93,7 @@ class IssueStatus extends AbstractValidator
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
@@ -104,9 +104,9 @@ class IssueStatus extends AbstractValidator
      * @param string $status
      * @return bool
      */
-    protected function _isAllowed($status)
+    protected function isAllowed($status)
     {
-        $allowedStatuses = $this->_getStatuses();
+        $allowedStatuses = $this->getStatuses();
 
         return isset($allowedStatuses[$status])
                && $allowedStatuses[$status];

@@ -90,7 +90,7 @@ class ModelEventFields extends AbstractValidator
     protected function checkEventPrefix($content, $file)
     {
         if (!preg_match('/_eventPrefix[ ]+=[ ]/', $content)) {
-            $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_PREFIX);
+            $this->addError($file, self::CODE_MODEL_MISSED_EVENT_PREFIX);
         }
 
         return $this;
@@ -106,7 +106,7 @@ class ModelEventFields extends AbstractValidator
     protected function checkEventObject($content, $file)
     {
         if (!preg_match('/_eventObject[ ]+=[ ]/', $content)) {
-            $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_OBJECT);
+            $this->addError($file, self::CODE_MODEL_MISSED_EVENT_OBJECT);
         }
 
         return $this;

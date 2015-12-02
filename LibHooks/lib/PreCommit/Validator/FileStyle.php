@@ -62,7 +62,7 @@ class FileStyle extends AbstractValidator
             //$line = count(explode("\n", $matches[0]));
 
             preg_match_all('~(\t)~s', $content, $tbMatches);
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::CODE_TAB_CHAR,
                 count($tbMatches[0])
@@ -81,7 +81,7 @@ class FileStyle extends AbstractValidator
     {
         //checking for windows line breaks
         if (preg_match_all('~(\r\n)~s', $content, $lnMatches)) {
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::CODE_WIN_LINE_BREAK,
                 count($lnMatches[0])
@@ -101,7 +101,7 @@ class FileStyle extends AbstractValidator
     protected function validateBom($content, $file)
     {
         if (substr($content, 0, 3) == pack('CCC', 0xef, 0xbb, 0xbf)) {
-            $this->_addError($file, self::CODE_FILE_BOM);
+            $this->addError($file, self::CODE_FILE_BOM);
         }
 
         return $this;

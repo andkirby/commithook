@@ -76,19 +76,19 @@ class RedundantCode extends AbstractValidator
 
             //find console.log()
             if ($this->canCheckType($ext, self::JS_CONSOLE) && false !== strpos($str, 'console.log(')) {
-                $this->_addError($file, self::JS_CONSOLE, $currentString, $line);
+                $this->addError($file, self::JS_CONSOLE, $currentString, $line);
             }
             //find is_null() function
             if ($this->canCheckType($ext, self::CODE_IS_NULL) && false !== strpos($str, 'is_null(')) {
-                $this->_addError($file, self::CODE_IS_NULL, $currentString, $line);
+                $this->addError($file, self::CODE_IS_NULL, $currentString, $line);
             }
             //find qqq()
             if ($this->canCheckType($ext, self::DEBUG_QQQ) && false !== strpos($str, 'qqq')) {
-                $this->_addError($file, self::DEBUG_QQQ, $currentString, $line);
+                $this->addError($file, self::DEBUG_QQQ, $currentString, $line);
             }
             //find var_dump()
             if ($this->canCheckType($ext, self::DEBUG_VAR_DUMP) && false !== strpos($str, 'var_dump(')) {
-                $this->_addError($file, self::DEBUG_VAR_DUMP, $currentString, $line);
+                $this->addError($file, self::DEBUG_VAR_DUMP, $currentString, $line);
             }
         }
 

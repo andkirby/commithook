@@ -93,7 +93,7 @@ class CodingStandard extends AbstractValidator
 
         preg_match_all('/\n\n\n/', $content, $match);
         if ($match[0]) {
-            $this->_addError($file, self::CODE_PHP_GAPS, count($match[0]));
+            $this->addError($file, self::CODE_PHP_GAPS, count($match[0]));
         }
 
         preg_match_all('/(\{|\()\n\n.*|.*\n\n[ ]*(\}|\))/', $content, $match);
@@ -109,7 +109,7 @@ class CodingStandard extends AbstractValidator
             sort($lines);
             //endregion
 
-            $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]), $lines);
+            $this->addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]), $lines);
         }
 
         return $this;
@@ -156,22 +156,22 @@ class CodingStandard extends AbstractValidator
                 // operator & && must be wrapped with spaces
                 || preg_match('/[^\(\s&]&{1,2}|&{1,2}[^\s&$]/i', $str)
             ) {
-                $this->_addError($file, self::CODE_PHP_OPERATOR_SPACES_MISSED, $currentString, $line);
+                $this->addError($file, self::CODE_PHP_OPERATOR_SPACES_MISSED, $currentString, $line);
             }
 
             //checking for an assignment in a condition
             if (preg_match('~if\s*\((.*?)\)\s*[{:]~s', $str, $a)) {
                 if (preg_match('~\$[^= ]+ ?= ?[^=]~', $a[1])) {
-                    $this->_addError($file, self::CODE_PHP_CONDITION_ASSIGNMENT, $currentString, $line);
+                    $this->addError($file, self::CODE_PHP_CONDITION_ASSIGNMENT, $currentString, $line);
                 }
             }
 
             if (preg_match('/(?:[,\(\)\{\}=]\s{2,}|\w\s{2,}[\(\)\{\}]|\s+[,]|\S\s+[)]|[(]\s+)/i', $str)) {
-                $this->_addError($file, self::CODE_PHP_REDUNDANT_SPACES, $currentString, $line);
+                $this->addError($file, self::CODE_PHP_REDUNDANT_SPACES, $currentString, $line);
             }
 
             if (strlen($str) > 120) {
-                $this->_addError($file, self::CODE_PHP_LINE_EXCEEDS, null, $line);
+                $this->addError($file, self::CODE_PHP_LINE_EXCEEDS, null, $line);
             }
 
             $operators = 'elseif|else if|else|if|switch|foreach|for|while|do';
@@ -184,36 +184,36 @@ class CodingStandard extends AbstractValidator
                     if (preg_match('/^[^A-z0-9\>\$]*(try|do)[^A-z0-9-\$]*$/', trim($str))
                         && trim($str) !== $b[1].' {'
                     ) {
-                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif ($b[1] == 'while') {
                     if (substr(trim($str), -1) == ';' && !preg_match('/^\s+\} while \(.*\);$/', $str)
                         || substr(trim($str), -1) != ';' && !preg_match('/^\s+while \(.*\) {$/', $str)
                     ) {
-                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif ($b[1] == 'else') {
                     if (!preg_match('/\s*} else {$/i', $str)) {
-                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif (substr(trim($b[0]), -3) != ') {') {
                     $bracketRight = substr_count($b[0], ')');
                     $bracketLeft  = substr_count($b[0], '(');
                     if ($bracketLeft >= 1 && $bracketLeft == $bracketRight) {
-                        $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
                 } elseif (substr(ltrim($b[0], ' }'), strlen($b[1]), 1) != ' ') { //check right space after construct
-                    $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                    $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                 }
             }
 
             //check try..catch
             if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $b)) {
-                $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             } elseif (preg_match('/[^A-z]catch/i', $str)
                       && !preg_match('/^\s*(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
             ) {
-                $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
+                $this->addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             }
 
             //check function naming and scope
@@ -222,17 +222,17 @@ class CodingStandard extends AbstractValidator
                     if (preg_match('/^\s*(static )?public /', $str)
                         && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
                     ) {
-                        $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
                     } elseif ($this->useUnderScoreInProtected()
                               && preg_match('/^\s*(static )?(protected|private) /', $str)
                               && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
                     ) {
-                        $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
+                        $this->addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
                     } elseif (!$this->useUnderScoreInProtected()
                               && preg_match('/^\s*(static )?(protected|private) /', $str)
                               && !preg_match('/(protected|private) (static )?function [a-z]{2}/', $str)
                     ) {
-                        $this->_addError(
+                        $this->addError(
                             $file,
                             self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE,
                             $currentString,
@@ -241,7 +241,7 @@ class CodingStandard extends AbstractValidator
                     }
                 }
                 if (!preg_match('/(protected|private|public) (static )?function/', $str)) {
-                    $this->_addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
+                    $this->addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
                 }
             }
 
@@ -261,7 +261,7 @@ class CodingStandard extends AbstractValidator
                 }
                 if ($vars) {
                     $values = array('value' => $currentString, 'vars' => implode(',', $vars));
-                    $this->_addError($file, self::CODE_PHP_UNDERSCORE_IN_VAR, $values, $line);
+                    $this->addError($file, self::CODE_PHP_UNDERSCORE_IN_VAR, $values, $line);
                 }
             }
         }

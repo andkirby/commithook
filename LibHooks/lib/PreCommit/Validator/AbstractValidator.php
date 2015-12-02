@@ -33,6 +33,10 @@ abstract class AbstractValidator
     protected $errorMessages = array();
 
     /**
+     * Init options
+     *
+     * Init error collector
+     *
      * @param array $options
      * @throws Exception
      */
@@ -65,7 +69,7 @@ abstract class AbstractValidator
      * @param int    $line
      * @return $this
      */
-    protected function _addError($file, $type, $value = null, $line = null)
+    protected function addError($file, $type, $value = null, $line = null)
     {
         $this->errorCollector->addError($file, $type, $this->errorMessages[$type], $value, $line);
     }

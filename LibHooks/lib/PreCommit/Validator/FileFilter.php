@@ -62,23 +62,23 @@ class FileFilter extends AbstractValidator
             return false;
         }
 
-        if ($this->_isFileAllowed($file)) {
+        if ($this->isFileAllowed($file)) {
             //file is allowed to edit, no need to check protection
-            return !$this->_isFileSkipped($file);
+            return !$this->isFileSkipped($file);
         }
 
-        return !$this->_isFileProtected($file) && !$this->_isFileSkipped($file);
+        return !$this->isFileProtected($file) && !$this->isFileSkipped($file);
     }
 
     /**
      * Check file from ignore list
      *
-     * @param $file
+     * @param string $file
      * @return bool
      */
-    protected function _isFileAllowed($file)
+    protected function isFileAllowed($file)
     {
-        if ($this->_isFileAllowedByPath($file)) {
+        if ($this->isFileAllowedByPath($file)) {
             return true;
         }
         $list = Config::getInstance()->getMultiNode(self::XPATH_ALLOW_FILES);
@@ -97,9 +97,9 @@ class FileFilter extends AbstractValidator
      * @param string $file
      * @return bool
      */
-    protected function _isFileSkipped($file)
+    protected function isFileSkipped($file)
     {
-        if ($this->_isFileSkippedByPath($file)) {
+        if ($this->isFileSkippedByPath($file)) {
             return true;
         }
 
@@ -125,18 +125,18 @@ class FileFilter extends AbstractValidator
     /**
      * Check file from ignore list
      *
-     * @param $file
+     * @param string $file
      * @return bool
      */
-    protected function _isFileProtected($file)
+    protected function isFileProtected($file)
     {
-        if ($this->_isFileProtectedByPath($file)) {
+        if ($this->isFileProtectedByPath($file)) {
             return true;
         }
         $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_FILES);
         foreach ($list as $item) {
             if (strpos($file, $item) === 0) {
-                $this->_addError($file, self::PROTECTED_FILE, $item);
+                $this->addError($file, self::PROTECTED_FILE, $item);
 
                 return true;
             }
@@ -148,10 +148,10 @@ class FileFilter extends AbstractValidator
     /**
      * Check if file in allowed path
      *
-     * @param $file
+     * @param string $file
      * @return bool
      */
-    protected function _isFileAllowedByPath($file)
+    protected function isFileAllowedByPath($file)
     {
         $list = Config::getInstance()->getMultiNode(self::XPATH_ALLOW_PATHS);
         foreach ($list as $item) {
@@ -169,7 +169,7 @@ class FileFilter extends AbstractValidator
      * @param string $file
      * @return bool
      */
-    protected function _isFileSkippedByPath($file)
+    protected function isFileSkippedByPath($file)
     {
         $list = Config::getInstance()->getMultiNode(self::XPATH_SKIP_PATHS);
         foreach ($list as $item) {
@@ -184,15 +184,15 @@ class FileFilter extends AbstractValidator
     /**
      * Check file from ignore list
      *
-     * @param $file
+     * @param string $file
      * @return bool
      */
-    protected function _isFileProtectedByPath($file)
+    protected function isFileProtectedByPath($file)
     {
         $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_PATHS);
         foreach ($list as $item) {
             if (strpos($file, (string) $item) === 0) {
-                $this->_addError($file, self::PROTECTED_PATH, $item);
+                $this->addError($file, self::PROTECTED_PATH, $item);
 
                 return true;
             }

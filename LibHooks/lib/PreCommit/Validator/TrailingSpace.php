@@ -54,7 +54,7 @@ class TrailingSpace extends AbstractValidator
     {
         $matches = array();
         if (preg_match_all("~.*?[ \t]+\r?\n~", $content, $matches)) {
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::CODE_PHP_REDUNDANT_TRAILING_SPACES,
                 count($matches[0])
@@ -76,7 +76,7 @@ class TrailingSpace extends AbstractValidator
         $lines    = explode("\n", $content);
         $lastLine = array_pop($lines);
         if ($lastLine != '') {
-            $this->_addError($file, self::CODE_PHP_NO_END_TRAILING_LINE);
+            $this->addError($file, self::CODE_PHP_NO_END_TRAILING_LINE);
         }
 
         return $this;

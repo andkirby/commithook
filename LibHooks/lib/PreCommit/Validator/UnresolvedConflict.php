@@ -50,7 +50,7 @@ class UnresolvedConflict extends AbstractValidator
     {
         //checking for windows line breaks
         if (strpos($content, '<<<<<<<'.' HEAD') || strpos($content, "\n>>>>>>> ")) {
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::MERGE_CONFLICT
             );

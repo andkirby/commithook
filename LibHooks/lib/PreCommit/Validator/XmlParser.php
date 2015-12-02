@@ -49,14 +49,14 @@ class XmlParser extends AbstractValidator
             if ($error->level < 3) {
                 return true;
             }
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::CODE_XML_ERROR,
                 str_replace("\n", '', $error->message),
                 $error->line
             );
         } catch (\Exception $e) {
-            $this->_addError(
+            $this->addError(
                 $file,
                 self::CODE_XML_ERROR,
                 str_replace("\n", '', $e->getMessage())

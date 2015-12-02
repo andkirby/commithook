@@ -45,7 +45,7 @@ class CodingStandardMagento extends CodingStandard
             $currentString = trim($originalArr[$line - 1]);
             //check using Mage::throwException();
             if (false !== strpos($str, 'Mage::throwException(')) {
-                $this->_addError($file, self::CODE_PHP_DEPRECATED_THROW_EXCEPTION, $currentString, $line);
+                $this->addError($file, self::CODE_PHP_DEPRECATED_THROW_EXCEPTION, $currentString, $line);
             }
         }
 

@@ -65,7 +65,7 @@ class CodingStandardPhtml extends AbstractValidator
 
         preg_match_all('/\n\n\n/', $content, $match);
         if ($match[0]) {
-            $this->_addError($file, self::CODE_PHTML_GAPS, count($match[0]));
+            $this->addError($file, self::CODE_PHTML_GAPS, count($match[0]));
         }
 
         return $this;
@@ -125,7 +125,7 @@ class CodingStandardPhtml extends AbstractValidator
             && substr_count($str, '(') === substr_count($str, ')') //ignore multi-line conditions
             && !preg_match('/[^A-z0-9]+(?:'.$operators.').*?\).*?:/i', $b[0], $m)
         ) {
-            $this->_addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
+            $this->addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
         }
 
         return $this;
@@ -150,7 +150,7 @@ class CodingStandardPhtml extends AbstractValidator
             }
             if ($vars) {
                 $values = array('value' => $str, 'vars' => implode(',', $vars));
-                $this->_addError($file, self::CODE_PHTML_UNDERSCORE_IN_VAR, $values, $line);
+                $this->addError($file, self::CODE_PHTML_UNDERSCORE_IN_VAR, $values, $line);
             }
         }
 
@@ -168,7 +168,7 @@ class CodingStandardPhtml extends AbstractValidator
     protected function validateStringNoProtectedMethodUsage($file, $str, $line)
     {
         if (preg_match('/\$this-\>_[^_]/', $str)) {
-            $this->_addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
+            $this->addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
         }
 
         return $this;
@@ -185,7 +185,7 @@ class CodingStandardPhtml extends AbstractValidator
     protected function validateStringNoClassesUsage($file, $str, $line)
     {
         if (preg_match('/[A-z_]{3,}\:\:[A-z_]/', $str)) {
-            $this->_addError($file, self::CODE_PHTML_CLASS, $str, $line);
+            $this->addError($file, self::CODE_PHTML_CLASS, $str, $line);
         }
 
         return $this;

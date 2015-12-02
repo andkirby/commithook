@@ -75,7 +75,7 @@ class ParentThis extends AbstractValidator
         $regularClass = ltrim($parentClass, '\\'); //remove left "\"
         $regularClass = str_replace('\\', '\x5C', $regularClass); //set codes instead "\"
         if (preg_match('~ +\* @return +\x5C?'.$regularClass.'~', $content)) {
-            $this->_addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
+            $this->addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
         }
 
         return $this;

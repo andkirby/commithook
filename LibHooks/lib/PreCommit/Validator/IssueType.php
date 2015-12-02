@@ -38,7 +38,7 @@ class IssueType extends AbstractValidator
     public function validate($message, $file)
     {
         if ($message->issue && !$message->issue->getType()) {
-            $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_TYPE, $message->issue->getOriginalType());
+            $this->addError('Commit Message', self::CODE_WRONG_ISSUE_TYPE, $message->issue->getOriginalType());
         }
 
         return !$this->errorCollector->hasErrors();
