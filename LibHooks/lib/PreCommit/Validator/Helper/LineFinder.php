@@ -11,6 +11,13 @@ namespace PreCommit\Validator\Helper;
 class LineFinder
 {
     /**
+     * Original content
+     *
+     * @var string
+     */
+    protected static $originContent;
+
+    /**
      * Find line
      *
      * @param string $find
@@ -20,6 +27,14 @@ class LineFinder
      */
     public static function findLines($find, $content, $once = false)
     {
+        /**
+         * Right lines cannot be determined due to cutting omitted code.
+         *
+         * @see \PreCommit\Filter\SkipContent::filter()
+         * @todo Remove using hack
+         */
+        $content = self::$originContent;
+
         $offset = 0;
         $lines  = array();
 
@@ -27,12 +42,12 @@ class LineFinder
         $targetLength = strlen($find);
 
         //find line endings in a finding string
-        str_replace("\n", '', $find, $lineShift);
+        $lineShift = substr_count($find, "\n");
 
         while ($position = strpos($content, $find, $offset)) {
             //get line position
             str_replace("\n", '', substr($content, 0, $position), $line);
-            $line = $line + 1 + $lineShift;
+            $line = $line + $lineShift;
 
             if ($once) {
                 //if once - return only first match
@@ -46,5 +61,15 @@ class LineFinder
         }
 
         return $lines;
+    }
+
+    /**
+     * Set original content
+     *
+     * @param string $content
+     */
+    public static function setOriginContent($content)
+    {
+        self::$originContent = $content;
     }
 }
