@@ -34,15 +34,15 @@ class ParentThis extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $parentClass = $this->_getExtendClass($content);
+        $parentClass = $this->getExtendClass($content);
         if (!$parentClass) {
             return false;
         }
-        $this->_validateParentClassInReturn($parentClass, $content, $file);
+        $this->validateParentClassInReturn($parentClass, $content, $file);
 
-        $parentClassAlias = $this->_getClassAlias($parentClass, $content);
+        $parentClassAlias = $this->getClassAlias($parentClass, $content);
         if ($parentClassAlias) {
-            $this->_validateParentClassInReturn($parentClassAlias, $content, $file);
+            $this->validateParentClassInReturn($parentClassAlias, $content, $file);
         }
 
         return !$this->errorCollector->hasErrors();
@@ -54,7 +54,7 @@ class ParentThis extends AbstractValidator
      * @param string $content
      * @return string|null
      */
-    protected function _getExtendClass($content)
+    protected function getExtendClass($content)
     {
         $matches = array();
         preg_match('/ extends[ ]+([A-z0-9_\x92]+)/', $content, $matches);
@@ -70,7 +70,7 @@ class ParentThis extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateParentClassInReturn($parentClass, $content, $file)
+    protected function validateParentClassInReturn($parentClass, $content, $file)
     {
         $regularClass = ltrim($parentClass, '\\'); //remove left "\"
         $regularClass = str_replace('\\', '\x5C', $regularClass); //set codes instead "\"
@@ -88,7 +88,7 @@ class ParentThis extends AbstractValidator
      * @param string $content
      * @return null|string
      */
-    protected function _getClassAlias($class, $content)
+    protected function getClassAlias($class, $content)
     {
         $matches = array();
         if (strpos($class, '\\')) {
@@ -97,8 +97,7 @@ class ParentThis extends AbstractValidator
                 return null;
             }
             $parentPath = substr($class, 0, strpos($class, "\x5C"));
-            if (
-                preg_match('~use ([A-z0-9\x5C_]+)\x5C'.$parentPath.';~', $content, $matches)
+            if (preg_match('~use ([A-z0-9\x5C_]+)\x5C'.$parentPath.';~', $content, $matches)
                 || preg_match('~use ([A-z0-9\x5C_]+) as '.$parentPath.';~', $content, $matches)
             ) {
                 return $matches[1].substr($class, strpos($class, "\x5C"));

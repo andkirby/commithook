@@ -37,8 +37,8 @@ class TrailingSpace extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validateRedundantTrailingSpaces($content, $file);
-        $this->_validateTrailingLine($content, $file);
+        $this->validateRedundantTrailingSpaces($content, $file);
+        $this->validateTrailingLine($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -50,7 +50,7 @@ class TrailingSpace extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateRedundantTrailingSpaces($content, $file)
+    protected function validateRedundantTrailingSpaces($content, $file)
     {
         $matches = array();
         if (preg_match_all("~.*?[ \t]+\r?\n~", $content, $matches)) {
@@ -71,7 +71,7 @@ class TrailingSpace extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateTrailingLine($content, $file)
+    protected function validateTrailingLine($content, $file)
     {
         $lines    = explode("\n", $content);
         $lastLine = array_pop($lines);

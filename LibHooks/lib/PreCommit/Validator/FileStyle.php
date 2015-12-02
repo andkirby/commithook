@@ -42,9 +42,9 @@ class FileStyle extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validateTabIndents($content, $file);
-        $this->_validateLineBreaks($content, $file);
-        $this->_validateBom($content, $file);
+        $this->validateTabIndents($content, $file);
+        $this->validateLineBreaks($content, $file);
+        $this->validateBom($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -56,7 +56,7 @@ class FileStyle extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateTabIndents($content, $file)
+    protected function validateTabIndents($content, $file)
     {
         if (preg_match('~^[^\t]*?\t~s', $content, $matches)) {
             //$line = count(explode("\n", $matches[0]));
@@ -77,7 +77,7 @@ class FileStyle extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateLineBreaks($content, $file)
+    protected function validateLineBreaks($content, $file)
     {
         //checking for windows line breaks
         if (preg_match_all('~(\r\n)~s', $content, $lnMatches)) {
@@ -98,7 +98,7 @@ class FileStyle extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateBom($content, $file)
+    protected function validateBom($content, $file)
     {
         if (substr($content, 0, 3) == pack('CCC', 0xef, 0xbb, 0xbf)) {
             $this->_addError($file, self::CODE_FILE_BOM);

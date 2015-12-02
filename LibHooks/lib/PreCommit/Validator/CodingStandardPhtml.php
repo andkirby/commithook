@@ -46,8 +46,8 @@ class CodingStandardPhtml extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validateGaps($content, $file);
-        $this->_validateCodeStyleByLines($content, $file);
+        $this->validateGaps($content, $file);
+        $this->validateCodeStyleByLines($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -59,7 +59,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateGaps($content, $file)
+    protected function validateGaps($content, $file)
     {
         $content = preg_replace('/\r/', '', $content);
 
@@ -78,9 +78,9 @@ class CodingStandardPhtml extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateCodeStyleByLines($content, $file)
+    protected function validateCodeStyleByLines($content, $file)
     {
-        $content     = $this->_filterContent($content);
+        $content     = $this->filterContent($content);
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         foreach ($originalArr as $line => $str) {
             $str = trim($str);
@@ -88,10 +88,10 @@ class CodingStandardPhtml extends AbstractValidator
                 //skip empty line
                 continue;
             }
-            $this->_validateStringAlternativeSyntaxUsage($file, $str, $line);
-            $this->_validateStringNoUnderscoreInVariableName($file, $str, $line);
-            $this->_validateStringNoProtectedMethodUsage($file, $str, $line);
-            $this->_validateStringNoClassesUsage($file, $str, $line);
+            $this->validateStringAlternativeSyntaxUsage($file, $str, $line);
+            $this->validateStringNoUnderscoreInVariableName($file, $str, $line);
+            $this->validateStringNoProtectedMethodUsage($file, $str, $line);
+            $this->validateStringNoClassesUsage($file, $str, $line);
         }
 
         return $this;
@@ -105,7 +105,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param string $content
      * @return string
      */
-    protected function _filterContent($content)
+    protected function filterContent($content)
     {
         return preg_replace('/<script(\n|\r|.)*?<\/script>/', '', $content);
     }
@@ -118,7 +118,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param int    $line
      * @return $this
      */
-    protected function _validateStringAlternativeSyntaxUsage($file, $str, $line)
+    protected function validateStringAlternativeSyntaxUsage($file, $str, $line)
     {
         $operators = 'elseif|else if|if|switch|foreach|for|while';
         if (preg_match('/[^A-z0-9]+(?:'.$operators.')[^A-z]?\(.*?\).*/i', $str, $b)
@@ -139,7 +139,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param int    $line
      * @return $this
      */
-    protected function _validateStringNoUnderscoreInVariableName($file, $str, $line)
+    protected function validateStringNoUnderscoreInVariableName($file, $str, $line)
     {
         if (false !== strpos($str, '$')
             && preg_match_all('/\$\w*_\w*/', $str, $matches)
@@ -165,7 +165,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param int    $line
      * @return $this
      */
-    protected function _validateStringNoProtectedMethodUsage($file, $str, $line)
+    protected function validateStringNoProtectedMethodUsage($file, $str, $line)
     {
         if (preg_match('/\$this-\>_[^_]/', $str)) {
             $this->_addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
@@ -182,7 +182,7 @@ class CodingStandardPhtml extends AbstractValidator
      * @param int    $line
      * @return $this
      */
-    protected function _validateStringNoClassesUsage($file, $str, $line)
+    protected function validateStringNoClassesUsage($file, $str, $line)
     {
         if (preg_match('/[A-z_]{3,}\:\:[A-z_]/', $str)) {
             $this->_addError($file, self::CODE_PHTML_CLASS, $str, $line);

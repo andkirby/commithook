@@ -49,7 +49,7 @@ class IssueType extends AbstractValidator
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
