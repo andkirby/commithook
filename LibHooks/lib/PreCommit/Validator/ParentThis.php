@@ -1,6 +1,8 @@
 <?php
 namespace PreCommit\Validator;
 
+use PreCommit\Validator\Helper\LineFinder;
+
 /**
  * Class of validator for calling parent method described in PHPDoc
  *
@@ -74,11 +76,36 @@ class ParentThis extends AbstractValidator
     {
         $regularClass = ltrim($parentClass, '\\'); //remove left "\"
         $regularClass = str_replace('\\', '\x5C', $regularClass); //set codes instead "\"
-        if (preg_match('~ +\* @return +\x5C?'.$regularClass.'~', $content)) {
-            $this->addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
+        if (preg_match_all('~[ ]+\* @return +\x5C?'.$regularClass.'\x0A~', $content, $match)) {
+            if ($match[0]) {
+                //region Find lines
+                $findings = $match[0];
+                sort($findings);
+                $findings = array_unique($findings);
+                $lines    = array();
+                foreach ($findings as $find) {
+                    $lines = array_merge($lines, $this->findLines($find, $content));
+                }
+                sort($lines);
+                //endregion
+                $this->addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, $lines);
+            }
         }
 
         return $this;
+    }
+
+    /**
+     * Find lines for a string
+     *
+     * @param string $find
+     * @param string $content
+     * @param bool   $once
+     * @return array|int
+     */
+    protected function findLines($find, $content, $once = false)
+    {
+        return LineFinder::findLines($find, $content, $once);
     }
 
     /**
