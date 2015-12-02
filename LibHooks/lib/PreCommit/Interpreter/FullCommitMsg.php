@@ -17,14 +17,14 @@ class FullCommitMsg implements InterpreterInterface
      *
      * @var string
      */
-    protected $_type;
+    protected $type;
 
     /**
      * Input commit message
      *
      * @var string
      */
-    protected $_message;
+    protected $message;
 
     /**
      * Set type
@@ -34,9 +34,9 @@ class FullCommitMsg implements InterpreterInterface
     public function __construct(array $options = array())
     {
         if (isset($options['type'])) {
-            $this->_type = $options['type'];
+            $this->type = $options['type'];
         } else {
-            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+            $this->type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
         }
     }
 
@@ -57,11 +57,11 @@ class FullCommitMsg implements InterpreterInterface
             throw new Exception('Wrong message data object instance set.');
         }
 
-        preg_match($this->_getRegular(), $message->body, $matches);
+        preg_match($this->getRegular(), $message->body, $matches);
 
         $result = array();
         array_shift($matches); //ignore match all
-        foreach ($this->_getKeys() as $name => $regular) {
+        foreach ($this->getKeys() as $name => $regular) {
             if ($matches) {
                 $result[$name] = array_shift($matches);
             }
@@ -75,7 +75,7 @@ class FullCommitMsg implements InterpreterInterface
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
@@ -86,9 +86,9 @@ class FullCommitMsg implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getFormat()
+    protected function getFormat()
     {
-        $format = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->_type.'/format');
+        $format = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->type.'/format');
         if (!$format) {
             throw new Exception('Format regular expression is not set.');
         }
@@ -102,9 +102,9 @@ class FullCommitMsg implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getRegularFormat()
+    protected function getRegularFormat()
     {
-        $regular = $this->_getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->_type.'/regular');
+        $regular = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->type.'/regular');
         if (!$regular) {
             throw new Exception('Base regular expression is not set.');
         }
@@ -118,9 +118,9 @@ class FullCommitMsg implements InterpreterInterface
      * @return array
      * @throws \PreCommit\Exception
      */
-    protected function _getKeys()
+    protected function getKeys()
     {
-        $keys = $this->_getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting/'.$this->_type.'/key');
+        $keys = $this->getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting/'.$this->type.'/key');
         if (!$keys) {
             throw new Exception('Key regular expressions is not set.');
         }
@@ -133,13 +133,13 @@ class FullCommitMsg implements InterpreterInterface
      *
      * @return array
      */
-    protected function _getRegular()
+    protected function getRegular()
     {
-        $format = $this->_getFormat();
-        foreach ($this->_getKeys() as $name => $regular) {
+        $format = $this->getFormat();
+        foreach ($this->getKeys() as $name => $regular) {
             $format = str_replace("__{$name}__", "($regular)", $format);
         }
 
-        return str_replace("__format__", "{$format}", $this->_getRegularFormat());
+        return str_replace("__format__", "{$format}", $this->getRegularFormat());
     }
 }
