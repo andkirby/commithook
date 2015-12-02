@@ -11,8 +11,10 @@ interface AdapterInterface
     /**#@+
      * Issue types
      */
-    const TYPE_BUG = 'bug';
+    const TYPE_BUG  = 'bug';
+
     const TYPE_TASK = 'task';
+
     /**#@-*/
 
     /**

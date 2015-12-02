@@ -40,9 +40,11 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
      *
      * @var array
      */
-    protected $_labelTypes = array(
-        'bug', 'enhancement'
-    );
+    protected $_labelTypes
+        = array(
+            'bug',
+            'enhancement',
+        );
 
     /**
      * Default issue type (label)
@@ -66,7 +68,19 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
     public function __construct($issueKey)
     {
         parent::__construct($issueKey);
-        $this->_issueKey = (string)$issueKey;
+        $this->_issueKey = (string) $issueKey;
+    }
+
+    /**
+     * Get issue summary
+     *
+     * @return string
+     */
+    public function getSummary()
+    {
+        $issue = $this->_getIssue();
+
+        return $issue['title'];
     }
 
     /**
@@ -90,24 +104,30 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
                     );
                 }
                 $this->_cacheResult(
-                    $this->_getCacheKey(), $this->_issue
+                    $this->_getCacheKey(),
+                    $this->_issue
                 );
             }
         }
+
         return $this->_issue;
     }
 
+    //region Caching methods
+
     /**
-     * Get issue number
+     * Get cache summary string
      *
-     * @return int
+     * @param string $key
+     * @return string|bool
      */
-    protected function _getIssueNumber()
+    protected function _getCachedResult($key)
     {
-        return (int)ltrim($this->_issueKey, '#');
+        $data = $this->_getCache()->getItem($key);
+
+        return $data ? unserialize($data) : null;
     }
 
-    //region Caching methods
     /**
      * Get cache key
      *
@@ -115,8 +135,27 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _getCacheKey()
     {
-        return $this->_getVendorName() . '-' . $this->_getRepositoryName()
-               . '-' . $this->_getIssueNumber();
+        return $this->_getVendorName().'-'.$this->_getRepositoryName()
+               .'-'.$this->_getIssueNumber();
+    }
+
+    /**
+     * Load issue by API
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function _loadIssueData()
+    {
+        if (!$this->_canRequest()) {
+            throw new Exception('Connection params not fully set.');
+        }
+
+        return $this->_getApi()->issue()->show(
+            $this->_getVendorName(),
+            $this->_getRepositoryName(),
+            $this->_getIssueNumber()
+        );
     }
 
     /**
@@ -133,29 +172,8 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
         } else {
             $this->_getCache()->removeItem($key);
         }
+
         return $this;
-    }
-
-    /**
-     * Get cache summary string
-     *
-     * @param string $key
-     * @return string|bool
-     */
-    protected function _getCachedResult($key)
-    {
-        $data = $this->_getCache()->getItem($key);
-        return $data ? unserialize($data) : null;
-    }
-
-    /**
-     * Get cache directory
-     *
-     * @return string
-     */
-    protected function _getCacheDir()
-    {
-        return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
     }
 
     /**
@@ -169,120 +187,13 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
             array(
                 'cache_dir' => $this->_getCacheDir(),
                 'ttl'       => 7200,
-                'namespace' => 'issue-github-' . self::CACHE_SCHEMA_VERSION
+                'namespace' => 'issue-github-'.self::CACHE_SCHEMA_VERSION,
             )
         );
     }
     //endregion
 
     //region Interface methods
-    /**
-     * Get issue summary
-     *
-     * @return string
-     */
-    public function getSummary()
-    {
-        $issue = $this->_getIssue();
-        return $issue['title'];
-    }
-
-    /**
-     * Get issue key
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        $issue = $this->_getIssue();
-        return $issue['number'];
-    }
-
-    /**
-     * Get issue type
-     *
-     * @return string
-     */
-    public function getOriginalType()
-    {
-        $issue = $this->_getIssue();
-        if (!empty($issue['labels'])) {
-            foreach ($issue['labels'] as $label) {
-                if (in_array($label['name'], $this->_labelTypes)) {
-                    return $label['name'];
-                }
-            }
-        }
-        return $this->_defaultLabelType;
-    }
-
-    /**
-     * Get status name
-     *
-     * @return string
-     */
-    public function getStatus()
-    {
-        $issue = $this->_getIssue();
-        return $this->_normalizeName($issue['state']);
-    }
-
-    /**
-     * Cache issue
-     *
-     * @return $this
-     */
-    public function ignoreIssue()
-    {
-        $this->_cacheResult($this->_getCacheKey(), array());
-        return $this;
-    }
-    //endregion
-
-    //region API methods
-    /**
-     * Load issue by API
-     *
-     * @return array
-     * @throws Exception
-     */
-    protected function _loadIssueData()
-    {
-        if (!$this->_canRequest()) {
-            throw new Exception('Connection params not fully set.');
-        }
-        return $this->_getApi()->issue()->show(
-            $this->_getVendorName(),
-            $this->_getRepositoryName(),
-            $this->_getIssueNumber()
-        );
-    }
-
-    /**
-     * Get GitHub API
-     *
-     * @return Api
-     */
-    protected function _getApi()
-    {
-        if ($this->_api === null) {
-            $this->_api = new Api();
-            $this->_api->authenticate('andkirby', 'gigaleon33');
-        }
-        return $this->_api;
-    }
-
-    /**
-     * Check if can make a request
-     *
-     * @return bool
-     */
-    protected function _canRequest()
-    {
-        return $this->_getVendorName()
-               && $this->_getRepositoryName();
-    }
-    //endregion
 
     /**
      * Get vendor name
@@ -302,5 +213,110 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getRepositoryName()
     {
         return $this->_getConfig()->getNode('tracker/github/repository');
+    }
+
+    /**
+     * Get issue number
+     *
+     * @return int
+     */
+    protected function _getIssueNumber()
+    {
+        return (int) ltrim($this->_issueKey, '#');
+    }
+
+    /**
+     * Check if can make a request
+     *
+     * @return bool
+     */
+    protected function _canRequest()
+    {
+        return $this->_getVendorName()
+               && $this->_getRepositoryName();
+    }
+
+    /**
+     * Get GitHub API
+     *
+     * @return Api
+     */
+    protected function _getApi()
+    {
+        if ($this->_api === null) {
+            $this->_api = new Api();
+            $this->_api->authenticate('andkirby', 'gigaleon33');
+        }
+
+        return $this->_api;
+    }
+    //endregion
+
+    //region API methods
+
+    /**
+     * Get cache directory
+     *
+     * @return string
+     */
+    protected function _getCacheDir()
+    {
+        return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
+    }
+
+    /**
+     * Get issue key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        $issue = $this->_getIssue();
+
+        return $issue['number'];
+    }
+
+    /**
+     * Get issue type
+     *
+     * @return string
+     */
+    public function getOriginalType()
+    {
+        $issue = $this->_getIssue();
+        if (!empty($issue['labels'])) {
+            foreach ($issue['labels'] as $label) {
+                if (in_array($label['name'], $this->_labelTypes)) {
+                    return $label['name'];
+                }
+            }
+        }
+
+        return $this->_defaultLabelType;
+    }
+    //endregion
+
+    /**
+     * Get status name
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        $issue = $this->_getIssue();
+
+        return $this->_normalizeName($issue['state']);
+    }
+
+    /**
+     * Cache issue
+     *
+     * @return $this
+     */
+    public function ignoreIssue()
+    {
+        $this->_cacheResult($this->_getCacheKey(), array());
+
+        return $this;
     }
 }

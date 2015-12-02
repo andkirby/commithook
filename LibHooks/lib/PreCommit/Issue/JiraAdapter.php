@@ -44,7 +44,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      */
     public function __construct($issueKey)
     {
-        $this->_issueKey = (string)$issueKey;
+        $this->_issueKey = (string) $issueKey;
     }
 
     /**
@@ -73,6 +73,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
             $result = new Api\Result($result);
         }
         $this->_issue = new Issue($result->getResult());
+
         return $this->_issue;
     }
 
@@ -88,6 +89,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     {
         list($project, $number) = explode('-', $issueKey);
         $project = strtoupper($project);
+
         return array($project, $number);
     }
 
@@ -96,19 +98,20 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
      * Write summary to cache file
      *
      * @param string $issueKey
-     * @param array $result
+     * @param array  $result
      * @return $this
      */
     protected function _cacheResult($issueKey, $result)
     {
         $cache = $this->_getCache();
-        list($project, ) = $this->_interpretIssueKey($issueKey);
+        list($project,) = $this->_interpretIssueKey($issueKey);
         $cache->setTags($issueKey, array($project));
         if ($result) {
             $cache->setItem($issueKey, serialize($result));
         } else {
             $cache->removeItem($issueKey);
         }
+
         return $this;
     }
 
@@ -122,6 +125,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     protected function _getCachedResult($issueKey)
     {
         $data = $this->_getCache()->getItem($issueKey);
+
         return $data ? unserialize($data) : null;
     }
 
@@ -146,7 +150,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
             array(
                 'cache_dir' => $this->_getCacheDir(),
                 'ttl'       => 7200,
-                'namespace' => 'issue-jira-' . self::CACHE_SCHEMA_VERSION
+                'namespace' => 'issue-jira-'.self::CACHE_SCHEMA_VERSION,
             )
         );
     }
@@ -203,6 +207,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     public function ignoreIssue()
     {
         $this->_cacheResult($this->_issueKey, array());
+
         return $this;
     }
     //endregion
@@ -220,6 +225,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
         if (!$this->_canRequest()) {
             throw new Api\Exception('Connection params not fully set.');
         }
+
         return $this->_getApi()->api(
             Api::REQUEST_GET,
             sprintf($this->_getApiUri(), $issueKey),

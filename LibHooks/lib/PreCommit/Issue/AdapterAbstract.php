@@ -51,10 +51,15 @@ abstract class AdapterAbstract implements AdapterInterface
     public function getType()
     {
         $issueType = $this->_normalizeName($this->getOriginalType());
-        return $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'
-                                            . $this->_getTrackerType() . '/' . $this->_type . '/' . $issueType)
-            ?: $this->_getConfig()->getNode('hooks/commit-msg/message/issue/type/tracker/'
-                                            . $this->_getTrackerType() . '/default/' . $issueType);
+
+        return $this->_getConfig()->getNode(
+            'hooks/commit-msg/message/issue/type/tracker/'
+            .$this->_getTrackerType().'/'.$this->_type.'/'.$issueType
+        )
+            ?: $this->_getConfig()->getNode(
+                'hooks/commit-msg/message/issue/type/tracker/'
+                .$this->_getTrackerType().'/default/'.$issueType
+            );
     }
 
     /**
@@ -75,6 +80,6 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function _getTrackerType()
     {
-        return (string)$this->_getConfig()->getNode('tracker/type');
+        return (string) $this->_getConfig()->getNode('tracker/type');
     }
 }

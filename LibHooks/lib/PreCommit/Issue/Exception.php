@@ -8,5 +8,4 @@ namespace PreCommit\Issue;
  */
 class Exception extends \PreCommit\Exception
 {
-
 }
