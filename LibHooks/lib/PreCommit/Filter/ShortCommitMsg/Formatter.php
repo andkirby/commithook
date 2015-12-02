@@ -19,7 +19,7 @@ class Formatter implements Message\FilterInterface
      *
      * @var string
      */
-    protected $_type;
+    protected $type;
 
     /**
      * Set type
@@ -30,11 +30,11 @@ class Formatter implements Message\FilterInterface
     public function __construct(array $options = array())
     {
         if (isset($options['type'])) {
-            $this->_type = $options['type'];
+            $this->type = $options['type'];
         } else {
-            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+            $this->type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
         }
-        if (!$this->_type) {
+        if (!$this->type) {
             throw new Exception('Type is not set.');
         }
     }
@@ -47,11 +47,11 @@ class Formatter implements Message\FilterInterface
      */
     public function filter(Message $message)
     {
-        $this->_buildHead(
-            $this->_getFormatConfig(),
+        $this->buildHead(
+            $this->getFormatConfig(),
             $message
         );
-        $this->_buildBody($message);
+        $this->buildBody($message);
 
         return $message;
     }
@@ -64,7 +64,7 @@ class Formatter implements Message\FilterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _buildHead($config, Message $message)
+    protected function buildHead($config, Message $message)
     {
         $output = $config['format'];
         //make default keys list
@@ -80,13 +80,13 @@ class Formatter implements Message\FilterInterface
         if (!empty($config['key']) && is_array($config['key'])) {
             foreach ($config['key'] as $name => $keyConfig) {
                 if (isset($keyConfig['xpath'])) {
-                    $keys[$name] = $this->_getConfig()->getNode($keyConfig['xpath']);
+                    $keys[$name] = $this->getConfig()->getNode($keyConfig['xpath']);
                 } else {
                     throw new Exception("Please set 'xpath' node with a path to a local value.");
                 }
             }
         }
-        $message->head = $this->_putKeys($keys, $output);
+        $message->head = $this->putKeys($keys, $output);
 
         return $this;
     }
@@ -97,9 +97,9 @@ class Formatter implements Message\FilterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getFormatConfig()
+    protected function getFormatConfig()
     {
-        $format = $this->_getConfig()->getNodeArray('formatters/ShortCommitMsg/formatting/'.$this->_type);
+        $format = $this->getConfig()->getNodeArray('formatters/ShortCommitMsg/formatting/'.$this->type);
         if (empty($format['format'])) {
             throw new Exception('Format to build commit message is not set.');
         }
@@ -115,7 +115,7 @@ class Formatter implements Message\FilterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _putKeys(array $keys, $output)
+    protected function putKeys(array $keys, $output)
     {
         foreach ($keys as $name => $value) {
             if (!$value) {
@@ -133,9 +133,9 @@ class Formatter implements Message\FilterInterface
      * @param \PreCommit\Message $message
      * @return $this
      */
-    protected function _buildBody(Message $message)
+    protected function buildBody(Message $message)
     {
-        $message->userBody = $this->_addHyphen($message->userBody);
+        $message->userBody = $this->addHyphen($message->userBody);
         $message->body     = $message->head."\n".$message->userBody;
 
         return $this;
@@ -147,7 +147,7 @@ class Formatter implements Message\FilterInterface
      * @param string $comment
      * @return string
      */
-    protected function _addHyphen($comment)
+    protected function addHyphen($comment)
     {
         if ($comment && 0 !== strpos(trim($comment), '-')) {
             $comment = ' - '.$comment;
@@ -161,7 +161,7 @@ class Formatter implements Message\FilterInterface
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }

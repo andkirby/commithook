@@ -24,13 +24,13 @@ class ShortCommitMsg implements Message\FilterInterface
         $message->body = trim($message->body);
         //JIRA is the one issue tracker so far
         //TODO implement factory parser loading
-        $result = $this->_getParser()->interpret($message);
+        $result = $this->getParser()->interpret($message);
 
         if (!$result || !$message->issueKey || !$message->summary || !$message->verb) {
             //the message wasn't parsed correctly
             return $message;
         }
-        $this->_buildMessage($message);
+        $this->buildMessage($message);
 
         return $message;
     }
@@ -42,9 +42,9 @@ class ShortCommitMsg implements Message\FilterInterface
      * @return $this
      * @throws \PreCommit\Exception
      */
-    protected function _buildMessage(Message $message)
+    protected function buildMessage(Message $message)
     {
-        $this->_getFormatter()->filter($message);
+        $this->getFormatter()->filter($message);
 
         return $this;
     }
@@ -54,9 +54,9 @@ class ShortCommitMsg implements Message\FilterInterface
      *
      * @return array|null
      */
-    protected function _getFormatterConfig()
+    protected function getFormatterConfig()
     {
-        return $this->_getConfig()->getNodeArray('filters/ShortCommitMsg/issue/formatter');
+        return $this->getConfig()->getNodeArray('filters/ShortCommitMsg/issue/formatter');
     }
 
     /**
@@ -64,13 +64,13 @@ class ShortCommitMsg implements Message\FilterInterface
      *
      * @return \PreCommit\Filter\ShortCommitMsg\Parser\Jira
      */
-    protected function _getParser()
+    protected function getParser()
     {
-        $class = $this->_getConfig()->getNode(
-            'tracker/'.$this->_getTrackerType().'/message/parser/class'
+        $class = $this->getConfig()->getNode(
+            'tracker/'.$this->getTrackerType().'/message/parser/class'
         );
 
-        return new $class;
+        return new $class();
     }
 
     /**
@@ -79,17 +79,18 @@ class ShortCommitMsg implements Message\FilterInterface
      * @return FilterInterface
      * @throws Exception
      */
-    protected function _getFormatter()
+    protected function getFormatter()
     {
-        $config = $this->_getFormatterConfig();
+        $config = $this->getFormatterConfig();
         if (empty($config['class'])) {
             throw new Exception('Interpreter class is not set.');
         }
+        $class  = $config['class'];
         /** @var FilterInterface $interpreter */
         if (empty($config['options'])) {
-            return new $config['class'];
+            return new $class();
         } else {
-            return new $config['class'](
+            return new $class(
                 $config['options']
             );
         }
@@ -100,7 +101,7 @@ class ShortCommitMsg implements Message\FilterInterface
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
@@ -110,8 +111,8 @@ class ShortCommitMsg implements Message\FilterInterface
      *
      * @return string
      */
-    protected function _getTrackerType()
+    protected function getTrackerType()
     {
-        return (string) $this->_getConfig()->getNode('tracker/type');
+        return (string) $this->getConfig()->getNode('tracker/type');
     }
 }

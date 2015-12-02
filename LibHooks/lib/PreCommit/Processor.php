@@ -22,7 +22,7 @@ class Processor
             throw new Exception('Adapter name cannot be empty.');
         }
 
-        $class = self::_getAdapterClassName($adapter);
+        $class = self::getAdapterClassName($adapter);
 
         try {
             return new $class($vcsType);
@@ -41,7 +41,7 @@ class Processor
      * @param string $adapter
      * @return array
      */
-    protected static function _getAdapterClassName($adapter)
+    protected static function getAdapterClassName($adapter)
     {
         $adapter = explode('-', $adapter);
         foreach ($adapter as &$part) {
@@ -51,8 +51,3 @@ class Processor
         return '\\'.__CLASS__.'\\'.implode('', $adapter);
     }
 }
-
-
-
-
-

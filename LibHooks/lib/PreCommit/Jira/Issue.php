@@ -40,7 +40,7 @@ class Issue extends JiraLib\Issue
             $sprints      = array();
             $sprintsDraft = $this->get('Sprint') ?: array();
             foreach ($sprintsDraft as $draft) {
-                $sprints[] = $this->_parseSprintString($draft);
+                $sprints[] = $this->parseSprintString($draft);
             }
             $this->fields['Sprint/s'] = $sprints;
         }
@@ -54,7 +54,7 @@ class Issue extends JiraLib\Issue
      * @param string $sprintDraft
      * @return array
      */
-    protected function _parseSprintString($sprintDraft)
+    protected function parseSprintString($sprintDraft)
     {
         $start     = strpos($sprintDraft, '[');
         $paramsStr = trim(substr($sprintDraft, $start), '[]');
@@ -76,7 +76,7 @@ class Issue extends JiraLib\Issue
     }
 
     /**
-     * get issue status
+     * Get issue status
      *
      * @return mixed
      */

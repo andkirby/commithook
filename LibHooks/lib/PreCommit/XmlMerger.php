@@ -25,7 +25,7 @@ class XmlMerger
     /**
      * Add name of nodes which should a collection
      *
-     * @param $xpath
+     * @param string $xpath
      */
     public function addCollectionNode($xpath)
     {
@@ -48,7 +48,7 @@ class XmlMerger
             $xmlUpdate = simplexml_load_string($xmlUpdate);
         }
 
-        $this->_merge($xmlSource, $xmlUpdate);
+        $this->makeMerge($xmlSource, $xmlUpdate);
 
         return $xmlSource;
     }
@@ -60,27 +60,27 @@ class XmlMerger
      * @param \SimpleXMLElement $xmlUpdate
      * @return $this
      */
-    protected function _merge($xmlSource, $xmlUpdate)
+    protected function makeMerge($xmlSource, $xmlUpdate)
     {
         /** @var \SimpleXMLElement $node */
         foreach ($xmlUpdate as $name => $node) {
-            $this->_addProcessXpathName($name);
+            $this->addProcessXpathName($name);
             /** @var \SimpleXMLElement $nodeSource */
             $nodeSource = $xmlSource->$name;
-            if ($this->_isCollectionXpath() || !$nodeSource) {
+            if ($this->isCollectionXpath() || !$nodeSource) {
                 $this->xmlAppend($xmlSource, $node);
             } else {
-                $this->_mergeAttributes($nodeSource, $node);
+                $this->mergeAttributes($nodeSource, $node);
 
                 if ($node->count()) {
                     //merge child nodes
-                    $this->_merge($nodeSource, $node);
+                    $this->makeMerge($nodeSource, $node);
                 } else {
                     //set only value
                     $nodeSource[0] = (string) $node;
                 }
             }
-            $this->_unsetProcessXpathName($name);
+            $this->unsetProcessXpathName($name);
         }
 
         return $this;
@@ -92,7 +92,7 @@ class XmlMerger
      * @param string $name
      * @return $this
      */
-    protected function _addProcessXpathName($name)
+    protected function addProcessXpathName($name)
     {
         $this->processXpath .= '/'.$name;
 
@@ -104,7 +104,7 @@ class XmlMerger
      *
      * @return bool
      */
-    protected function _isCollectionXpath()
+    protected function isCollectionXpath()
     {
         return in_array($this->processXpath, $this->collectionNodes);
     }
@@ -129,7 +129,7 @@ class XmlMerger
      * @param \SimpleXMLElement $xmlUpdate
      * @return $this
      */
-    protected function _mergeAttributes($xmlSource, $xmlUpdate)
+    protected function mergeAttributes($xmlSource, $xmlUpdate)
     {
         if (!$xmlSource->getName()) {
             return $this;
@@ -153,7 +153,7 @@ class XmlMerger
      * @param string $name
      * @return $this
      */
-    protected function _unsetProcessXpathName($name)
+    protected function unsetProcessXpathName($name)
     {
         $length             = strlen($this->processXpath);
         $lengthName         = strlen($name) + 1;

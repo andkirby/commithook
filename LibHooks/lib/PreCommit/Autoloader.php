@@ -23,7 +23,7 @@ class Autoloader
             $class = str_replace('_', '/', $class);
         }
         $file = str_replace('\\', '/', $class).'.php';
-        if (self::_isExist($file)) {
+        if (self::isExist($file)) {
             require_once $file;
         } else {
             throw new Exception('File '.$file.' not found in include path: '.get_include_path(), self::EXCEPTION_CODE);
@@ -36,7 +36,7 @@ class Autoloader
      * @param string $file
      * @return bool
      */
-    protected static function _isExist($file)
+    protected static function isExist($file)
     {
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
             $path = rtrim($path, '\\/');
