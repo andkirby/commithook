@@ -1,5 +1,6 @@
 <?php
 namespace PreCommit\Validator;
+
 use \PreCommit\Exception as Exception;
 use \PreCommit\Processor\ErrorCollector as Error;
 
