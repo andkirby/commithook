@@ -145,7 +145,7 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function _loadValidator($name, array $options = array())
     {
@@ -196,6 +196,7 @@ class PreCommit extends AbstractAdapter
     {
         foreach ($this->getValidators($ext) as $validatorName => $status) {
             if ($status && $status !== 'false') {
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $this->_loadValidator($validatorName)
                     ->validate($content, $file, $filePath);
             }
@@ -215,10 +216,12 @@ class PreCommit extends AbstractAdapter
     {
         foreach ($this->getFilters($ext) as $validatorName => $status) {
             if ($status && $status !== 'false') {
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $content = $this->_loadFilter($validatorName)
                     ->filter($content, $file, $filePath);
             }
         }
+
         return $content;
     }
 

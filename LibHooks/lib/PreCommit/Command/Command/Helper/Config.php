@@ -31,10 +31,10 @@ class Config extends Helper
      *
      * @var array
      */
-    protected $_values = array();
+    protected $values = array();
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getName()
     {
@@ -48,7 +48,7 @@ class Config extends Helper
      */
     public function reset()
     {
-        $this->_values = array();
+        $this->values = array();
 
         return $this;
     }
@@ -62,7 +62,7 @@ class Config extends Helper
      */
     public function setValue($xpath, $value)
     {
-        $this->_values[$xpath] = $value;
+        $this->values[$xpath] = $value;
 
         return $this;
     }
@@ -78,7 +78,7 @@ class Config extends Helper
         $config = $this->loadConfig($configFile);
 
         $updated = false;
-        foreach ($this->_values as $xpath => $value) {
+        foreach ($this->values as $xpath => $value) {
             if ($config->getNode($xpath) == $value) {
                 continue;
             }

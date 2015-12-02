@@ -23,7 +23,7 @@ class SimpleQuestion extends Helper
     const MAX_ATTEMPTS = 3;
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getName()
     {

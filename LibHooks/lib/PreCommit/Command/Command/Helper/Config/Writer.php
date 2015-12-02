@@ -18,7 +18,7 @@ class Writer extends Helper
     const NAME = 'commithook_config_writer';
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getName()
     {

@@ -20,7 +20,7 @@ class ProjectDir extends Helper
     const NAME = 'project_dir';
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getName()
     {

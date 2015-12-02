@@ -35,7 +35,7 @@ class IgnoreCommit extends Set
      *
      * @var
      */
-    protected $_trackerType;
+    protected $trackerType;
 
     /**
      * Update status
@@ -44,7 +44,7 @@ class IgnoreCommit extends Set
      *
      * @var bool
      */
-    protected $_updated = false;
+    protected $updated = false;
 
     /**
      * Execute command
@@ -61,7 +61,7 @@ class IgnoreCommit extends Set
         try {
             if ($input->getOption('show')) {
                 $output->writeln(
-                    $this->_getValidators($input)
+                    $this->getValidators($input)
                 );
             } else {
                 $this->checkOptions($input);
@@ -69,7 +69,7 @@ class IgnoreCommit extends Set
                 $this->disableProtection($input, $input->getOption('disable'));
 
                 if ($this->isVerbose($output)) {
-                    if ($this->_updated) {
+                    if ($this->updated) {
                         $output->writeln(
                             'Validation will be ignored for the next commit.'
                         );
@@ -98,7 +98,7 @@ class IgnoreCommit extends Set
      * @param InputInterface $input
      * @return array|null|string
      */
-    protected function _getValidators(InputInterface $input)
+    protected function getValidators(InputInterface $input)
     {
         $xpath = self::XPATH_IGNORED_VALIDATORS;
         if ($input->getOption('code')) {

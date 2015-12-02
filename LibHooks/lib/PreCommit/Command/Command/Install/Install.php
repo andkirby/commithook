@@ -162,7 +162,7 @@ class Install extends AbstractCommand
             throw new Exception('Could not create file '.$file);
         }
 
-        $this->_makeFileExecutable($file);
+        $this->makeFileExecutable($file);
 
         if ($this->isVerbose($output)) {
             $output->writeln("CommitHook file set to '$file'.");
@@ -177,7 +177,7 @@ class Install extends AbstractCommand
      * @param string $file
      * @return $this
      */
-    protected function _makeFileExecutable($file)
+    protected function makeFileExecutable($file)
     {
         chmod($file, 0774);
 

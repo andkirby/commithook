@@ -24,7 +24,7 @@ class Application extends BaseApplication
      *
      * @var string
      */
-    protected $_logo
+    protected $logo
         = <<<LOGO
  _ __  __    _ __  ,___                    __
 ( /  )( /  /( /  )/   /              o _/_( /  /       /
@@ -51,6 +51,6 @@ LOGO;
      */
     public function getHelp()
     {
-        return $this->_logo.parent::getHelp();
+        return $this->logo.parent::getHelp();
     }
 }

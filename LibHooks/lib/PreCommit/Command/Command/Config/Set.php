@@ -72,7 +72,7 @@ class Set extends AbstractCommand
      *
      * @var
      */
-    protected $_trackerType;
+    protected $trackerType;
 
     /**
      * Update status
@@ -81,7 +81,7 @@ class Set extends AbstractCommand
      *
      * @var bool
      */
-    protected $_updated = false;
+    protected $updated = false;
 
     /**
      * Execute command
@@ -99,7 +99,7 @@ class Set extends AbstractCommand
             if ($input->getArgument('key') === 'wizard') {
                 $this->connectionWizard($input, $output);
 
-                if ($this->_updated) {
+                if ($this->updated) {
                     $output->writeln('Configuration updated.');
                     $output->writeln('Do not forget to share project commithook.xml file with your team.');
                     $output->writeln('Enjoy!');
@@ -108,7 +108,7 @@ class Set extends AbstractCommand
                 $this->writeDefaultOptions($input, $output);
                 $this->writeKeyValueOption($input, $output);
 
-                if ($this->_updated) {
+                if ($this->updated) {
                     $output->writeln(
                         'Configuration updated.'
                     );
@@ -139,8 +139,8 @@ class Set extends AbstractCommand
         $output->writeln('Set up issue tracker connection.');
 
         //type
-        $options            = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
-        $this->_trackerType = $this->getQuestionHelper()->ask(
+        $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
+        $this->trackerType = $this->getQuestionHelper()->ask(
             $input,
             $output,
             $this->getSimpleQuestion()->getQuestion(
@@ -158,7 +158,7 @@ class Set extends AbstractCommand
             $input,
             $output,
             $this->getSimpleQuestion()->getQuestion(
-                "'{$this->_trackerType}' URL",
+                "'{$this->trackerType}' URL",
                 $this->getConfig()->getNode($this->getXpath('url'))
             )
         );
@@ -168,14 +168,14 @@ class Set extends AbstractCommand
             $input,
             $output,
             $this->getSimpleQuestion()->getQuestion(
-                "'{$this->_trackerType}' username",
+                "'{$this->trackerType}' username",
                 $this->getConfig()->getNode($this->getXpath('username'))
             )
         );
 
         //password
         $question = $this->getSimpleQuestion()->getQuestion(
-            "'{$this->_trackerType}' password",
+            "'{$this->trackerType}' password",
             $this->getConfig()->getNode($this->getXpath('password'))
                 ? '*****' : null
         );
@@ -189,7 +189,7 @@ class Set extends AbstractCommand
             $input,
             $output,
             $this->getSimpleQuestion()->getQuestion(
-                "Current '{$this->_trackerType}' project key",
+                "Current '{$this->trackerType}' project key",
                 $this->getConfig()->getNode($this->getXpath('project'))
             )
         );
@@ -199,7 +199,7 @@ class Set extends AbstractCommand
         $scopeCredentials = self::OPTION_SCOPE_PROJECT == $scope
             ? $this->getCredentialsScope($input, $output) : $scope;
 
-        $this->writeConfig(self::XPATH_TRACKER_TYPE, $scope, $this->_trackerType);
+        $this->writeConfig(self::XPATH_TRACKER_TYPE, $scope, $this->trackerType);
         $this->writeConfig($this->getXpath('url'), $scope, $url);
         $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
         if (null !== $password) {
@@ -447,10 +447,10 @@ class Set extends AbstractCommand
         );
 
         if (self::XPATH_TRACKER_TYPE === $xpath) {
-            $this->_trackerType = $value;
+            $this->trackerType = $value;
         }
 
-        $this->_updated = $result ?: $this->_updated;
+        $this->updated = $result ?: $this->updated;
 
         return $this;
     }
@@ -508,15 +508,15 @@ class Set extends AbstractCommand
      */
     protected function getTrackerType()
     {
-        if ($this->_trackerType) {
-            return $this->_trackerType;
+        if ($this->trackerType) {
+            return $this->trackerType;
         }
-        $this->_trackerType = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
-        if (!$this->_trackerType) {
+        $this->trackerType = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
+        if (!$this->trackerType) {
             new Exception('Tracker type is not set. Please use command: commithook config --tracker [TRACKER]');
         }
 
-        return $this->_trackerType;
+        return $this->trackerType;
     }
 
     /**
@@ -571,7 +571,7 @@ class Set extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function setApplication(Application $application = null)
     {
