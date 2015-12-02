@@ -1,5 +1,6 @@
 <?php
 namespace PreCommit\Validator;
+
 use PreCommit\Exception;
 
 /**
@@ -13,9 +14,13 @@ class RedundantCode extends AbstractValidator
      * Error codes
      */
     const CODE_IS_NULL   = 'isNullFunction';
+
     const JS_CONSOLE     = 'jsConsoleFunction';
+
     const DEBUG_QQQ      = 'qqqDebugFunction';
+
     const DEBUG_VAR_DUMP = 'varDumpDebugFunction';
+
     /**#@-*/
 
     /**
@@ -23,24 +28,26 @@ class RedundantCode extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_IS_NULL => 'Redundant usage is_null() function. Use null === $a construction. Original line: %value%',
-        self::JS_CONSOLE     => 'Redundant usage JS console.log() function. Original line: %value%',
-        self::DEBUG_QQQ      => 'Redundant usage qqq() debug function. Original line: %value%',
-        self::DEBUG_VAR_DUMP => 'Redundant usage var_dump() debug function. Original line: %value%',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_IS_NULL   => 'Redundant usage is_null() function. Use null === $a construction. Original line: %value%',
+            self::JS_CONSOLE     => 'Redundant usage JS console.log() function. Original line: %value%',
+            self::DEBUG_QQQ      => 'Redundant usage qqq() debug function. Original line: %value%',
+            self::DEBUG_VAR_DUMP => 'Redundant usage var_dump() debug function. Original line: %value%',
+        );
 
     /**
      * File types list for each redundant code
      *
      * @var array
      */
-    protected $_fileTypes = array(
-        self::CODE_IS_NULL   => array('php', 'phtml'),
-        self::JS_CONSOLE     => array('php', 'phtml', 'js'),
-        self::DEBUG_QQQ      => array('php', 'phtml'),
-        self::DEBUG_VAR_DUMP => array('php', 'phtml'),
-    );
+    protected $_fileTypes
+        = array(
+            self::CODE_IS_NULL   => array('php', 'phtml'),
+            self::JS_CONSOLE     => array('php', 'phtml', 'js'),
+            self::DEBUG_QQQ      => array('php', 'phtml'),
+            self::DEBUG_VAR_DUMP => array('php', 'phtml'),
+        );
 
     /**
      * Validate content
@@ -101,6 +108,7 @@ class RedundantCode extends AbstractValidator
         if (!isset($this->_fileTypes[$code])) {
             throw new Exception("Unknown code $code.");
         }
+
         return in_array($extension, $this->_fileTypes[$code]);
     }
 }

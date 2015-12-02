@@ -9,7 +9,7 @@ class ErrorHandler
     /**
      * Handle error method
      *
-     * @param  int $errNo
+     * @param  int     $errNo
      * @param  string  $errStr
      * @param  string  $errFile
      * @param  integer $errLine

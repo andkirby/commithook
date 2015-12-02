@@ -1,8 +1,8 @@
 <?php
 namespace PreCommit\Validator;
 
-use \PreCommit\Exception as Exception;
-use \PreCommit\Processor\ErrorCollector as Error;
+use PreCommit\Exception as Exception;
+use PreCommit\Processor\ErrorCollector as Error;
 
 /**
  * Class AbstractValidator
@@ -51,7 +51,7 @@ abstract class AbstractValidator
      * Validate method
      *
      * @param string $content
-     * @param string $file      Validated file
+     * @param string $file Validated file
      * @return bool
      */
     abstract public function validate($content, $file);
@@ -62,7 +62,7 @@ abstract class AbstractValidator
      * @param string $file
      * @param string $type
      * @param string $value
-     * @param int $line
+     * @param int    $line
      * @return $this
      */
     protected function _addError($file, $type, $value = null, $line = null)

@@ -23,26 +23,13 @@ class XmlMerger
     protected $_processXpath = 'root';
 
     /**
-     * Append XML node
-     *
-     * @param \SimpleXMLElement $to
-     * @param \SimpleXMLElement $from
-     */
-    public function xmlAppend(\SimpleXMLElement $to, \SimpleXMLElement $from)
-    {
-        $toDom   = dom_import_simplexml($to);
-        $fromDom = dom_import_simplexml($from);
-        $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
-    }
-
-    /**
      * Add name of nodes which should a collection
      *
      * @param $xpath
      */
     public function addCollectionNode($xpath)
     {
-        $this->_collectionNodes[] = 'root/' . $xpath;
+        $this->_collectionNodes[] = 'root/'.$xpath;
     }
 
     /**
@@ -62,6 +49,7 @@ class XmlMerger
         }
 
         $this->_merge($xmlSource, $xmlUpdate);
+
         return $xmlSource;
     }
 
@@ -89,11 +77,12 @@ class XmlMerger
                     $this->_merge($nodeSource, $node);
                 } else {
                     //set only value
-                    $nodeSource[0] = (string)$node;
+                    $nodeSource[0] = (string) $node;
                 }
             }
             $this->_unsetProcessXpathName($name);
         }
+
         return $this;
     }
 
@@ -105,22 +94,32 @@ class XmlMerger
      */
     protected function _addProcessXpathName($name)
     {
-        $this->_processXpath .= '/' . $name;
+        $this->_processXpath .= '/'.$name;
+
         return $this;
     }
 
     /**
-     * Remove node name from process xpath
+     * Check if such XPath means plenty nodes
      *
-     * @param string $name
-     * @return $this
+     * @return bool
      */
-    protected function _unsetProcessXpathName($name)
+    protected function _isCollectionXpath()
     {
-        $length              = strlen($this->_processXpath);
-        $lengthName          = strlen($name) + 1;
-        $this->_processXpath = substr($this->_processXpath, 0, $length - $lengthName);
-        return $this;
+        return in_array($this->_processXpath, $this->_collectionNodes);
+    }
+
+    /**
+     * Append XML node
+     *
+     * @param \SimpleXMLElement $to
+     * @param \SimpleXMLElement $from
+     */
+    public function xmlAppend(\SimpleXMLElement $to, \SimpleXMLElement $from)
+    {
+        $toDom   = dom_import_simplexml($to);
+        $fromDom = dom_import_simplexml($from);
+        $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
     }
 
     /**
@@ -135,25 +134,31 @@ class XmlMerger
         if (!$xmlSource->getName()) {
             return $this;
         }
-        $attributes = (array)$xmlSource->attributes();
+        $attributes = (array) $xmlSource->attributes();
         $attributes = isset($attributes['@attributes']) ? $attributes['@attributes'] : array();
         foreach ($xmlUpdate->attributes() as $name => $value) {
             if (isset($attributes[$name])) {
-                $xmlSource->attributes()->$name = (string)$value;
+                $xmlSource->attributes()->$name = (string) $value;
             } else {
-                $xmlSource->addAttribute($name, (string)$value);
+                $xmlSource->addAttribute($name, (string) $value);
             }
         }
+
         return $this;
     }
 
     /**
-     * Check if such XPath means plenty nodes
+     * Remove node name from process xpath
      *
-     * @return bool
+     * @param string $name
+     * @return $this
      */
-    protected function _isCollectionXpath()
+    protected function _unsetProcessXpathName($name)
     {
-        return in_array($this->_processXpath, $this->_collectionNodes);
+        $length              = strlen($this->_processXpath);
+        $lengthName          = strlen($name) + 1;
+        $this->_processXpath = substr($this->_processXpath, 0, $length - $lengthName);
+
+        return $this;
     }
 }

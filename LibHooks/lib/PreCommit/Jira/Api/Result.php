@@ -27,6 +27,7 @@ class Result extends JiraLib\Api\Result
                 $result[] = new Issue($issue);
             }
         }
+
         return $result;
     }
 }

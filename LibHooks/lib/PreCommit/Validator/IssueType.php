@@ -15,6 +15,7 @@ class IssueType extends AbstractValidator
      * Error codes
      */
     const CODE_WRONG_ISSUE_TYPE = 'wrongIssueType';
+
     /**#@-*/
 
     /**
@@ -22,9 +23,10 @@ class IssueType extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_WRONG_ISSUE_TYPE => 'Issue type "%value%" is not suitable to have commits.',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_WRONG_ISSUE_TYPE => 'Issue type "%value%" is not suitable to have commits.',
+        );
 
     /**
      * Checking for interpreter errors
@@ -38,6 +40,7 @@ class IssueType extends AbstractValidator
         if ($message->issue && !$message->issue->getType()) {
             $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_TYPE, $message->issue->getOriginalType());
         }
+
         return !$this->_errorCollector->hasErrors();
     }
 

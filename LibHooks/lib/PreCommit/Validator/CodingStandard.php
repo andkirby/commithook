@@ -14,28 +14,46 @@ class CodingStandard extends AbstractValidator
      * Skip tag for publicMethodNaming errors
      */
     const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
-    const SKIP_TAG_METHOD_NAMING = 'skipCommitHookMethodNaming';
+
+    const SKIP_TAG_METHOD_NAMING        = 'skipCommitHookMethodNaming';
+
     /**#@-*/
 
     /**#@+
      * Error codes
      */
-    const CODE_PHP_CATCH                    = 'standardCatch';
-    const CODE_PHP_TRY                      = 'standardTry';
-    const CODE_PHP_IF_ELSE_BRACE            = 'standardElse';
-    const CODE_PHP_SPACE_BRACE              = 'spaceBrace';
-    const CODE_PHP_SPACE_BRACKET            = 'spaceBracket';
-    const CODE_PHP_LINE_EXCEEDS             = 'lineLength';
-    const CODE_PHP_REDUNDANT_SPACES         = 'redundantSpace';
-    const CODE_PHP_CONDITION_ASSIGNMENT     = 'conditionAssignment';
-    const CODE_PHP_OPERATOR_SPACES_MISSED   = 'operatorSpace';
-    const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID     = 'publicMethodNaming';
-    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID  = 'protectedMethodNaming';
-    const CODE_PHP_METHOD_SCOPE             = 'methodWithoutScope';
-    const CODE_PHP_GAPS                     = 'redundantGaps';
-    const CODE_PHP_BRACKET_GAPS             = 'redundantGapAfterBracket';
-    const CODE_PHP_LAST_FUNCTION_GAP        = 'redundantGapAfterLastFunction';
-    const CODE_PHP_UNDERSCORE_IN_VAR        = 'variableHasUnderscore';
+    const CODE_PHP_CATCH                           = 'standardCatch';
+
+    const CODE_PHP_TRY                             = 'standardTry';
+
+    const CODE_PHP_IF_ELSE_BRACE                   = 'standardElse';
+
+    const CODE_PHP_SPACE_BRACE                     = 'spaceBrace';
+
+    const CODE_PHP_SPACE_BRACKET                   = 'spaceBracket';
+
+    const CODE_PHP_LINE_EXCEEDS                    = 'lineLength';
+
+    const CODE_PHP_REDUNDANT_SPACES                = 'redundantSpace';
+
+    const CODE_PHP_CONDITION_ASSIGNMENT            = 'conditionAssignment';
+
+    const CODE_PHP_OPERATOR_SPACES_MISSED          = 'operatorSpace';
+
+    const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    = 'publicMethodNaming';
+
+    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID = 'protectedMethodNaming';
+
+    const CODE_PHP_METHOD_SCOPE                    = 'methodWithoutScope';
+
+    const CODE_PHP_GAPS                            = 'redundantGaps';
+
+    const CODE_PHP_BRACKET_GAPS                    = 'redundantGapAfterBracket';
+
+    const CODE_PHP_LAST_FUNCTION_GAP               = 'redundantGapAfterLastFunction';
+
+    const CODE_PHP_UNDERSCORE_IN_VAR               = 'variableHasUnderscore';
+
     /**#@-*/
 
     /**
@@ -43,23 +61,24 @@ class CodingStandard extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHP_TRY               => "Syntax in TRY instruction is wrong. Original line: %value%",
-        self::CODE_PHP_CATCH             => "Syntax in CATCH instruction is wrong. Original line: %value%",
-        self::CODE_PHP_IF_ELSE_BRACE     => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
-        self::CODE_PHP_SPACE_BRACE       => 'Spaces missed near {. Original line: %value%',
-        self::CODE_PHP_SPACE_BRACKET     => 'Spaces missed near (. Original line: %value%',
-        self::CODE_PHP_LINE_EXCEEDS      => 'Length exceeds 120 chars.',
-        self::CODE_PHP_REDUNDANT_SPACES  => 'Additional spaces found. Original line: %value%',
-        self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
-        self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
-        self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
-        self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
-        self::CODE_PHP_METHOD_SCOPE      => 'Method should have scope: public or protected. Original line: %value%',
-        self::CODE_PHP_GAPS              => 'File contain at least two gaps in succession %value% time(s).',
-        self::CODE_PHP_BRACKET_GAPS      => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
-        self::CODE_PHP_UNDERSCORE_IN_VAR => 'Underscore in variable(s): %vars%. Original line: %value%',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHP_TRY                             => "Syntax in TRY instruction is wrong. Original line: %value%",
+            self::CODE_PHP_CATCH                           => "Syntax in CATCH instruction is wrong. Original line: %value%",
+            self::CODE_PHP_IF_ELSE_BRACE                   => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACE                     => 'Spaces missed near {. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACKET                   => 'Spaces missed near (. Original line: %value%',
+            self::CODE_PHP_LINE_EXCEEDS                    => 'Length exceeds 120 chars.',
+            self::CODE_PHP_REDUNDANT_SPACES                => 'Additional spaces found. Original line: %value%',
+            self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
+            self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
+            self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
+            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+            self::CODE_PHP_METHOD_SCOPE                    => 'Method should have scope: public or protected. Original line: %value%',
+            self::CODE_PHP_GAPS                            => 'File contain at least two gaps in succession %value% time(s).',
+            self::CODE_PHP_BRACKET_GAPS                    => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
+            self::CODE_PHP_UNDERSCORE_IN_VAR               => 'Underscore in variable(s): %vars%. Original line: %value%',
+        );
 
     /**
      * Validate content
@@ -98,7 +117,7 @@ class CodingStandard extends AbstractValidator
             $findings = $match[0];
             sort($findings);
             $findings = array_unique($findings);
-            $lines = array();
+            $lines    = array();
             foreach ($findings as $find) {
                 $lines = array_merge($lines, $this->_findLines($find, $content));
             }
@@ -107,6 +126,7 @@ class CodingStandard extends AbstractValidator
 
             $this->_addError($file, self::CODE_PHP_BRACKET_GAPS, count($match[0]), $lines);
         }
+
         return $this;
     }
 
@@ -170,14 +190,14 @@ class CodingStandard extends AbstractValidator
             }
 
             $operators = 'elseif|else if|else|if|switch|foreach|for|while|do';
-            $reg       = '/\s*[^A-z0-9$_]+((?:' . $operators . '))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
+            $reg       = '/\s*[^A-z0-9$_]+((?:'.$operators.'))(\W*[^\(]*)[^\)]*([^\x0A\x0D]*)/i';
 
             if (preg_match($reg, $str, $b)
                 && !preg_match('/^[A-z0-9_]/', $b[2])
             ) {
                 if ($b[1] == 'do' || $b[1] == 'try') {
                     if (preg_match('/^[^A-z0-9\>\$]*(try|do)[^A-z0-9-\$]*$/', trim($str))
-                        && trim($str) !== $b[1] . ' {'
+                        && trim($str) !== $b[1].' {'
                     ) {
                         $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
                     }
@@ -206,7 +226,7 @@ class CodingStandard extends AbstractValidator
             if (preg_match('/[^A-z]try[^A-z]/i', $str) && !preg_match('/^(\s+try \{)$/i', $str, $b)) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             } elseif (preg_match('/[^A-z]catch/i', $str)
-                && !preg_match('/^\s*(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
+                      && !preg_match('/^\s*(\} catch \([A-z0-9_\\]+ \$[A-z0-9_]+\) \{)$/', $str, $m)
             ) {
                 $this->_addError($file, self::CODE_PHP_SPACE_BRACKET, $currentString, $line);
             }
@@ -219,7 +239,7 @@ class CodingStandard extends AbstractValidator
                     ) {
                         $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
                     } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
-                        && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
+                              && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
                     ) {
                         $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
                     }
@@ -249,7 +269,21 @@ class CodingStandard extends AbstractValidator
                 }
             }
         }
+
         return $this;
+    }
+
+    /**
+     * Find lines for a string
+     *
+     * @param string $find
+     * @param string $content
+     * @param bool   $once
+     * @return array|int
+     */
+    protected function _findLines($find, $content, $once = false)
+    {
+        return LineFinder::findLines($find, $content, $once);
     }
 
     /**
@@ -262,24 +296,26 @@ class CodingStandard extends AbstractValidator
     static public function splitContent($content)
     {
         $parsedArr = array();
-        $length = strlen($content);
+        $length    = strlen($content);
 
         $cleanedText = '';
-        $state = 0;
-        $line = 1;
+        $state       = 0;
+        $line        = 1;
         for ($i = 0; $i < $length; $i++) {
             $byte = $content[$i];
             switch ($state) {
                 case 1: //in single quotes
-                    if ($byte == '\'' && $i > 1 && ($content[$i - 1] != '\\'
-                        || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')
+                    if ($byte == '\'' && $i > 1
+                        && ($content[$i - 1] != '\\'
+                            || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')
                     ) {
                         $state = 0;
                     }
                     $cleanedText .= $byte;
-                    if ("\x0A" == $byte || "\x0D" == $byte &&
-                        ($i < $length - 1 && $content[$i + 1] != "\x0A"
-                            && $content[$i + 1] != "\x0D")
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A"
+                               && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
                     }
@@ -293,8 +329,9 @@ class CodingStandard extends AbstractValidator
                         $state = 0;
                     }
                     $cleanedText .= $byte;
-                    if ("\x0A" == $byte || "\x0D" == $byte
-                        && ($i < $length - 1 && $content[$i + 1] != "\x0D" && $content[$i + 1] != "\x0D")
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0D" && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
                     }
@@ -304,8 +341,9 @@ class CodingStandard extends AbstractValidator
                     if (preg_match('/[\x00-\x0D]/', $byte)) {
                         $state = 0;
                     }
-                    if ("\x0A" == $byte || "\x0D" == $byte
-                        && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
                     }
@@ -316,16 +354,18 @@ class CodingStandard extends AbstractValidator
                         $state = 0;
                         $i++;
                     }
-                    if ("\x0A" == $byte || "\x0D" == $byte
-                        && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
                     }
                     break;
 
                 default:
-                    if ("\x0A" == $byte || "\x0D" == $byte &&
-                        ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
                     ) {
                         $line++;
                     }
@@ -349,6 +389,7 @@ class CodingStandard extends AbstractValidator
                     @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
             }
         }
+
         return $parsedArr;
     }
 
@@ -364,25 +405,13 @@ class CodingStandard extends AbstractValidator
         preg_match('/function ([A-z_]+)/', $str, $matches);
         if ($matches) {
             $funcName = $matches[1];
-            $reg      = '~[ *]*\@(' . self::SKIP_TAG_PUBLIC_METHOD_NAMING
-                        . '|' . self::SKIP_TAG_METHOD_NAMING . ')\s+' . $funcName . '\n~';
+            $reg      = '~[ *]*\@('.self::SKIP_TAG_PUBLIC_METHOD_NAMING
+                        .'|'.self::SKIP_TAG_METHOD_NAMING.')\s+'.$funcName.'\n~';
             if (preg_match($reg, $content, $m)) {
                 return true;
             }
         }
-        return false;
-    }
 
-    /**
-     * Find lines for a string
-     *
-     * @param string $find
-     * @param string $content
-     * @param bool   $once
-     * @return array|int
-     */
-    protected function _findLines($find, $content, $once = false)
-    {
-        return LineFinder::findLines($find, $content, $once);
+        return false;
     }
 }

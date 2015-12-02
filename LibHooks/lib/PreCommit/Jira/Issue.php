@@ -11,38 +11,6 @@ use chobie\Jira as JiraLib;
 class Issue extends JiraLib\Issue
 {
     /**
-     * Get GreenHooper sprints in human readable format
-     *
-     * @return array
-     */
-    public function getSprints()
-    {
-        if (!isset($this->fields['Sprint/s'])) {
-            $sprints = array();
-            $sprintsDraft = $this->get('Sprint') ?: array();
-            foreach ($sprintsDraft as $draft) {
-                $sprints[] = $this->_parseSprintString($draft);
-            }
-            $this->fields['Sprint/s'] = $sprints;
-        }
-        return $this->fields['Sprint/s'];
-    }
-
-    /**
-     * Get params from GreenHooper sprint string
-     *
-     * @param string $sprintDraft
-     * @return array
-     */
-    protected function _parseSprintString($sprintDraft)
-    {
-        $start  = strpos($sprintDraft, '[');
-        $paramsStr = trim(substr($sprintDraft, $start), '[]');
-        parse_str(str_replace(',', '&', $paramsStr), $params);
-        return $params;
-    }
-
-    /**
      * Get sprints simple
      *
      * @param bool $addState
@@ -57,7 +25,42 @@ class Issue extends JiraLib\Issue
                 $sprints[$sprint['id']] .= " ({$sprint['state']})";
             }
         }
+
         return $sprints;
+    }
+
+    /**
+     * Get GreenHooper sprints in human readable format
+     *
+     * @return array
+     */
+    public function getSprints()
+    {
+        if (!isset($this->fields['Sprint/s'])) {
+            $sprints      = array();
+            $sprintsDraft = $this->get('Sprint') ?: array();
+            foreach ($sprintsDraft as $draft) {
+                $sprints[] = $this->_parseSprintString($draft);
+            }
+            $this->fields['Sprint/s'] = $sprints;
+        }
+
+        return $this->fields['Sprint/s'];
+    }
+
+    /**
+     * Get params from GreenHooper sprint string
+     *
+     * @param string $sprintDraft
+     * @return array
+     */
+    protected function _parseSprintString($sprintDraft)
+    {
+        $start     = strpos($sprintDraft, '[');
+        $paramsStr = trim(substr($sprintDraft, $start), '[]');
+        parse_str(str_replace(',', '&', $paramsStr), $params);
+
+        return $params;
     }
 
     /**
@@ -68,6 +71,7 @@ class Issue extends JiraLib\Issue
     public function getStatusName()
     {
         $status = $this->getStatus();
+
         return isset($status['name']) ? $status['name'] : null;
     }
 
@@ -81,6 +85,7 @@ class Issue extends JiraLib\Issue
         if (isset($this->fields['status'])) {
             return $this->fields['status'];
         }
+
         return null;
     }
 
@@ -92,17 +97,19 @@ class Issue extends JiraLib\Issue
     public function getTypeName()
     {
         $type = $this->getIssueType();
+
         return isset($type['name']) ? $type['name'] : null;
     }
 
     /**
-     * Get Affects Version/s
+     * Get summary
      *
-     * @return array
+     * @return string
      */
-    public function getAffectsVersions()
+    public function getIssueType()
     {
-        return $this->get('Affects Version/s') ?: array();
+        return isset($this->fields['issuetype']['name'])
+            ? $this->fields['issuetype']['name'] : null;
     }
 
     /**
@@ -116,7 +123,18 @@ class Issue extends JiraLib\Issue
         foreach ($this->getAffectsVersions() as $version) {
             $versions[] = $version['name'];
         }
+
         return $versions;
+    }
+
+    /**
+     * Get Affects Version/s
+     *
+     * @return array
+     */
+    public function getAffectsVersions()
+    {
+        return $this->get('Affects Version/s') ?: array();
     }
 
     /**
@@ -130,6 +148,7 @@ class Issue extends JiraLib\Issue
         foreach ($this->getFixVersions() as $version) {
             $versions[] = $version['name'];
         }
+
         return $versions;
     }
 
@@ -146,10 +165,12 @@ class Issue extends JiraLib\Issue
             $authors = $this->getChangeLogResolveAuthors();
         }
         if (!$authors) {
-            $authors  = array($this->getIssueAssignee() . ' (assignee)');
+            $authors = array($this->getIssueAssignee().' (assignee)');
         }
+
         return $authors ?: array();
     }
+
     /**
      * Get issue VCS authors
      *
@@ -162,6 +183,7 @@ class Issue extends JiraLib\Issue
         if ($commits && isset($commits[$this->getKey()])) {
             $authors = array_keys($commits[$this->getKey()]['hash']);
         }
+
         return $authors;
     }
 
@@ -189,6 +211,7 @@ class Issue extends JiraLib\Issue
                 }
             }
         }
+
         return $authors;
     }
 
@@ -200,13 +223,14 @@ class Issue extends JiraLib\Issue
     public function getIssueAssignee()
     {
         $assignee = $this->getAssignee();
+
         return $assignee['displayName'];
     }
 
     /**
      * Get issue change log
      *
-     * @param bool  $reverse
+     * @param bool $reverse
      * @return array
      */
     public function getChangeLog($reverse = true)
@@ -216,6 +240,7 @@ class Issue extends JiraLib\Issue
         if ($reverse) {
             $changeLog = array_reverse($changeLog, true);
         }
+
         return $changeLog;
     }
 
@@ -227,16 +252,5 @@ class Issue extends JiraLib\Issue
     public function getSummary()
     {
         return $this->fields['summary'];
-    }
-
-    /**
-     * Get summary
-     *
-     * @return string
-     */
-    public function getIssueType()
-    {
-        return isset($this->fields['issuetype']['name'])
-            ? $this->fields['issuetype']['name'] : null;
     }
 }

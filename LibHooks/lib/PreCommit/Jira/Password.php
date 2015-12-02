@@ -1,8 +1,8 @@
 <?php
 namespace PreCommit\Jira;
 
+use ILBYNINKHULN\PasswordException as PasswordException;
 use PreCommit\Exception as UserException;
-use \ILBYNINKHULN\PasswordException as PasswordException;
 
 require_once '_password.php';
 

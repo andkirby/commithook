@@ -17,11 +17,16 @@ class CommitMsg extends AbstractValidator
     /**#@+
      * Error codes
      */
-    const CODE_BAD_COMMIT_MESSAGE = 'badCommitMessage';
-    const CODE_VERB_INCORRECT = 'badCommitVerb';
+    const CODE_BAD_COMMIT_MESSAGE   = 'badCommitMessage';
+
+    const CODE_VERB_INCORRECT       = 'badCommitVerb';
+
     const CODE_ISSUE_TYPE_INCORRECT = 'badIssueType';
-    const CODE_VERB_NOT_FOUND = 'commitVerbNotFound';
-    const CODE_KEY_NOT_SET = 'commitKeyNotSet';
+
+    const CODE_VERB_NOT_FOUND       = 'commitVerbNotFound';
+
+    const CODE_KEY_NOT_SET          = 'commitKeyNotSet';
+
     /**#@-*/
 
     /**
@@ -29,13 +34,14 @@ class CommitMsg extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_BAD_COMMIT_MESSAGE   => 'Head of commit message "%value%" has improper form.',
-        self::CODE_VERB_INCORRECT       => 'Commit verb "%value%" is not suitable for the issue.',
-        self::CODE_ISSUE_TYPE_INCORRECT => 'Issue type "%value%" is not suitable to check verb properly. Please take a look your configuration.',
-        self::CODE_VERB_NOT_FOUND       => 'Commit verb "%value%" not found.',
-        self::CODE_KEY_NOT_SET          => 'Required commit key "%value%" is not set.',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_BAD_COMMIT_MESSAGE   => 'Head of commit message "%value%" has improper form.',
+            self::CODE_VERB_INCORRECT       => 'Commit verb "%value%" is not suitable for the issue.',
+            self::CODE_ISSUE_TYPE_INCORRECT => 'Issue type "%value%" is not suitable to check verb properly. Please take a look your configuration.',
+            self::CODE_VERB_NOT_FOUND       => 'Commit verb "%value%" not found.',
+            self::CODE_KEY_NOT_SET          => 'Required commit key "%value%" is not set.',
+        );
 
     /**
      * Message interpreting type
@@ -67,7 +73,7 @@ class CommitMsg extends AbstractValidator
      * Checking for interpreter errors
      *
      * @param Message $message
-     * @param string $file
+     * @param string  $file
      * @return bool
      */
     public function validate($message, $file)
@@ -75,6 +81,7 @@ class CommitMsg extends AbstractValidator
         if (!$this->_matchMessage($message)) {
             $this->_addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $message->head);
         }
+
         return !$this->_errorCollector->hasErrors();
     }
 
@@ -97,6 +104,7 @@ class CommitMsg extends AbstractValidator
                 return true;
             }
         }
+
         return false;
     }
 
@@ -104,7 +112,7 @@ class CommitMsg extends AbstractValidator
      * Get result by external matching
      *
      * @param Message $message
-     * @param array $config
+     * @param array   $config
      * @return bool
      * @throws \PreCommit\Exception
      */
@@ -151,6 +159,7 @@ class CommitMsg extends AbstractValidator
                 }
                 if (!isset($result[$name]) || !$result[$name]) {
                     $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $name);
+
                     return false;
                 }
             }
@@ -164,6 +173,7 @@ class CommitMsg extends AbstractValidator
             $key = array_search($message->verb, $this->_getVerbs());
             if (false === $key) {
                 $this->_addError('Commit Message', self::CODE_VERB_NOT_FOUND, $message->verb);
+
                 return false;
             }
 
@@ -171,18 +181,23 @@ class CommitMsg extends AbstractValidator
             if (!$this->_errorCollector->hasErrors()) {
                 if (!$message->issue->getType()) {
                     $this->_addError(
-                        'Commit Message', self::CODE_ISSUE_TYPE_INCORRECT, $message->issue->getOriginalType()
+                        'Commit Message',
+                        self::CODE_ISSUE_TYPE_INCORRECT,
+                        $message->issue->getOriginalType()
                     );
+
                     return false;
                 }
                 //it's cannot be processed if issue type is not valid
                 $allowed = $this->_getAllowedVerbs($message->issue->getType());
                 if (!isset($allowed[$key]) || !$allowed[$key]) {
                     $this->_addError('Commit Message', self::CODE_VERB_INCORRECT, $message->verb);
+
                     return false;
                 }
             }
         }
+
         return true;
     }
 
@@ -198,10 +213,15 @@ class CommitMsg extends AbstractValidator
         if (!$type) {
             throw new Exception('Empty issue type.');
         }
-        return (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/'
-                                                        . $this->_type . '/' . $type)
-            ?: (array)$this->_getConfig()->getNodeArray('validators/IssueType/issue/verb/allowed/default/'
-                                                        . $type);
+
+        return (array) $this->_getConfig()->getNodeArray(
+            'validators/IssueType/issue/verb/allowed/'
+            .$this->_type.'/'.$type
+        )
+            ?: (array) $this->_getConfig()->getNodeArray(
+                'validators/IssueType/issue/verb/allowed/default/'
+                .$type
+            );
     }
 
     /**
@@ -211,8 +231,8 @@ class CommitMsg extends AbstractValidator
      */
     protected function _getVerbs()
     {
-        return (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->_type)
-            ?: (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
+        return (array) $this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->_type)
+            ?: (array) $this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
     /**

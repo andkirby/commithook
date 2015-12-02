@@ -12,10 +12,15 @@ class CodingStandardPhtml extends AbstractValidator
      * Error codes
      */
     const CODE_PHTML_ALTERNATIVE_SYNTAX = 'nonAlterSyntax';
+
     const CODE_PHTML_GAPS               = 'redundantGapsPhtml';
+
     const CODE_PHTML_UNDERSCORE_IN_VAR  = 'variableHasUnderscorePhtml';
+
     const CODE_PHTML_PROTECTED_METHOD   = 'protectedMethodUsage';
+
     const CODE_PHTML_CLASS              = 'classUsage';
+
     /**#@-*/
 
     /**
@@ -23,13 +28,14 @@ class CodingStandardPhtml extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHTML_ALTERNATIVE_SYNTAX => 'No ability to use braces in the PHTML code. Please use alternative syntax as if..endif. Original line: %value%',
-        self::CODE_PHTML_GAPS               => 'File contain at least two gaps in succession %value% time(s).',
-        self::CODE_PHTML_UNDERSCORE_IN_VAR  => 'Underscore in variable(s): %vars%. Original line: %value%',
-        self::CODE_PHTML_PROTECTED_METHOD   => 'It is not possible to use protected method of $this object in a template. Original line: %value%',
-        self::CODE_PHTML_CLASS              => 'It is not possible classes in templates. Original line: %value%',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHTML_ALTERNATIVE_SYNTAX => 'No ability to use braces in the PHTML code. Please use alternative syntax as if..endif. Original line: %value%',
+            self::CODE_PHTML_GAPS               => 'File contain at least two gaps in succession %value% time(s).',
+            self::CODE_PHTML_UNDERSCORE_IN_VAR  => 'Underscore in variable(s): %vars%. Original line: %value%',
+            self::CODE_PHTML_PROTECTED_METHOD   => 'It is not possible to use protected method of $this object in a template. Original line: %value%',
+            self::CODE_PHTML_CLASS              => 'It is not possible classes in templates. Original line: %value%',
+        );
 
     /**
      * Validate content
@@ -61,6 +67,7 @@ class CodingStandardPhtml extends AbstractValidator
         if ($match[0]) {
             $this->_addError($file, self::CODE_PHTML_GAPS, count($match[0]));
         }
+
         return $this;
     }
 
@@ -73,7 +80,7 @@ class CodingStandardPhtml extends AbstractValidator
      */
     protected function _validateCodeStyleByLines($content, $file)
     {
-        $content = $this->_filterContent($content);
+        $content     = $this->_filterContent($content);
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         foreach ($originalArr as $line => $str) {
             $str = trim($str);
@@ -86,6 +93,7 @@ class CodingStandardPhtml extends AbstractValidator
             $this->_validateStringNoProtectedMethodUsage($file, $str, $line);
             $this->_validateStringNoClassesUsage($file, $str, $line);
         }
+
         return $this;
     }
 
@@ -100,6 +108,27 @@ class CodingStandardPhtml extends AbstractValidator
     protected function _filterContent($content)
     {
         return preg_replace('/<script(\n|\r|.)*?<\/script>/', '', $content);
+    }
+
+    /**
+     * Validate string for alternative syntax usage of if..endif, foreach..endforeach, etc.
+     *
+     * @param string $file
+     * @param string $str
+     * @param int    $line
+     * @return $this
+     */
+    protected function _validateStringAlternativeSyntaxUsage($file, $str, $line)
+    {
+        $operators = 'elseif|else if|if|switch|foreach|for|while';
+        if (preg_match('/[^A-z0-9]+(?:'.$operators.')[^A-z]?\(.*?\).*/i', $str, $b)
+            && substr_count($str, '(') === substr_count($str, ')') //ignore multi-line conditions
+            && !preg_match('/[^A-z0-9]+(?:'.$operators.').*?\).*?:/i', $b[0], $m)
+        ) {
+            $this->_addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
+        }
+
+        return $this;
     }
 
     /**
@@ -124,6 +153,7 @@ class CodingStandardPhtml extends AbstractValidator
                 $this->_addError($file, self::CODE_PHTML_UNDERSCORE_IN_VAR, $values, $line);
             }
         }
+
         return $this;
     }
 
@@ -132,27 +162,7 @@ class CodingStandardPhtml extends AbstractValidator
      *
      * @param string $file
      * @param string $str
-     * @param int $line
-     * @return $this
-     */
-    protected function _validateStringAlternativeSyntaxUsage($file, $str, $line)
-    {
-        $operators = 'elseif|else if|if|switch|foreach|for|while';
-        if (preg_match('/[^A-z0-9]+(?:' . $operators . ')[^A-z]?\(.*?\).*/i', $str, $b)
-            && substr_count($str, '(') === substr_count($str, ')') //ignore multi-line conditions
-            && !preg_match('/[^A-z0-9]+(?:' . $operators . ').*?\).*?:/i', $b[0], $m)
-        ) {
-            $this->_addError($file, self::CODE_PHTML_ALTERNATIVE_SYNTAX, $str, $line);
-        }
-        return $this;
-    }
-
-    /**
-     * Validate string for alternative syntax usage of if..endif, foreach..endforeach, etc.
-     *
-     * @param string $file
-     * @param string $str
-     * @param int $line
+     * @param int    $line
      * @return $this
      */
     protected function _validateStringNoProtectedMethodUsage($file, $str, $line)
@@ -160,6 +170,7 @@ class CodingStandardPhtml extends AbstractValidator
         if (preg_match('/\$this-\>_[^_]/', $str)) {
             $this->_addError($file, self::CODE_PHTML_PROTECTED_METHOD, $str, $line);
         }
+
         return $this;
     }
 
@@ -168,7 +179,7 @@ class CodingStandardPhtml extends AbstractValidator
      *
      * @param string $file
      * @param string $str
-     * @param int $line
+     * @param int    $line
      * @return $this
      */
     protected function _validateStringNoClassesUsage($file, $str, $line)
@@ -176,6 +187,7 @@ class CodingStandardPhtml extends AbstractValidator
         if (preg_match('/[A-z_]{3,}\:\:[A-z_]/', $str)) {
             $this->_addError($file, self::CODE_PHTML_CLASS, $str, $line);
         }
+
         return $this;
     }
 }

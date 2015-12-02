@@ -1,5 +1,6 @@
 <?php
 namespace PreCommit\Validator;
+
 use PreCommit\Config;
 use PreCommit\Exception;
 
@@ -13,8 +14,10 @@ class PhpClass extends AbstractValidator
     /**#@+
      * Error codes
      */
-    const CODE_PHP_TAG = 'noPhpTagStart';
+    const CODE_PHP_TAG       = 'noPhpTagStart';
+
     const CODE_PHP_INTERPRET = 'phpInterpret';
+
     /**#@-*/
 
     /**
@@ -22,10 +25,11 @@ class PhpClass extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHP_TAG => 'File does not start with php opening tag. Any preceding rows may start output.',
-        self::CODE_PHP_INTERPRET => "PHP interpreter (%path%) has found run-time errors! Check this: \n %value%",
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHP_TAG       => 'File does not start with php opening tag. Any preceding rows may start output.',
+            self::CODE_PHP_INTERPRET => "PHP interpreter (%path%) has found run-time errors! Check this: \n %value%",
+        );
 
     /**
      * Path PHP interpreter
@@ -54,7 +58,7 @@ class PhpClass extends AbstractValidator
     /**
      * Checking for interpreter errors
      *
-     * @param string $content  Absolute path
+     * @param string $content Absolute path
      * @param string $file
      * @return bool
      */
@@ -63,6 +67,7 @@ class PhpClass extends AbstractValidator
         $this->_validatePhpOpenedTag($content, $file);
         $filePath = func_get_arg(2);
         $this->_validatePhpByInterpret($filePath, $file);
+
         return !$this->_errorCollector->hasErrors();
     }
 
@@ -78,6 +83,7 @@ class PhpClass extends AbstractValidator
         if (0 !== strpos($content, '<?')) {
             $this->_addError($file, self::CODE_PHP_TAG);
         }
+
         return $this;
     }
 
@@ -98,11 +104,12 @@ class PhpClass extends AbstractValidator
                 $file,
                 self::CODE_PHP_INTERPRET,
                 array(
-                     'path'  => $this->_interpreterPath,
-                     'value' => $value,
+                    'path'  => $this->_interpreterPath,
+                    'value' => $value,
                 )
             );
         }
+
         return $this;
     }
 }

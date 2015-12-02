@@ -87,7 +87,8 @@ abstract class AbstractAdapter
     protected function _getVcsAdapter($type)
     {
         $type  = ucfirst($type);
-        $class = 'PreCommit\\Vcs\\' . $type;
+        $class = 'PreCommit\\Vcs\\'.$type;
+
         return new $class();
     }
 
@@ -121,13 +122,14 @@ abstract class AbstractAdapter
             $decorLength = 30 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
             $output .= str_repeat('=', round($decorLength - 0.1))
-                       . " $file " . str_repeat('=', round($decorLength)) . PHP_EOL;
+                       ." $file ".str_repeat('=', round($decorLength)).PHP_EOL;
             foreach ($fileErrors as $errorsType) {
                 foreach ($errorsType as $error) {
-                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message']) . "\n";
+                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message'])."\n";
                 }
             }
         }
+
         return $output;
     }
 
@@ -151,13 +153,14 @@ abstract class AbstractAdapter
     public function addObserver($event, \Closure $observer)
     {
         $this->_eventObservers[$event][] = $observer;
+
         return $this;
     }
 
     /**
      * Dispatch event
      *
-     * @param string       $event
+     * @param string            $event
      * @param array|string|null $params
      * @return $this
      */
@@ -169,6 +172,7 @@ abstract class AbstractAdapter
                 $observer($this, $params);
             }
         }
+
         return $this;
     }
 
@@ -182,10 +186,11 @@ abstract class AbstractAdapter
     protected function _loadValidator($name, array $options = array())
     {
         if (empty($this->_validators[$name])) {
-            $class                    = '\\PreCommit\\Validator\\' . str_replace('-', '\\', $name);
+            $class                    = '\\PreCommit\\Validator\\'.str_replace('-', '\\', $name);
             $options                  = array_merge($this->_getValidatorDefaultOptions(), $options);
             $this->_validators[$name] = new $class($options);
         }
+
         return $this->_validators[$name];
     }
 
@@ -214,6 +219,7 @@ abstract class AbstractAdapter
             $class                 = "\\PreCommit\\Filter\\$name";
             $this->_filters[$name] = new $class($options);
         }
+
         return $this->_filters[$name];
     }
 }

@@ -12,6 +12,7 @@ class UnresolvedConflict extends AbstractValidator
      * Error codes
      */
     const MERGE_CONFLICT = 'mergeConflictGarbage';
+
     /**#@-*/
 
     /**
@@ -19,9 +20,10 @@ class UnresolvedConflict extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::MERGE_CONFLICT => 'File contains unresolved VCS conflict.',
-    );
+    protected $_errorMessages
+        = array(
+            self::MERGE_CONFLICT => 'File contains unresolved VCS conflict.',
+        );
 
     /**
      * Check exists VCS conflicts
@@ -33,6 +35,7 @@ class UnresolvedConflict extends AbstractValidator
     public function validate($content, $file)
     {
         $this->_validateGitConflict($content, $file);
+
         return !$this->_errorCollector->hasErrors();
     }
 
@@ -46,12 +49,13 @@ class UnresolvedConflict extends AbstractValidator
     protected function _validateGitConflict($content, $file)
     {
         //checking for windows line breaks
-        if (strpos($content, '<<<<<<<' . ' HEAD') || strpos($content, "\n>>>>>>> ")) {
+        if (strpos($content, '<<<<<<<'.' HEAD') || strpos($content, "\n>>>>>>> ")) {
             $this->_addError(
                 $file,
                 self::MERGE_CONFLICT
             );
         }
+
         return $this;
     }
 }

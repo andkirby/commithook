@@ -198,9 +198,9 @@ class Jira implements InterpreterInterface
      */
     protected function interpretShortMessage($message)
     {
-        $verbs = array_keys($this->getVerbs());
-        $verbs = implode('|', $verbs);
-        $verbs = "$verbs";
+        $verbs           = array_keys($this->getVerbs());
+        $verbs           = implode('|', $verbs);
+        $verbs           = "$verbs";
         $issueKeyRegular = $this->getIssueKeyRegular();
         preg_match("/^(($verbs) ?)?(($issueKeyRegular) ?)?([^\n]{2,})?/", trim($message), $m);
 

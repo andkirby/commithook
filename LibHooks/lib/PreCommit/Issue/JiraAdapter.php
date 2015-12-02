@@ -45,6 +45,7 @@ class JiraAdapter extends AdapterAbstract implements AdapterInterface
     public function __construct($issueKey)
     {
         $this->_issueKey = (string) $issueKey;
+        parent::__construct($issueKey);
     }
 
     /**

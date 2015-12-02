@@ -16,6 +16,7 @@ class IssueStatus extends AbstractValidator
      * Error codes
      */
     const CODE_WRONG_ISSUE_STATUS = 'wrongIssueStatus';
+
     /**#@-*/
 
     /**
@@ -23,9 +24,10 @@ class IssueStatus extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_WRONG_ISSUE_STATUS => 'The issue status "%value%" does not support to add new commit.',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_WRONG_ISSUE_STATUS => 'The issue status "%value%" does not support to add new commit.',
+        );
 
     /**
      * Set type
@@ -57,6 +59,7 @@ class IssueStatus extends AbstractValidator
         ) {
             $this->_addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
         }
+
         return !$this->_errorCollector->hasErrors();
     }
 
@@ -67,9 +70,12 @@ class IssueStatus extends AbstractValidator
      */
     protected function _getStatuses()
     {
-        return (array)$this->_getConfig()->getNodeArray(
-            'validators/IssueStatus/issue/status/' . $this->_getTrackerType() . '/allowed/' . $this->_type)
-            ?: (array)$this->_getConfig()->getNodeArray('validators/IssueStatus/issue/status/' . $this->_getTrackerType() . '/allowed/' . $this->_type);
+        return (array) $this->_getConfig()->getNodeArray(
+            'validators/IssueStatus/issue/status/'.$this->_getTrackerType().'/allowed/'.$this->_type
+        )
+            ?: (array) $this->_getConfig()->getNodeArray(
+                'validators/IssueStatus/issue/status/'.$this->_getTrackerType().'/allowed/'.$this->_type
+            );
     }
 
     /**
@@ -79,7 +85,7 @@ class IssueStatus extends AbstractValidator
      */
     protected function _getTrackerType()
     {
-        return (string)$this->_getConfig()->getNode('tracker/type');
+        return (string) $this->_getConfig()->getNode('tracker/type');
     }
 
     /**
@@ -101,6 +107,7 @@ class IssueStatus extends AbstractValidator
     protected function _isAllowed($status)
     {
         $allowedStatuses = $this->_getStatuses();
+
         return isset($allowedStatuses[$status])
                && $allowedStatuses[$status];
     }

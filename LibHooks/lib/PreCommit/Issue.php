@@ -32,13 +32,14 @@ class Issue
                 return null;
             }
 
-            $class   = self::_getConfig()->getNode('tracker/' . $tracker . '/issue/adapter/class');
+            $class = self::_getConfig()->getNode('tracker/'.$tracker.'/issue/adapter/class');
 
             self::$_adapters[$key] = new $class($key);
             if (!(self::$_adapters[$key] instanceof AdapterInterface)) {
                 throw new Exception("Class $class doesn't implement \\PreCommit\\Issue\\AdapterInterface.");
             }
         }
+
         return self::$_adapters[$key];
     }
 
@@ -49,7 +50,7 @@ class Issue
      */
     static protected function _getTrackerType()
     {
-        return (string)self::_getConfig()->getNode('tracker/type');
+        return (string) self::_getConfig()->getNode('tracker/type');
     }
 
     /**

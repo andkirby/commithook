@@ -9,16 +9,6 @@ use PreCommit\Exception;
 class Git implements AdapterInterface
 {
     /**
-     * Get path to project
-     *
-     * @return string
-     */
-    public function getCodePath()
-    {
-        return trim(`git rev-parse --show-toplevel`);
-    }
-
-    /**
      * Get affected files
      *
      * @return string
@@ -28,6 +18,7 @@ class Git implements AdapterInterface
         if (defined('TEST_MODE') && TEST_MODE) {
             return array_filter(explode("\n", `git ls-files -m`));
         }
+
         return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
     }
 
@@ -43,7 +34,29 @@ class Git implements AdapterInterface
         if (!file_exists($file)) {
             throw new Exception("Commit message file '$file' not found.");
         }
+
         return file_get_contents($file);
+    }
+
+    /**
+     * Get commit message file
+     *
+     * @return string
+     */
+    protected function _getCommitMessageFile()
+    {
+        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'
+               .DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+    }
+
+    /**
+     * Get path to project
+     *
+     * @return string
+     */
+    public function getCodePath()
+    {
+        return trim(`git rev-parse --show-toplevel`);
     }
 
     /**
@@ -59,18 +72,8 @@ class Git implements AdapterInterface
         if (false === file_put_contents($file, $message)) {
             throw new Exception("Commit message file '$file' cannot be updated.");
         }
-        return $this;
-    }
 
-    /**
-     * Get commit message file
-     *
-     * @return string
-     */
-    protected function _getCommitMessageFile()
-    {
-        return $this->getCodePath() . DIRECTORY_SEPARATOR . '.git'
-        . DIRECTORY_SEPARATOR . 'COMMIT_EDITMSG';
+        return $this;
     }
 
     /**
@@ -80,7 +83,8 @@ class Git implements AdapterInterface
      */
     public function isMergeInProgress()
     {
-        $mergeFile = $this->getCodePath() . DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR . 'MERGE_HEAD';
+        $mergeFile = $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'MERGE_HEAD';
+
         return file_exists($mergeFile);
     }
 }

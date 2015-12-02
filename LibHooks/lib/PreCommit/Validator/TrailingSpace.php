@@ -12,7 +12,9 @@ class TrailingSpace extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_REDUNDANT_TRAILING_SPACES = 'redundantTrailingSpaces';
-    const CODE_PHP_NO_END_TRAILING_LINE = 'noTrailingEndLine';
+
+    const CODE_PHP_NO_END_TRAILING_LINE      = 'noTrailingEndLine';
+
     /**#@-*/
 
     /**
@@ -20,10 +22,11 @@ class TrailingSpace extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHP_REDUNDANT_TRAILING_SPACES => 'Contains trailing space(s) at lease %value% times.',
-        self::CODE_PHP_NO_END_TRAILING_LINE => 'Missing trailing line in the end of file.',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHP_REDUNDANT_TRAILING_SPACES => 'Contains trailing space(s) at lease %value% times.',
+            self::CODE_PHP_NO_END_TRAILING_LINE      => 'Missing trailing line in the end of file.',
+        );
 
     /**
      * Checking for interpreter errors
@@ -36,24 +39,8 @@ class TrailingSpace extends AbstractValidator
     {
         $this->_validateRedundantTrailingSpaces($content, $file);
         $this->_validateTrailingLine($content, $file);
-        return !$this->_errorCollector->hasErrors();
-    }
 
-    /**
-     * Check mandatory trailing line in the end of file
-     *
-     * @param string $content
-     * @param string $file
-     * @return $this
-     */
-    protected function _validateTrailingLine($content, $file)
-    {
-        $lines = explode("\n", $content);
-        $lastLine = array_pop($lines);
-        if ($lastLine != '') {
-            $this->_addError($file, self::CODE_PHP_NO_END_TRAILING_LINE);
-        }
-        return $this;
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
@@ -73,6 +60,25 @@ class TrailingSpace extends AbstractValidator
                 count($matches[0])
             );
         }
+
+        return $this;
+    }
+
+    /**
+     * Check mandatory trailing line in the end of file
+     *
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    protected function _validateTrailingLine($content, $file)
+    {
+        $lines    = explode("\n", $content);
+        $lastLine = array_pop($lines);
+        if ($lastLine != '') {
+            $this->_addError($file, self::CODE_PHP_NO_END_TRAILING_LINE);
+        }
+
         return $this;
     }
 }

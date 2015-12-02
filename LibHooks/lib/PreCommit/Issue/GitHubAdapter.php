@@ -261,7 +261,7 @@ class GitHubAdapter extends AdapterAbstract implements AdapterInterface
      */
     protected function _getCacheDir()
     {
-        return $this->_getConfig()->getCacheDir(COMMIT_HOOKS_ROOT);
+        return $this->_getConfig()->getCacheDir();
     }
 
     /**

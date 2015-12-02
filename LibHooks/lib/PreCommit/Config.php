@@ -40,6 +40,52 @@ class Config extends \SimpleXMLElement
     protected static $_configFiles = array();
 
     /**
+     * Get config cache file
+     *
+     * @return string
+     */
+    public static function getCacheFile()
+    {
+        return self::getCacheDir()
+               .DIRECTORY_SEPARATOR
+               .md5(self::getInstance()->getNode('version').static::getProjectDir())
+               .'.xml';
+    }
+
+    /**
+     * Get cache directory
+     *
+     * @return string
+     * @throws Exception
+     */
+    public static function getCacheDir()
+    {
+        $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
+        $dir  = self::_readPath($path);
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0750, true)) {
+                throw new Exception("Unable to create cache directory by path '$dir'");
+            }
+        }
+
+        return realpath($dir);
+    }
+
+    /**
+     * Get node by xpath
+     *
+     * @param string $xpath
+     * @return string|null
+     */
+    public function getNode($xpath)
+    {
+        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = isset($result[0]) ? (string) $result[0] : null;
+
+        return $result;
+    }
+
+    /**
      * Get config instance
      *
      * @param array $options
@@ -51,7 +97,7 @@ class Config extends \SimpleXMLElement
         if (!self::$_instance || !empty($options['file'])) {
             self::$_instance = self::loadInstance($options);
             if (empty($options['root_dir'])) {
-                self::setSrcRootDir(realpath(__DIR__ . '/../../'));
+                self::setSrcRootDir(realpath(__DIR__.'/../../'));
             }
             if (!empty($options['project_dir'])) {
                 self::setProjectDir($options['project_dir']);
@@ -60,7 +106,76 @@ class Config extends \SimpleXMLElement
                 self::mergeExtraConfig();
             }
         }
+
         return self::$_instance;
+    }
+
+    /**
+     * Get project dir
+     *
+     * @todo It should be removed from Config
+     * @return string
+     */
+    public static function getProjectDir()
+    {
+        return static::$_projectDir;
+    }
+
+    /**
+     * Set project dir by hook file
+     *
+     * @todo It should be removed from Config
+     * @param string $dir
+     * @return string
+     */
+    public static function setProjectDir($dir)
+    {
+        static::$_projectDir = $dir;
+    }
+
+    /**
+     * Read path
+     *
+     * @param string $path
+     * @return string
+     * @throws Exception
+     */
+    protected static function _readPath($path)
+    {
+        $updated = false;
+        if (0 === strpos($path, 'PROJECT_DIR')) {
+            $updated = true;
+            $path    = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
+        }
+        if (false !== strpos($path, 'PROJECT_NAME')) {
+            $updated = true;
+            $path    = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
+        }
+        if (0 === strpos($path, 'HOME')) {
+            $updated = true;
+            $path    = str_replace('HOME', self::_getHomeUserDir(), $path);
+        }
+        if (!$updated) {
+            $path = static::$_rootDir.DIRECTORY_SEPARATOR.$path;
+        }
+
+        return $path;
+    }
+
+    /**
+     * Catch exception and show failed XPath
+     *
+     * @param string $path
+     * @return \SimpleXMLElement[]
+     * @throws \PreCommit\Exception
+     */
+    public function xpath($path)
+    {
+        try {
+            return parent::xpath($path);
+        } catch (\Exception $e) {
+            throw new Exception("Invalid XPath '$path'");
+        }
     }
 
     /**
@@ -77,7 +192,7 @@ class Config extends \SimpleXMLElement
             throw new Exception('Options parameter "file" is required.');
         }
         if (!file_exists($options['file'])) {
-            $options['file'] = $options['file'] . '.dist';
+            $options['file'] = $options['file'].'.dist';
         }
         if (!file_exists($options['file'])) {
             throw new Exception("File '{$options['file']}' not found.");
@@ -88,30 +203,20 @@ class Config extends \SimpleXMLElement
         if ($setFile) {
             self::setConfigFile('root', $options['file']);
         }
+
         return $config;
     }
 
     /**
-     * Get config cache file
+     * Set project dir by hook file
      *
+     * @todo  It should be removed from Config
+     * @param string $dir
      * @return string
      */
-    public static function getCacheFile()
+    public static function setSrcRootDir($dir)
     {
-        return self::getCacheDir()
-               . DIRECTORY_SEPARATOR
-               . md5(self::getInstance()->getNode('version') . static::getProjectDir())
-               . '.xml';
-    }
-
-    /**
-     * Check cache enabling
-     *
-     * @return null|string
-     */
-    public static function isCacheDisabled()
-    {
-        return (bool)self::getInstance()->getNode('disable_cache');
+        static::$_rootDir = rtrim($dir, '\\/');
     }
 
     /**
@@ -131,9 +236,11 @@ class Config extends \SimpleXMLElement
                 '='
             )) {
                 self::replaceInstance($configCached);
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -168,6 +275,59 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Get home user directory
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected static function _getHomeUserDir()
+    {
+        //@startSkipCommitHooks
+        if (isset($_SERVER['USERPROFILE'])) {
+            $home = $_SERVER['USERPROFILE'];
+        } elseif (isset($_SERVER['HOME'])) {
+            $home = $_SERVER['HOME'];
+        } else {
+            throw new Exception('Path to user home directory not found.');
+        }
+
+        //@finishSkipCommitHooks
+        return $home;
+    }
+
+    /**
+     * Get config file
+     *
+     * @param string $name
+     * @param string $file
+     * @return null|string
+     */
+    public static function setConfigFile($name, $file)
+    {
+        return self::$_configFiles[$name] = $file;
+    }
+
+    /**
+     * Check cache enabling
+     *
+     * @return null|string
+     */
+    public static function isCacheDisabled()
+    {
+        return (bool) self::getInstance()->getNode('disable_cache');
+    }
+
+    /**
+     * Replace instance
+     *
+     * @param Config $config
+     */
+    public static function replaceInstance(Config $config)
+    {
+        self::$_instance = $config;
+    }
+
+    /**
      * Get XML merger
      *
      * @return \PreCommit\XmlMerger
@@ -179,6 +339,7 @@ class Config extends \SimpleXMLElement
         $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
         $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
+
         return $merger;
     }
 
@@ -209,6 +370,40 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Get node array values
+     *
+     * @param string $xpath
+     * @return array|null
+     */
+    public function getNodeArray($xpath)
+    {
+        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = isset($result[0]) ? (array) $result[0] : array();
+        $result = json_decode(json_encode($result), true);
+
+        //remove XML comments (hack) TODO investigate a problem
+        unset($result['comment']);
+
+        return $result;
+    }
+
+    /**
+     * Load file to merge
+     *
+     * @param string $file
+     * @return \SimpleXMLElement
+     * @throws \PreCommit\Exception
+     */
+    protected static function _loadXmlFileToMerge($file)
+    {
+        try {
+            return simplexml_load_file($file);
+        } catch (\Exception $e) {
+            throw new Exception("Cannot load XML file '$file'");
+        }
+    }
+
+    /**
      * Get config file
      *
      * @param string $name
@@ -230,129 +425,6 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get config file
-     *
-     * @param string $name
-     * @param string $file
-     * @return null|string
-     */
-    public static function setConfigFile($name, $file)
-    {
-        return self::$_configFiles[$name] = $file;
-    }
-
-    /**
-     * Get home user directory
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected static function _getHomeUserDir()
-    {
-        //@startSkipCommitHooks
-        if (isset($_SERVER['USERPROFILE'])) {
-            $home = $_SERVER['USERPROFILE'];
-        } elseif (isset($_SERVER['HOME'])) {
-            $home = $_SERVER['HOME'];
-        } else {
-            throw new Exception('Path to user home directory not found.');
-        }
-        //@finishSkipCommitHooks
-        return $home;
-    }
-
-    /**
-     * Load file to merge
-     *
-     * @param string $file
-     * @return \SimpleXMLElement
-     * @throws \PreCommit\Exception
-     */
-    protected static function _loadXmlFileToMerge($file)
-    {
-        try {
-            return simplexml_load_file($file);
-        } catch (\Exception $e) {
-            throw new Exception("Cannot load XML file '$file'");
-        }
-    }
-
-    /**
-     * Get project dir
-     *
-     * @todo It should be removed from Config
-     * @return string
-     */
-    public static function getProjectDir()
-    {
-        return static::$_projectDir;
-    }
-
-    /**
-     * Set project dir by hook file
-     *
-     * @todo It should be removed from Config
-     * @param string $dir
-     * @return string
-     */
-    public static function setProjectDir($dir)
-    {
-        static::$_projectDir = $dir;
-    }
-
-    /**
-     * Set project dir by hook file
-     *
-     * @todo  It should be removed from Config
-     * @param string $dir
-     * @return string
-     */
-    public static function setSrcRootDir($dir)
-    {
-        static::$_rootDir = rtrim($dir, '\\/');
-    }
-
-    /**
-     * Replace instance
-     *
-     * @param Config $config
-     */
-    public static function replaceInstance(Config $config)
-    {
-        self::$_instance = $config;
-    }
-
-    /**
-     * Get node by xpath
-     *
-     * @param string $xpath
-     * @return string|null
-     */
-    public function getNode($xpath)
-    {
-        $result = $this->xpath(self::XPATH_START . $xpath);
-        $result = isset($result[0]) ? (string)$result[0] : null;
-        return $result;
-    }
-
-    /**
-     * Get node array values
-     *
-     * @param string $xpath
-     * @return array|null
-     */
-    public function getNodeArray($xpath)
-    {
-        $result = $this->xpath(self::XPATH_START . $xpath);
-        $result = isset($result[0]) ? (array)$result[0] : array();
-        $result = json_decode(json_encode($result), true);
-
-        //remove XML comments (hack) TODO investigate a problem
-        unset($result['comment']);
-        return $result;
-    }
-
-    /**
      * Get node/s by expression
      *
      * @param string $xpath
@@ -369,10 +441,12 @@ class Config extends \SimpleXMLElement
                 /** @var Config $node */
                 $data[$node->getName()] = $this->_getNodeValue($node);
             }
+
             return $data;
         } elseif ($result instanceof Config) {
             return $this->_getNodeValue($result);
         }
+
         return null;
     }
 
@@ -390,72 +464,11 @@ class Config extends \SimpleXMLElement
             foreach ($node->children() as $child) {
                 $data[$child->getName()] = $this->_getNodeValue($child);
             }
+
             return $data;
         } else {
-            return (string)$node;
+            return (string) $node;
         }
-    }
-
-    /**
-     * Catch exception and show failed XPath
-     *
-     * @param string $path
-     * @return \SimpleXMLElement[]
-     * @throws \PreCommit\Exception
-     */
-    public function xpath($path)
-    {
-        try {
-            return parent::xpath($path);
-        } catch (\Exception $e) {
-            throw new Exception("Invalid XPath '$path'");
-        }
-    }
-
-    /**
-     * Get cache directory
-     *
-     * @return string
-     * @throws Exception
-     */
-    public static function getCacheDir()
-    {
-        $path = trim(Config::getInstance()->getNode('cache_dir'), '\\/');
-        $dir  = self::_readPath($path);
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0750, true)) {
-                throw new Exception("Unable to create cache directory by path '$dir'");
-            }
-        }
-        return realpath($dir);
-    }
-
-    /**
-     * Read path
-     *
-     * @param string $path
-     * @return string
-     * @throws Exception
-     */
-    protected static function _readPath($path)
-    {
-        $updated = false;
-        if (0 === strpos($path, 'PROJECT_DIR')) {
-            $updated = true;
-            $path    = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
-        }
-        if (false !== strpos($path, 'PROJECT_NAME')) {
-            $updated = true;
-            $path    = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
-        }
-        if (0 === strpos($path, 'HOME')) {
-            $updated = true;
-            $path    = str_replace('HOME', self::_getHomeUserDir(), $path);
-        }
-        if (!$updated) {
-            $path = static::$_rootDir . DIRECTORY_SEPARATOR . $path;
-        }
-        return $path;
     }
 
     /**
@@ -475,7 +488,8 @@ class Config extends \SimpleXMLElement
 
         $result = $this->getNodeArray($xpath);
 
-        $result = isset($result[$last]) ? (array)$result[$last] : array();
+        $result = isset($result[$last]) ? (array) $result[$last] : array();
+
         return $result;
     }
 }

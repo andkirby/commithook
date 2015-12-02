@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Validator;
+
 use PreCommit\Validator\Helper\LineFinder;
-use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Class XML validator
@@ -14,14 +14,23 @@ class PhpDoc extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_DOC_MISSED            = 'phpDocMissed';
+
     const CODE_PHP_DOC_MESSAGE           = 'phpDocMessageMissed';
+
     const CODE_PHP_DOC_MISSED_GAP        = 'phpDocMissedGap';
+
     const CODE_PHP_DOC_ENTER_DESCRIPTION = 'phpDocEnterDescription';
+
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
+
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
+
     const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
+
     const CODE_PHP_DOC_VAR_EMPTY         = 'phpDocVarEmpty';
+
     const CODE_PHP_DOC_SINGLE_ASTERISK   = 'phpDocSingleAsterisk';
+
     /**#@-*/
 
     /**
@@ -29,17 +38,18 @@ class PhpDoc extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc has incomplete info: Enter description here... - Please, write a reasonable description.',
-        self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
-        self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
-        self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
-        self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in uppercase.\t%value%",
-        self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
-        self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
-        self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
-        self::CODE_PHP_DOC_SINGLE_ASTERISK   => 'There are found inline PHPDoc with single asterisk (*) at least %value% times. Please use double asterisk (e.g.: /** @var $this */).',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_PHP_DOC_ENTER_DESCRIPTION => 'PHPDoc has incomplete info: Enter description here... - Please, write a reasonable description.',
+            self::CODE_PHP_DOC_UNKNOWN           => "PHPDoc has incomplete info: 'unknown_type' - Please, specify a type.",
+            self::CODE_PHP_DOC_MISSED            => 'PHPDoc is missing for %value%',
+            self::CODE_PHP_DOC_MISSED_GAP        => 'Gap after description is missed in PHPDoc for %value%',
+            self::CODE_PHP_DOC_MESSAGE           => "There is PHPDoc message missed or first letter is not in uppercase.\t%value%",
+            self::CODE_PHP_DOC_EXTRA_GAP         => 'There are found extra gaps in PHPDoc block at least %value% times.',
+            self::CODE_PHP_DOC_VAR_NULL          => 'There are found "@var null" or "@param null" in PHPDoc block at least %value% times. Please describe it with more types.',
+            self::CODE_PHP_DOC_VAR_EMPTY         => 'There are found "@var" or "@param" which does not have described type in PHPDoc block at least %value% times. Please describe it',
+            self::CODE_PHP_DOC_SINGLE_ASTERISK   => 'There are found inline PHPDoc with single asterisk (*) at least %value% times. Please use double asterisk (e.g.: /** @var $this */).',
+        );
 
     /**
      * Validate PhpDocs
@@ -73,6 +83,17 @@ class PhpDoc extends AbstractValidator
     }
 
     /**
+     * Remove Group commented nodes
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function _cleanGroupCommentedNodes($content)
+    {
+        return preg_replace('/\s*\/\*\*\#\@\+(\s|\S)*?\/\*\*\#@\-\*\//', '', $content);
+    }
+
+    /**
      * Validate PHPDoc for contained "Enter_description here..."
      *
      * @param string $file
@@ -82,9 +103,10 @@ class PhpDoc extends AbstractValidator
      */
     protected function _validateEnterDescription($file, $str, $line)
     {
-        if (preg_match('/\*\s*Enter ' . 'description here/i', $str)) {
+        if (preg_match('/\*\s*Enter '.'description here/i', $str)) {
             $this->_addError($file, self::CODE_PHP_DOC_ENTER_DESCRIPTION, null, $line);
         }
+
         return $this;
     }
 
@@ -101,6 +123,7 @@ class PhpDoc extends AbstractValidator
         if (preg_match('/\*\x20\@.*?unknown_type/i', $str)) {
             $this->_addError($file, self::CODE_PHP_DOC_UNKNOWN, null, $line);
         }
+
         return $this;
     }
 
@@ -114,15 +137,18 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocsForClassItems($content, $file)
     {
         $reg = '/(?<!\*\/\x0D|\*\/)\x0A\x20{4}((?:public function|protected function|private function'
-            . '|function|const|public|protected|private)[^\x0A]*)/i';
+               .'|function|const|public|protected|private)[^\x0A]*)/i';
         if (preg_match_all($reg, $content, $matches)) {
             foreach ($matches[1] as $match) {
                 $this->_addError(
-                    $file, self::CODE_PHP_DOC_MISSED, $match,
+                    $file,
+                    self::CODE_PHP_DOC_MISSED,
+                    $match,
                     $this->_findLines($match, $content, true)
                 );
             }
         }
+
         return $this;
     }
 
@@ -140,6 +166,7 @@ class PhpDoc extends AbstractValidator
                 $this->_addError($file, self::CODE_PHP_DOC_MISSED, $match);
             }
         }
+
         return $this;
     }
 
@@ -153,7 +180,9 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocMessage($content, $file)
     {
         if (preg_match_all(
-            '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//', $content, $matches
+            '/\x20+\/\*\*\x0D?\x0A\x20+\*([^ ][^A-Z]|\x20[^A-Z])(\s|\S)*?\*\//',
+            $content,
+            $matches
         )) {
             $findings = array();
             foreach ($matches[0] as $match) {
@@ -170,7 +199,7 @@ class PhpDoc extends AbstractValidator
             //region Find lines
             sort($findings);
             $findings = array_unique($findings);
-            $lines = array();
+            $lines    = array();
             foreach ($findings as $find) {
                 $lines = array_merge($lines, $this->_findLines($find, $content));
             }
@@ -179,6 +208,7 @@ class PhpDoc extends AbstractValidator
 
             $this->_addError($file, self::CODE_PHP_DOC_MESSAGE, null, $lines);
         }
+
         return $this;
     }
 
@@ -192,24 +222,16 @@ class PhpDoc extends AbstractValidator
     protected function _validateMissedGapAfterPhpDocMessage($content, $file)
     {
         if (preg_match_all(
-            '/\x20+\* \w.*(?=\x0D?\x0A\x20+\*\x20@)/', $content, $matches
+            '/\x20+\* \w.*(?=\x0D?\x0A\x20+\*\x20@)/',
+            $content,
+            $matches
         )) {
             foreach ($matches[0] as $match) {
                 $this->_addError($file, self::CODE_PHP_DOC_MISSED_GAP, $match);
             }
         }
-        return $this;
-    }
 
-    /**
-     * Remove Group commented nodes
-     *
-     * @param string $content
-     * @return string
-     */
-    protected function _cleanGroupCommentedNodes($content)
-    {
-        return preg_replace('/\s*\/\*\*\#\@\+(\s|\S)*?\/\*\*\#@\-\*\//', '', $content);
+        return $this;
     }
 
     /**
@@ -222,11 +244,14 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocExtraGap($content, $file)
     {
         if (preg_match_all(
-            '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/', $content, $matches
+            '/\x0D?\x0A\x20+\*\x0D?\x0A\x20+\*(\x0D?\x0A|\/)/',
+            $content,
+            $matches
         )) {
             $lines = $this->_findLines(rtrim($matches[0][0]), $content);
             $this->_addError($file, self::CODE_PHP_DOC_EXTRA_GAP, count($matches[0]), $lines);
         }
+
         return $this;
     }
 
@@ -240,7 +265,9 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocVarEmptyType($content, $file)
     {
         if (preg_match_all(
-            '/\x0D?\x0A\x20+\*\x20(@(param|var)((\x20+\$.+)|(\x0D?\x0A)))/', $content, $matches
+            '/\x0D?\x0A\x20+\*\x20(@(param|var)((\x20+\$.+)|(\x0D?\x0A)))/',
+            $content,
+            $matches
         )) {
             $lines = array();
             foreach ($matches[0] as $match) {
@@ -248,6 +275,7 @@ class PhpDoc extends AbstractValidator
             }
             $this->_addError($file, self::CODE_PHP_DOC_VAR_EMPTY, count($matches[0]), $lines);
         }
+
         return $this;
     }
 
@@ -261,14 +289,16 @@ class PhpDoc extends AbstractValidator
     protected function _validateExistPhpDocVarNull($content, $file)
     {
         if (preg_match_all(
-            '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/', $content, $matches
+            '/\x0D?\x0A\x20+\*\x20@(param|var)\x20(null|NULL)(\x0D?\x0A|\x20)/',
+            $content,
+            $matches
         )) {
-            $lines = array();
+            $lines    = array();
             $findings = array(
                 ' * @var null ',
                 ' * @param null ',
-                ' * @var null' . "\n",
-                ' * @param null' . "\n",
+                ' * @var null'."\n",
+                ' * @param null'."\n",
             );
             foreach ($findings as $find) {
                 $lines = array_merge($lines, $this->_findLines($find, $content));
@@ -276,6 +306,7 @@ class PhpDoc extends AbstractValidator
             sort($lines);
             $this->_addError($file, self::CODE_PHP_DOC_VAR_NULL, count($matches[0]), $lines);
         }
+
         return $this;
     }
 
@@ -294,6 +325,7 @@ class PhpDoc extends AbstractValidator
             $lines = $this->_findLines($target, $content);
             $this->_addError($file, self::CODE_PHP_DOC_SINGLE_ASTERISK, $count, $lines);
         }
+
         return $this;
     }
 

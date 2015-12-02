@@ -12,6 +12,7 @@ class ParentThis extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_RETURN_NOT_THIS = 'phpReturnNotUsesThis';
+
     /**#@-*/
 
     /**
@@ -43,6 +44,7 @@ class ParentThis extends AbstractValidator
         if ($parentClassAlias) {
             $this->_validateParentClassInReturn($parentClassAlias, $content, $file);
         }
+
         return !$this->_errorCollector->hasErrors();
     }
 
@@ -56,7 +58,27 @@ class ParentThis extends AbstractValidator
     {
         $matches = array();
         preg_match('/ extends[ ]+([A-z0-9_\x92]+)/', $content, $matches);
+
         return isset($matches[1]) ? $matches[1] : null;
+    }
+
+    /**
+     * Check if parent class matches with
+     *
+     * @param string $parentClass
+     * @param string $content
+     * @param string $file
+     * @return $this
+     */
+    protected function _validateParentClassInReturn($parentClass, $content, $file)
+    {
+        $regularClass = ltrim($parentClass, '\\'); //remove left "\"
+        $regularClass = str_replace('\\', '\x5C', $regularClass); //set codes instead "\"
+        if (preg_match('~ +\* @return +\x5C?'.$regularClass.'~', $content)) {
+            $this->_addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
+        }
+
+        return $this;
     }
 
     /**
@@ -76,42 +98,25 @@ class ParentThis extends AbstractValidator
             }
             $parentPath = substr($class, 0, strpos($class, "\x5C"));
             if (
-                preg_match('~use ([A-z0-9\x5C_]+)\x5C' . $parentPath . ';~', $content, $matches)
-                || preg_match('~use ([A-z0-9\x5C_]+) as ' . $parentPath . ';~', $content, $matches)
+                preg_match('~use ([A-z0-9\x5C_]+)\x5C'.$parentPath.';~', $content, $matches)
+                || preg_match('~use ([A-z0-9\x5C_]+) as '.$parentPath.';~', $content, $matches)
             ) {
-                return $matches[1] . substr($class, strpos($class, "\x5C"));
+                return $matches[1].substr($class, strpos($class, "\x5C"));
             }
         }
         preg_match("~use $class as ([A-z0-9_]+);~", $content, $matches);
         if (!empty($matches[1])) {
             return $matches[1];
         }
-        preg_match('~use ([A-z0-9\\_]+\\' . $class . ');~', $content, $matches);
+        preg_match('~use ([A-z0-9\\_]+\\'.$class.');~', $content, $matches);
         if (!empty($matches[1])) {
             return $matches[1];
         }
-        preg_match('~use ([A-z0-9\\_]+) as ' . $class . ';~', $content, $matches);
+        preg_match('~use ([A-z0-9\\_]+) as '.$class.';~', $content, $matches);
         if (!empty($matches[1])) {
             return $matches[1];
         }
-        return null;
-    }
 
-    /**
-     * Check if parent class matches with
-     *
-     * @param string $parentClass
-     * @param string $content
-     * @param string $file
-     * @return $this
-     */
-    protected function _validateParentClassInReturn($parentClass, $content, $file)
-    {
-        $regularClass = ltrim($parentClass, '\\'); //remove left "\"
-        $regularClass = str_replace('\\', '\x5C', $regularClass); //set codes instead "\"
-        if (preg_match('~ +\* @return +\x5C?' . $regularClass . '~', $content)) {
-            $this->_addError($file, self::CODE_PHP_RETURN_NOT_THIS, $parentClass, null);
-        }
-        return $this;
+        return null;
     }
 }

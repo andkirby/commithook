@@ -15,7 +15,9 @@ class ModelEventFields extends AbstractValidator
      * Error codes
      */
     const CODE_MODEL_MISSED_EVENT_PREFIX = 'mageDataModelMissedEventPrefix';
+
     const CODE_MODEL_MISSED_EVENT_OBJECT = 'mageDataModelMissedEventObject';
+
     /**#@-*/
 
     /**
@@ -23,10 +25,11 @@ class ModelEventFields extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_MODEL_MISSED_EVENT_PREFIX => "Missed declaring \$this->_eventPrefix in data model. Please declare it in _construct() method. E.g.: 'namespace_module_name_export_order' for class Namespace_ModuleName_Export_Order.",
-        self::CODE_MODEL_MISSED_EVENT_OBJECT => "Missed declaring \$this->_eventObject in data model. Please declare it in _construct() method. E.g.: 'export_order' for class Namespace_ModuleName_Export_Order.",
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_MODEL_MISSED_EVENT_PREFIX => "Missed declaring \$this->_eventPrefix in data model. Please declare it in _construct() method. E.g.: 'namespace_module_name_export_order' for class Namespace_ModuleName_Export_Order.",
+            self::CODE_MODEL_MISSED_EVENT_OBJECT => "Missed declaring \$this->_eventObject in data model. Please declare it in _construct() method. E.g.: 'export_order' for class Namespace_ModuleName_Export_Order.",
+        );
 
     /**
      * Validate method
@@ -45,18 +48,8 @@ class ModelEventFields extends AbstractValidator
         }
         $this->_checkEventPrefix($content, $file);
         $this->_checkEventObject($content, $file);
-        return !$this->_errorCollector->hasErrors();
-    }
 
-    /**
-     * Check if class is abstract
-     *
-     * @param string $content
-     * @return bool
-     */
-    protected function _isAbstractClass($content)
-    {
-        return (bool)strpos($content, 'abstract class ');
+        return !$this->_errorCollector->hasErrors();
     }
 
     /**
@@ -68,11 +61,23 @@ class ModelEventFields extends AbstractValidator
     protected function _isDataModel($content)
     {
         foreach ($this->_getAbstractDataModelClasses() as $class) {
-            if (strpos($content, 'extends ' . $class)) {
+            if (strpos($content, 'extends '.$class)) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Check if class is abstract
+     *
+     * @param string $content
+     * @return bool
+     */
+    protected function _isAbstractClass($content)
+    {
+        return (bool) strpos($content, 'abstract class ');
     }
 
     /**
@@ -87,6 +92,7 @@ class ModelEventFields extends AbstractValidator
         if (!preg_match('/_eventPrefix[ ]+=[ ]/', $content)) {
             $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_PREFIX);
         }
+
         return $this;
     }
 
@@ -102,6 +108,7 @@ class ModelEventFields extends AbstractValidator
         if (!preg_match('/_eventObject[ ]+=[ ]/', $content)) {
             $this->_addError($file, self::CODE_MODEL_MISSED_EVENT_OBJECT);
         }
+
         return $this;
     }
 

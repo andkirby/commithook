@@ -1,6 +1,6 @@
 <?php
 namespace PreCommit\Processor;
-use \PreCommit\Exception as Exception;
+
 use PreCommit\Message;
 
 /**
@@ -38,6 +38,7 @@ class CommitMsg extends AbstractAdapter
     public function setCodePath($codePath)
     {
         $this->_codePath = $codePath;
+
         return $this;
     }
 
@@ -83,6 +84,7 @@ class CommitMsg extends AbstractAdapter
         } else {
             $this->_setCommitMessage($message);
         }
+
         return !$this->_errorCollector->hasErrors();
     }
 

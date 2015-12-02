@@ -18,26 +18,26 @@ class ErrorCollector
     /**
      * Add an error
      *
-     * @param string $file
-     * @param int $type
-     * @param int $message
+     * @param string       $file
+     * @param int          $type
+     * @param int          $message
      * @param string|array $value
-     * @param int|null $line
+     * @param int|null     $line
      * @return $this
      */
     public function addError($file, $type, $message, $value = null, $line = null)
     {
-        if ($value !== (array)$value) {
+        if ($value !== (array) $value) {
             $value = array('value' => $value);
         }
         foreach ($value as $key => $val) {
-            $val = trim($val);
+            $val     = trim($val);
             $message = str_replace("%$key%", $val, $message);
         }
 
         if ($line) {
-            $lineValue = is_array($line) ? implode(',', $line) : $line;
-            $message = "Line: $lineValue. " . $message;
+            $lineValue                     = is_array($line) ? implode(',', $line) : $line;
+            $message                       = "Line: $lineValue. ".$message;
             $this->_errors[$file][$type][] = array(
                 'line'    => $line,
                 'value'   => $value['value'],
@@ -49,6 +49,7 @@ class ErrorCollector
                 'message' => $message,
             );
         }
+
         return $this;
     }
 
@@ -69,6 +70,6 @@ class ErrorCollector
      */
     public function hasErrors()
     {
-        return (bool)$this->_errors;
+        return (bool) $this->_errors;
     }
 }

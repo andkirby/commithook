@@ -12,6 +12,7 @@ class XmlParser extends AbstractValidator
      * Error codes
      */
     const CODE_XML_ERROR = 'xmlParse';
+
     /**#@-*/
 
     /**
@@ -19,9 +20,10 @@ class XmlParser extends AbstractValidator
      *
      * @var array
      */
-    protected $_errorMessages = array(
-        self::CODE_XML_ERROR => '%value%',
-    );
+    protected $_errorMessages
+        = array(
+            self::CODE_XML_ERROR => '%value%',
+        );
 
     /**
      * Validate XML
