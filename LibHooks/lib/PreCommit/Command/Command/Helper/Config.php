@@ -106,7 +106,9 @@ class Config extends Helper
     protected function loadConfig($file)
     {
         if (!file_exists($file)) {
-            $xml = '<?xml version="1.0" encoding="UTF-8"?><config></config>';
+            $xml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?><config />
+XML;
             $this->getWriter()->writeContent(
                 $file,
                 $xml
