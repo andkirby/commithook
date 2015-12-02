@@ -24,6 +24,7 @@ class Autoloader
         }
         $file = str_replace('\\', '/', $class).'.php';
         if (self::isExist($file)) {
+            /** @noinspection PhpIncludeInspection */
             require_once $file;
         } else {
             throw new Exception('File '.$file.' not found in include path: '.get_include_path(), self::EXCEPTION_CODE);
