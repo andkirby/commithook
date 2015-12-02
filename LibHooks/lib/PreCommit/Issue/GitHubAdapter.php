@@ -40,7 +40,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @var array
      */
-    protected $_labelTypes
+    protected $labelTypes
         = array(
             'bug',
             'enhancement',
@@ -51,14 +51,14 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @var array
      */
-    protected $_defaultLabelType = 'enhancement';
+    protected $defaultLabelType = 'enhancement';
 
     /**
      * GitHub API client
      *
      * @var Api
      */
-    protected $_api;
+    protected $api;
 
     /**
      * Set issue key
@@ -78,7 +78,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getSummary()
     {
-        $issue = $this->_getIssue();
+        $issue = $this->getIssue();
 
         return $issue['title'];
     }
@@ -89,22 +89,22 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * @return array
      * @throws \PreCommit\Issue\Exception
      */
-    protected function _getIssue()
+    protected function getIssue()
     {
         if (null === $this->issue) {
-            $this->issue = $this->_getCachedResult(
-                $this->_getCacheKey()
+            $this->issue = $this->getCachedResult(
+                $this->getCacheKey()
             );
             if (!$this->issue) {
-                $this->issue = $this->_loadIssueData();
+                $this->issue = $this->loadIssueData();
                 if (!$this->issue) {
                     throw new Exception(
                         "Issue not {$this->issueKey} found.",
                         self::EXCEPTION_CODE_ISSUE_NOT_FOUND
                     );
                 }
-                $this->_cacheResult(
-                    $this->_getCacheKey(),
+                $this->cacheResult(
+                    $this->getCacheKey(),
                     $this->issue
                 );
             }
@@ -121,9 +121,9 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * @param string $key
      * @return string|bool
      */
-    protected function _getCachedResult($key)
+    protected function getCachedResult($key)
     {
-        $data = $this->_getCache()->getItem($key);
+        $data = $this->getCache()->getItem($key);
 
         return $data ? unserialize($data) : null;
     }
@@ -133,10 +133,10 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getCacheKey()
+    protected function getCacheKey()
     {
-        return $this->_getVendorName().'-'.$this->_getRepositoryName()
-               .'-'.$this->_getIssueNumber();
+        return $this->getVendorName().'-'.$this->getRepositoryName()
+               .'-'.$this->getIssueNumber();
     }
 
     /**
@@ -145,16 +145,16 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * @return array
      * @throws Exception
      */
-    protected function _loadIssueData()
+    protected function loadIssueData()
     {
-        if (!$this->_canRequest()) {
+        if (!$this->canRequest()) {
             throw new Exception('Connection params not fully set.');
         }
 
-        return $this->_getApi()->issue()->show(
-            $this->_getVendorName(),
-            $this->_getRepositoryName(),
-            $this->_getIssueNumber()
+        return $this->getApi()->issue()->show(
+            $this->getVendorName(),
+            $this->getRepositoryName(),
+            $this->getIssueNumber()
         );
     }
 
@@ -165,12 +165,12 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * @param array  $result
      * @return $this
      */
-    protected function _cacheResult($key, $result)
+    protected function cacheResult($key, $result)
     {
         if ($result) {
-            $this->_getCache()->setItem($key, serialize($result));
+            $this->getCache()->setItem($key, serialize($result));
         } else {
-            $this->_getCache()->removeItem($key);
+            $this->getCache()->removeItem($key);
         }
 
         return $this;
@@ -181,11 +181,11 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return \Zend\Cache\Storage\Adapter\Filesystem
      */
-    protected function _getCache()
+    protected function getCache()
     {
         return new CacheAdapter(
             array(
-                'cache_dir' => $this->_getCacheDir(),
+                'cache_dir' => $this->getCacheDir(),
                 'ttl'       => 7200,
                 'namespace' => 'issue-github-'.self::CACHE_SCHEMA_VERSION,
             )
@@ -200,7 +200,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getVendorName()
+    protected function getVendorName()
     {
         return $this->getConfig()->getNode('tracker/github/name');
     }
@@ -210,7 +210,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getRepositoryName()
+    protected function getRepositoryName()
     {
         return $this->getConfig()->getNode('tracker/github/repository');
     }
@@ -220,7 +220,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return int
      */
-    protected function _getIssueNumber()
+    protected function getIssueNumber()
     {
         return (int) ltrim($this->issueKey, '#');
     }
@@ -230,10 +230,10 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return bool
      */
-    protected function _canRequest()
+    protected function canRequest()
     {
-        return $this->_getVendorName()
-               && $this->_getRepositoryName();
+        return $this->getVendorName()
+               && $this->getRepositoryName();
     }
 
     /**
@@ -241,14 +241,14 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return Api
      */
-    protected function _getApi()
+    protected function getApi()
     {
-        if ($this->_api === null) {
-            $this->_api = new Api();
-            $this->_api->authenticate('andkirby', 'gigaleon33');
+        if ($this->api === null) {
+            $this->api = new Api();
+            $this->api->authenticate('andkirby', 'gigaleon33');
         }
 
-        return $this->_api;
+        return $this->api;
     }
     //endregion
 
@@ -259,7 +259,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getCacheDir()
+    protected function getCacheDir()
     {
         return $this->getConfig()->getCacheDir();
     }
@@ -271,7 +271,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getKey()
     {
-        $issue = $this->_getIssue();
+        $issue = $this->getIssue();
 
         return $issue['number'];
     }
@@ -283,16 +283,16 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getOriginalType()
     {
-        $issue = $this->_getIssue();
+        $issue = $this->getIssue();
         if (!empty($issue['labels'])) {
             foreach ($issue['labels'] as $label) {
-                if (in_array($label['name'], $this->_labelTypes)) {
+                if (in_array($label['name'], $this->labelTypes)) {
                     return $label['name'];
                 }
             }
         }
 
-        return $this->_defaultLabelType;
+        return $this->defaultLabelType;
     }
     //endregion
 
@@ -303,7 +303,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getStatus()
     {
-        $issue = $this->_getIssue();
+        $issue = $this->getIssue();
 
         return $this->normalizeName($issue['state']);
     }
@@ -315,7 +315,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function ignoreIssue()
     {
-        $this->_cacheResult($this->_getCacheKey(), array());
+        $this->cacheResult($this->getCacheKey(), array());
 
         return $this;
     }
