@@ -245,7 +245,10 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     {
         if ($this->api === null) {
             $this->api = new Api();
-            $this->api->authenticate('andkirby', 'gigaleon33');
+            $this->api->authenticate(
+                $this->getConfig()->getNode('tracker/github/username'),
+                $this->getConfig()->getNode('tracker/github/password')
+            );
         }
 
         return $this->api;
