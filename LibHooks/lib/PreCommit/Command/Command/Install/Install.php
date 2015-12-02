@@ -140,10 +140,24 @@ class Install extends CommandAbstract
         if (!file_put_contents($file, $body)) {
             throw new Exception('Could not create file ' . $file);
         }
-        chmod($file, 0777);
+
+        $this->_makeFileExecutable($file);
+
         if ($this->isVerbose($output)) {
             $output->writeln("CommitHook file set to '$file'.");
         }
+        return $this;
+    }
+
+    /**
+     * Make file executable via changing file system permissions
+     *
+     * @param string $file
+     * @return $this
+     */
+    protected function _makeFileExecutable($file)
+    {
+        chmod($file, 0777);
         return $this;
     }
 
