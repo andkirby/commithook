@@ -23,7 +23,7 @@ class Api extends JiraLib\Api
      *
      * @var bool
      */
-    protected $_processErrors = true;
+    protected $processErrors = true;
 
     /**
      * Check credentials
@@ -61,15 +61,16 @@ class Api extends JiraLib\Api
         $data = array(),
         $asJson = false,
         $isFile = false,
-        $debug = false)
-    {
+        $debug = false
+    ) {
         $result = parent::api($method, $url, $data, true, $isFile, $debug);
         if ($result) {
-            $this->_processErrors($result);
+            $this->processErrors($result);
             if (!$asJson) {
                 $result = new Api\Result($result);
             }
         }
+
         return $result;
     }
 
@@ -80,17 +81,18 @@ class Api extends JiraLib\Api
      * @throws JiraLib\Api\Exception
      * @return $this
      */
-    protected function _processErrors($result)
+    protected function processErrors($result)
     {
         if ($result instanceof JiraLib\Api\Result) {
             $result = $result->getResult();
         }
         if (!empty($result['errorMessages'])) {
             throw new JiraLib\Api\Exception(
-                'API errors: ' . PHP_EOL
-                . implode(PHP_EOL, $result['errorMessages'])
+                'API errors: '.PHP_EOL
+                .implode(PHP_EOL, $result['errorMessages'])
             );
         }
+
         return $this;
     }
 }
