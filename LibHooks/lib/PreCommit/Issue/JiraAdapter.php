@@ -54,22 +54,23 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      * @return \PreCommit\Jira\Issue
      * @throws Api\Exception
      */
-    protected function _getIssue()
+    protected function getIssue()
     {
         if (null !== $this->issue) {
             return $this->issue;
         }
 
-        $result = $this->_getCachedResult($this->issueKey);
+        $result = $this->getCachedResult($this->issueKey);
         if (!$result) {
             /** @var Api\Result $result */
-            $result = $this->_loadIssueData($this->issueKey);
+            $result = $this->loadIssueData($this->issueKey);
             if (!$result) {
                 throw new Api\Exception(
-                    "Issue not {$this->issueKey} found.", self::EXCEPTION_CODE_ISSUE_NOT_FOUND
+                    "Issue not {$this->issueKey} found.",
+                    self::EXCEPTION_CODE_ISSUE_NOT_FOUND
                 );
             }
-            $this->_cacheResult($this->issueKey, $result->getResult());
+            $this->cacheResult($this->issueKey, $result->getResult());
         } else {
             $result = new Api\Result($result);
         }
@@ -86,7 +87,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      * @param string $issueKey
      * @return array
      */
-    protected function _interpretIssueKey($issueKey)
+    protected function interpretIssueKey($issueKey)
     {
         list($project, $number) = explode('-', $issueKey);
         $project = strtoupper($project);
@@ -102,10 +103,10 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      * @param array  $result
      * @return $this
      */
-    protected function _cacheResult($issueKey, $result)
+    protected function cacheResult($issueKey, $result)
     {
-        $cache = $this->_getCache();
-        list($project,) = $this->_interpretIssueKey($issueKey);
+        $cache = $this->getCache();
+        list($project) = $this->interpretIssueKey($issueKey);
         $cache->setTags($issueKey, array($project));
         if ($result) {
             $cache->setItem($issueKey, serialize($result));
@@ -123,9 +124,9 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      * @return string|bool
      * @todo Refactoring needed
      */
-    protected function _getCachedResult($issueKey)
+    protected function getCachedResult($issueKey)
     {
-        $data = $this->_getCache()->getItem($issueKey);
+        $data = $this->getCache()->getItem($issueKey);
 
         return $data ? unserialize($data) : null;
     }
@@ -135,7 +136,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getCacheDir()
+    protected function getCacheDir()
     {
         return $this->getConfig()->getCacheDir();
     }
@@ -145,11 +146,11 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return \Zend\Cache\Storage\Adapter\Filesystem
      */
-    protected function _getCache()
+    protected function getCache()
     {
         return new CacheAdapter(
             array(
-                'cache_dir' => $this->_getCacheDir(),
+                'cache_dir' => $this->getCacheDir(),
                 'ttl'       => 7200,
                 'namespace' => 'issue-jira-'.self::CACHE_SCHEMA_VERSION,
             )
@@ -165,7 +166,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getSummary()
     {
-        return $this->_getIssue()->getSummary();
+        return $this->getIssue()->getSummary();
     }
 
     /**
@@ -175,7 +176,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getKey()
     {
-        return $this->_getIssue()->getKey();
+        return $this->getIssue()->getKey();
     }
 
     /**
@@ -185,7 +186,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getOriginalType()
     {
-        return $this->_getIssue()->getIssueType();
+        return $this->getIssue()->getIssueType();
     }
 
     /**
@@ -196,7 +197,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function getStatus()
     {
-        return $this->normalizeName($this->_getIssue()->getStatusName());
+        return $this->normalizeName($this->getIssue()->getStatusName());
     }
 
     /**
@@ -207,7 +208,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     public function ignoreIssue()
     {
-        $this->_cacheResult($this->issueKey, array());
+        $this->cacheResult($this->issueKey, array());
 
         return $this;
     }
@@ -221,16 +222,16 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      * @return \chobie\Jira\Api\Result
      * @throws Api\Exception
      */
-    protected function _loadIssueData($issueKey)
+    protected function loadIssueData($issueKey)
     {
-        if (!$this->_canRequest()) {
+        if (!$this->canRequest()) {
             throw new Api\Exception('Connection params not fully set.');
         }
 
-        return $this->_getApi()->api(
+        return $this->getApi()->api(
             Api::REQUEST_GET,
-            sprintf($this->_getApiUri(), $issueKey),
-            array('fields' => $this->_getIssueApiFields())
+            sprintf($this->getApiUri(), $issueKey),
+            array('fields' => $this->getIssueApiFields())
         );
     }
 
@@ -239,7 +240,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return Api
      */
-    protected function _getApi()
+    protected function getApi()
     {
         return new Api(
             $this->getConfig()->getNode('tracker/jira/url'),
@@ -257,7 +258,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getApiUri()
+    protected function getApiUri()
     {
         return '/rest/api/2/issue/%s';
     }
@@ -267,9 +268,9 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getIssueApiFields()
+    protected function getIssueApiFields()
     {
-        return implode(',', $this->_getIssueRequestFields());
+        return implode(',', $this->getIssueRequestFields());
     }
 
     /**
@@ -277,7 +278,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function _getIssueRequestFields()
+    protected function getIssueRequestFields()
     {
         return array('summary', 'issuetype', 'status');
     }
@@ -287,7 +288,7 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      *
      * @return bool
      */
-    protected function _canRequest()
+    protected function canRequest()
     {
         return $this->getConfig()->getNode('tracker/jira/url')
                && $this->getConfig()->getNode('tracker/jira/username')
