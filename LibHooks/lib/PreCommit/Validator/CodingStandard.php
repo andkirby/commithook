@@ -1,6 +1,7 @@
 <?php
 namespace PreCommit\Validator;
 
+use PreCommit\Config;
 use PreCommit\Validator\Helper\LineFinder;
 
 /**
@@ -14,46 +15,29 @@ class CodingStandard extends AbstractValidator
      * Skip tag for publicMethodNaming errors
      */
     const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
-
     const SKIP_TAG_METHOD_NAMING        = 'skipCommitHookMethodNaming';
-
     /**#@-*/
 
     /**#@+
      * Error codes
      */
-    const CODE_PHP_CATCH                           = 'standardCatch';
-
-    const CODE_PHP_TRY                             = 'standardTry';
-
-    const CODE_PHP_IF_ELSE_BRACE                   = 'standardElse';
-
-    const CODE_PHP_SPACE_BRACE                     = 'spaceBrace';
-
-    const CODE_PHP_SPACE_BRACKET                   = 'spaceBracket';
-
-    const CODE_PHP_LINE_EXCEEDS                    = 'lineLength';
-
-    const CODE_PHP_REDUNDANT_SPACES                = 'redundantSpace';
-
-    const CODE_PHP_CONDITION_ASSIGNMENT            = 'conditionAssignment';
-
-    const CODE_PHP_OPERATOR_SPACES_MISSED          = 'operatorSpace';
-
-    const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    = 'publicMethodNaming';
-
-    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID = 'protectedMethodNaming';
-
-    const CODE_PHP_METHOD_SCOPE                    = 'methodWithoutScope';
-
-    const CODE_PHP_GAPS                            = 'redundantGaps';
-
-    const CODE_PHP_BRACKET_GAPS                    = 'redundantGapAfterBracket';
-
-    const CODE_PHP_LAST_FUNCTION_GAP               = 'redundantGapAfterLastFunction';
-
-    const CODE_PHP_UNDERSCORE_IN_VAR               = 'variableHasUnderscore';
-
+    const CODE_PHP_CATCH                                         = 'standardCatch';
+    const CODE_PHP_TRY                                           = 'standardTry';
+    const CODE_PHP_IF_ELSE_BRACE                                 = 'standardElse';
+    const CODE_PHP_SPACE_BRACE                                   = 'spaceBrace';
+    const CODE_PHP_SPACE_BRACKET                                 = 'spaceBracket';
+    const CODE_PHP_LINE_EXCEEDS                                  = 'lineLength';
+    const CODE_PHP_REDUNDANT_SPACES                              = 'redundantSpace';
+    const CODE_PHP_CONDITION_ASSIGNMENT                          = 'conditionAssignment';
+    const CODE_PHP_OPERATOR_SPACES_MISSED                        = 'operatorSpace';
+    const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID                  = 'publicMethodNaming';
+    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID               = 'protectedMethodNaming';
+    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE = 'protectedMethodNamingNoUnderscore';
+    const CODE_PHP_METHOD_SCOPE                                  = 'methodWithoutScope';
+    const CODE_PHP_GAPS                                          = 'redundantGaps';
+    const CODE_PHP_BRACKET_GAPS                                  = 'redundantGapAfterBracket';
+    const CODE_PHP_LAST_FUNCTION_GAP                             = 'redundantGapAfterLastFunction';
+    const CODE_PHP_UNDERSCORE_IN_VAR                             = 'variableHasUnderscore';
     /**#@-*/
 
     /**
@@ -63,21 +47,22 @@ class CodingStandard extends AbstractValidator
      */
     protected $errorMessages
         = array(
-            self::CODE_PHP_TRY                             => "Syntax in TRY instruction is wrong. Original line: %value%",
-            self::CODE_PHP_CATCH                           => "Syntax in CATCH instruction is wrong. Original line: %value%",
-            self::CODE_PHP_IF_ELSE_BRACE                   => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
-            self::CODE_PHP_SPACE_BRACE                     => 'Spaces missed near {. Original line: %value%',
-            self::CODE_PHP_SPACE_BRACKET                   => 'Spaces missed near (. Original line: %value%',
-            self::CODE_PHP_LINE_EXCEEDS                    => 'Length exceeds 120 chars.',
-            self::CODE_PHP_REDUNDANT_SPACES                => 'Additional spaces found. Original line: %value%',
-            self::CODE_PHP_CONDITION_ASSIGNMENT            => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
-            self::CODE_PHP_OPERATOR_SPACES_MISSED          => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
-            self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID    => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
-            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
-            self::CODE_PHP_METHOD_SCOPE                    => 'Method should have scope: public or protected. Original line: %value%',
-            self::CODE_PHP_GAPS                            => 'File contain at least two gaps in succession %value% time(s).',
-            self::CODE_PHP_BRACKET_GAPS                    => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
-            self::CODE_PHP_UNDERSCORE_IN_VAR               => 'Underscore in variable(s): %vars%. Original line: %value%',
+            self::CODE_PHP_TRY                                           => "Syntax in TRY instruction is wrong. Original line: %value%",
+            self::CODE_PHP_CATCH                                         => "Syntax in CATCH instruction is wrong. Original line: %value%",
+            self::CODE_PHP_IF_ELSE_BRACE                                 => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACE                                   => 'Spaces missed near {. Original line: %value%',
+            self::CODE_PHP_SPACE_BRACKET                                 => 'Spaces missed near (. Original line: %value%',
+            self::CODE_PHP_LINE_EXCEEDS                                  => 'Length exceeds 120 chars.',
+            self::CODE_PHP_REDUNDANT_SPACES                              => 'Additional spaces found. Original line: %value%',
+            self::CODE_PHP_CONDITION_ASSIGNMENT                          => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
+            self::CODE_PHP_OPERATOR_SPACES_MISSED                        => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
+            self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID                  => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
+            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID               => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
+            self::CODE_PHP_METHOD_SCOPE                                  => 'Method should have scope: public or protected. Original line: %value%',
+            self::CODE_PHP_GAPS                                          => 'File contain at least two gaps in succession %value% time(s).',
+            self::CODE_PHP_BRACKET_GAPS                                  => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
+            self::CODE_PHP_UNDERSCORE_IN_VAR                             => 'Underscore in variable(s): %vars%. Original line: %value%',
         );
 
     /**
@@ -89,8 +74,8 @@ class CodingStandard extends AbstractValidator
      */
     public function validate($content, $file)
     {
-        $this->_validateGaps($content, $file);
-        $this->_validateCodeStyleByLines($content, $file);
+        $this->validateGaps($content, $file);
+        $this->validateCodeStyleByLines($content, $file);
 
         return !$this->errorCollector->hasErrors();
     }
@@ -102,7 +87,7 @@ class CodingStandard extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateGaps($content, $file)
+    protected function validateGaps($content, $file)
     {
         $content = preg_replace('/\r/', '', $content);
 
@@ -119,7 +104,7 @@ class CodingStandard extends AbstractValidator
             $findings = array_unique($findings);
             $lines    = array();
             foreach ($findings as $find) {
-                $lines = array_merge($lines, $this->_findLines($find, $content));
+                $lines = array_merge($lines, $this->findLines($find, $content));
             }
             sort($lines);
             //endregion
@@ -137,7 +122,7 @@ class CodingStandard extends AbstractValidator
      * @param string $file
      * @return $this
      */
-    protected function _validateCodeStyleByLines($content, $file)
+    protected function validateCodeStyleByLines($content, $file)
     {
         $originalArr = preg_split('/\x0A\x0D|\x0D\x0A|\x0A|\x0D/', $content);
         $parsedArr   = $this->splitContent($content);
@@ -233,15 +218,26 @@ class CodingStandard extends AbstractValidator
 
             //check function naming and scope
             if (strpos($str, ' function ')) {
-                if (!$this->_isSkipMethodNameValidation($content, $str)) {
+                if (!$this->isSkipMethodNameValidation($content, $str)) {
                     if (preg_match('/^\s*(static )?public /', $str)
                         && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
                     ) {
                         $this->_addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
-                    } elseif (preg_match('/^\s*(static )?(protected|private) /', $str)
+                    } elseif ($this->useUnderScoreInProtected()
+                              && preg_match('/^\s*(static )?(protected|private) /', $str)
                               && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
                     ) {
                         $this->_addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
+                    } elseif (!$this->useUnderScoreInProtected()
+                              && preg_match('/^\s*(static )?(protected|private) /', $str)
+                              && !preg_match('/(protected|private) (static )?function [a-z]{2}/', $str)
+                    ) {
+                        $this->_addError(
+                            $file,
+                            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE,
+                            $currentString,
+                            $line
+                        );
                     }
                 }
                 if (!preg_match('/(protected|private|public) (static )?function/', $str)) {
@@ -281,7 +277,7 @@ class CodingStandard extends AbstractValidator
      * @param bool   $once
      * @return array|int
      */
-    protected function _findLines($find, $content, $once = false)
+    protected function findLines($find, $content, $once = false)
     {
         return LineFinder::findLines($find, $content, $once);
     }
@@ -400,7 +396,7 @@ class CodingStandard extends AbstractValidator
      * @param string $str
      * @return bool
      */
-    protected function _isSkipMethodNameValidation($content, $str)
+    protected function isSkipMethodNameValidation($content, $str)
     {
         preg_match('/function ([A-z_]+)/', $str, $matches);
         if ($matches) {
@@ -413,5 +409,16 @@ class CodingStandard extends AbstractValidator
         }
 
         return false;
+    }
+
+    /**
+     * Get configuration of underscore using in non-public methods
+     *
+     * @return bool
+     */
+    protected function useUnderScoreInProtected()
+    {
+        return (bool) Config::getInstance()
+            ->getNode('validators/CodingStandard/underscore_in_non_public');
     }
 }

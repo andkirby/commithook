@@ -5,6 +5,9 @@
         <PhpClass>
             <interpret>c:/xampp/php/php.exe</interpret>
         </PhpClass>
+        <CodingStandard>
+            <underscore_in_non_public>1</underscore_in_non_public>
+        </CodingStandard>
         <FileFilter>
             <filter>
                 <!-- "skip" validation list -->
