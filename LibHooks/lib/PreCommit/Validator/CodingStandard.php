@@ -293,7 +293,7 @@ class CodingStandard extends AbstractValidator
      * @todo Refactor method
      * @return array
      */
-    static public function splitContent($content)
+    public static function splitContent($content)
     {
         $parsedArr = array();
         $length    = strlen($content);

@@ -17,7 +17,7 @@ class Autoloader
      * @param string $class
      * @throws Exception
      */
-    static public function autoload($class)
+    public static function autoload($class)
     {
         if (strpos($class, '_')) {
             $class = str_replace('_', '/', $class);
@@ -51,7 +51,7 @@ class Autoloader
     /**
      * Register autoloader
      */
-    static public function register()
+    public static function register()
     {
         spl_autoload_register(__NAMESPACE__.'\Autoloader::autoload');
     }
