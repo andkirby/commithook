@@ -6,13 +6,13 @@ use PreCommit\Command\Command\Config\Set;
 use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
-use PreCommit\Filter\InterfaceFilter as InterfaceFilter;
+use PreCommit\Filter\FilterInterface as InterfaceFilter;
 
 /**
  * Class abstract process adapter
  *
  * @package PreCommit\Processor
- * @method InterfaceFilter _loadFilter
+ * @method FilterInterface _loadFilter
  */
 class PreCommit extends AbstractAdapter
 {

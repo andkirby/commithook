@@ -4,7 +4,7 @@ namespace PreCommit\Message;
 use PreCommit\Message;
 
 /**
- * Class InterfaceFilter
+ * Class FilterInterface
  *
  * @package PreCommit\Message
  */

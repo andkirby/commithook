@@ -3,7 +3,7 @@ namespace PreCommit\Filter\ShortCommitMsg;
 
 use PreCommit\Config;
 use PreCommit\Exception;
-use PreCommit\Filter\InterfaceFilter;
+use PreCommit\Filter\FilterInterface;
 use PreCommit\Issue;
 use PreCommit\Jira\Api;
 use PreCommit\Message;

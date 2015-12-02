@@ -73,7 +73,7 @@ class ShortCommitMsg implements Message\InterfaceFilter
     /**
      * Get message builder
      *
-     * @return InterfaceFilter
+     * @return FilterInterface
      * @throws Exception
      */
     protected function _getFormatter()
@@ -82,7 +82,7 @@ class ShortCommitMsg implements Message\InterfaceFilter
         if (empty($config['class'])) {
             throw new Exception('Interpreter class is not set.');
         }
-        /** @var InterfaceFilter $interpreter */
+        /** @var FilterInterface $interpreter */
         if (empty($config['options'])) {
             return new $config['class'];
         } else {

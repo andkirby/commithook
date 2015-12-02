@@ -10,11 +10,11 @@
 namespace PreCommit\Filter;
 
 /**
- * Class InterfaceFilter
+ * Class FilterInterface
  *
  * @package PreCommit\Filter
  */
-interface InterfaceFilter
+interface FilterInterface
 {
     /**
      * @param string $content

@@ -6,7 +6,7 @@ namespace PreCommit\Filter;
  *
  * @package PreCommit\Filter
  */
-class SkipContent implements InterfaceFilter
+class SkipContent implements FilterInterface
 {
     /**#@+
      * Skip tags
