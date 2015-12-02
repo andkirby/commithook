@@ -19,14 +19,14 @@ class Jira implements InterpreterInterface
      *
      * @var Issue\AdapterInterface
      */
-    protected $_issue;
+    protected $issue;
 
     /**
      * Message interpreting type
      *
      * @var string
      */
-    protected $_type;
+    protected $type;
 
     /**
      * Set type
@@ -37,11 +37,11 @@ class Jira implements InterpreterInterface
     public function __construct(array $options = array())
     {
         if (isset($options['type'])) {
-            $this->_type = $options['type'];
+            $this->type = $options['type'];
         } else {
-            $this->_type = $this->_getConfig()->getNode('hooks/commit-msg/message/type');
+            $this->type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
         }
-        if (!$this->_type) {
+        if (!$this->type) {
             throw new Exception('Type is not set.');
         }
     }
@@ -55,16 +55,16 @@ class Jira implements InterpreterInterface
     public function interpret($message)
     {
         //interpret first row to get summary
-        $interpretResult = $this->_interpretShortMessage($message->head);
+        $interpretResult = $this->interpretShortMessage($message->head);
         if (!$interpretResult) {
             return $message;
         }
         list($verb, $issueKey, $userBodyInline) = $interpretResult;
-        $userBody = $this->_mergeComment($message->userBody, $userBodyInline);
+        $userBody = $this->mergeComment($message->userBody, $userBodyInline);
 
-        $this->_initIssue($issueKey);
+        $this->initIssue($issueKey);
 
-        if (!$this->_getIssue()) {
+        if (!$this->getIssue()) {
             //ignore when could not get an issue to build a full message
             return false;
         }
@@ -72,9 +72,9 @@ class Jira implements InterpreterInterface
         $message->shortVerb = $verb;
         $message->issueKey  = $issueKey;
         $message->userBody  = $userBody;
-        $message->issue     = $this->_getIssue();
-        $message->summary   = $this->_getIssue()->getSummary();
-        $message->verb      = $this->_getVerb($verb);
+        $message->issue     = $this->getIssue();
+        $message->summary   = $this->getIssue()->getSummary();
+        $message->verb      = $this->getVerb($verb);
 
         return $message;
     }
@@ -84,7 +84,7 @@ class Jira implements InterpreterInterface
      *
      * @return Config
      */
-    protected function _getConfig()
+    protected function getConfig()
     {
         return Config::getInstance();
     }
@@ -95,14 +95,15 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getIssueTypeDefaultVerb()
+    protected function getIssueTypeDefaultVerb()
     {
-        $generalType = $this->_getIssue()->getType();
+        $generalType = $this->getIssue()->getType();
         if ($generalType) {
-            return $this->_interpretShortVerb(
-                $this->_getDefaultShortVerb($generalType)
+            return $this->interpretShortVerb(
+                $this->getDefaultShortVerb($generalType)
             );
         }
+
         return null;
     }
 
@@ -113,12 +114,13 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _interpretShortVerb($shortVerb)
+    protected function interpretShortVerb($shortVerb)
     {
-        $map = $this->_getVerbs();
+        $map = $this->getVerbs();
         if (!isset($map[$shortVerb])) {
             throw new Exception("Unknown verb key '$shortVerb'.");
         }
+
         return $map[$shortVerb];
     }
 
@@ -129,12 +131,13 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getVerb($shortVerb)
+    protected function getVerb($shortVerb)
     {
         if (!$shortVerb) {
-            return $this->_getIssueTypeDefaultVerb();
+            return $this->getIssueTypeDefaultVerb();
         }
-        return $this->_interpretShortVerb($shortVerb);
+
+        return $this->interpretShortVerb($shortVerb);
     }
 
     /**
@@ -142,10 +145,10 @@ class Jira implements InterpreterInterface
      *
      * @return array
      */
-    protected function _getVerbs()
+    protected function getVerbs()
     {
-        return (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->_type)
-            ?: (array)$this->_getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
+        return (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->type)
+            ?: (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
     /**
@@ -156,9 +159,9 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _getActiveIssueKey()
+    protected function getActiveIssueKey()
     {
-        return $this->_getConfig()->getNode('tracker/' . $this->_getTrackerType() . '/active_task');
+        return $this->getConfig()->getNode('tracker/' . $this->getTrackerType() . '/active_task');
     }
 
     /**
@@ -170,15 +173,16 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function _normalizeIssueKey($issueNo)
+    protected function normalizeIssueKey($issueNo)
     {
-        if ((string)(int)$issueNo === $issueNo) {
-            $project = $this->_getConfig()->getNode('tracker/' . $this->_getTrackerType() . '/project');
+        if ((string) (int) $issueNo === $issueNo) {
+            $project = $this->getConfig()->getNode('tracker/' . $this->getTrackerType() . '/project');
             if (!$project) {
                 throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file "commithook.xml" within current project.');
             }
             $issueNo = "$project-$issueNo";
         }
+
         return $issueNo;
     }
 
@@ -190,24 +194,25 @@ class Jira implements InterpreterInterface
      * @throws \PreCommit\Exception
      * @todo Too long and complex code
      */
-    protected function _interpretShortMessage($message)
+    protected function interpretShortMessage($message)
     {
-        $verbs = array_keys($this->_getVerbs());
+        $verbs = array_keys($this->getVerbs());
         $verbs = implode('|', $verbs);
         $verbs = "$verbs";
-        $issueKeyRegular = $this->_getIssueKeyRegular();
+        $issueKeyRegular = $this->getIssueKeyRegular();
         preg_match("/^(($verbs) ?)?(($issueKeyRegular) ?)?([^\n]{2,})?/", trim($message), $m);
 
         if (!$m || !$m[0]) {
             /**
              * Issue not found. Try to get one from defined configuration
              */
-            $issueNo = $this->_getActiveIssueKey();
+            $issueNo = $this->getActiveIssueKey();
             if (!$issueNo || !preg_match("/^$issueKeyRegular$/", $issueNo)) {
                 //no chances to find an issue
                 return false;
             }
-            return array(null, $this->_normalizeIssueKey($issueNo), null);
+
+            return array(null, $this->normalizeIssueKey($issueNo), null);
         }
 
         $commitVerb  = trim($m[2]);
@@ -223,12 +228,13 @@ class Jira implements InterpreterInterface
             /**
              * Issue not found. Try to get one from defined configuration
              */
-            $issueNo = $this->_getActiveIssueKey();
+            $issueNo = $this->getActiveIssueKey();
             if (!$issueNo || !preg_match("/^$issueKeyRegular$/", $issueNo)) {
                 //no chances to find an issue
                 return false;
             }
-            return array($commitVerb, $this->_normalizeIssueKey($issueNo), null);
+
+            return array($commitVerb, $this->normalizeIssueKey($issueNo), null);
         }
 
         //TODO Fix this hardcoded logic
@@ -269,19 +275,20 @@ class Jira implements InterpreterInterface
             /**
              * Issue not found. Try to get one from defined configuration
              */
-            $issueNo = $this->_getActiveIssueKey();
+            $issueNo = $this->getActiveIssueKey();
             if (!preg_match("/^$issueKeyRegular$/", $issueNo)) {
                 //no chances to find an issue
                 return false;
             }
         }
-        $issueKey = $this->_normalizeIssueKey($issueNo);
+        $issueKey = $this->normalizeIssueKey($issueNo);
         //endregion
 
         $userMessage = null;
         if ($m) {
             $userMessage = trim(array_pop($m));
         }
+
         return array($commitVerb, $issueKey, $userMessage);
     }
 
@@ -291,9 +298,9 @@ class Jira implements InterpreterInterface
      * @param string $generalType
      * @return string|null
      */
-    protected function _getDefaultShortVerb($generalType)
+    protected function getDefaultShortVerb($generalType)
     {
-        return $this->_getConfig()->getNode('filters/ShortCommitMsg/issue/default_type_verb/' . $generalType);
+        return $this->getConfig()->getNode('filters/ShortCommitMsg/issue/default_type_verb/' . $generalType);
     }
 
     /**
@@ -303,13 +310,14 @@ class Jira implements InterpreterInterface
      * @param string $commentInline
      * @return string
      */
-    protected function _mergeComment($comment, $commentInline)
+    protected function mergeComment($comment, $commentInline)
     {
         if ($commentInline && $comment) {
             $comment = $commentInline . "\n" . $comment;
         } elseif ($commentInline) {
             $comment = $commentInline;
         }
+
         return $comment;
     }
 
@@ -320,9 +328,10 @@ class Jira implements InterpreterInterface
      * @return \PreCommit\Issue\AdapterInterface
      * @throws \PreCommit\Exception
      */
-    protected function _initIssue($issueKey)
+    protected function initIssue($issueKey)
     {
-        $this->_issue = Issue::factory($issueKey);
+        $this->issue = Issue::factory($issueKey);
+
         return $this;
     }
 
@@ -331,9 +340,9 @@ class Jira implements InterpreterInterface
      *
      * @return \PreCommit\Issue\AdapterInterface
      */
-    protected function _getIssue()
+    protected function getIssue()
     {
-        return $this->_issue;
+        return $this->issue;
     }
 
     /**
@@ -341,7 +350,7 @@ class Jira implements InterpreterInterface
      *
      * @return string
      */
-    protected function _getIssueKeyRegular()
+    protected function getIssueKeyRegular()
     {
         return '([A-Z0-9]+[-])?[0-9]+';
     }
@@ -351,7 +360,7 @@ class Jira implements InterpreterInterface
      *
      * @return string
      */
-    protected function _getIssueKeyCompleteRegular()
+    protected function getIssueKeyCompleteRegular()
     {
         return '[A-Z0-9]+[-][0-9]+';
     }
@@ -361,8 +370,8 @@ class Jira implements InterpreterInterface
      *
      * @return string
      */
-    protected function _getTrackerType()
+    protected function getTrackerType()
     {
-        return (string)$this->_getConfig()->getNode('tracker/type');
+        return (string) $this->getConfig()->getNode('tracker/type');
     }
 }
