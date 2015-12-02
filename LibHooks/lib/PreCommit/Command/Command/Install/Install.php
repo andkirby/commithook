@@ -157,7 +157,7 @@ class Install extends CommandAbstract
      */
     protected function _makeFileExecutable($file)
     {
-        chmod($file, 0777);
+        chmod($file, 0774);
         return $this;
     }
 
