@@ -24,7 +24,8 @@ class Application extends BaseApplication
      *
      * @var string
      */
-    protected $_logo = <<<LOGO
+    protected $_logo
+        = <<<LOGO
  _ __  __    _ __  ,___                    __
 ( /  )( /  /( /  )/   /              o _/_( /  /       /
  /--'  /--/  /--'/    __ _ _   _ _   , /   /--/ __ __ /<  (
@@ -38,7 +39,8 @@ LOGO;
     public function __construct()
     {
         parent::__construct(
-            'PHP CommitHooks', self::VERSION
+            'PHP CommitHooks',
+            self::VERSION
         );
     }
 
@@ -49,6 +51,6 @@ LOGO;
      */
     public function getHelp()
     {
-        return $this->_logo . parent::getHelp();
+        return $this->_logo.parent::getHelp();
     }
 }

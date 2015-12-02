@@ -13,16 +13,16 @@ use Symfony\Component\Console\Helper\Helper;
 class Config extends Helper
 {
     /**
+     * Helper name
+     */
+    const NAME = 'commithook_config';
+
+    /**
      * Writer
      *
      * @var Config\Writer
      */
     protected $writer;
-
-    /**
-     * Helper name
-     */
-    const NAME = 'commithook_config';
 
     /**
      * Value to write
@@ -49,6 +49,7 @@ class Config extends Helper
     public function reset()
     {
         $this->_values = array();
+
         return $this;
     }
 
@@ -62,6 +63,7 @@ class Config extends Helper
     public function setValue($xpath, $value)
     {
         $this->_values[$xpath] = $value;
+
         return $this;
     }
 
@@ -73,7 +75,7 @@ class Config extends Helper
      */
     public function write($configFile)
     {
-        $config  = $this->loadConfig($configFile);
+        $config = $this->loadConfig($configFile);
 
         $updated = false;
         foreach ($this->_values as $xpath => $value) {
@@ -86,9 +88,11 @@ class Config extends Helper
 
         if ($updated) {
             $this->getWriter()->write(
-                $config, $configFile
+                $config,
+                $configFile
             );
         }
+
         return $updated;
     }
 
@@ -103,35 +107,12 @@ class Config extends Helper
     {
         if (!file_exists($file)) {
             $this->getWriter()->writeContent(
-                $file, '<?xml version="1.0" encoding="UTF-8"?><config></config>'
+                $file,
+                '<?xml version="1.0" encoding="UTF-8"?><config></config>'
             );
         }
+
         return ConfigInstance::loadInstance(array('file' => $file), false);
-    }
-
-    /**
-     * Get config writer
-     *
-     * @return Config\Writer
-     */
-    protected function getWriter()
-    {
-        if ($this->writer === null) {
-            $this->writer = $this->getHelperSet()->get(Config\Writer::NAME);
-        }
-        return $this->writer;
-    }
-
-    /**
-     * Set writer
-     *
-     * @param Config\Writer $writer
-     * @return $this
-     */
-    public function setWriter(Config\Writer $writer)
-    {
-        $this->writer = $writer;
-        return $this;
     }
 
     /**
@@ -148,6 +129,34 @@ class Config extends Helper
             $config,
             $this->getXmlUpdate($xpath, $value)
         );
+
+        return $this;
+    }
+
+    /**
+     * Get config writer
+     *
+     * @return Config\Writer
+     */
+    protected function getWriter()
+    {
+        if ($this->writer === null) {
+            $this->writer = $this->getHelperSet()->get(Config\Writer::NAME);
+        }
+
+        return $this->writer;
+    }
+
+    /**
+     * Set writer
+     *
+     * @param Config\Writer $writer
+     * @return $this
+     */
+    public function setWriter(Config\Writer $writer)
+    {
+        $this->writer = $writer;
+
         return $this;
     }
 
@@ -179,7 +188,7 @@ class Config extends Helper
                 $startXml .= "<$node>$value</$node>\n";
             } else {
                 $startXml .= "<$node>\n";
-                $endXml = "</$node>\n" . $endXml;
+                $endXml = "</$node>\n".$endXml;
             }
         }
         $startXml = rtrim($startXml);
@@ -193,6 +202,7 @@ class Config extends Helper
 {$endXml}
 </config>
 XML;
+
         return simplexml_load_string($xml);
     }
 
@@ -215,8 +225,10 @@ XML;
         $this->setValueToXml($config, $xpath, $value);
 
         $this->getWriter()->write(
-            $config, $configFile
+            $config,
+            $configFile
         );
+
         return true;
     }
 }

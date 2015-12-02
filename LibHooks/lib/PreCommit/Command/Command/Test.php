@@ -2,7 +2,6 @@
 namespace PreCommit\Command\Command;
 
 use PreCommit\Command\Exception;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,6 +28,7 @@ class Test extends AbstractCommand
         $this->setDescription(
             'This command can test your files before committing.'
         );
+
         return $this;
     }
 
@@ -44,8 +44,10 @@ class Test extends AbstractCommand
     {
         parent::execute($input, $output);
         !defined('TEST_MODE') && define('TEST_MODE', true);
-        $hookFile = $this->askProjectDir($input, $output) . '/.git/hooks/pre-commit';
-        require_once __DIR__ . '/../../../../runner.php';
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $hookFile = $this->askProjectDir($input, $output).'/.git/hooks/pre-commit';
+        require_once __DIR__.'/../../../../runner.php';
+
         return 0;
     }
 }

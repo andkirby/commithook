@@ -11,7 +11,6 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Base command abstract class
@@ -91,11 +90,13 @@ abstract class AbstractCommand extends Command
         if (null === $config) {
             //TODO Make single load
             $config = Config::getInstance(
-                array('file' => $this->commithookDir
-                                . DIRECTORY_SEPARATOR
-                                . 'LibHooks' . DIRECTORY_SEPARATOR
-                                . 'config' . DIRECTORY_SEPARATOR
-                                . 'root.xml')
+                array(
+                    'file' => $this->commithookDir
+                              .DIRECTORY_SEPARATOR
+                              .'LibHooks'.DIRECTORY_SEPARATOR
+                              .'config'.DIRECTORY_SEPARATOR
+                              .'root.xml',
+                )
             );
             Config::setProjectDir($this->askProjectDir($this->input, $this->output));
             if (!Config::loadCache()) {
@@ -103,6 +104,7 @@ abstract class AbstractCommand extends Command
             }
             $config = Config::getInstance();
         }
+
         return $config;
     }
 
@@ -132,9 +134,12 @@ abstract class AbstractCommand extends Command
     protected function configureInput()
     {
         $this->addOption(
-            'project-dir', '-d', InputOption::VALUE_REQUIRED,
+            'project-dir',
+            '-d',
+            InputOption::VALUE_REQUIRED,
             'Path to project (VCS) root directory.'
         );
+
         return $this;
     }
 
@@ -151,8 +156,9 @@ abstract class AbstractCommand extends Command
         static $dir;
         if (!$dir) {
             $option = $input->getOption('project-dir');
-            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
+            $dir    = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
         }
+
         return $dir;
     }
 

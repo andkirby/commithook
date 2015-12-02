@@ -1,8 +1,6 @@
 <?php
 namespace PreCommit\Command\Command\Helper\Config;
 
-use PreCommit\Command\Exception;
-use PreCommit\Config;
 use Symfony\Component\Console\Helper\Helper;
 
 /**

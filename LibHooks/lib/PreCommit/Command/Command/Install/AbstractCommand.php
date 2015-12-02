@@ -3,7 +3,6 @@ namespace PreCommit\Command\Command\Install;
 
 use PreCommit\Command\Command;
 use PreCommit\Command\Exception;
-
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,7 +42,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
     /**
      * Get target files
      *
-     * @param InputInterface   $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
      * @throws Exception
@@ -54,6 +53,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
             if ($this->isVeryVerbose($output)) {
                 $output->writeln('All files mode.');
             }
+
             return $this->getAvailableHooks();
         }
 
@@ -76,13 +76,14 @@ abstract class AbstractCommand extends Command\AbstractCommand
                 return true;
             }
         }
+
         return false;
     }
 
     /**
      * Get target files from input options
      *
-     * @param InputInterface   $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return array
      * @throws Exception
@@ -124,10 +125,11 @@ abstract class AbstractCommand extends Command\AbstractCommand
      */
     protected function getHooksDir(OutputInterface $output, $projectDir)
     {
-        $hooksDir = $projectDir . '/.git/hooks';
+        $hooksDir = $projectDir.'/.git/hooks';
         if (!is_dir($hooksDir)) {
             throw new Exception('GIT hooks directory not found.');
         }
+
         return $hooksDir;
     }
 
@@ -140,15 +142,20 @@ abstract class AbstractCommand extends Command\AbstractCommand
     {
         parent::configureInput();
         $this->addOption(
-            'hook', null, InputOption::VALUE_REQUIRED,
+            'hook',
+            null,
+            InputOption::VALUE_REQUIRED,
             $this->getCustomHookOptionDescription()
         );
         foreach ($this->getAvailableHooks() as $hook) {
             $this->addOption(
-                $hook, null, InputOption::VALUE_NONE,
+                $hook,
+                null,
+                InputOption::VALUE_NONE,
                 $this->getHookOptionDescription($hook)
             );
         }
+
         return $this;
     }
 }

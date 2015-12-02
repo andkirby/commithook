@@ -26,6 +26,7 @@ class Remove extends AbstractCommand
         $this->setDescription(
             'This command can remove installed hook files in your project.'
         );
+
         return $this;
     }
 
@@ -42,15 +43,17 @@ class Remove extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $output, $this->askProjectDir($input, $output)
+                $output,
+                $this->askProjectDir($input, $output)
             );
-            $files = $this->getTargetFiles($input, $output);
-            $status = $this->removeHookFiles($output, $hooksDir, $files);
+            $files    = $this->getTargetFiles($input, $output);
+            $status   = $this->removeHookFiles($output, $hooksDir, $files);
         } catch (Exception $e) {
             if ($this->isVeryVerbose($output)) {
                 throw $e;
             } else {
                 $output->writeln($e->getMessage());
+
                 return 1;
             }
         }
@@ -63,6 +66,7 @@ class Remove extends AbstractCommand
         } else {
             $output->writeln('No CommitHook file(s) to remove.');
         }
+
         return 0;
     }
 
@@ -74,12 +78,14 @@ class Remove extends AbstractCommand
      * @param array           $files
      * @return bool
      */
-    protected function removeHookFiles(OutputInterface $output, $hooksDir,
+    protected function removeHookFiles(
+        OutputInterface $output,
+        $hooksDir,
         array $files
     ) {
         $status = false;
         foreach ($files as $filename) {
-            $file = $hooksDir . DIRECTORY_SEPARATOR . $filename;
+            $file = $hooksDir.DIRECTORY_SEPARATOR.$filename;
             if (!is_file($file)) {
                 //file not found
                 if ($this->isVerbose($output)) {
@@ -98,6 +104,7 @@ class Remove extends AbstractCommand
                 $status = true;
             }
         }
+
         return $status;
     }
 

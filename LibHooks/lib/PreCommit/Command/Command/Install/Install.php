@@ -27,6 +27,7 @@ class Install extends AbstractCommand
         $this->setDescription(
             'This command can install available hook files into your project.'
         );
+
         return $this;
     }
 
@@ -39,13 +40,18 @@ class Install extends AbstractCommand
     {
         parent::configureInput();
         $this->addOption(
-            'overwrite', '-w', InputOption::VALUE_NONE,
+            'overwrite',
+            '-w',
+            InputOption::VALUE_NONE,
             'Overwrite exist hook files.'
         );
         $this->addOption(
-            'php-binary', '-p', InputOption::VALUE_REQUIRED,
+            'php-binary',
+            '-p',
+            InputOption::VALUE_REQUIRED,
             'Path to PHP binary file.'
         );
+
         return $this;
     }
 
@@ -62,10 +68,12 @@ class Install extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $output, $this->askProjectDir($input, $output)
+                $output,
+                $this->askProjectDir($input, $output)
             );
             $this->createHooks(
-                $output, $input,
+                $output,
+                $input,
                 $hooksDir,
                 $this->getTargetFiles($input, $output),
                 $this->askPhpPath($input, $output),
@@ -76,6 +84,7 @@ class Install extends AbstractCommand
                 throw $e;
             } else {
                 $output->writeln($e->getMessage());
+
                 return 1;
             }
         }
@@ -89,6 +98,7 @@ class Install extends AbstractCommand
                 "PHP CommitHook files have been created."
             );
         }
+
         return 0;
     }
 
@@ -104,15 +114,24 @@ class Install extends AbstractCommand
      * @return $this
      * @throws Exception
      */
-    protected function createHooks(OutputInterface $output, InputInterface $input, $hooksDir,
-        $targetHooks, $phpPath, $runnerPath
+    protected function createHooks(
+        OutputInterface $output,
+        InputInterface $input,
+        $hooksDir,
+        $targetHooks,
+        $phpPath,
+        $runnerPath
     ) {
         $body = $this->getHookBody($phpPath, $runnerPath);
         foreach ($targetHooks as $file) {
             $this->createHookFile(
-                $output, $input, $hooksDir . DIRECTORY_SEPARATOR . $file, $body
+                $output,
+                $input,
+                $hooksDir.DIRECTORY_SEPARATOR.$file,
+                $body
             );
         }
+
         return $this;
     }
 
@@ -130,15 +149,17 @@ class Install extends AbstractCommand
     {
         if (!$input->getOption('overwrite') && file_exists($file)
             && 'y' !== $this->getQuestionHelper()->ask(
-                $input, $output,
+                $input,
+                $output,
                 $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
-            $output->writeln('Could not overwrite file ' . $file);
+            $output->writeln('Could not overwrite file '.$file);
+
             return $this;
         }
         if (!file_put_contents($file, $body)) {
-            throw new Exception('Could not create file ' . $file);
+            throw new Exception('Could not create file '.$file);
         }
 
         $this->_makeFileExecutable($file);
@@ -146,6 +167,7 @@ class Install extends AbstractCommand
         if ($this->isVerbose($output)) {
             $output->writeln("CommitHook file set to '$file'.");
         }
+
         return $this;
     }
 
@@ -158,6 +180,7 @@ class Install extends AbstractCommand
     protected function _makeFileExecutable($file)
     {
         chmod($file, 0774);
+
         return $this;
     }
 
@@ -179,13 +202,14 @@ class Install extends AbstractCommand
         }
 
         $max = 3;
-        $i = 0;
+        $i   = 0;
         while (!$file || !$validator($file, $output)) {
             if ($file) {
                 $output->writeln('Given PHP executable file is not valid.');
             }
             $file = $this->getQuestionHelper()->ask(
-                $input, $output,
+                $input,
+                $output,
                 $this->getSimpleQuestion()->getQuestion("Please set your PHP executable file", $file)
             );
             if (++$i > $max) {
@@ -208,11 +232,13 @@ class Install extends AbstractCommand
                 $test = `$file -r "echo 'Test passed.';" 2>&1`;
                 if ($output && $output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
                     $output->writeln(
-                        'PHP test output: ' . PHP_EOL . $test
+                        'PHP test output: '.PHP_EOL.$test
                     );
                 }
+
                 return 0 === strpos($test, 'Test passed.');
             }
+
             return false;
         };
     }
@@ -241,10 +267,11 @@ PHP;
      */
     protected function getHookBody($phpPath, $runnerPhpPath)
     {
-        $phpPath = $this->normalizePath($phpPath);
+        $phpPath       = $this->normalizePath($phpPath);
         $runnerPhpPath = $this->normalizePath($runnerPhpPath);
-        $template = $this->getHookTemplate();
-        $template = str_replace('{PHP_EXE}', $phpPath, $template);
+        $template      = $this->getHookTemplate();
+        $template      = str_replace('{PHP_EXE}', $phpPath, $template);
+
         return str_replace('{RUNNER_PHP}', $runnerPhpPath, $template);
     }
 
@@ -255,7 +282,7 @@ PHP;
      */
     protected function getRunnerFile()
     {
-        return $this->commithookDir . '/bin/runner.php';
+        return $this->commithookDir.'/bin/runner.php';
     }
 
     /**
@@ -266,10 +293,10 @@ PHP;
     public function getSystemPhpPath()
     {
         $file = null;
-        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php')) {
-            $file = PHP_BIN_DIR . '/php';
-        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR . '/php.exe')) {
-            $file = PHP_BIN_DIR . '/php.exe';
+        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php')) {
+            $file = PHP_BIN_DIR.'/php';
+        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php.exe')) {
+            $file = PHP_BIN_DIR.'/php.exe';
         } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
             $file = PHP_BINARY;
         } elseif (getenv('PHP_BINARY') && is_file(getenv('PHP_BINARY'))) {
@@ -283,6 +310,7 @@ PHP;
         if ($file) {
             $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
         }
+
         return $file;
     }
 
@@ -297,6 +325,7 @@ PHP;
         if (DIRECTORY_SEPARATOR == '/') {
             return str_replace('\\', DIRECTORY_SEPARATOR, $path);
         }
+
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 

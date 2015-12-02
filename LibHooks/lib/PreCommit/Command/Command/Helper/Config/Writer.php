@@ -36,6 +36,7 @@ class Writer extends Helper
     public function write($config, $file)
     {
         $this->writeContent($file, $this->getWellFormattedXml($config));
+
         return true;
     }
 
@@ -51,11 +52,12 @@ class Writer extends Helper
     {
         $dir = pathinfo($file, PATHINFO_DIRNAME);
         if (!is_dir($dir) && !mkdir($dir, 770, true)) {
-            throw new Exception('Cannot create directory \'' . $dir . '\'.');
+            throw new Exception('Cannot create directory \''.$dir.'\'.');
         }
         if (!file_put_contents($file, $content)) {
             throw new Exception("Cannot write file '$file'.");
         }
+
         return $this;
     }
 
@@ -73,6 +75,7 @@ class Writer extends Helper
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput       = true;
         $doc->loadXML($config->asXML());
+
         return str_replace('  ', '    ', $doc->saveXML()); //use 4 spaces as indent
     }
 
@@ -95,6 +98,7 @@ XML;
             $this->writeContent($file, $xml);
         }
         $config = Config::loadInstance(array('file' => $file), false);
+
         return $config;
     }
 
@@ -131,6 +135,7 @@ XML;
 {$endXml}
 </config>
 XML;
+
         return simplexml_load_string($xml);
     }
 }

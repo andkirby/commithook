@@ -40,7 +40,10 @@ class SimpleQuestion extends Helper
      * @return \Symfony\Component\Console\Question\Question
      */
     public function getQuestionConfirm(
-        $question, $default = 'y', array $options = array('y', 'n'), $required = true
+        $question,
+        $default = 'y',
+        array $options = array('y', 'n'),
+        $required = true
     ) {
         return $this->getQuestion($question, $default, $options, $required);
     }
@@ -56,7 +59,11 @@ class SimpleQuestion extends Helper
      * @return \Symfony\Component\Console\Question\Question
      */
     public function getQuestion(
-        $message, $default = null, array $options = array(), $required = true, $useOptionValue = true
+        $message,
+        $default = null,
+        array $options = array(),
+        $required = true,
+        $useOptionValue = true
     ) {
         $default = (!$useOptionValue && $this->isList($options) && $default !== null)
             ? $options[$default] : $default;
@@ -69,6 +76,7 @@ class SimpleQuestion extends Helper
         $question->setValidator(
             $this->getValidator($options, $required, $useOptionValue)
         );
+
         return $question;
     }
 
@@ -118,9 +126,10 @@ class SimpleQuestion extends Helper
     {
         $list = '';
         foreach ($options as $key => $title) {
-            $list .= " $key - $title" . ($default == $key ? ' (Default)' : '') . "\n";
+            $list .= " $key - $title".($default == $key ? ' (Default)' : '')."\n";
         }
-        $question .= ":\n" . $list . ($default ? ' [' . $default . ']: ' : ' : ');
+        $question .= ":\n".$list.($default ? ' ['.$default.']: ' : ' : ');
+
         return $question;
     }
 
@@ -137,9 +146,10 @@ class SimpleQuestion extends Helper
         $question .= '%s%s: ';
         $question = sprintf(
             $question,
-            ($options ? ' (' . implode('/', $options) . ')' : ''),
-            ($default ? ' [' . $default . ']' : '')
+            ($options ? ' ('.implode('/', $options).')' : ''),
+            ($default ? ' ['.$default.']' : '')
         );
+
         return $question;
     }
 
@@ -155,12 +165,14 @@ class SimpleQuestion extends Helper
     {
         if ($options) {
             $useValue = $this->isList($options) && $optionValueIsAnswer;
+
             return function ($value) use ($options, $useValue) {
                 if ($useValue && !array_key_exists($value, $options)
                     || !$useValue && !in_array($value, $options, true)
                 ) {
                     throw new Exception("Incorrect value '$value'.");
                 }
+
                 return $useValue ? $options[$value] : $value;
             };
         } else {
@@ -168,6 +180,7 @@ class SimpleQuestion extends Helper
                 if ($required && (null === $value)) {
                     throw new Exception("Empty value.");
                 }
+
                 return $value;
             };
         }

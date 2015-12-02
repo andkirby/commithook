@@ -49,6 +49,7 @@ class ProjectDir extends Helper
             return $validator($dir);
         } catch (Exception $e) {
         }
+
         return $this->askProjectDir($input, $output, $dir);
     }
 
@@ -84,9 +85,10 @@ class ProjectDir extends Helper
     {
         return function ($dir) {
             $dir = rtrim($dir, '\\/');
-            if (!is_dir($dir . '/.git')) {
+            if (!is_dir($dir.'/.git')) {
                 throw new Exception("Directory '$dir' does not contain '.git' subdirectory.");
             }
+
             return $dir;
         };
     }
@@ -111,7 +113,8 @@ class ProjectDir extends Helper
         );
 
         $dir = $this->getQuestionHelper()->ask(
-            $input, $output,
+            $input,
+            $output,
             $question
         );
 

@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Command;
 
-use \PreCommit\Exception as TopException;
+use PreCommit\Exception as TopException;
 
 /**
  * Class Exception

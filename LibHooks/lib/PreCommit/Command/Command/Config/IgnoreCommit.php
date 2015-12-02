@@ -85,8 +85,10 @@ class IgnoreCommit extends Set
                 throw $e;
             }
             $output->writeln($e->getMessage());
+
             return 1;
         }
+
         return 0;
     }
 
@@ -106,6 +108,7 @@ class IgnoreCommit extends Set
         } else {
             $xpath = sprintf($xpath, '*');
         }
+
         return array_keys(
             $this->getConfig()->getNodesExpr($xpath)
         );
@@ -123,6 +126,7 @@ class IgnoreCommit extends Set
             $input->setOption('code', true);
             $input->setOption('protection', true);
         }
+
         return $this;
     }
 
@@ -138,9 +142,11 @@ class IgnoreCommit extends Set
         if ($input->getOption('code')) {
             $this->writeConfig(
                 self::XPATH_IGNORE_CODE,
-                static::OPTION_SCOPE_PROJECT_SELF, !$remove
+                static::OPTION_SCOPE_PROJECT_SELF,
+                !$remove
             );
         }
+
         return $this;
     }
 
@@ -156,9 +162,11 @@ class IgnoreCommit extends Set
         if ($input->getOption('protection')) {
             $this->writeConfig(
                 self::XPATH_IGNORE_PROTECTION,
-                static::OPTION_SCOPE_PROJECT_SELF, !$remove
+                static::OPTION_SCOPE_PROJECT_SELF,
+                !$remove
             );
         }
+
         return $this;
     }
 
@@ -178,6 +186,7 @@ HELP;
 
         $this->setHelp($help);
         $this->setDescription($help);
+
         return $this;
     }
 
@@ -190,21 +199,30 @@ HELP;
     {
         AbstractCommand::configureInput();
         $this->addOption(
-            'show', 's', InputOption::VALUE_NONE,
+            'show',
+            's',
+            InputOption::VALUE_NONE,
             'Show validator names which will be omitted.'
         );
         $this->addOption(
-            'code', 'c', InputOption::VALUE_NONE,
+            'code',
+            'c',
+            InputOption::VALUE_NONE,
             'Ignore code validation.'
         );
         $this->addOption(
-            'protection', 't', InputOption::VALUE_NONE,
+            'protection',
+            't',
+            InputOption::VALUE_NONE,
             'Ignore file protection.'
         );
         $this->addOption(
-            'disable', 'r', InputOption::VALUE_NONE,
+            'disable',
+            'r',
+            InputOption::VALUE_NONE,
             'Disable ignoring of the next commit.'
         );
+
         return $this;
     }
 }
