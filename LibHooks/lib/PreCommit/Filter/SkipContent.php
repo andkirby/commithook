@@ -31,7 +31,11 @@ class SkipContent implements FilterInterface
      */
     public function filter($content, $file = null)
     {
-        //TODO Remove hack for saving original content
+        /**
+         * Set original content for finding right line numbers
+         *
+         * @todo Remove hack for saving original content
+         */
         LineFinder::setOriginContent($content);
 
         return preg_replace(
