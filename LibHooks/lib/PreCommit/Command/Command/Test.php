@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit\Command
  */
-class Test extends CommandAbstract
+class Test extends AbstractCommand
 {
     /**
      * Init default helpers

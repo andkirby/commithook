@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit
  */
-class Install extends CommandAbstract
+class Install extends AbstractCommand
 {
     /**
      * Init default helpers

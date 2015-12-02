@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Command\Command\Config;
 
-use PreCommit\Command\Command\CommandAbstract;
+use PreCommit\Command\Command\AbstractCommand;
 use PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,7 +56,7 @@ class IgnoreCommit extends Set
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        CommandAbstract::execute($input, $output);
+        AbstractCommand::execute($input, $output);
 
         try {
             if ($input->getOption('show')) {
@@ -188,7 +188,7 @@ HELP;
      */
     protected function configureInput()
     {
-        CommandAbstract::configureInput();
+        AbstractCommand::configureInput();
         $this->addOption(
             'show', 's', InputOption::VALUE_NONE,
             'Show validator names which will be omitted.'

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit\Command\Command
  */
-abstract class CommandAbstract extends Command\CommandAbstract
+abstract class AbstractCommand extends Command\AbstractCommand
 {
     /**
      * Get custom hook option description
@@ -87,7 +87,8 @@ abstract class CommandAbstract extends Command\CommandAbstract
      * @return array
      * @throws Exception
      */
-    protected function getOptionTargetFiles(InputInterface $input,
+    protected function getOptionTargetFiles(
+        InputInterface $input,
         OutputInterface $output
     ) {
         if ($this->isVeryVerbose($output)) {
@@ -107,10 +108,9 @@ abstract class CommandAbstract extends Command\CommandAbstract
             }
             if (!in_array($userFile, $files)) {
                 $files[] = $userFile;
-                return $files;
             }
-            return $files;
         }
+
         return $files;
     }
 

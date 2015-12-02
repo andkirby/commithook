@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package PreCommit\Command
  */
-class Remove extends CommandAbstract
+class Remove extends AbstractCommand
 {
     /**
      * Init default helpers

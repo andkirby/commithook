@@ -1,7 +1,7 @@
 <?php
 namespace PreCommit\Command\Command\Config;
 
-use PreCommit\Command\Command\CommandAbstract;
+use PreCommit\Command\Command\AbstractCommand;
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @package PreCommit\Command
  */
-class Set extends CommandAbstract
+class Set extends AbstractCommand
 {
     /**#@+
      * Option scopes

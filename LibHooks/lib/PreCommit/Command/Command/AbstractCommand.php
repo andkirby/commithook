@@ -18,7 +18,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @package PreCommit\Command\Command
  */
-abstract class CommandAbstract extends Command
+abstract class AbstractCommand extends Command
 {
     /**
      * Base commithook directory
@@ -120,14 +120,14 @@ abstract class CommandAbstract extends Command
      *
      * Set name, description, help
      *
-     * @return CommandAbstract
+     * @return AbstractCommand
      */
     abstract protected function configureCommand();
 
     /**
      * Init input definitions
      *
-     * @return CommandAbstract
+     * @return AbstractCommand
      */
     protected function configureInput()
     {
