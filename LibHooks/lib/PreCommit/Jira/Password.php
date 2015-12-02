@@ -2,6 +2,7 @@
 namespace PreCommit\Jira;
 
 use PreCommit\Exception as UserException;
+use \ILBYNINKHULN\PasswordException as PasswordException;
 
 require_once '_password.php';
 
@@ -22,7 +23,7 @@ class Password extends \ILBYNINKHULN\Password
     {
         try {
             return parent::getPassword();
-        } catch (\ILBYNINKHULN\PasswordException $e) {
+        } catch (PasswordException $e) {
             throw new UserException($e->getMessage());
         }
     }
