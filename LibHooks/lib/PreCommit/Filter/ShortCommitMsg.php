@@ -11,7 +11,7 @@ use PreCommit\Message;
  *
  * @package PreCommit\Filter
  */
-class ShortCommitMsg implements Message\InterfaceFilter
+class ShortCommitMsg implements Message\FilterInterface
 {
     /**
      * Filter short commit message

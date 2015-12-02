@@ -8,7 +8,7 @@ use PreCommit\Message;
  *
  * @package PreCommit\Message
  */
-interface InterfaceFilter
+interface FilterInterface
 {
     /**
      * Filer message

@@ -8,7 +8,7 @@ use PreCommit\Message;
  *
  * @package PreCommit\Filter
  */
-class Explode implements Message\InterfaceFilter
+class Explode implements Message\FilterInterface
 {
     /**
      * Filter short commit message

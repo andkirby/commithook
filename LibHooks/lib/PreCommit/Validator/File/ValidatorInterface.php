@@ -2,7 +2,7 @@
 namespace PreCommit\Validator\File;
 
 /**
- * Class InterfaceFilter
+ * Class FilterInterface
  *
  * @package PreCommit\Filter
  */

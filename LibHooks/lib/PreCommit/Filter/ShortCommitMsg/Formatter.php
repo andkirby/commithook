@@ -12,7 +12,7 @@ use PreCommit\Message;
  *
  * @package PreCommit\Validator
  */
-class Formatter implements Message\InterfaceFilter
+class Formatter implements Message\FilterInterface
 {
     /**
      * Message interpreting type

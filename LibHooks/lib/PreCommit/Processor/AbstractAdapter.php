@@ -211,7 +211,7 @@ abstract class AbstractAdapter
      *
      * @param string $name
      * @param array  $options
-     * @return \PreCommit\Message\InterfaceFilter
+     * @return \PreCommit\Message\FilterInterface
      */
     protected function _loadFilter($name, array $options = array())
     {
