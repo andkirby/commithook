@@ -26,7 +26,7 @@ class CommitMsg extends AbstractAdapter
     public function __construct($vcsType)
     {
         parent::__construct($vcsType);
-        $this->setCodePath($this->_vcsAdapter->getCodePath());
+        $this->setCodePath($this->vcsAdapter->getCodePath());
     }
 
     /**
@@ -55,19 +55,19 @@ class CommitMsg extends AbstractAdapter
         $message->body = $this->_getCommitMessage();
 
         try {
-            $message = $this->_loadFilter('Explode')
+            $message = $this->loadFilter('Explode')
                 ->filter($message);
 
-            $message = $this->_loadFilter('ShortCommitMsg')
+            $message = $this->loadFilter('ShortCommitMsg')
                 ->filter($message);
 
-            $this->_loadValidator('IssueType')
+            $this->loadValidator('IssueType')
                 ->validate($message, null);
 
-            $this->_loadValidator('CommitMsg')
+            $this->loadValidator('CommitMsg')
                 ->validate($message, null);
 
-            $this->_loadValidator('IssueStatus')
+            $this->loadValidator('IssueStatus')
                 ->validate($message, null);
         } catch (\Exception $e) {
             //TODO refactor ignore issue approach
@@ -78,14 +78,14 @@ class CommitMsg extends AbstractAdapter
             throw $e;
         }
 
-        if ($this->_errorCollector->hasErrors() && $message->issue) {
+        if ($this->errorCollector->hasErrors() && $message->issue) {
             //ignore issue caching on failed validation
             $message->issue->ignoreIssue();
         } else {
             $this->_setCommitMessage($message);
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
@@ -95,7 +95,7 @@ class CommitMsg extends AbstractAdapter
      */
     protected function _getCommitMessage()
     {
-        return $this->_vcsAdapter->getCommitMessage();
+        return $this->vcsAdapter->getCommitMessage();
     }
 
     /**
@@ -106,6 +106,6 @@ class CommitMsg extends AbstractAdapter
      */
     protected function _setCommitMessage(Message $message)
     {
-        return $this->_vcsAdapter->setCommitMessage($message->body);
+        return $this->vcsAdapter->setCommitMessage($message->body);
     }
 }

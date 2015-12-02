@@ -3,6 +3,7 @@ namespace PreCommit\Processor;
 
 use PreCommit\Exception;
 use PreCommit\Processor\ErrorCollector as Error;
+use \PreCommit\Vcs\AdapterInterface;
 
 /**
  * Class abstract process adapter
@@ -17,28 +18,28 @@ abstract class AbstractAdapter
      *
      * @var \PreCommit\Processor\ErrorCollector
      */
-    protected $_errorCollector;
+    protected $errorCollector;
 
     /**
      * Version Control System adapter
      *
      * @var \PreCommit\Vcs\AdapterInterface
      */
-    protected $_vcsAdapter;
+    protected $vcsAdapter;
 
     /**
      * Used validators list
      *
      * @var array
      */
-    protected $_validators = array();
+    protected $validators = array();
 
     /**
      * Used filters list
      *
      * @var array
      */
-    protected $_filters = array();
+    protected $filters = array();
 
     /**
      * Event observers
@@ -47,7 +48,7 @@ abstract class AbstractAdapter
      *
      * @var array
      */
-    protected $_eventObservers = array();
+    protected $eventObservers = array();
 
     //endregion
 
@@ -60,21 +61,21 @@ abstract class AbstractAdapter
     public function __construct($options = array())
     {
         if (is_string($options)) {
-            $this->_vcsAdapter = $this->_getVcsAdapter($options);
-        } elseif (is_object($options) && $options instanceof \PreCommit\Vcs\AdapterInterface) {
-            $this->_vcsAdapter = $options;
+            $this->vcsAdapter = $this->getVcsAdapter($options);
+        } elseif (is_object($options) && $options instanceof AdapterInterface) {
+            $this->vcsAdapter = $options;
         } elseif (isset($options['vcs']) && is_object($options['vcs'])
-                  && $options['vcs'] instanceof \PreCommit\Vcs\AdapterInterface
+                  && $options['vcs'] instanceof AdapterInterface
         ) {
-            $this->_vcsAdapter = $options['vcs'];
+            $this->vcsAdapter = $options['vcs'];
         } else {
             throw new Exception('VCS adapter is not set.');
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
-            $this->_errorCollector = $options['errorCollector'];
+            $this->errorCollector = $options['errorCollector'];
         } else {
-            $this->_errorCollector = $this->_getErrorCollector();
+            $this->errorCollector = $this->getErrorCollector();
         }
     }
 
@@ -84,7 +85,7 @@ abstract class AbstractAdapter
      * @param string $type
      * @return string
      */
-    protected function _getVcsAdapter($type)
+    protected function getVcsAdapter($type)
     {
         $type  = ucfirst($type);
         $class = 'PreCommit\\Vcs\\'.$type;
@@ -97,7 +98,7 @@ abstract class AbstractAdapter
      *
      * @return ErrorCollector
      */
-    protected function _getErrorCollector()
+    protected function getErrorCollector()
     {
         return new Error();
     }
@@ -140,7 +141,7 @@ abstract class AbstractAdapter
      */
     public function getErrors()
     {
-        return $this->_errorCollector->getErrors();
+        return $this->errorCollector->getErrors();
     }
 
     /**
@@ -152,7 +153,7 @@ abstract class AbstractAdapter
      */
     public function addObserver($event, \Closure $observer)
     {
-        $this->_eventObservers[$event][] = $observer;
+        $this->eventObservers[$event][] = $observer;
 
         return $this;
     }
@@ -166,9 +167,9 @@ abstract class AbstractAdapter
      */
     public function dispatchEvent($event, $params = null)
     {
-        if (!empty($this->_eventObservers[$event])) {
+        if (!empty($this->eventObservers[$event])) {
             /** @var \Closure $observer */
-            foreach ($this->_eventObservers[$event] as $observer) {
+            foreach ($this->eventObservers[$event] as $observer) {
                 $observer($this, $params);
             }
         }
@@ -183,15 +184,15 @@ abstract class AbstractAdapter
      * @param array  $options
      * @return \PreCommit\Validator\AbstractValidator
      */
-    protected function _loadValidator($name, array $options = array())
+    protected function loadValidator($name, array $options = array())
     {
-        if (empty($this->_validators[$name])) {
-            $class                    = '\\PreCommit\\Validator\\'.str_replace('-', '\\', $name);
-            $options                  = array_merge($this->_getValidatorDefaultOptions(), $options);
-            $this->_validators[$name] = new $class($options);
+        if (empty($this->validators[$name])) {
+            $class                   = '\\PreCommit\\Validator\\'.str_replace('-', '\\', $name);
+            $options                 = array_merge($this->getValidatorDefaultOptions(), $options);
+            $this->validators[$name] = new $class($options);
         }
 
-        return $this->_validators[$name];
+        return $this->validators[$name];
     }
 
     /**
@@ -201,9 +202,9 @@ abstract class AbstractAdapter
      *
      * @return array
      */
-    protected function _getValidatorDefaultOptions()
+    protected function getValidatorDefaultOptions()
     {
-        return array('errorCollector' => $this->_errorCollector);
+        return array('errorCollector' => $this->errorCollector);
     }
 
     /**
@@ -213,13 +214,13 @@ abstract class AbstractAdapter
      * @param array  $options
      * @return \PreCommit\Message\FilterInterface
      */
-    protected function _loadFilter($name, array $options = array())
+    protected function loadFilter($name, array $options = array())
     {
-        if (empty($this->_filters[$name])) {
-            $class                 = "\\PreCommit\\Filter\\$name";
-            $this->_filters[$name] = new $class($options);
+        if (empty($this->filters[$name])) {
+            $class                = "\\PreCommit\\Filter\\$name";
+            $this->filters[$name] = new $class($options);
         }
 
-        return $this->_filters[$name];
+        return $this->filters[$name];
     }
 }

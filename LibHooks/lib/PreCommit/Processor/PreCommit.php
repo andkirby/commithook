@@ -12,7 +12,7 @@ use PreCommit\Filter\FilterInterface;
  * Class abstract process adapter
  *
  * @package PreCommit\Processor
- * @method FilterInterface _loadFilter
+ * @method FilterInterface loadFilter
  */
 class PreCommit extends AbstractAdapter
 {
@@ -56,8 +56,8 @@ class PreCommit extends AbstractAdapter
     public function __construct($vcsType)
     {
         parent::__construct($vcsType);
-        $this->setCodePath($this->_vcsAdapter->getCodePath());
-        $this->setFiles($this->_vcsAdapter->getAffectedFiles());
+        $this->setCodePath($this->vcsAdapter->getCodePath());
+        $this->setFiles($this->vcsAdapter->getAffectedFiles());
     }
 
     //region GettersSetters
@@ -104,7 +104,7 @@ class PreCommit extends AbstractAdapter
             return true;
         }
 
-        $fileFilter = $this->_loadValidator('FileFilter');
+        $fileFilter = $this->loadValidator('FileFilter');
 
         foreach ($this->_files as $file) {
             $file = trim($file);
@@ -132,7 +132,7 @@ class PreCommit extends AbstractAdapter
             $this->runValidators('after_all', $content, $file, $filePath);
         }
 
-        return !$this->_errorCollector->hasErrors();
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
@@ -145,20 +145,20 @@ class PreCommit extends AbstractAdapter
      */
     protected function _canProcess()
     {
-        return !$this->_vcsAdapter->isMergeInProgress();
+        return !$this->vcsAdapter->isMergeInProgress();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _loadValidator($name, array $options = array())
+    protected function loadValidator($name, array $options = array())
     {
         $omitted = $this->_getOmittedValidators();
         if (isset($omitted[$name])) {
             $name = 'Stub';
         }
 
-        return parent::_loadValidator($name, $options);
+        return parent::loadValidator($name, $options);
     }
 
     /**
@@ -203,7 +203,7 @@ class PreCommit extends AbstractAdapter
         foreach ($this->getValidators($ext) as $validatorName => $status) {
             if ($status && $status !== 'false') {
                 /** @noinspection PhpMethodParametersCountMismatchInspection */
-                $this->_loadValidator($validatorName)
+                $this->loadValidator($validatorName)
                     ->validate($content, $file, $filePath);
             }
         }
@@ -223,7 +223,7 @@ class PreCommit extends AbstractAdapter
         foreach ($this->getFilters($ext) as $validatorName => $status) {
             if ($status && $status !== 'false') {
                 /** @noinspection PhpMethodParametersCountMismatchInspection */
-                $content = $this->_loadFilter($validatorName)
+                $content = $this->loadFilter($validatorName)
                     ->filter($content, $file, $filePath);
             }
         }
