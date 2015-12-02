@@ -13,14 +13,14 @@ class XmlMerger
      *
      * @var array
      */
-    protected $_collectionNodes = array();
+    protected $collectionNodes = array();
 
     /**
      * Xpath of a process node
      *
      * @var string
      */
-    protected $_processXpath = 'root';
+    protected $processXpath = 'root';
 
     /**
      * Add name of nodes which should a collection
@@ -29,7 +29,7 @@ class XmlMerger
      */
     public function addCollectionNode($xpath)
     {
-        $this->_collectionNodes[] = 'root/'.$xpath;
+        $this->collectionNodes[] = 'root/'.$xpath;
     }
 
     /**
@@ -94,7 +94,7 @@ class XmlMerger
      */
     protected function _addProcessXpathName($name)
     {
-        $this->_processXpath .= '/'.$name;
+        $this->processXpath .= '/'.$name;
 
         return $this;
     }
@@ -106,7 +106,7 @@ class XmlMerger
      */
     protected function _isCollectionXpath()
     {
-        return in_array($this->_processXpath, $this->_collectionNodes);
+        return in_array($this->processXpath, $this->collectionNodes);
     }
 
     /**
@@ -155,9 +155,9 @@ class XmlMerger
      */
     protected function _unsetProcessXpathName($name)
     {
-        $length              = strlen($this->_processXpath);
-        $lengthName          = strlen($name) + 1;
-        $this->_processXpath = substr($this->_processXpath, 0, $length - $lengthName);
+        $length             = strlen($this->processXpath);
+        $lengthName         = strlen($name) + 1;
+        $this->processXpath = substr($this->processXpath, 0, $length - $lengthName);
 
         return $this;
     }

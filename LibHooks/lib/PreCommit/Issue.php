@@ -15,7 +15,7 @@ class Issue
      *
      * @var AdapterInterface[]
      */
-    static protected $_adapters = array();
+    static protected $adapters = array();
 
     /**
      * Get config instance
@@ -24,23 +24,23 @@ class Issue
      * @return AdapterInterface
      * @throws \PreCommit\Exception
      */
-    static public function factory($key)
+    public static function factory($key)
     {
-        if (!isset(self::$_adapters[$key])) {
-            $tracker = self::_getTrackerType();
+        if (!isset(self::$adapters[$key])) {
+            $tracker = self::getTrackerType();
             if (!$tracker) {
                 return null;
             }
 
-            $class = self::_getConfig()->getNode('tracker/'.$tracker.'/issue/adapter/class');
+            $class = self::getConfig()->getNode('tracker/'.$tracker.'/issue/adapter/class');
 
-            self::$_adapters[$key] = new $class($key);
-            if (!(self::$_adapters[$key] instanceof AdapterInterface)) {
+            self::$adapters[$key] = new $class($key);
+            if (!(self::$adapters[$key] instanceof AdapterInterface)) {
                 throw new Exception("Class $class doesn't implement \\PreCommit\\Issue\\AdapterInterface.");
             }
         }
 
-        return self::$_adapters[$key];
+        return self::$adapters[$key];
     }
 
     /**
@@ -48,9 +48,9 @@ class Issue
      *
      * @return string
      */
-    static protected function _getTrackerType()
+    protected static function getTrackerType()
     {
-        return (string) self::_getConfig()->getNode('tracker/type');
+        return (string) self::getConfig()->getNode('tracker/type');
     }
 
     /**
@@ -58,7 +58,7 @@ class Issue
      *
      * @return Config
      */
-    static protected function _getConfig()
+    protected static function getConfig()
     {
         return Config::getInstance();
     }

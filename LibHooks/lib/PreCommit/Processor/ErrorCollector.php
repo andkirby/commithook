@@ -13,7 +13,7 @@ class ErrorCollector
      *
      * @var array
      */
-    protected $_errors = array();
+    protected $errors = array();
 
     /**
      * Add an error
@@ -36,15 +36,15 @@ class ErrorCollector
         }
 
         if ($line) {
-            $lineValue                     = is_array($line) ? implode(',', $line) : $line;
-            $message                       = "Line: $lineValue. ".$message;
-            $this->_errors[$file][$type][] = array(
+            $lineValue                    = is_array($line) ? implode(',', $line) : $line;
+            $message                      = "Line: $lineValue. ".$message;
+            $this->errors[$file][$type][] = array(
                 'line'    => $line,
                 'value'   => $value['value'],
                 'message' => $message,
             );
         } else {
-            $this->_errors[$file][$type][] = array(
+            $this->errors[$file][$type][] = array(
                 'value'   => $value['value'],
                 'message' => $message,
             );
@@ -60,7 +60,7 @@ class ErrorCollector
      */
     public function getErrors()
     {
-        return $this->_errors;
+        return $this->errors;
     }
 
     /**
@@ -70,6 +70,6 @@ class ErrorCollector
      */
     public function hasErrors()
     {
-        return (bool) $this->_errors;
+        return (bool) $this->errors;
     }
 }
