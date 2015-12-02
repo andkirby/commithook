@@ -89,7 +89,7 @@ class Config extends \SimpleXMLElement
      * Get config instance
      *
      * @param array $options
-     * @return Config
+     * @return $this
      * @throws Exception
      */
     public static function getInstance(array $options = array())
@@ -391,13 +391,13 @@ class Config extends \SimpleXMLElement
      * Load file to merge
      *
      * @param string $file
-     * @return \SimpleXMLElement
+     * @return self
      * @throws \PreCommit\Exception
      */
     protected static function loadXmlFileToMerge($file)
     {
         try {
-            return simplexml_load_file($file);
+            return simplexml_load_file($file, __CLASS__);
         } catch (\Exception $e) {
             throw new Exception("Cannot load XML file '$file'");
         }
@@ -493,4 +493,3 @@ class Config extends \SimpleXMLElement
         return $result;
     }
 }
-

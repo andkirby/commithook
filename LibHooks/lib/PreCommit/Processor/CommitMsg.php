@@ -52,7 +52,7 @@ class CommitMsg extends AbstractAdapter
     {
         $message = new Message();
 
-        $message->body = $this->_getCommitMessage();
+        $message->body = $this->getCommitMessage();
 
         try {
             $message = $this->loadFilter('Explode')
@@ -82,7 +82,7 @@ class CommitMsg extends AbstractAdapter
             //ignore issue caching on failed validation
             $message->issue->ignoreIssue();
         } else {
-            $this->_setCommitMessage($message);
+            $this->setCommitMessage($message);
         }
 
         return !$this->errorCollector->hasErrors();
@@ -93,7 +93,7 @@ class CommitMsg extends AbstractAdapter
      *
      * @return string
      */
-    protected function _getCommitMessage()
+    protected function getCommitMessage()
     {
         return $this->vcsAdapter->getCommitMessage();
     }
@@ -104,7 +104,7 @@ class CommitMsg extends AbstractAdapter
      * @param \PreCommit\Message $message
      * @return string
      */
-    protected function _setCommitMessage(Message $message)
+    protected function setCommitMessage(Message $message)
     {
         return $this->vcsAdapter->setCommitMessage($message->body);
     }

@@ -140,8 +140,7 @@ class CodingStandard extends AbstractValidator
             }
 
             $currentString = trim($originalArr[$line - 1]);
-            if (
-                preg_match('/\S=\>|=\>\S/i', $str) // operator => must be wrapped with spaces
+            if (preg_match('/\S=\>|=\>\S/i', $str) // operator => must be wrapped with spaces
                 || preg_match('/[^\s(]\!/i', $str) // operators != !== must have preceding space
 
                 // operators = == === must be wrapped with spaces
