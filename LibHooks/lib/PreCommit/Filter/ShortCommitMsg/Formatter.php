@@ -3,7 +3,6 @@ namespace PreCommit\Filter\ShortCommitMsg;
 
 use PreCommit\Config;
 use PreCommit\Exception;
-use PreCommit\Filter\FilterInterface;
 use PreCommit\Issue;
 use PreCommit\Jira\Api;
 use PreCommit\Message;
@@ -49,16 +48,18 @@ class Formatter implements Message\InterfaceFilter
     public function filter(Message $message)
     {
         $this->_buildHead(
-            $this->_getFormatConfig(), $message
+            $this->_getFormatConfig(),
+            $message
         );
         $this->_buildBody($message);
+
         return $message;
     }
 
     /**
      * Build message
      *
-     * @param array $config  Config for formatting
+     * @param array   $config Config for formatting
      * @param Message $message
      * @return string
      * @throws \PreCommit\Exception
@@ -67,7 +68,7 @@ class Formatter implements Message\InterfaceFilter
     {
         $output = $config['format'];
         //make default keys list
-        $keys   = array(
+        $keys = array(
             'summary'   => $message->summary,
             'issue_key' => $message->issueKey,
             'verb'      => $message->verb,
@@ -86,6 +87,7 @@ class Formatter implements Message\InterfaceFilter
             }
         }
         $message->head = $this->_putKeys($keys, $output);
+
         return $this;
     }
 
@@ -97,10 +99,11 @@ class Formatter implements Message\InterfaceFilter
      */
     protected function _getFormatConfig()
     {
-        $format = $this->_getConfig()->getNodeArray('formatters/ShortCommitMsg/formatting/' . $this->_type);
+        $format = $this->_getConfig()->getNodeArray('formatters/ShortCommitMsg/formatting/'.$this->_type);
         if (empty($format['format'])) {
             throw new Exception('Format to build commit message is not set.');
         }
+
         return $format;
     }
 
@@ -120,6 +123,7 @@ class Formatter implements Message\InterfaceFilter
             }
             $output = str_replace("__{$name}__", $value, $output);
         }
+
         return $output;
     }
 
@@ -132,7 +136,8 @@ class Formatter implements Message\InterfaceFilter
     protected function _buildBody(Message $message)
     {
         $message->userBody = $this->_addHyphen($message->userBody);
-        $message->body = $message->head . "\n" . $message->userBody;
+        $message->body     = $message->head."\n".$message->userBody;
+
         return $this;
     }
 
@@ -145,8 +150,9 @@ class Formatter implements Message\InterfaceFilter
     protected function _addHyphen($comment)
     {
         if ($comment && 0 !== strpos(trim($comment), '-')) {
-            $comment = ' - ' . $comment;
+            $comment = ' - '.$comment;
         }
+
         return $comment;
     }
 

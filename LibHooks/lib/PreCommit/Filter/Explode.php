@@ -19,7 +19,8 @@ class Explode implements Message\InterfaceFilter
     public function filter(Message $message)
     {
         $message->body = trim($message->body);
-        list($message->head, $message->userBody) = $this->_explodeMessage($message->body);
+        list($message->head, $message->userBody) = $this->explodeMessage($message->body);
+
         return $message;
     }
 
@@ -29,11 +30,12 @@ class Explode implements Message\InterfaceFilter
      * @param string $inputMessage
      * @return array
      */
-    protected function _explodeMessage($inputMessage)
+    protected function explodeMessage($inputMessage)
     {
         $arr      = explode("\n", $inputMessage);
         $head     = array_shift($arr);
         $userBody = trim(str_replace($head, '', $inputMessage));
+
         return array($head, $userBody);
     }
 }

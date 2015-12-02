@@ -31,6 +31,7 @@ class ShortCommitMsg implements Message\InterfaceFilter
             return $message;
         }
         $this->_buildMessage($message);
+
         return $message;
     }
 
@@ -44,6 +45,7 @@ class ShortCommitMsg implements Message\InterfaceFilter
     protected function _buildMessage(Message $message)
     {
         $this->_getFormatter()->filter($message);
+
         return $this;
     }
 
@@ -65,8 +67,9 @@ class ShortCommitMsg implements Message\InterfaceFilter
     protected function _getParser()
     {
         $class = $this->_getConfig()->getNode(
-            'tracker/' . $this->_getTrackerType() . '/message/parser/class'
+            'tracker/'.$this->_getTrackerType().'/message/parser/class'
         );
+
         return new $class;
     }
 
@@ -109,6 +112,6 @@ class ShortCommitMsg implements Message\InterfaceFilter
      */
     protected function _getTrackerType()
     {
-        return (string)$this->_getConfig()->getNode('tracker/type');
+        return (string) $this->_getConfig()->getNode('tracker/type');
     }
 }

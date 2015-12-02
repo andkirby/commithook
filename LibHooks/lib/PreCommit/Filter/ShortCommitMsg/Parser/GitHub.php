@@ -1,8 +1,8 @@
 <?php
 namespace PreCommit\Filter\ShortCommitMsg\Parser;
 
-use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Filter\ShortCommitMsg;
+use PreCommit\Interpreter\InterpreterInterface;
 
 /**
  * Class filter to parse short message
@@ -22,6 +22,6 @@ class GitHub extends ShortCommitMsg\Parser\Jira implements InterpreterInterface
      */
     protected function normalizeIssueKey($issueNo)
     {
-        return "#" . ltrim($issueNo, '#');
+        return "#".ltrim($issueNo, '#');
     }
 }

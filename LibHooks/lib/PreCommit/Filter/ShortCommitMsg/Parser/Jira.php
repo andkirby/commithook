@@ -147,7 +147,7 @@ class Jira implements InterpreterInterface
      */
     protected function getVerbs()
     {
-        return (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/' . $this->type)
+        return (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->type)
             ?: (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
     }
 
@@ -161,7 +161,7 @@ class Jira implements InterpreterInterface
      */
     protected function getActiveIssueKey()
     {
-        return $this->getConfig()->getNode('tracker/' . $this->getTrackerType() . '/active_task');
+        return $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/active_task');
     }
 
     /**
@@ -176,9 +176,11 @@ class Jira implements InterpreterInterface
     protected function normalizeIssueKey($issueNo)
     {
         if ((string) (int) $issueNo === $issueNo) {
-            $project = $this->getConfig()->getNode('tracker/' . $this->getTrackerType() . '/project');
+            $project = $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/project');
             if (!$project) {
-                throw new Exception('JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file "commithook.xml" within current project.');
+                throw new Exception(
+                    'JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file "commithook.xml" within current project.'
+                );
             }
             $issueNo = "$project-$issueNo";
         }
@@ -215,8 +217,8 @@ class Jira implements InterpreterInterface
             return array(null, $this->normalizeIssueKey($issueNo), null);
         }
 
-        $commitVerb  = trim($m[2]);
-        if ($commitVerb && $commitVerb . end($m) === $m[0]) {
+        $commitVerb = trim($m[2]);
+        if ($commitVerb && $commitVerb.end($m) === $m[0]) {
             //only user message or issue set
             $commitVerb = null;
         }
@@ -240,10 +242,10 @@ class Jira implements InterpreterInterface
         //TODO Fix this hardcoded logic
         if (null === $commitVerb && $m[2] && $m[4] && trim($m[2]) == $m[2]) {
             //recover issue key
-            $m[4] = $m[2] . $m[4];
+            $m[4] = $m[2].$m[4];
         } elseif (null === $commitVerb && $m[6] && !$m[4] && trim($m[2]) == $m[2]) {
             //recover user message
-            $m[6] = $m[2] . $m[6];
+            $m[6] = $m[2].$m[6];
         }
 
         //region Get issue key from matches
@@ -300,7 +302,7 @@ class Jira implements InterpreterInterface
      */
     protected function getDefaultShortVerb($generalType)
     {
-        return $this->getConfig()->getNode('filters/ShortCommitMsg/issue/default_type_verb/' . $generalType);
+        return $this->getConfig()->getNode('filters/ShortCommitMsg/issue/default_type_verb/'.$generalType);
     }
 
     /**
@@ -313,7 +315,7 @@ class Jira implements InterpreterInterface
     protected function mergeComment($comment, $commentInline)
     {
         if ($commentInline && $comment) {
-            $comment = $commentInline . "\n" . $comment;
+            $comment = $commentInline."\n".$comment;
         } elseif ($commentInline) {
             $comment = $commentInline;
         }
