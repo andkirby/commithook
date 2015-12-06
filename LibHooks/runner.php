@@ -2,12 +2,14 @@
 /**
  * End point file to run CommitHooks
  *
+ * @see        bin/runner.php
  * @deprecated Deprecated to direct using since v1.6.4.
  *             All code will be pushed to use /bin/runner.php
- * @see /bin/runner.php
  */
-/** stub */
 
+/**
+ * Stub
+*/
 !defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', realpath(__DIR__ . '/..'));
 !defined('TEST_MODE') && define('TEST_MODE', false);
 set_include_path(
@@ -70,7 +72,9 @@ if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
 }
 
-/** @var \PreCommit\Processor\AbstractAdapter $processor */
+/**
+ * @var \PreCommit\Processor\AbstractAdapter $processor
+*/
 $processor = \PreCommit\Processor::factory($hookName, $vcs);
 $processor->process();
 
