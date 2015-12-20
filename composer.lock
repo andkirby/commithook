@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "db851fe3cc03e30bcca8fd49880949b9",
-    "content-hash": "d70b39ef89348cec40de7b5009232dfd",
+    "hash": "9a41201ce750d14d0c29170e42c7f2ef",
+    "content-hash": "6db6d0571471dc7a2eb06c6fbd06d9e9",
     "packages": [
         {
             "name": "chobie/jira-api-restclient",
@@ -859,6 +859,40 @@
                 "phpcs"
             ],
             "time": "2015-12-01 17:11:30"
+        },
+        {
+            "name": "magento-ecg/coding-standard",
+            "version": "1.2",
+            "target-dir": "Ecg",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento-ecg/coding-standard.git",
+                "reference": "d6f4aaeb36729b666b57e5457187f0d857bbdac9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-ecg/coding-standard/zipball/d6f4aaeb36729b666b57e5457187f0d857bbdac9",
+                "reference": "d6f4aaeb36729b666b57e5457187f0d857bbdac9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Magento Expert Consulting Group",
+                    "homepage": "http://magentocommerce.com/consulting",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A set of PHP_CodeSniffer rules and sniffs.",
+            "homepage": "https://github.com/magento-ecg/coding-standard",
+            "time": "2015-04-27 07:16:39"
         },
         {
             "name": "phpdocumentor/reflection-docblock",

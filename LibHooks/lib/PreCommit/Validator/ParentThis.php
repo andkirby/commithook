@@ -14,7 +14,6 @@ class ParentThis extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_RETURN_NOT_THIS = 'phpReturnNotUsesThis';
-
     /**#@-*/
 
     /**
@@ -130,19 +129,29 @@ class ParentThis extends AbstractValidator
                 return $matches[1].substr($class, strpos($class, "\x5C"));
             }
         }
-        preg_match("~use $class as ([A-z0-9_]+);~", $content, $matches);
+
+        $class   = ltrim($class, '\\');
+        $matched = null;
+
+        preg_match('~use [\x5C]?'.$class.' as ([A-z0-9_]+);~', $content, $matches);
         if (!empty($matches[1])) {
-            return $matches[1];
-        }
-        preg_match('~use ([A-z0-9\\_]+\\'.$class.');~', $content, $matches);
-        if (!empty($matches[1])) {
-            return $matches[1];
-        }
-        preg_match('~use ([A-z0-9\\_]+) as '.$class.';~', $content, $matches);
-        if (!empty($matches[1])) {
-            return $matches[1];
+            $matched = $matches[1];
         }
 
-        return null;
+        if ($matched === null) {
+            preg_match('~use ([A-z0-9\x5C_]+[\x5C]'.$class.');~', $content, $matches);
+            if (!empty($matches[1])) {
+                $matched = $matches[1];
+            }
+        }
+
+        if ($matched === null) {
+            preg_match('~use ([A-z0-9\x5C_]+) as '.$class.';~', $content, $matches);
+            if (!empty($matches[1])) {
+                $matched = $matches[1];
+            }
+        }
+
+        return $matched;
     }
 }

@@ -2,18 +2,19 @@
 <ruleset name="CommitHooks">
     <description>The CommitHooks coding standard. (extended from Symfony2)</description>
 
-    <!-- Include the whole PSR-1 standard -->
-    <rule ref="../../vendor/escapestudios/symfony2-coding-standard/Symfony2"/>
+    <!-- Include the whole Symfony2 standard -->
+    <rule ref="../../vendor/escapestudios/symfony2-coding-standard/Symfony2" />
 
-    <!--Commithooks-->
+    <!--Exclude files-->
     <exclude-pattern>LibHooks/lib/PreCommit/Jira/Password.php</exclude-pattern>
     <exclude-pattern>LibHooks/lib/PreCommit/Jira/_password.php</exclude-pattern>
     <exclude-pattern>LibHooks/lib/PreCommit/Jira/_password.lib.php</exclude-pattern>
     <exclude-pattern>LibHooks/runner.php</exclude-pattern>
     <exclude-pattern>LibHooks/tests/</exclude-pattern>
-    <rule ref="Squiz.Strings.ConcatenationSpacing.PaddingFound">
-        <severity>0</severity>
-    </rule>
+
+    <!--<rule ref="Squiz.Strings.ConcatenationSpacing.PaddingFound">-->
+        <!--<severity>0</severity>-->
+    <!--</rule>-->
     <rule ref="Symfony2.Functions.ScopeOrder.Invalid">
         <severity>0</severity>
     </rule>

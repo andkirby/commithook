@@ -15,6 +15,9 @@
         <CodingStandard>
             <underscore_in_non_public>0</underscore_in_non_public>
         </CodingStandard>
+        <CodeSniffer>
+            <config_rule>LibHooks/phpcs</config_rule>
+        </CodeSniffer>
     </validators>
 
     <tracker>
