@@ -60,6 +60,15 @@
                 </allow>
             </filter>
         </FileFilter>
+        <CodeSniffer>
+            <rule>
+                <!-- Name of existed standard -->
+                <!--<name>Zend</name>-->
+
+                <!-- Path to directory with standard -->
+                <!--<directory>path/to/dir</directory>-->
+            </rule>
+        </CodeSniffer>
     </validators>
 
     <!--Hooks process setup-->

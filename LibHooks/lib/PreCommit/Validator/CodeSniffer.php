@@ -51,7 +51,7 @@ class CodeSniffer extends AbstractValidator
 
         if (!$this->getStandardConfigDir()) {
             throw new Exception(
-                'Path to PHP CodeSniffer not found. Please set it by XPath validators/CodeSniffer/config_rule'
+                'CodeSniffer standard not found. Please set it by XPath validators/CodeSniffer/config_rule'
             );
         }
 
@@ -93,13 +93,38 @@ class CodeSniffer extends AbstractValidator
     }
 
     /**
+     * Get code sniffer standard
+     *
+     * @return string
+     */
+    protected function getStandard()
+    {
+        $standard = $this->getStandardConfigDir();
+        if (!$standard) {
+            $standard = $this->getStandardName();
+        }
+
+        return $standard;
+    }
+
+    /**
+     * Get standard config file
+     *
+     * @return string
+     */
+    protected function getStandardName()
+    {
+        return Config::getInstance()->getNode('validators/CodeSniffer/rule/name');
+    }
+
+    /**
      * Get standard config file
      *
      * @return string
      */
     protected function getStandardConfigDir()
     {
-        $dir = Config::getInstance()->getNode('validators/CodeSniffer/config_rule');
+        $dir = Config::getInstance()->getNode('validators/CodeSniffer/rule/directory');
         if (realpath($dir)) {
             return $dir;
         }
