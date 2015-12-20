@@ -89,7 +89,7 @@ class CodeSniffer extends AbstractValidator
      */
     protected function showErrorSource()
     {
-        return true;
+        return (bool) Config::getInstance()->getNode('validators/CodeSniffer/message/show_source');
     }
 
     /**

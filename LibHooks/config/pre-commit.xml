@@ -68,6 +68,10 @@
                 <!-- Path to directory with standard -->
                 <!--<directory>path/to/dir</directory>-->
             </rule>
+            <message>
+                <!--Show source in error messages-->
+                <show_source>0</show_source>
+            </message>
         </CodeSniffer>
     </validators>
 
