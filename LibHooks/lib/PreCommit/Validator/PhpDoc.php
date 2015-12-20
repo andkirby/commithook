@@ -14,23 +14,14 @@ class PhpDoc extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_DOC_MISSED            = 'phpDocMissed';
-
     const CODE_PHP_DOC_MESSAGE           = 'phpDocMessageMissed';
-
     const CODE_PHP_DOC_MISSED_GAP        = 'phpDocMissedGap';
-
     const CODE_PHP_DOC_ENTER_DESCRIPTION = 'phpDocEnterDescription';
-
     const CODE_PHP_DOC_UNKNOWN           = 'phpDocUnknown';
-
     const CODE_PHP_DOC_EXTRA_GAP         = 'phpDocExtraGap';
-
     const CODE_PHP_DOC_VAR_NULL          = 'phpDocVarNull';
-
     const CODE_PHP_DOC_VAR_EMPTY         = 'phpDocVarEmpty';
-
     const CODE_PHP_DOC_SINGLE_ASTERISK   = 'phpDocSingleAsterisk';
-
     /**#@-*/
 
     /**
@@ -136,8 +127,7 @@ class PhpDoc extends AbstractValidator
      */
     protected function validateExistPhpDocsForClassItems($content, $file)
     {
-        $reg = '/(?<!\*\/\x0D|\*\/)\x0A\x20{4}((?:public function|protected function|private function'
-               .'|function|const|public|protected|private)[^\x0A]*)/i';
+        $reg = '/(?<!\*\/\x0D|\*\/)\x0A\x20{4}((?:public function|protected function|private function|function|const|public|protected|private)[^\x0A]*)/i';
         if (preg_match_all($reg, $content, $matches)) {
             foreach ($matches[1] as $match) {
                 $this->addError(
@@ -186,7 +176,7 @@ class PhpDoc extends AbstractValidator
         )) {
             $findings = array();
             foreach ($matches[0] as $match) {
-                if (stripos($match, ' * {@inheritdoc}')) {
+                if (stripos($match, ' * {@inheritdoc}') || stripos($match, ' * @inheritdoc')) {
                     continue;
                 }
                 $findings[] = $match;

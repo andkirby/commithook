@@ -64,13 +64,13 @@ abstract class AbstractValidator
      * Add error
      *
      * @param string $file
-     * @param string $type
+     * @param string $code
      * @param string $value
      * @param int    $line
      * @return $this
      */
-    protected function addError($file, $type, $value = null, $line = null)
+    protected function addError($file, $code, $value = null, $line = null)
     {
-        $this->errorCollector->addError($file, $type, $this->errorMessages[$type], $value, $line);
+        $this->errorCollector->addError($file, $code, $this->errorMessages[$code], $value, $line);
     }
 }

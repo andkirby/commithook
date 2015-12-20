@@ -72,4 +72,14 @@ class LineFinder
     {
         self::$originContent = $content;
     }
+
+    /**
+     * Get original content
+     *
+     * @return string
+     */
+    public static function getOriginContent()
+    {
+        return self::$originContent;
+    }
 }

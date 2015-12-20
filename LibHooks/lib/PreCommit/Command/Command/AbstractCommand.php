@@ -91,11 +91,7 @@ abstract class AbstractCommand extends Command
             //TODO Make single load
             $config = Config::getInstance(
                 array(
-                    'file' => $this->commithookDir
-                              .DIRECTORY_SEPARATOR
-                              .'LibHooks'.DIRECTORY_SEPARATOR
-                              .'config'.DIRECTORY_SEPARATOR
-                              .'root.xml',
+                    'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'LibHooks'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
                 )
             );
             Config::setProjectDir($this->askProjectDir($this->input, $this->output));

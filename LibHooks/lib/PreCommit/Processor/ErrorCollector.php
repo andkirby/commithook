@@ -19,13 +19,13 @@ class ErrorCollector
      * Add an error
      *
      * @param string       $file
-     * @param int          $type
+     * @param string       $code
      * @param int          $message
      * @param string|array $value
      * @param int|null     $line
      * @return $this
      */
-    public function addError($file, $type, $message, $value = null, $line = null)
+    public function addError($file, $code, $message, $value = null, $line = null)
     {
         if ($value !== (array) $value) {
             $value = array('value' => $value);
@@ -38,13 +38,13 @@ class ErrorCollector
         if ($line) {
             $lineValue                    = is_array($line) ? implode(',', $line) : $line;
             $message                      = "Line: $lineValue. ".$message;
-            $this->errors[$file][$type][] = array(
+            $this->errors[$file][$code][] = array(
                 'line'    => $line,
                 'value'   => $value['value'],
                 'message' => $message,
             );
         } else {
-            $this->errors[$file][$type][] = array(
+            $this->errors[$file][$code][] = array(
                 'value'   => $value['value'],
                 'message' => $message,
             );
