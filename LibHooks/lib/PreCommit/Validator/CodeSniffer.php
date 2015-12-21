@@ -25,7 +25,7 @@ class CodeSniffer extends AbstractValidator
      */
     protected $errorMessages
         = array(
-            self::CODE_PHP_CODE_SNIFFER_ERROR => "CodeSniffer Error.",
+            self::CODE_PHP_CODE_SNIFFER_ERROR => 'CodeSniffer Error.',
         );
 
     /**
@@ -51,7 +51,7 @@ class CodeSniffer extends AbstractValidator
 
         if (!$this->getStandardConfigDir()) {
             throw new Exception(
-                'CodeSniffer standard not found. Please set it by XPath validators/CodeSniffer/config_rule'
+                'CodeSniffer standard not found. Please set it by XPath validators/CodeSniffer/rule/directory (or validators/CodeSniffer/rule/name for rule name)'
             );
         }
 
