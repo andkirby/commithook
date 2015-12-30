@@ -155,7 +155,7 @@
             </filetype>
             <end_message>
                 <success>Your code is valid.</success>
-                <error>Ooops! Something wrong in your files for commit.</error>
+                <error>Ooops! Something wrong in your files for committing.</error>
             </end_message>
         </pre-commit>
     </hooks>
