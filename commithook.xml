@@ -8,6 +8,7 @@
                 <skip>
                     <files>
                         <file>LibHooks/lib/PreCommit/Composer/Application.php</file>
+                        <file>LibHooks/runner.php</file>
                     </files>
                 </skip>
             </filter>
@@ -21,7 +22,6 @@
             </rule>
         </CodeSniffer>
     </validators>
-
     <tracker>
         <type>github</type>
         <github>

@@ -34,13 +34,14 @@ if (!isset($rootConfigFile)) {
 }
 $config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
 
-echo PHP_EOL;
-echo 'PHP CommitHooks v' . $config->getNode('version');
-echo PHP_EOL;
-echo 'Please report all hook bugs to the GitHub project.';
-echo PHP_EOL;
-echo 'http://github.com/andkirby/commithook';
-echo PHP_EOL . PHP_EOL;
+//prepare head block for output
+$output = array();
+$output['head'] = 'PHP CommitHooks v' . $config->getNode('version');
+$output['head'] .= PHP_EOL;
+$output['head'] .= 'Please report all hook bugs to the GitHub project.';
+$output['head'] .= PHP_EOL;
+$output['head'] .= 'http://github.com/andkirby/commithook';
+$output['head'] .= PHP_EOL . PHP_EOL;
 
 //Process hook name
 $supportedHooks = $config->getNodeArray('supported_hooks');
@@ -51,7 +52,9 @@ if (empty($hookFile)) {
     if (isset($backtrace[0]['file'])) {
         $hookFile = $backtrace[0]['file'];
     } else {
-        throw new \PreCommit\Exception('Error. Please add line "$hookFile = __FILE__;" in your hook file.');
+        echo 'Error. Please add line "$hookFile = __FILE__;" in your hook file.';
+        echo PHP_EOL . PHP_EOL;
+        exit(1);
     }
 }
 
@@ -72,23 +75,36 @@ if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
 }
 
-/**
- * @var \PreCommit\Processor\AbstractAdapter $processor
-*/
-$processor = \PreCommit\Processor::factory($hookName, $vcs);
-$processor->process();
+try {
+    /**
+     * @var \PreCommit\Processor\AbstractAdapter $processor
+     */
+    $processor = \PreCommit\Processor::factory($hookName, $vcs);
+    $processor->process();
+} catch (\Exception $e) {
+    echo 'EXCEPTION:'.$e->getMessage();
+    echo PHP_EOL;
+    echo $e->getTraceAsString();
+    echo PHP_EOL . PHP_EOL;
+    exit(1);
+}
+
+//show head block
+if (PreCommit\Config::getInstance()->getNode('output/show_head')) {
+    echo $output['head'];
+}
 
 if (!$processor->getErrors()) {
-    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/success");
+    echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/success");
     $processor->dispatchEvent('success_end');
     $processor->dispatchEvent('end', 0);
     echo PHP_EOL . PHP_EOL;
     exit(0);
 } else {
-    echo PreCommit\Config::getInstance()->getNode("hook/$hookName/end_message/error");
+    echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/error");
+    echo PHP_EOL . PHP_EOL;
     $processor->dispatchEvent('error_end');
     $processor->dispatchEvent('end', 1);
-    echo PHP_EOL . PHP_EOL;
     echo $processor->getErrorsOutput();
     echo PHP_EOL . PHP_EOL;
     exit(1);
