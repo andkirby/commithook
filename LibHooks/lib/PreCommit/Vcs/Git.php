@@ -15,12 +15,6 @@ class Git implements AdapterInterface
      */
     public function getAffectedFiles()
     {
-        if (defined('TEST_MODE') && TEST_MODE) {
-            //@startSkipCommitHooks
-            return array_filter(explode("\n", `git ls-files -m`));
-            //@finishSkipCommitHooks
-        }
-
         //@startSkipCommitHooks
         return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
         //@finishSkipCommitHooks
@@ -49,8 +43,7 @@ class Git implements AdapterInterface
      */
     protected function getCommitMessageFile()
     {
-        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'
-               .DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
     }
 
     /**
