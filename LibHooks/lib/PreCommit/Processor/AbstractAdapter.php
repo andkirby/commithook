@@ -3,7 +3,7 @@ namespace PreCommit\Processor;
 
 use PreCommit\Exception;
 use PreCommit\Processor\ErrorCollector as Error;
-use \PreCommit\Vcs\AdapterInterface;
+use PreCommit\Vcs\AdapterInterface;
 
 /**
  * Class abstract process adapter
@@ -60,14 +60,12 @@ abstract class AbstractAdapter
      */
     public function __construct($options = array())
     {
-        if (is_string($options)) {
-            $this->vcsAdapter = $this->getVcsAdapter($options);
-        } elseif (is_object($options) && $options instanceof AdapterInterface) {
-            $this->vcsAdapter = $options;
+        if (is_string($options) || is_object($options) && $options instanceof AdapterInterface) {
+            $this->initVcsAdapter($options);
         } elseif (isset($options['vcs']) && is_object($options['vcs'])
                   && $options['vcs'] instanceof AdapterInterface
         ) {
-            $this->vcsAdapter = $options['vcs'];
+            $this->initVcsAdapter($options['vcs']);
         } else {
             throw new Exception('VCS adapter is not set.');
         }
@@ -80,17 +78,36 @@ abstract class AbstractAdapter
     }
 
     /**
+     * Init VCS adapter
+     *
+     * @param string|AdapterInterface $type
+     * @return mixed AdapterInterface
+     * @throws \PreCommit\Exception
+     */
+    protected function initVcsAdapter($type)
+    {
+        if (is_string($type)) {
+            if (strpos($type, '\\') || strpos($type, '_')) {
+                $class = $type;
+            } else {
+                $class = '\\PreCommit\\Vcs\\'.ucfirst($type);
+            }
+            $this->vcsAdapter = new $class();
+        } elseif (is_object($type) && $type instanceof AdapterInterface) {
+            $this->vcsAdapter = $type;
+        } else {
+            throw new Exception('VCS adapter is not set.');
+        }
+    }
+
+    /**
      * Get VCS object
      *
-     * @param string $type
-     * @return string
+     * @return AdapterInterface
      */
-    protected function getVcsAdapter($type)
+    public function getVcsAdapter()
     {
-        $type  = ucfirst($type);
-        $class = 'PreCommit\\Vcs\\'.$type;
-
-        return new $class();
+        return $this->vcsAdapter;
     }
 
     /**
@@ -122,8 +139,7 @@ abstract class AbstractAdapter
         foreach ($this->getErrors() as $file => $fileErrors) {
             $decorLength = 30 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
-            $output .= str_repeat('=', round($decorLength - 0.1))
-                       ." $file ".str_repeat('=', round($decorLength)).PHP_EOL;
+            $output .= str_repeat('=', round($decorLength - 0.1))." $file ".str_repeat('=', round($decorLength)).PHP_EOL;
             foreach ($fileErrors as $errorsType) {
                 foreach ($errorsType as $error) {
                     $output .= str_replace(array("\n", PHP_EOL), '', $error['message'])."\n";
