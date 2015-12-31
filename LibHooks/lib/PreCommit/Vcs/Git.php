@@ -21,6 +21,23 @@ class Git implements AdapterInterface
     }
 
     /**
+     * Add path to VCS
+     *
+     * @param string $path
+     * @return $this
+     * @throws \PreCommit\Exception
+     */
+    public function addPath($path)
+    {
+        if (!realpath($path)) {
+            throw new Exception('Unknown path: '.$path);
+        }
+        `git add $path`;
+
+        return $this;
+    }
+
+    /**
      * Get inner text of commit message file
      *
      * @return string

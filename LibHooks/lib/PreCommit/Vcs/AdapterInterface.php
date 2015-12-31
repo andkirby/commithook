@@ -36,6 +36,14 @@ interface AdapterInterface
     public function setCommitMessage($message);
 
     /**
+     * Add path to VCS
+     *
+     * @param string $path
+     * @return $this
+     */
+    public function addPath($path);
+
+    /**
      * Get merge status
      *
      * @return bool
