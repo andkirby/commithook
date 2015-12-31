@@ -102,6 +102,9 @@
 
                         <!-- Tabs, BOM, line separators-->
                         <FileStyle>1</FileStyle>
+
+                        <!-- Checking license -->
+                        <License>1</License>
                     </code>
                     <protection>
                         <FileFilter>1</FileFilter>
