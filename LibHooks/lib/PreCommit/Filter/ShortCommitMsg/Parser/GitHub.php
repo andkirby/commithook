@@ -24,4 +24,14 @@ class GitHub extends ShortCommitMsg\Parser\Jira implements InterpreterInterface
     {
         return "#".ltrim($issueNo, '#');
     }
+
+    /**
+     * Get issue key regular expression
+     *
+     * @return string
+     */
+    protected function getIssueKeyRegular()
+    {
+        return '[#]?[0-9]+';
+    }
 }

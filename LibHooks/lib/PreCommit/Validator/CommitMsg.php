@@ -17,16 +17,11 @@ class CommitMsg extends AbstractValidator
     /**#@+
      * Error codes
      */
-    const CODE_BAD_COMMIT_MESSAGE   = 'badCommitMessage';
-
-    const CODE_VERB_INCORRECT       = 'badCommitVerb';
-
+    const CODE_BAD_COMMIT_MESSAGE = 'badCommitMessage';
+    const CODE_VERB_INCORRECT = 'badCommitVerb';
     const CODE_ISSUE_TYPE_INCORRECT = 'badIssueType';
-
-    const CODE_VERB_NOT_FOUND       = 'commitVerbNotFound';
-
-    const CODE_KEY_NOT_SET          = 'commitKeyNotSet';
-
+    const CODE_VERB_NOT_FOUND = 'commitVerbNotFound';
+    const CODE_KEY_NOT_SET = 'commitKeyNotSet';
     /**#@-*/
 
     /**
@@ -74,11 +69,16 @@ class CommitMsg extends AbstractValidator
      *
      * @param Message $message
      * @param string  $file
+     * @param bool    $test    Make a test without adding errors
      * @return bool
      */
-    public function validate($message, $file)
+    public function validate($message, $file, $test = false)
     {
-        if (!$this->matchMessage($message)) {
+        $matched = $this->matchMessage($message);
+        if ($test) {
+            return $matched;
+        }
+        if (!$matched) {
             $this->addError('Commit Message', self::CODE_BAD_COMMIT_MESSAGE, $message->head);
         }
 
@@ -214,14 +214,16 @@ class CommitMsg extends AbstractValidator
             throw new Exception('Empty issue type.');
         }
 
-        return (array) $this->getConfig()->getNodeArray(
-            'validators/IssueType/issue/verb/allowed/'
-            .$this->type.'/'.$type
-        )
-            ?: (array) $this->getConfig()->getNodeArray(
-                'validators/IssueType/issue/verb/allowed/default/'
-                .$type
+        $verbs = (array) $this->getConfig()->getNodeArray(
+            'validators/IssueType/issue/verb/allowed/'.$this->type.'/'.$type
+        );
+        if (!$verbs) {
+            $verbs = (array) $this->getConfig()->getNodeArray(
+                'validators/IssueType/issue/verb/allowed/default/'.$type
             );
+        }
+
+        return $verbs;
     }
 
     /**
@@ -231,8 +233,12 @@ class CommitMsg extends AbstractValidator
      */
     protected function getVerbs()
     {
-        return (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->type)
-            ?: (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
+        $verbs = (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/'.$this->type);
+        if (!$verbs) {
+            $verbs = (array) $this->getConfig()->getNodeArray('hooks/commit-msg/message/verb/list/default');
+        }
+
+        return $verbs;
     }
 
     /**

@@ -81,6 +81,16 @@ class FullCommitMsg implements InterpreterInterface
     }
 
     /**
+     * Get tracker type
+     *
+     * @return string
+     */
+    protected function getTrackerType()
+    {
+        return (string) $this->getConfig()->getNode('tracker/type');
+    }
+
+    /**
      * Get format
      *
      * @return string
@@ -88,7 +98,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function getFormat()
     {
-        $format = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->type.'/format');
+        $format = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->getTrackerType().'/'.$this->type.'/format');
         if (!$format) {
             throw new Exception('Format regular expression is not set.');
         }
@@ -104,7 +114,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function getRegularFormat()
     {
-        $regular = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->type.'/regular');
+        $regular = $this->getConfig()->getNode('interpreters/FullCommitMsg/formatting/'.$this->getTrackerType().'/'.$this->type.'/regular');
         if (!$regular) {
             throw new Exception('Base regular expression is not set.');
         }
@@ -120,7 +130,7 @@ class FullCommitMsg implements InterpreterInterface
      */
     protected function getKeys()
     {
-        $keys = $this->getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting/'.$this->type.'/key');
+        $keys = $this->getConfig()->getNodeArray('interpreters/FullCommitMsg/formatting/'.$this->getTrackerType().'/'.$this->type.'/key');
         if (!$keys) {
             throw new Exception('Key regular expressions is not set.');
         }

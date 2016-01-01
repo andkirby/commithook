@@ -2,6 +2,7 @@
 namespace PreCommit\Processor;
 
 use PreCommit\Message;
+use PreCommit\Validator\CommitMsg as ValidatorCommitMsg;
 
 /**
  * Class abstract process adapter
@@ -58,8 +59,13 @@ class CommitMsg extends AbstractAdapter
             $message = $this->loadFilter('Explode')
                 ->filter($message);
 
-            $message = $this->loadFilter('ShortCommitMsg')
-                ->filter($message);
+            /** @var ValidatorCommitMsg $commitMsg */
+            $commitMsg = $this->loadValidator('CommitMsg');
+
+            if (!$commitMsg->validate($message, null, true)) {
+                $message = $this->loadFilter('ShortCommitMsg')
+                    ->filter($message);
+            }
 
             $this->loadValidator('IssueType')
                 ->validate($message, null);
