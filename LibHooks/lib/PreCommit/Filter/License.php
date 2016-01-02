@@ -50,20 +50,10 @@ class License implements FilterInterface
      */
     public function getLicenseGenerator($file)
     {
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext   = pathinfo($file, PATHINFO_EXTENSION);
         $class = __CLASS__.'\\'.ucfirst($ext);
 
         return new $class();
-    }
-
-    /**
-     * Get config model
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return Config::getInstance();
     }
 
     /**
@@ -73,9 +63,11 @@ class License implements FilterInterface
      */
     public function getLicense()
     {
-        return trim($this->getConfig()->getNode(
-            'validators/License/licenses/'.$this->getLicenseName().'/text'
-        ));
+        return trim(
+            $this->getConfig()->getNode(
+                'validators/License/licenses/'.$this->getLicenseName().'/text'
+            )
+        );
     }
 
     /**
@@ -85,9 +77,11 @@ class License implements FilterInterface
      */
     public function getTestLicense()
     {
-        return trim($this->getConfig()->getNode(
-            'validators/License/licenses/'.$this->getLicenseName().'/test_text'
-        ));
+        return trim(
+            $this->getConfig()->getNode(
+                'validators/License/licenses/'.$this->getLicenseName().'/test_text'
+            )
+        );
     }
 
     /**
@@ -129,6 +123,16 @@ class License implements FilterInterface
         PreCommit::getVcsAdapter()->addPath($file);
 
         return $this;
+    }
+
+    /**
+     * Get config model
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return Config::getInstance();
     }
 
     /**
