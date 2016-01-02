@@ -4,4 +4,4 @@ commithook-local.xml
 commithook-self.xml
 .cache/*
 ca.pem
-/test.sh
+/test.*
