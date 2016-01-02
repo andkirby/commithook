@@ -31,7 +31,7 @@
                     ]]></text>
                     <test_text>* NOTICE OF LICENSE</test_text>
                     <paths>
-                        <whitelist>
+                        <required>
                             <path1>app/code/community/CoolCompany</path1>
                             <path2>app/code/local/CoolCompany</path2>
                             <js>js/cool-company</js>
@@ -41,10 +41,10 @@
                             <shell>shell/**/cool-company</shell>
                             <lib>lib/CoolCompany</lib>
                             <design>app/design/*/*/*/cool-company</design>
-                        </whitelist>
-                        <blacklist>
+                        </required>
+                        <skipped>
                             <lib>lib/CoolCompany/specific/files</lib>
-                        </blacklist>
+                        </skipped>
                     </paths>
                     <filepaths>
                         <required>
