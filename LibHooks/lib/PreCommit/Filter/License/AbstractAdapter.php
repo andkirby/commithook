@@ -26,11 +26,11 @@ abstract class AbstractAdapter
     protected $license;
 
     /**
-     * The line where should be added new generated license block
+     * License text for testing
      *
-     * @var array
+     * @var string
      */
-    protected $pasteAtLine = - 1;
+    protected $testLicense;
 
     /**
      * The code which should be placed before license
@@ -200,7 +200,24 @@ abstract class AbstractAdapter
      */
     protected function getTestLicense()
     {
-        return $this->getLicense();
+        if (!$this->testLicense) {
+            return $this->getLicense();
+        }
+
+        return $this->testLicense;
+    }
+
+    /**
+     * Set license
+     *
+     * @param string $text
+     * @return $this
+     */
+    public function setTestLicense($text)
+    {
+        $this->testLicense = $text;
+
+        return $this;
     }
 
     /**
