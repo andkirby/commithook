@@ -2,7 +2,6 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-
 namespace PreCommit\Filter;
 
 use PreCommit\Config;
@@ -10,6 +9,7 @@ use PreCommit\Exception;
 use PreCommit\Filter\License\AbstractAdapter;
 use PreCommit\Helper\PathMatch;
 use PreCommit\Processor\PreCommit;
+use PreCommit\Validator\Helper\LineFinder;
 
 /**
  * Class License for adding license block into files
@@ -27,24 +27,24 @@ class License implements FilterInterface
             return $content;
         }
 
-        $newContent = $this->getLicenseGenerator($file)
-            ->setContent($content)
-            ->setLicense($this->getLicense())
-            ->setTestLicense($this->getTestLicense())
-            ->generate();
+        $newContent = $this->generateLicense($content, $file);
 
         if (!$newContent) {
             return $content;
         }
 
+        //update original content
+        $newOriginalContent = $this->generateLicense(LineFinder::getOriginContent(), $file);
+        LineFinder::setOriginContent($newOriginalContent);
+
         $this->writeContent(
             $this->getFileAbsolutePath($file),
-            $newContent
+            $newOriginalContent
         );
 
         $this->addFileToVcs($file);
 
-        return $content;
+        return $newContent;
     }
 
     /**
@@ -190,5 +190,21 @@ class License implements FilterInterface
         );
 
         return array_merge($paths, $filePaths);
+    }
+
+    /**
+     * Generate license in file content
+     *
+     * @param string $content
+     * @param string $file
+     * @return null|string
+     */
+    protected function generateLicense($content, $file)
+    {
+        return $this->getLicenseGenerator($file)
+            ->setContent($content)
+            ->setLicense($this->getLicense())
+            ->setTestLicense($this->getTestLicense())
+            ->generate();
     }
 }

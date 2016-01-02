@@ -1,4 +1,7 @@
 <?php
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
 namespace PreCommit\Filter\License;
 
 /**
@@ -38,6 +41,6 @@ class Php extends AbstractAdapter
      */
     public function getWrapStringAfterLicense()
     {
-        return ''; //add one line delimiter
+        return null;
     }
 }
