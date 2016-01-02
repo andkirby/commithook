@@ -17,6 +17,8 @@ namespace PreCommit\Filter;
 interface FilterInterface
 {
     /**
+     * Filter content
+     *
      * @param string $content
      * @param string $file
      * @return mixed
