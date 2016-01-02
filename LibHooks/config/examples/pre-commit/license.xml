@@ -42,9 +42,9 @@
                             <lib>lib/CoolCompany</lib>
                             <design>app/design/*/*/*/cool-company</design>
                         </required>
-                        <skipped>
+                        <ignored>
                             <lib>lib/CoolCompany/specific/files</lib>
-                        </skipped>
+                        </ignored>
                     </paths>
                     <filepaths>
                         <required>
