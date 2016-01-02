@@ -237,10 +237,10 @@ abstract class AbstractAdapter
         $block = $this->getLicense();
 
         //wrap block with default code (e.g. for XML <!-- and -->)
-        if ($this->getWrapStringBeforeLicense()) {
+        if (null !== $this->getWrapStringBeforeLicense()) {
             $block = $this->getWrapStringBeforeLicense()."\n".$block;
         }
-        if ($this->getWrapStringAfterLicense()) {
+        if (null !== $this->getWrapStringAfterLicense()) {
             $block .= "\n".$this->getWrapStringAfterLicense();
         }
 

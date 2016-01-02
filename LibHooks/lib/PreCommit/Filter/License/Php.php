@@ -2,19 +2,19 @@
 namespace PreCommit\Filter\License;
 
 /**
- * Class Xml
- * This filter responsible for adding license block into XML files
+ * Class Php
+ * This filter responsible for adding license block into PHP files
  *
  * @package PreCommit\Filter\License
  */
-class Xml extends AbstractAdapter
+class Php extends AbstractAdapter
 {
     /**
      * {@inheritdoc}
      */
     protected function getInputContentBeforeLicense()
     {
-        return '<?xml';
+        return '<?php';
     }
 
     /**
@@ -30,7 +30,7 @@ class Xml extends AbstractAdapter
      */
     public function getWrapStringBeforeLicense()
     {
-        return '<!--';
+        return null;
     }
 
     /**
@@ -38,6 +38,6 @@ class Xml extends AbstractAdapter
      */
     public function getWrapStringAfterLicense()
     {
-        return '-->';
+        return ''; //add one line delimiter
     }
 }
