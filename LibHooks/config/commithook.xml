@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<config>
-    <!--General config file-->
-    <output>
-        <show_head>1</show_head>
-    </output>
-</config>

@@ -1,0 +1,15 @@
+<?php
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+namespace PreCommit\Filter;
+
+/**
+ * Class Php
+ * This filter responsible for adding license block into PHP files
+ *
+ * @package PreCommit\Filter\License
+ */
+class Exception extends \PreCommit\Exception
+{
+}

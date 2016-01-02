@@ -3,6 +3,6 @@ php:
   - "5.4"
 install:
   - composer install --no-dev
-script: phpunit --configuration LibHooks/tests/phpunit.xml.dist --coverage-text
+script: phpunit --configuration src/tests/phpunit.xml.dist --coverage-text
 notifications:
   email: "andkirby@gmail.com"

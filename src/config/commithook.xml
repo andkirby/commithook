@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <!--General config file-->
+    <output>
+        <show_head>1</show_head>
+    </output>
+</config>

@@ -10,9 +10,18 @@
             <filter>
                 <skip>
                     <files>
-                        <file>LibHooks/lib/PreCommit/Composer/Application.php</file>
-                        <file>LibHooks/runner.php</file>
+                        <file>src/lib/PreCommit/Command/Application.php</file>
+                        <file>src/lib/PreCommit/Jira/Password.php</file>
+                        <file>src/lib/PreCommit/Jira/_password.php</file>
+                        <file>src/lib/PreCommit/Jira/_password.lib.php</file>
+                        <file>src/runner.php</file>
                     </files>
+                    <paths>
+                        <path>bin/</path>
+                        <path>src/tests/testsuite/PreCommit/Test/Filter/_fixture</path>
+                        <path>src/tests/testsuite/PreCommit/Test/_fixture</path>
+                        <path>src/tests/</path>
+                    </paths>
                 </skip>
             </filter>
         </FileFilter>
@@ -21,7 +30,7 @@
         </CodingStandard>
         <CodeSniffer>
             <rule>
-                <directory>LibHooks/phpcs</directory>
+                <directory>src/phpcs</directory>
             </rule>
         </CodeSniffer>
         <License>
@@ -34,9 +43,10 @@
                     ]]></text>
                     <test_text>andkirby/commithook/master/LICENSE.md</test_text>
                     <paths>
-                        <whitelist>
-                            <src>LibHooks</src>
-                        </whitelist>
+                        <required>
+                            <src>src</src>
+                        </required>
+                        <ignored>src/tests/testsuite/**/_fixture</ignored>
                     </paths>
                 </commithook>
             </licenses>

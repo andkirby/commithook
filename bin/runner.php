@@ -1,5 +1,8 @@
 <?php
 /**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+/**
  * Alias for old runner.php
  */
 
@@ -16,4 +19,4 @@ if (empty($hookFile)) {
     }
 }
 
-require_once realpath(__DIR__ . '/..') . '/LibHooks/runner.php';
+require_once realpath(__DIR__ . '/..') . '/src/runner.php';

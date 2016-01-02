@@ -28,8 +28,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "PreCommit\\": "LibHooks/lib/PreCommit",
-      "PreCommit\\Test\\": "LibHooks/tests/testsuite/PreCommit/Test"
+      "PreCommit\\": "src/lib/PreCommit",
+      "PreCommit\\Test\\": "src/tests/testsuite/PreCommit/Test"
     }
   },
   "extra": {

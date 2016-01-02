@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <tracker>
+        <jira>
+            <project>TEST</project>
+        </jira>
+    </tracker>
+</config>
