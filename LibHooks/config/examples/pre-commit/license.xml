@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<config>
+    <!--Validators setup-->
+    <validators>
+        <License>
+            <auto_update>1</auto_update>
+            <licenses>
+                <cool_company>
+                    <text><![CDATA[
+/**
+ * CoolCompany
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to cool-company@example.com so we can send you a copy immediately.
+ *
+ * @category  CoolCompany
+ * @package   CoolCompany_${PACKAGE}
+ * @copyright Copyright (c) 2015 Cool Company, Inc. (http://www.example.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+                    ]]></text>
+                    <paths>
+                        <whitelist>
+                            <path1>app/code/community/CoolCompany</path1>
+                            <path2>app/code/local/CoolCompany</path2>
+                            <js>js/cool-company</js>
+                            <!-- Directory example: skin/some/name/cool-company -->
+                            <skin>skin/*/*/cool-company</skin>
+                            <!-- Directory example: shell/any/dir/structure/cool-company -->
+                            <shell>shell/**/cool-company</shell>
+                            <lib>lib/CoolCompany</lib>
+                            <design>app/design/*/*/*/cool-company</design>
+                        </whitelist>
+                        <blacklist>
+                            <lib>lib/CoolCompany/specific/files</lib>
+                        </blacklist>
+                    </paths>
+                    <filepaths>
+                        <required>
+                            <js>js/cool-company/specific/*.jjs</js>
+                        </required>
+                    </filepaths>
+                    <!--<filetypes>-->
+                        <!--<php>1</php>-->
+                        <!--<js>1</js>-->
+                        <!--<xml>1</xml>-->
+                        <!--<css>1</css>-->
+                        <!--<scss>1</scss>-->
+                    <!--</filetypes>-->
+                </cool_company>
+            </licenses>
+        </License>
+    </validators>
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </php>
+            </filetype>
+        </pre-commit>
+    </hooks>
+</config>
