@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
 <config>
     <!--Validators setup-->
     <validators>
@@ -111,6 +116,7 @@
                     </protection>
                 </validator>
             </ignore>
+
             <filetype>
                 <!--Run validators before any filter because filters run always before validators-->
                 <before_all_original />
@@ -124,7 +130,11 @@
                     </validators>
                 </before_all>
                 <php>
+                    <filters>
+                        <License>0</License>
+                    </filters>
                     <validators>
+                        <License>0</License>
                         <CodeSniffer>1</CodeSniffer>
                         <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
@@ -134,21 +144,41 @@
                     </validators>
                 </php>
                 <phtml>
+                    <filters>
+                        <License>0</License>
+                    </filters>
                     <validators>
+                        <License>0</License>
                         <RedundantCode>1</RedundantCode>
                         <CodingStandardPhtml>1</CodingStandardPhtml>
                     </validators>
                 </phtml>
                 <js>
+                    <filters>
+                        <License>0</License>
+                    </filters>
                     <validators>
+                        <License>0</License>
                         <RedundantCode>1</RedundantCode>
                     </validators>
                 </js>
                 <xml>
+                    <filters>
+                        <License>0</License>
+                    </filters>
                     <validators>
+                        <License>0</License>
                         <XmlParser>1</XmlParser>
                     </validators>
                 </xml>
+                <css>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </css>
                 <after_all>
                     <validators>
                         <TrailingSpace>1</TrailingSpace>
@@ -158,7 +188,7 @@
             </filetype>
             <end_message>
                 <success>Your code is valid.</success>
-                <error>Ooops! Something wrong in your files for committing.</error>
+                <error>Ooops! Something wrong in your files.</error>
             </end_message>
         </pre-commit>
     </hooks>
