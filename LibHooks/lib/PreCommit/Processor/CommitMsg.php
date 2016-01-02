@@ -27,7 +27,7 @@ class CommitMsg extends AbstractAdapter
     public function __construct($vcsType)
     {
         parent::__construct($vcsType);
-        $this->setCodePath($this->vcsAdapter->getCodePath());
+        $this->setCodePath($this->getVcsAdapter()->getCodePath());
     }
 
     /**
@@ -101,7 +101,7 @@ class CommitMsg extends AbstractAdapter
      */
     protected function getCommitMessage()
     {
-        return $this->vcsAdapter->getCommitMessage();
+        return $this->getVcsAdapter()->getCommitMessage();
     }
 
     /**
@@ -112,6 +112,6 @@ class CommitMsg extends AbstractAdapter
      */
     protected function setCommitMessage(Message $message)
     {
-        return $this->vcsAdapter->setCommitMessage($message->body);
+        return $this->getVcsAdapter()->setCommitMessage($message->body);
     }
 }

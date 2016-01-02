@@ -56,8 +56,8 @@ class PreCommit extends AbstractAdapter
     public function __construct($vcsType)
     {
         parent::__construct($vcsType);
-        $this->setCodePath($this->vcsAdapter->getCodePath());
-        $this->setFiles($this->vcsAdapter->getAffectedFiles());
+        $this->setCodePath($this->getVcsAdapter()->getCodePath());
+        $this->setFiles($this->getVcsAdapter()->getAffectedFiles());
     }
 
     //region GettersSetters
@@ -145,7 +145,7 @@ class PreCommit extends AbstractAdapter
      */
     protected function canProcess()
     {
-        return !$this->vcsAdapter->isMergeInProgress();
+        return !$this->getVcsAdapter()->isMergeInProgress();
     }
 
     /**

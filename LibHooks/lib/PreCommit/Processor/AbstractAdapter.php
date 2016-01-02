@@ -25,7 +25,7 @@ abstract class AbstractAdapter
      *
      * @var \PreCommit\Vcs\AdapterInterface
      */
-    protected $vcsAdapter;
+    protected static $vcsAdapter;
 
     /**
      * Used validators list
@@ -60,14 +60,16 @@ abstract class AbstractAdapter
      */
     public function __construct($options = array())
     {
-        if (is_string($options) || is_object($options) && $options instanceof AdapterInterface) {
-            $this->initVcsAdapter($options);
-        } elseif (isset($options['vcs']) && is_object($options['vcs'])
-                  && $options['vcs'] instanceof AdapterInterface
-        ) {
-            $this->initVcsAdapter($options['vcs']);
-        } else {
-            throw new Exception('VCS adapter is not set.');
+        if (null === self::$vcsAdapter) {
+            if (is_string($options) || is_object($options) && $options instanceof AdapterInterface) {
+                $this->initVcsAdapter($options);
+            } elseif (isset($options['vcs']) && is_object($options['vcs'])
+                      && $options['vcs'] instanceof AdapterInterface
+            ) {
+                $this->initVcsAdapter($options['vcs']);
+            } else {
+                throw new Exception('VCS adapter is not set.');
+            }
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
@@ -82,9 +84,9 @@ abstract class AbstractAdapter
      *
      * @param string|AdapterInterface $type
      * @return mixed AdapterInterface
-     * @throws \PreCommit\Exception
+     * @throws Exception
      */
-    protected function initVcsAdapter($type)
+    protected static function initVcsAdapter($type)
     {
         if (is_string($type)) {
             if (strpos($type, '\\') || strpos($type, '_')) {
@@ -92,9 +94,9 @@ abstract class AbstractAdapter
             } else {
                 $class = '\\PreCommit\\Vcs\\'.ucfirst($type);
             }
-            $this->vcsAdapter = new $class();
+            static::$vcsAdapter = new $class();
         } elseif (is_object($type) && $type instanceof AdapterInterface) {
-            $this->vcsAdapter = $type;
+            static::$vcsAdapter = $type;
         } else {
             throw new Exception('VCS adapter is not set.');
         }
@@ -105,9 +107,9 @@ abstract class AbstractAdapter
      *
      * @return AdapterInterface
      */
-    public function getVcsAdapter()
+    public static function getVcsAdapter()
     {
-        return $this->vcsAdapter;
+        return static::$vcsAdapter;
     }
 
     /**
