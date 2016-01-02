@@ -69,4 +69,26 @@ class XmlTest extends TestCase
 
         $this->assertNull($generator->generate());
     }
+
+    /**
+     * Test exists license block
+     *
+     * @expectedException \PreCommit\Exception
+     */
+    public function testNotExistsInputContentBlock()
+    {
+        $generator = new Xml();
+        $generator->setContent(
+            '<config>
+    <node>Text</node>
+</config>'
+        );
+        $generator->setLicense(
+            '/**
+ * License block
+ */'
+        );
+
+        $generator->generate();
+    }
 }
