@@ -8,6 +8,7 @@ namespace PreCommit\Filter;
 use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Filter\License\AbstractAdapter;
+use PreCommit\Helper\PathMatch;
 use PreCommit\Processor\PreCommit;
 
 /**
@@ -22,6 +23,10 @@ class License implements FilterInterface
      */
     public function filter($content, $file = null)
     {
+        if (!$this->isLicenseRequired($file)) {
+            return $content;
+        }
+
         $newContent = $this->getLicenseGenerator($file)
             ->setContent($content)
             ->setLicense($this->getLicense())
@@ -143,5 +148,47 @@ class License implements FilterInterface
     protected function getLicenseName()
     {
         return $this->getConfig()->getNode('license/name');
+    }
+
+    /**
+     * Check
+     *
+     * @param string $file
+     * @return bool
+     */
+    protected function isLicenseRequired($file)
+    {
+        $matcher = new PathMatch();
+
+        return $matcher
+            ->setAllowed(
+                $this->getPaths('required')
+            )
+            ->setProtected(
+                $this->getPaths('ignored')
+            )
+            ->test($file);
+    }
+
+    /**
+     * Get paths
+     *
+     * @param string $type
+     * @return array
+     */
+    protected function getPaths($type)
+    {
+        $name = $this->getLicenseName();
+
+        $paths = array_values($this->getConfig()->getNodeArray('validators/License/licenses/'.$name.'/paths/'.$type));
+        foreach ($paths as &$path) {
+            $path = rtrim($path, '/').'/';
+        }
+
+        $filePaths = array_values(
+            $this->getConfig()->getNodeArray('validators/License/licenses/'.$name.'/filepaths/'.$type)
+        );
+
+        return array_merge($paths, $filePaths);
     }
 }
