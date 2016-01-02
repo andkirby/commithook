@@ -1,4 +1,8 @@
 <?php
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+
 namespace PreCommit\Filter;
 
 use PreCommit\Config;
@@ -47,7 +51,7 @@ class License implements FilterInterface
     public function getLicenseGenerator($file)
     {
         $ext = pathinfo($file, PATHINFO_EXTENSION);
-        $class = __NAMESPACE__.'\\'.__CLASS__.'\\'.ucfirst($ext);
+        $class = __CLASS__.'\\'.ucfirst($ext);
 
         return new $class();
     }

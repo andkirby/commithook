@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <!-- This is a local configuration file. It is not used in external projects.-->
 <config>
+    <license>
+        <name>commithook</name>
+    </license>
     <!--Validators setup-->
     <validators>
         <FileFilter>
@@ -21,7 +24,64 @@
                 <directory>LibHooks/phpcs</directory>
             </rule>
         </CodeSniffer>
+        <License>
+            <licenses>
+                <commithook>
+                    <text><![CDATA[
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+                    ]]></text>
+                    <test_text>andkirby/commithook/master/LICENSE.md</test_text>
+                    <paths>
+                        <whitelist>
+                            <src>LibHooks</src>
+                        </whitelist>
+                    </paths>
+                </commithook>
+            </licenses>
+        </License>
     </validators>
+
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </php>
+                <phtml>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </phtml>
+                <xml>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </xml>
+                <css>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </css>
+            </filetype>
+        </pre-commit>
+    </hooks>
+
     <tracker>
         <type>github</type>
         <github>
