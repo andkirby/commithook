@@ -243,7 +243,7 @@ class Jira implements InterpreterInterface
         if (null === $commitVerb && $m[2] && $m[4] && trim($m[2]) == $m[2]) {
             //recover issue key
             $m[4] = $m[2].$m[4];
-        } elseif (null === $commitVerb && $m[6] && !$m[4] && trim($m[2]) == $m[2]) {
+        } elseif (null === $commitVerb && isset($m[6]) && $m[6] && !$m[4] && trim($m[2]) == $m[2]) {
             //recover user message
             $m[6] = $m[2].$m[6];
         }
