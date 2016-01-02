@@ -98,16 +98,6 @@ class PhtmlTest extends TestCase
  */'
         );
 
-        $expected
-            = '<?php
-/**
- * License block
- */
-?>
-<div>
-    <span>Text</span>
-</div>';
-
         $this->assertNull($generator->generate());
     }
 }
