@@ -20,7 +20,7 @@
                         <path>bin/</path>
                         <path>src/tests/testsuite/PreCommit/Test/Filter/_fixture</path>
                         <path>src/tests/testsuite/PreCommit/Test/_fixture</path>
-                        <path>src/tests/</path>
+                        <!--<path>src/tests/</path>-->
                     </paths>
                 </skip>
             </filter>

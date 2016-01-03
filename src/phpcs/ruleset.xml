@@ -10,12 +10,14 @@
     <!-- Include the whole Symfony2 standard -->
     <rule ref="../../vendor/escapestudios/symfony2-coding-standard/Symfony2"/>
 
+    <!--<rule ref="Generic.Debug.JSHint"/>-->
+
     <!--Exclude files-->
     <exclude-pattern>src/lib/PreCommit/Jira/Password.php</exclude-pattern>
     <exclude-pattern>src/lib/PreCommit/Jira/_password.php</exclude-pattern>
     <exclude-pattern>src/lib/PreCommit/Jira/_password.lib.php</exclude-pattern>
     <exclude-pattern>src/runner.php</exclude-pattern>
-    <exclude-pattern>*/tests/testsuite/*</exclude-pattern>
+    <!--<exclude-pattern>*/tests/testsuite/*</exclude-pattern>-->
     <exclude-pattern>src/tests/testsuite/PreCommit/Test/Validator/XmlParserTest.php</exclude-pattern>
 
     <!--<rule ref="Squiz.Strings.ConcatenationSpacing.PaddingFound">-->
