@@ -49,7 +49,7 @@ class PhpClass extends AbstractValidator
      */
     public function __construct(array $options)
     {
-        $interpreter = (string) Config::getInstance()->getNode('validators/PhpClass/interpret');
+        $interpreter = (string) Config::getInstance()->getNode('code/interpreter/php');
         if (empty($interpreter)) {
             throw new Exception('Path to PHP interpreter is not set.');
         }

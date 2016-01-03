@@ -9,4 +9,12 @@
     <output>
         <show_head>1</show_head>
     </output>
+
+    <code>
+        <interpreter>
+            <php>c:/xampp/php/php.exe</php>
+            <nodejs>c:/xampp/nodejs/node.exe</nodejs>
+            <!--<rhino>c:/progra~1/Java/bin/java.exe -jar rhino/js.jar</rhino>-->
+        </interpreter>
+    </code>
 </config>

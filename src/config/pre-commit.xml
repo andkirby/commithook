@@ -7,9 +7,6 @@
 <config>
     <!--Validators setup-->
     <validators>
-        <PhpClass>
-            <interpret>c:/xampp/php/php.exe</interpret>
-        </PhpClass>
         <CodingStandard>
             <underscore_in_non_public>1</underscore_in_non_public>
         </CodingStandard>
