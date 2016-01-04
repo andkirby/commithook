@@ -15,15 +15,10 @@ class CodingStandardPhtml extends AbstractValidator
      * Error codes
      */
     const CODE_PHTML_ALTERNATIVE_SYNTAX = 'nonAlterSyntax';
-
-    const CODE_PHTML_GAPS               = 'redundantGapsPhtml';
-
-    const CODE_PHTML_UNDERSCORE_IN_VAR  = 'variableHasUnderscorePhtml';
-
-    const CODE_PHTML_PROTECTED_METHOD   = 'protectedMethodUsage';
-
-    const CODE_PHTML_CLASS              = 'classUsage';
-
+    const CODE_PHTML_GAPS = 'redundantGapsPhtml';
+    const CODE_PHTML_UNDERSCORE_IN_VAR = 'variableHasUnderscorePhtml';
+    const CODE_PHTML_PROTECTED_METHOD = 'protectedMethodUsage';
+    const CODE_PHTML_CLASS = 'classUsage';
     /**#@-*/
 
     /**
@@ -34,7 +29,7 @@ class CodingStandardPhtml extends AbstractValidator
     protected $errorMessages
         = array(
             self::CODE_PHTML_ALTERNATIVE_SYNTAX => 'No ability to use braces in the PHTML code. Please use alternative syntax as if..endif. Original line: %value%',
-            self::CODE_PHTML_GAPS               => 'File contain at least two gaps in succession %value% time(s).',
+            self::CODE_PHTML_GAPS               => 'File contains at least two gaps in succession %value% time(s).',
             self::CODE_PHTML_UNDERSCORE_IN_VAR  => 'Underscore in variable(s): %vars%. Original line: %value%',
             self::CODE_PHTML_PROTECTED_METHOD   => 'It is not possible to use protected method of $this object in a template. Original line: %value%',
             self::CODE_PHTML_CLASS              => 'It is not possible classes in templates. Original line: %value%',

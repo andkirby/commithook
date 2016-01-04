@@ -63,8 +63,8 @@ class CodingStandard extends AbstractValidator
             self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID               => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
             self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
             self::CODE_PHP_METHOD_SCOPE                                  => 'Method should have scope: public or protected. Original line: %value%',
-            self::CODE_PHP_GAPS                                          => 'File contain at least two gaps in succession %value% time(s).',
-            self::CODE_PHP_BRACKET_GAPS                                  => 'File contain at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
+            self::CODE_PHP_GAPS                                          => 'File contains at least two gaps in succession %value% time(s).',
+            self::CODE_PHP_BRACKET_GAPS                                  => 'File contains at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
             self::CODE_PHP_UNDERSCORE_IN_VAR                             => 'Underscore in variable(s): %vars%. Original line: %value%',
         );
 
