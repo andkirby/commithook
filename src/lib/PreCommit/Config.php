@@ -140,7 +140,7 @@ class Config extends \SimpleXMLElement
      * @return string
      * @throws Exception
      */
-    protected static function readPath($path)
+    public static function readPath($path)
     {
         $updated = false;
         if (0 === strpos($path, 'PROJECT_DIR')) {
