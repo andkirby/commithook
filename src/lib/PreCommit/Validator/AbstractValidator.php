@@ -75,5 +75,7 @@ abstract class AbstractValidator
     protected function addError($file, $code, $value = null, $line = null)
     {
         $this->errorCollector->addError($file, $code, $this->errorMessages[$code], $value, $line);
+
+        return $this;
     }
 }

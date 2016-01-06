@@ -4,9 +4,8 @@
  */
 namespace PreCommit\Validator;
 
-use PreCommit\Config;
-use PreCommit\Exception;
 use PreCommit\Interpreter\JsHintOutput;
+use PreCommit\Validator\Linter\AbstractLintValidator;
 
 /**
  * Class JsHint
@@ -15,8 +14,12 @@ use PreCommit\Interpreter\JsHintOutput;
  *
  * @package PreCommit\Validator
  */
-class JsHint extends AbstractValidator
+class JsHint extends AbstractLintValidator
 {
+    /**
+     * Linter type
+     */
+    const TYPE = 'jshint';
     /**#@+
      * Error codes
      */
@@ -34,86 +37,11 @@ class JsHint extends AbstractValidator
         );
 
     /**
-     * Validate XML
-     *
-     * @param string $content
-     * @param string $file
-     * @return bool
-     */
-    public function validate($content, $file)
-    {
-        foreach ($this->validateByJsHint($file) as $file => $errors) {
-            foreach ($errors as $error) {
-                $line    = $error[0].':'.$error[1];
-                $message = $error[2];
-                $this->addError(
-                    $file,
-                    self::CODE_JSHINT_ERROR,
-                    $message,
-                    $line
-                );
-            }
-        }
-
-        return !$this->errorCollector->hasErrors();
-    }
-
-    /**
-     * Validate file with JSHint
-     *
-     * @param string $file
-     * @return array
-     */
-    protected function validateByJsHint($file)
-    {
-        $command = $this->getCommand($file);
-        if (!$command) {
-            return array();
-        }
-        exec($command, $output);
-
-        $interpreter = new JsHintOutput();
-
-        return $interpreter->interpret($output);
-    }
-
-    /**
-     * Get complete command to execute JSHint validation
-     *
-     * @param string $file
-     * @return string
-     * @throws Exception
-     */
-    protected function getCommand($file)
-    {
-        $interpreterPath = $this->getNodeJsPath();
-        $jshintPath      = $this->getJsHintPath();
-        $configPath      = $this->getJsHintConfigPath();
-
-        if (!$interpreterPath || !$jshintPath || !$configPath) {
-            return array();
-        }
-
-        $command = $this->getCommandFormat();
-
-        if (!$command) {
-            throw new Exception('No command for running jshint.');
-        }
-
-        $command = str_replace('%interpreter%', $interpreterPath, $command);
-        $command = str_replace('%config%', $configPath, $command);
-        $command = str_replace('%jshint%', $jshintPath, $command);
-        $command = str_replace('%file%', $file, $command);
-
-        return $command;
-    }
-
-    /**
      * Get path to NodeJS executable file
      *
      * @return null|string
      */
-    protected function getNodeJsPath()
+    protected function getInterpreterPath()
     {
         return $this->getConfig()->getNode('code/interpreter/nodejs');
     }
@@ -123,7 +51,7 @@ class JsHint extends AbstractValidator
      *
      * @return null|string
      */
-    protected function getJsHintPath()
+    protected function getLinterPath()
     {
         return $this->getConfig()->getNode('validators/JsHint/execution/jshint');
     }
@@ -133,7 +61,7 @@ class JsHint extends AbstractValidator
      *
      * @return null|string
      */
-    protected function getJsHintConfigPath()
+    protected function getLinterConfigPath()
     {
         /**
          * Read custom project file
@@ -175,26 +103,6 @@ class JsHint extends AbstractValidator
     }
 
     /**
-     * Get path to JsHint executable file by NodeJS
-     *
-     * @return null|string
-     */
-    protected function getCommandFormat()
-    {
-        return $this->getConfig()->getNode('validators/JsHint/execution/command');
-    }
-
-    /**
-     * Get config model
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return Config::getInstance();
-    }
-
-    /**
      * Normalize filesystem path
      *
      * @param string $path
@@ -203,5 +111,29 @@ class JsHint extends AbstractValidator
     protected function normalizePath($path)
     {
         return str_replace('\\', '/', $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLinterOutputInterpreter()
+    {
+        return new JsHintOutput();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultErrorCode()
+    {
+        return self::CODE_JSHINT_ERROR;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidatorCode()
+    {
+        return 'JsHint';
     }
 }
