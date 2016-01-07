@@ -147,7 +147,7 @@ abstract class AbstractAdapter
             $output .= str_repeat('=', round($decorLength - 0.1))." $file ".str_repeat('=', round($decorLength)).PHP_EOL;
             foreach ($fileErrors as $errorsType) {
                 foreach ($errorsType as $error) {
-                    $output .= str_replace(array("\n", PHP_EOL), '', $error['message'])."\n";
+                    $output .= str_replace(array("\n\r"), "\n", $error['message'])."\n";
                 }
             }
         }
