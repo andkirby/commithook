@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<!--Example of config how to use SimplyLint validator in example with JsHint-->
+<config>
+    <code>
+        <interpreter>
+            <nodejs>path/to/nodejs.exe</nodejs>
+        </interpreter>
+    </code>
+    <!--Validators setup-->
+    <validators>
+        <Linter-SimplyLint>
+            <!--Files extension which should be applied this linter-->
+            <!--Internal config nodes are the the same like in linter JsHint for example-->
+            <!--so it's needed just this node-->
+            <js>
+                <execution>
+                    <!--Interpreter type. Used to get config by XPath code/interpreter/TYPE-->
+                    <interpreter_type>nodejs</interpreter_type>
+
+                    <!--Path to executable file of JSHint file which should be interpreted by the interpreter-->
+                    <linter>d:/s/jshint/bin/jshint</linter>
+
+                    <!--Command which will be executed to run linter-->
+                    <command>%interpreter% %linter% --config "%config%" %file%</command>
+                </execution>
+                <config>
+                    <file>
+                        <predefined>
+                            <default>path/to/jshint/config.json</default>
+                            <jshintrc>PROJECT_DIR/.csslintrc</jshintrc>
+                            <packages>PROJECT_DIR/packages.json</packages>
+                        </predefined>
+                    </file>
+                </config>
+            </js>
+        </Linter-SimplyLint>
+    </validators>
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <js>
+                    <validators>
+                        <Linter-SimplyLint>1</Linter-SimplyLint>
+                    </validators>
+                </js>
+            </filetype>
+        </pre-commit>
+    </hooks>
+</config>
