@@ -28,9 +28,9 @@ class JsHintOutput implements InterpreterInterface
                     continue;
                 }
                 $result[$matches[1]][] = array(
+                    $matches[4], //message
                     $matches[2], //line
                     $matches[3], //column
-                    $matches[4], //message
                 );
             }
         }

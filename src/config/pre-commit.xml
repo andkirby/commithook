@@ -77,9 +77,14 @@
         </CodeSniffer>
         <JsHint>
             <execution>
+                <!--Interpreter type. Used to get config by XPath code/interpreter/TYPE-->
+                <interpreter_type>nodejs</interpreter_type>
+
                 <!--Path to executable file of JSHint file which should be interpreted by the interpreter-->
-                <!--<jshint>D:/s/jshint/bin/jshint</nodejs>-->
-                <command>%interpreter% %jshint% --config "%config%" %file%</command>
+                <!--<linter>/path/to/jshint/bin/jshint</linter>-->
+
+                <!--Command which will be executed to run linter-->
+                <command>%interpreter% %linter% --config "%config%" %file%</command>
             </execution>
             <config>
                 <file>
@@ -88,16 +93,21 @@
                     <!--Default configuration (from PhpStorm 10.0.1)-->
                     <default>config/jshint/phpstorm-default.json</default>
 
+                    <!--Predefined system files list-->
+                    <predefined>
+                        <jshintrc>PROJECT_DIR/.jshintrc</jshintrc>
+                        <packages>PROJECT_DIR/packages.json</packages>
+                    </predefined>
+
                     <!--Custom configuration file-->
                     <!--You may use variables PROJECT_DIR or HOME-->
                     <!--Relative path will be considered as a path in project-->
                     <custom/>
 
                     <!--Finding JSHint config file priorities:
-                    1. <custom> XML node
-                    2. PROJECT_DIR/.jshintrc
-                    3. PROJECT_DIR/packages.json
-                    4. <default> XML node
+                    1. custom
+                    2. predefined/*
+                    3. default
                     -->
                 </file>
             </config>
