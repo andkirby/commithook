@@ -33,6 +33,13 @@ class IssueStatus extends AbstractValidator
         );
 
     /**
+     * Commit message type name
+     *
+     * @var null|string
+     */
+    protected $type;
+
+    /**
      * Set type
      *
      * @param array $options
@@ -42,8 +49,8 @@ class IssueStatus extends AbstractValidator
     {
         parent::__construct($options);
 
-        $this->_type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
-        if (!$this->_type) {
+        $this->type = $this->getConfig()->getNode('hooks/commit-msg/message/type');
+        if (!$this->type) {
             throw new Exception('Type is not set.');
         }
     }
@@ -73,12 +80,17 @@ class IssueStatus extends AbstractValidator
      */
     protected function getStatuses()
     {
-        return (array) $this->getConfig()->getNodeArray(
-            'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->_type
-        )
-            ?: (array) $this->getConfig()->getNodeArray(
-                'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->_type
+        $statuses = (array) $this->getConfig()->getNodesExpr(
+            'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->type.'/*[text() = \'1\' or text() = \'true\']'
+        );
+
+        if (!$statuses) {
+            $statuses = (array) $this->getConfig()->getNodesExpr(
+                'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/default/*[text() = \'1\' or text() = \'true\']'
             );
+        }
+
+        return $statuses;
     }
 
     /**
