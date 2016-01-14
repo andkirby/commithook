@@ -88,7 +88,7 @@ class License extends AbstractValidator
     }
 
     /**
-     * Get paths
+     * Get paths to files which should contain licences
      *
      * @param string $type
      * @return array
@@ -97,13 +97,13 @@ class License extends AbstractValidator
     {
         $name = $this->getLicenseName();
 
-        $paths = array_values($this->getConfig()->getNodeArray('/validators/License/licenses/'.$name.'/paths/'.$type));
+        $paths = array_values($this->getConfig()->getNodeArray('validators/License/licenses/'.$name.'/paths/'.$type));
         foreach ($paths as &$path) {
             $path = rtrim($path, '/').'/';
         }
 
         $filePaths = array_values(
-            $this->getConfig()->getNodeArray('/validators/License/licenses/'.$name.'/filepaths/'.$type)
+            $this->getConfig()->getNodeArray('validators/License/licenses/'.$name.'/filepaths/'.$type)
         );
 
         return array_merge($paths, $filePaths);
