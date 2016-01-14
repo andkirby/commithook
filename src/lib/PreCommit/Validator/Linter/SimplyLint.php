@@ -37,10 +37,9 @@ class SimplyLint extends AbstractLintValidator
      *
      * @var array
      */
-    protected $errorMessages
-        = array(
-            self::CODE_SIMPLY_LINT_ERROR => "(lint)\n%value%\n(lint end)",
-        );
+    protected $errorMessages = array(
+        self::CODE_SIMPLY_LINT_ERROR => "(lint)\n%value%\n(lint end)",
+    );
 
     /**
      * Set file extension
