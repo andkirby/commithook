@@ -14,12 +14,9 @@ class FileStyle extends AbstractValidator
     /**#@+
      * Error codes
      */
-    const CODE_TAB_CHAR       = 'tabCharacter';
-
+    const CODE_TAB_CHAR = 'tabCharacter';
     const CODE_WIN_LINE_BREAK = 'winLine';
-
-    const CODE_FILE_BOM       = 'fileBom';
-
+    const CODE_FILE_BOM = 'fileBom';
     /**#@-*/
 
     /**
