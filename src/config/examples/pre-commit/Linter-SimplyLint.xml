@@ -14,9 +14,9 @@
     <!--Validators setup-->
     <validators>
         <Linter-SimplyLint>
-            <!--Files extension which should be applied this linter-->
-            <!--Internal config nodes are the the same like in linter JsHint for example-->
-            <!--so it's needed just this node-->
+            <!--Files extension which should be applied by this linter-->
+            <!--Internal config nodes are the same like in linter JsHint for example-->
+            <!--so it's needed just this configuration for JS files-->
             <js>
                 <execution>
                     <!--Interpreter type. Used to get config by XPath code/interpreter/TYPE-->
@@ -32,7 +32,7 @@
                     <file>
                         <predefined>
                             <default>path/to/jshint/config.json</default>
-                            <jshintrc>PROJECT_DIR/.csslintrc</jshintrc>
+                            <jshintrc>PROJECT_DIR/.jshintrc</jshintrc>
                             <packages>PROJECT_DIR/packages.json</packages>
                         </predefined>
                     </file>
