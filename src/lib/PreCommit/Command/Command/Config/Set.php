@@ -204,7 +204,7 @@ class Set extends AbstractCommand
         $this->writeConfig($this->getXpath('url'), $scope, $url);
         $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
         if (null !== $password) {
-            $this->writeConfig($this->getXpath('password'), $scopeCredentials, $this->encrypt($password));
+            $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
         }
         $this->writeConfig($this->getXpath('project'), self::OPTION_SCOPE_PROJECT, $prjKey);
 
@@ -454,12 +454,18 @@ class Set extends AbstractCommand
      */
     protected function writeConfig($xpath, $scope, $value)
     {
+        //encrypt password TODO refactor this block
+        if ('password' === $xpath
+            || strpos($xpath, '/password')
+        ) {
+            $value = $this->encrypt($value);
+        }
+
         $result = $this->getConfigHelper()->writeValue(
             $this->getConfigFile($scope),
             $xpath,
             $value
         );
-
         if (self::XPATH_TRACKER_TYPE === $xpath) {
             $this->trackerType = $value;
         }
