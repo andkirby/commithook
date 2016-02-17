@@ -4,6 +4,7 @@
  */
 namespace PreCommit\Command\Command\Config;
 
+use AndKirby\Crypter\Crypter;
 use PreCommit\Command\Command\AbstractCommand;
 use PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
@@ -203,11 +204,24 @@ class Set extends AbstractCommand
         $this->writeConfig($this->getXpath('url'), $scope, $url);
         $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
         if (null !== $password) {
-            $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
+            $this->writeConfig($this->getXpath('password'), $scopeCredentials, $this->encrypt($password));
         }
         $this->writeConfig($this->getXpath('project'), self::OPTION_SCOPE_PROJECT, $prjKey);
 
         return $this;
+    }
+
+    /**
+     * Encrypt password
+     *
+     * @param string $password
+     * @return string
+     */
+    protected function encrypt($password)
+    {
+        $crypter = new Crypter();
+
+        return $crypter->encrypt($password);
     }
 
     /**

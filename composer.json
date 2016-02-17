@@ -28,6 +28,7 @@
   ],
   "autoload": {
     "psr-4": {
+      "AndKirby\\Crypter\\": "src/lib/Crypter",
       "PreCommit\\": "src/lib/PreCommit",
       "PreCommit\\Test\\": "src/tests/testsuite/PreCommit/Test"
     }
