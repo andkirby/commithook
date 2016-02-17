@@ -31,8 +31,8 @@ class Set extends AbstractCommand
      * project:      PROJECT_DIR/commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
-    const OPTION_SCOPE_GLOBAL = 'global';
-    const OPTION_SCOPE_PROJECT = 'project';
+    const OPTION_SCOPE_GLOBAL       = 'global';
+    const OPTION_SCOPE_PROJECT      = 'project';
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
     /**#@-*/
 
@@ -209,19 +209,6 @@ class Set extends AbstractCommand
         $this->writeConfig($this->getXpath('project'), self::OPTION_SCOPE_PROJECT, $prjKey);
 
         return $this;
-    }
-
-    /**
-     * Encrypt password
-     *
-     * @param string $password
-     * @return string
-     */
-    protected function encrypt($password)
-    {
-        $crypter = new Crypter();
-
-        return $crypter->encrypt($password);
     }
 
     /**
@@ -483,7 +470,9 @@ class Set extends AbstractCommand
      */
     protected function isNameXpath(InputInterface $input)
     {
-        return (bool) $input->getOption('xpath');
+        // @codingStandardsIgnoreStart
+        return (bool)$input->getOption('xpath');
+        // @codingStandardsIgnoreEnd
     }
 
     /**
@@ -559,6 +548,19 @@ class Set extends AbstractCommand
         }
 
         return null;
+    }
+
+    /**
+     * Encrypt password
+     *
+     * @param string $password
+     * @return string
+     */
+    protected function encrypt($password)
+    {
+        $crypter = new Crypter();
+
+        return $crypter->encrypt($password);
     }
 
     /**
