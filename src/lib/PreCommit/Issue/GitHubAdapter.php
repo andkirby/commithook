@@ -5,6 +5,7 @@
 namespace PreCommit\Issue;
 
 use Github\Client as Api;
+use PreCommit\Issue\Authorization\Password;
 use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
 
 /**
@@ -246,10 +247,11 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     protected function getApi()
     {
         if ($this->api === null) {
+            $password = new Password();
             $this->api = new Api();
             $this->api->authenticate(
                 $this->getConfig()->getNode('tracker/github/username'),
-                $this->getConfig()->getNode('tracker/github/password')
+                $password->getPassword($this->getTrackerType())
             );
         }
 

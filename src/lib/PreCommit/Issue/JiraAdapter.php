@@ -5,6 +5,7 @@
 namespace PreCommit\Issue;
 
 use chobie\Jira\Api\Authentication\Basic;
+use PreCommit\Issue\Authorization\Password;
 use PreCommit\Jira\Api;
 use PreCommit\Jira\Issue;
 use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
@@ -245,11 +246,13 @@ class JiraAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function getApi()
     {
+        $password = new Password();
+
         return new Api(
             $this->getConfig()->getNode('tracker/jira/url'),
             new Basic(
                 $this->getConfig()->getNode('tracker/jira/username'),
-                $this->getConfig()->getNode('tracker/jira/password')
+                $password->getPassword($this->getTrackerType())
             )
         );
     }

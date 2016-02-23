@@ -11,9 +11,6 @@
                 <skip>
                     <files>
                         <file>src/lib/PreCommit/Command/Application.php</file>
-                        <file>src/lib/PreCommit/Jira/Password.php</file>
-                        <file>src/lib/PreCommit/Jira/_password.php</file>
-                        <file>src/lib/PreCommit/Jira/_password.lib.php</file>
                         <file>src/runner.php</file>
                     </files>
                     <paths>

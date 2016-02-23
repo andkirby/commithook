@@ -4,6 +4,7 @@
  */
 namespace PreCommit\Command\Command\Config;
 
+use AndKirby\Crypter\Crypter;
 use PreCommit\Command\Command\AbstractCommand;
 use PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
@@ -30,8 +31,8 @@ class Set extends AbstractCommand
      * project:      PROJECT_DIR/commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
-    const OPTION_SCOPE_GLOBAL = 'global';
-    const OPTION_SCOPE_PROJECT = 'project';
+    const OPTION_SCOPE_GLOBAL       = 'global';
+    const OPTION_SCOPE_PROJECT      = 'project';
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
     /**#@-*/
 
@@ -440,12 +441,18 @@ class Set extends AbstractCommand
      */
     protected function writeConfig($xpath, $scope, $value)
     {
+        //encrypt password TODO refactor this block
+        if ('password' === $xpath
+            || strpos($xpath, '/password')
+        ) {
+            $value = $this->encrypt($value);
+        }
+
         $result = $this->getConfigHelper()->writeValue(
             $this->getConfigFile($scope),
             $xpath,
             $value
         );
-
         if (self::XPATH_TRACKER_TYPE === $xpath) {
             $this->trackerType = $value;
         }
@@ -463,7 +470,9 @@ class Set extends AbstractCommand
      */
     protected function isNameXpath(InputInterface $input)
     {
-        return (bool) $input->getOption('xpath');
+        // @codingStandardsIgnoreStart
+        return (bool)$input->getOption('xpath');
+        // @codingStandardsIgnoreEnd
     }
 
     /**
@@ -539,6 +548,19 @@ class Set extends AbstractCommand
         }
 
         return null;
+    }
+
+    /**
+     * Encrypt password
+     *
+     * @param string $password
+     * @return string
+     */
+    protected function encrypt($password)
+    {
+        $crypter = new Crypter();
+
+        return $crypter->encrypt($password);
     }
 
     /**
