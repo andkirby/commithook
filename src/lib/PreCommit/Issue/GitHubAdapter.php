@@ -205,7 +205,15 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function getVendorName()
     {
-        return $this->getConfig()->getNode('tracker/github/name');
+        $name = $this->getConfig()->getNode('tracker/github/name');
+        if (!$name) {
+            list($name) = explode(
+                '/',
+                $this->getProject()
+            );
+        }
+
+        return $name;
     }
 
     /**
@@ -215,7 +223,25 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function getRepositoryName()
     {
-        return $this->getConfig()->getNode('tracker/github/repository');
+        $name = $this->getConfig()->getNode('tracker/github/repository');
+        if (!$name) {
+            list(, $name) = explode(
+                '/',
+                $this->getProject()
+            );
+        }
+
+        return $name;
+    }
+
+    /**
+     * Get project "key"
+     *
+     * @return null|string
+     */
+    protected function getProject()
+    {
+        return $this->getConfig()->getNode('tracker/github/project');
     }
 
     /**
@@ -238,7 +264,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->getVendorName()
                && $this->getRepositoryName();
     }
-
     /**
      * Get GitHub API
      *
@@ -257,6 +282,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $this->api;
     }
+
     //endregion
 
     //region API methods
@@ -282,7 +308,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $issue['number'];
     }
-
     /**
      * Get issue type
      *
@@ -301,6 +326,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $this->defaultLabelType;
     }
+
     //endregion
 
     /**
