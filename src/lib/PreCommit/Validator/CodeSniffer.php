@@ -45,18 +45,20 @@ class CodeSniffer extends AbstractValidator
     public function validate($content, $file)
     {
         $collector = new CodeSniffer\Collector();
-        $result    = $collector->process(
-            array(
-                'standard' => $this->getStandardConfigDir(),
-                'files'    => array($file),
-            )
-        );
+        $standard  = $this->getStandard();
 
-        if (!$this->getStandardConfigDir()) {
+        if (!$standard) {
             throw new Exception(
                 'CodeSniffer standard not found. Please set it by XPath validators/CodeSniffer/rule/directory (or validators/CodeSniffer/rule/name for rule name)'
             );
         }
+
+        $result    = $collector->process(
+            array(
+                'standard' => $standard,
+                'files'    => array($file),
+            )
+        );
 
         $result = array_shift($result); //get result for the only file
         if ($result) {
