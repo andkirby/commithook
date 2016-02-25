@@ -19,7 +19,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * Cache schema version
      */
     const CACHE_SCHEMA_VERSION = 0;
-
     /**
      * Exception code when issue not found
      */
@@ -235,16 +234,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Get project "key"
-     *
-     * @return null|string
-     */
-    protected function getProject()
-    {
-        return $this->getConfig()->getNode('tracker/github/project');
-    }
-
-    /**
      * Get issue number
      *
      * @return int
@@ -264,6 +253,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->getVendorName()
                && $this->getRepositoryName();
     }
+
     /**
      * Get GitHub API
      *
@@ -272,7 +262,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     protected function getApi()
     {
         if ($this->api === null) {
-            $password = new Password();
+            $password  = new Password();
             $this->api = new Api();
             $this->api->authenticate(
                 $this->getConfig()->getNode('tracker/github/username'),
@@ -283,10 +273,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->api;
     }
 
-    //endregion
-
-    //region API methods
-
     /**
      * Get cache directory
      *
@@ -295,6 +281,20 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     protected function getCacheDir()
     {
         return $this->getConfig()->getCacheDir();
+    }
+
+    //endregion
+
+    //region API methods
+
+    /**
+     * Get project "key"
+     *
+     * @return null|string
+     */
+    protected function getProject()
+    {
+        return $this->getConfig()->getNode('tracker/github/project');
     }
 
     /**
@@ -308,6 +308,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $issue['number'];
     }
+
     /**
      * Get issue type
      *
