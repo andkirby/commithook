@@ -21,7 +21,7 @@ class SkipContent implements FilterInterface
      * $my->bad()->code();
      * [slash][slash]@finishSkipCommitHooks
      */
-    const SKIP_TAG_START = 'startSkipCommitHooks';
+    const SKIP_TAG_START  = 'startSkipCommitHooks';
     const SKIP_TAG_FINISH = 'finishSkipCommitHooks';
     /**#@-*/
 
@@ -34,13 +34,17 @@ class SkipContent implements FilterInterface
      */
     public function filter($content, $file = null)
     {
-        /**
-         * Set original content for finding right line numbers
-         *
-         * @todo Remove hack for saving original content
-         */
-        LineFinder::setOriginContent($content);
+        return $this->cutCodeBlock($content);
+    }
 
+    /**
+     * Cut skipping code block
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function cutCodeBlock($content)
+    {
         return preg_replace(
             '/(\s*\/\/@'.self::SKIP_TAG_START.')([\S\s])*?(\/\/@'.self::SKIP_TAG_FINISH.')/',
             '//replaced code because skipped validation',
