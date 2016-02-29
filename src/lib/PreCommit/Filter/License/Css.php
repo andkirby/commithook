@@ -11,6 +11,6 @@ namespace PreCommit\Filter\License;
  *
  * @package PreCommit\Filter\License
  */
-class Css extends AbstractSimpleText
+class Css extends SimpleCode
 {
 }
