@@ -238,7 +238,7 @@ abstract class AbstractAdapter
     protected function loadFilter($name, array $options = array())
     {
         if (empty($this->filters[$name])) {
-            $class                = "\\PreCommit\\Filter\\$name";
+            $class                   = '\\PreCommit\\Filter\\'.str_replace('-', '\\', $name);
             $this->filters[$name] = new $class($options);
         }
 

@@ -157,6 +157,7 @@
                 <!--Run validators, filters before specific validators-->
                 <before_all>
                     <filters>
+                        <OriginContent>1</OriginContent>
                         <SkipContent>1</SkipContent>
                     </filters>
                     <validators>
