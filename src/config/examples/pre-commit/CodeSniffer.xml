@@ -8,11 +8,13 @@
 <!--It can be added into PROJECT/commithook.xml file-->
 <config>
     <hooks>
+        <!--Required configuration-->
         <pre-commit>
             <validators>
                 <CodeSniffer>
                     <rule>
-                        <!--Use directory node or name node ONLY-->
+                        <!--Use one node <directory> OR <name> ONLY-->
+                        <!--<directory> has higher priority-->
 
                         <!--Set path to directory of your standard-->
                         <directory>vendor/escapestudios/symfony2-coding-standard/Symfony2</directory>
