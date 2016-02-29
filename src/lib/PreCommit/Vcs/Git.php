@@ -12,15 +12,39 @@ use PreCommit\Exception;
 class Git implements AdapterInterface
 {
     /**
+     * Affected files
+     *
+     * @var string
+     */
+    protected $affectedFiles;
+
+    /**
      * Get affected files
      *
      * @return string
      */
     public function getAffectedFiles()
     {
-        //@startSkipCommitHooks
-        return array_filter(explode("\n", `git diff --cached --name-only --diff-filter=ACM`));
-        //@finishSkipCommitHooks
+        if (null === $this->affectedFiles) {
+            //@startSkipCommitHooks
+            $this->affectedFiles = array_filter(
+                explode("\n", `git diff --cached --name-only --diff-filter=ACM`)
+            );
+            //@finishSkipCommitHooks
+        }
+
+        return $this->affectedFiles;
+    }
+
+    /**
+     * Set affected files
+     *
+     * @param array $files
+     * @return string
+     */
+    public function setAffectedFiles(array $files = null)
+    {
+        return $this->affectedFiles = $files;
     }
 
     /**

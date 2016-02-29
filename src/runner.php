@@ -28,6 +28,9 @@ require_once __DIR__ . '/../bin/autoload-init.php';
 //Get VCS type
 $vcs = isset($vcs) ? $vcs : 'git';
 
+//Get VCS files
+$vcsFiles = isset($vcsFiles) ? $vcsFiles : null;
+
 //load config
 if (!isset($rootConfigFile)) {
     $rootConfigFile = COMMIT_HOOKS_ROOT . '/src/config/root.xml';
@@ -79,7 +82,10 @@ try {
     /**
      * @var \PreCommit\Processor\AbstractAdapter $processor
      */
-    $processor = \PreCommit\Processor::factory($hookName, $vcs);
+    $processor = \PreCommit\Processor::factory(
+        $hookName,
+        array('vcs' => $vcs, 'vcsFiles' => $vcsFiles)
+    );
     $processor->process();
 } catch (\Exception $e) {
     echo 'EXCEPTION:'.$e->getMessage();
