@@ -18,7 +18,7 @@ class Sh extends AbstractAdapter
      */
     public function getWrapStringBeforeLicense()
     {
-        return ': <<\'LICENSE_BLOCK\'';
+        return ': <<\'LCS\'';
     }
 
     /**
@@ -26,7 +26,7 @@ class Sh extends AbstractAdapter
      */
     public function getWrapStringAfterLicense()
     {
-        return 'LICENSE_BLOCK';
+        return 'LCS';
     }
 
     /**
