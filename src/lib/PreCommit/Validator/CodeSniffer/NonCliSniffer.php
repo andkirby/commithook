@@ -4,6 +4,8 @@
  */
 namespace PreCommit\Validator\CodeSniffer;
 
+// @codingStandardsIgnoreFile
+
 /**
  * Class NonCliSniffer
  *
@@ -18,6 +20,57 @@ class NonCliSniffer extends \PHP_CodeSniffer
      * @see \PHP_CodeSniffer::$_tokenListeners
      */
     protected $tokenListeners = array();
+
+    /**
+     * Processes the files/directories that PHP_CodeSniffer was constructed with.
+     *
+     * @param string|array $files The files and directories to process. For
+     *                            directories, each sub directory will also
+     *                            be traversed for source files.
+     * @param boolean      $local If true, don't recurse into directories.
+     *
+     * @return array
+     * @throws \PHP_CodeSniffer_Exception If files are invalid.
+     */
+    public function processFiles($files, $local = false)
+    {
+        $files = (array) $files;
+
+        if (empty($this->allowedFileExtensions) === true) {
+            $this->allowedFileExtensions = $this->defaultFileExtensions;
+        }
+
+        $todo = $this->getFilesToProcess($files, $local);
+
+        //omitted process notification
+
+        $numProcessed = 0;
+        $lastDir      = '';
+        $result       = array();
+        foreach ($todo as $file) {
+            $this->file = $file;
+            $currDir    = dirname($file);
+            if ($lastDir !== $currDir) {
+                //omitted process notification
+
+                $lastDir = $currDir;
+            }
+
+            $phpcsFile = $this->processFile($file, null);
+            $numProcessed++;
+
+            if ($phpcsFile) {
+                $itemResult = $this->getFileResult($phpcsFile);
+
+                $result[$phpcsFile->getFilename()] = $itemResult;
+            }
+            //omitted process notification
+        }
+
+        //omitted process notification
+
+        return $result;
+    }
 
     /**
      * {@inheritdoc}
@@ -105,6 +158,26 @@ class NonCliSniffer extends \PHP_CodeSniffer
     }
 
     /**
+     * Get simple result of processed file
+     *
+     * @param \PHP_CodeSniffer_File $phpcsFile
+     * @return array
+     */
+    protected function getFileResult($phpcsFile)
+    {
+        $report = array();
+
+        if ($phpcsFile && ($phpcsFile->getErrorCount() || $phpcsFile->getWarningCount())) {
+            $report = array(
+                'errors'   => $phpcsFile->getErrors(),
+                'warnings' => $phpcsFile->getWarnings(),
+            );
+        }
+
+        return $report;
+    }
+
+    /**
      * Process the sniffs for a single file.
      *
      * Does raw processing only. No interactive support or error checking.
@@ -135,75 +208,8 @@ class NonCliSniffer extends \PHP_CodeSniffer
         return $phpcsFile;
     }
 
-    /**
-     * Processes the files/directories that PHP_CodeSniffer was constructed with.
-     *
-     * @param string|array $files The files and directories to process. For
-     *                            directories, each sub directory will also
-     *                            be traversed for source files.
-     * @param boolean      $local If true, don't recurse into directories.
-     *
-     * @return array
-     * @throws \PHP_CodeSniffer_Exception If files are invalid.
-     */
-    public function processFiles($files, $local = false)
-    {
-        $files = (array) $files;
-
-        if (empty($this->allowedFileExtensions) === true) {
-            $this->allowedFileExtensions = $this->defaultFileExtensions;
-        }
-
-        $todo = $this->getFilesToProcess($files, $local);
-
-        //omitted process notification
-
-        $numProcessed = 0;
-        $lastDir      = '';
-        $result       = array();
-        foreach ($todo as $file) {
-            $this->file = $file;
-            $currDir    = dirname($file);
-            if ($lastDir !== $currDir) {
-                //omitted process notification
-
-                $lastDir = $currDir;
-            }
-
-            $phpcsFile = $this->processFile($file, null);
-            $numProcessed++;
-
-            $itemResult = $this->getFileResult($phpcsFile);
-
-            $result[$phpcsFile->getFilename()] = $itemResult;
-            //omitted process notification
-        }
-
-        //omitted process notification
-
-        return $result;
-    }
-
-    /**
-     * Get simple result of processed file
-     *
-     * @param \PHP_CodeSniffer_File $phpcsFile
-     * @return array
-     */
-    protected function getFileResult($phpcsFile)
-    {
-        $report = array();
-        if ($phpcsFile->getErrorCount() || $phpcsFile->getWarningCount()) {
-            $report = array(
-                'errors'   => $phpcsFile->getErrors(),
-                'warnings' => $phpcsFile->getWarnings(),
-            );
-        }
-
-        return $report;
-    }
-
     //region Copied code for using self _tokenListeners property
+
     /**
      * Gets the array of PHP_CodeSniffer_Sniff's indexed by token type.
      *
