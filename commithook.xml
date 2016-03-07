@@ -85,6 +85,14 @@
                         <License>1</License>
                     </validators>
                 </css>
+                <sh>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </sh>
             </filetype>
         </pre-commit>
     </hooks>
