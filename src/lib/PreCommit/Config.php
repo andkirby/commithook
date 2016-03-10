@@ -43,13 +43,99 @@ class Config extends \SimpleXMLElement
     protected static $configFiles = array();
 
     /**
+     * Get node/s by expression
+     *
+     * @param string $xpath
+     *
+     * @return array|null|string
+     * @throws Exception
+     */
+    public function getNodesExpr($xpath)
+    {
+        $result = $this->xpath($xpath);
+        if (is_array($result)) {
+            //TODO looks like it's always an array
+            $data = array();
+            foreach ($result as $node) {
+                /** @var Config $node */
+                $data[$node->getName()] = $this->getNodeValue($node);
+            }
+
+            return $data;
+        } elseif ($result instanceof Config) {
+            return $this->getNodeValue($result);
+        }
+
+        return null;
+    }
+
+    /**
+     * Catch exception and show failed XPath
+     *
+     * @param string $path
+     *
+     * @return \SimpleXMLElement[]
+     * @throws \PreCommit\Exception
+     */
+    public function xpath($path)
+    {
+        try {
+            return parent::xpath($path);
+        } catch (\Exception $e) {
+            throw new Exception("Invalid XPath '$path'");
+        }
+    }
+
+    /**
+     * Get node multi values by xpath
+     *
+     * Multi-values means nodes with the same name in the same place
+     *
+     * @param string $xpath
+     * @return array|Config
+     */
+    public function getMultiNode($xpath)
+    {
+        $last  = null;
+        $arr   = explode('/', $xpath);
+        $last  = array_pop($arr);
+        $xpath = implode('/', $arr);
+
+        $result = $this->getNodeArray($xpath);
+
+        $result = isset($result[$last]) ? (array) $result[$last] : array();
+
+        return $result;
+    }
+
+    /**
+     * Get node array values
+     *
+     * @param string $xpath
+     * @return array|null
+     */
+    public function getNodeArray($xpath)
+    {
+        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = isset($result[0]) ? (array) $result[0] : array();
+        $result = json_decode(json_encode($result), true);
+
+        //remove XML comments (hack) TODO investigate a problem
+        unset($result['comment']);
+
+        return $result;
+    }
+
+    /**
      * Get config cache file
      *
      * @return string
      */
     public static function getCacheFile()
     {
-        return self::getCacheDir().DIRECTORY_SEPARATOR.md5(self::getInstance()->getNode('version').static::getProjectDir()).'.xml';
+        return self::getCacheDir().DIRECTORY_SEPARATOR.
+        md5(self::getInstance()->getNode('version').static::getProjectDir())
+        .'.xml';
     }
 
     /**
@@ -64,7 +150,9 @@ class Config extends \SimpleXMLElement
         $dir  = self::readPath($path);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0750, true)) {
-                throw new Exception("Unable to create cache directory by path '$dir'");
+                throw new Exception(
+                    "Unable to create cache directory by path '$dir'"
+                );
             }
         }
 
@@ -75,6 +163,7 @@ class Config extends \SimpleXMLElement
      * Get node by xpath
      *
      * @param string $xpath
+     *
      * @return string|null
      */
     public function getNode($xpath)
@@ -89,6 +178,7 @@ class Config extends \SimpleXMLElement
      * Get config instance
      *
      * @param array $options
+     *
      * @return $this
      * @throws Exception
      */
@@ -111,78 +201,11 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get project dir
-     *
-     * @todo It should be removed from Config
-     * @return string
-     */
-    public static function getProjectDir()
-    {
-        return static::$projectDir;
-    }
-
-    /**
-     * Set project dir by hook file
-     *
-     * @todo It should be removed from Config
-     * @param string $dir
-     * @return string
-     */
-    public static function setProjectDir($dir)
-    {
-        static::$projectDir = $dir;
-    }
-
-    /**
-     * Read path
-     *
-     * @param string $path
-     * @return string
-     * @throws Exception
-     */
-    public static function readPath($path)
-    {
-        $updated = false;
-        if (0 === strpos($path, 'PROJECT_DIR')) {
-            $updated = true;
-            $path    = str_replace('PROJECT_DIR', static::getProjectDir(), $path);
-        }
-        if (false !== strpos($path, 'PROJECT_NAME')) {
-            $updated = true;
-            $path    = str_replace('PROJECT_NAME', basename(static::getProjectDir()), $path);
-        }
-        if (0 === strpos($path, 'HOME')) {
-            $updated = true;
-            $path    = str_replace('HOME', self::getHomeUserDir(), $path);
-        }
-        if (!$updated) {
-            $path = static::$rootDir.DIRECTORY_SEPARATOR.$path;
-        }
-
-        return $path;
-    }
-
-    /**
-     * Catch exception and show failed XPath
-     *
-     * @param string $path
-     * @return \SimpleXMLElement[]
-     * @throws \PreCommit\Exception
-     */
-    public function xpath($path)
-    {
-        try {
-            return parent::xpath($path);
-        } catch (\Exception $e) {
-            throw new Exception("Invalid XPath '$path'");
-        }
-    }
-
-    /**
      * Load config instance
      *
      * @param array $options
      * @param bool  $setFile
+     *
      * @return $this
      * @throws \PreCommit\Exception
      */
@@ -208,10 +231,25 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Get config file
+     *
+     * @param string $name
+     * @param string $file
+     *
+     * @return null|string
+     */
+    public static function setConfigFile($name, $file)
+    {
+        return self::$configFiles[$name] = $file;
+    }
+
+    /**
      * Set project dir by hook file
      *
      * @todo  It should be removed from Config
+     *
      * @param string $dir
+     *
      * @return string
      */
     public static function setSrcRootDir($dir)
@@ -220,16 +258,44 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Set project dir by hook file
+     *
+     * @todo It should be removed from Config
+     *
+     * @param string $dir
+     *
+     * @return string
+     */
+    public static function setProjectDir($dir)
+    {
+        static::$projectDir = $dir;
+    }
+
+    /**
+     * Get project dir
+     *
+     * @todo It should be removed from Config
+     * @return string
+     */
+    public static function getProjectDir()
+    {
+        return static::$projectDir;
+    }
+
+    /**
      * Load cached config
      *
-     * @return bool             Returns FALSE in case it couldn't load cached config
+     * @return bool             Returns FALSE in case it couldn't load cached
+     *                          config
      */
     public static function loadCache()
     {
         //load config from cache
         $configCacheFile = self::getCacheFile();
         if (!self::isCacheDisabled() && is_file($configCacheFile)) {
-            $configCached = self::loadInstance(array('file' => $configCacheFile));
+            $configCached = self::loadInstance(
+                array('file' => $configCacheFile)
+            );
             if (version_compare(
                 $configCached->getNode('version'),
                 self::getInstance()->getNode('version'),
@@ -245,6 +311,26 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Check cache enabling
+     *
+     * @return null|string
+     */
+    public static function isCacheDisabled()
+    {
+        return (bool) self::getInstance()->getNode('disable_cache');
+    }
+
+    /**
+     * Replace instance
+     *
+     * @param Config $config
+     */
+    public static function replaceInstance(Config $config)
+    {
+        self::$instance = $config;
+    }
+
+    /**
      * Merge additional config files
      *
      * @param array $allowed
@@ -256,7 +342,14 @@ class Config extends \SimpleXMLElement
         /**
          * Try to get user root file
          */
-        self::mergeFiles($merger, array('user-root' => 'HOME/.commithook/user-root.xml'), $allowed);
+        self::mergeFiles(
+            $merger,
+            array(
+                'user-root'    => 'HOME/.commithook/user-root.xml',
+                'project-root' => 'PROJECT_DIR/.commithook/root.xml',
+            ),
+            $allowed
+        );
 
         /**
          * Merge configuration files
@@ -269,8 +362,149 @@ class Config extends \SimpleXMLElement
 
         //write cached config file
         $cacheFile = self::getCacheFile();
-        if (!self::isCacheDisabled() && is_writeable(pathinfo($cacheFile, PATHINFO_DIRNAME))) {
+        if (!self::isCacheDisabled()
+            && is_writeable(
+                pathinfo($cacheFile, PATHINFO_DIRNAME)
+            )
+        ) {
             self::getInstance()->asXML($cacheFile);
+        }
+    }
+
+    /**
+     * Get XML merger
+     *
+     * @return \PreCommit\XmlMerger
+     */
+    public static function getXmlMerger()
+    {
+        $merger = new XmlMerger();
+        $merger->addCollectionNode(
+            'validators/FileFilter/filter/skip/files/file'
+        );
+        $merger->addCollectionNode(
+            'validators/FileFilter/filter/skip/paths/path'
+        );
+        $merger->addCollectionNode(
+            'validators/FileFilter/filter/protect/files/file'
+        );
+        $merger->addCollectionNode(
+            'validators/FileFilter/filter/protect/paths/path'
+        );
+
+        return $merger;
+    }
+
+    /**
+     * Read path
+     *
+     * @param string $path
+     *
+     * @return string
+     * @throws Exception
+     */
+    public static function readPath($path)
+    {
+        $updated = false;
+        if (0 === strpos($path, 'PROJECT_DIR')) {
+            $updated = true;
+            $path    = str_replace(
+                'PROJECT_DIR',
+                static::getProjectDir(),
+                $path
+            );
+        }
+        if (false !== strpos($path, 'PROJECT_NAME')) {
+            $updated = true;
+            $path    = str_replace(
+                'PROJECT_NAME',
+                basename(static::getProjectDir()),
+                $path
+            );
+        }
+        if (0 === strpos($path, 'HOME')) {
+            $updated = true;
+            $path    = str_replace('HOME', self::getHomeUserDir(), $path);
+        }
+        if (!$updated) {
+            $path = static::$rootDir.DIRECTORY_SEPARATOR.$path;
+        }
+
+        return $path;
+    }
+
+    /**
+     * Get config file
+     *
+     * @param string $name
+     *
+     * @return null|string
+     */
+    public static function getConfigFile($name)
+    {
+        return isset(self::$configFiles[$name]) ? self::$configFiles[$name]
+            : null;
+    }
+
+    /**
+     * Get config file
+     *
+     * @return null|string
+     */
+    public static function getConfigFiles()
+    {
+        return self::$configFiles;
+    }
+
+    /**
+     * Get node value
+     *
+     * @param Config $node
+     *
+     * @return string|array
+     */
+    protected function getNodeValue($node)
+    {
+        if ($node->count()) {
+            $data = array();
+            /** @var Config $child */
+            foreach ($node->children() as $child) {
+                $data[$child->getName()] = $this->getNodeValue($child);
+            }
+
+            return $data;
+        } else {
+            return (string) $node;
+        }
+    }
+
+    /**
+     * Merge files
+     *
+     * @param XmlMerger   $merger
+     * @param array       $files
+     * @param array       $allowed
+     * @param Config|null $targetConfig
+     */
+    protected static function mergeFiles(
+        $merger,
+        $files,
+        array $allowed = null,
+        $targetConfig = null
+    ) {
+        foreach ($files as $key => $file) {
+            if ($allowed && !in_array($key, $allowed)) {
+                continue;
+            }
+            $file = self::readPath($file);
+
+            $targetConfig = $targetConfig ?: self::getInstance();
+            self::setConfigFile($key, $file);
+            if (!is_file($file)) {
+                continue;
+            }
+            $xml = self::loadXmlFileToMerge($file);
+            $merger->merge($targetConfig, $xml);
         }
     }
 
@@ -296,101 +530,10 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get config file
-     *
-     * @param string $name
-     * @param string $file
-     * @return null|string
-     */
-    public static function setConfigFile($name, $file)
-    {
-        return self::$configFiles[$name] = $file;
-    }
-
-    /**
-     * Check cache enabling
-     *
-     * @return null|string
-     */
-    public static function isCacheDisabled()
-    {
-        return (bool) self::getInstance()->getNode('disable_cache');
-    }
-
-    /**
-     * Replace instance
-     *
-     * @param Config $config
-     */
-    public static function replaceInstance(Config $config)
-    {
-        self::$instance = $config;
-    }
-
-    /**
-     * Get XML merger
-     *
-     * @return \PreCommit\XmlMerger
-     */
-    public static function getXmlMerger()
-    {
-        $merger = new XmlMerger();
-        $merger->addCollectionNode('validators/FileFilter/filter/skip/files/file');
-        $merger->addCollectionNode('validators/FileFilter/filter/skip/paths/path');
-        $merger->addCollectionNode('validators/FileFilter/filter/protect/files/file');
-        $merger->addCollectionNode('validators/FileFilter/filter/protect/paths/path');
-
-        return $merger;
-    }
-
-    /**
-     * Merge files
-     *
-     * @param XmlMerger   $merger
-     * @param array       $files
-     * @param array       $allowed
-     * @param Config|null $targetConfig
-     */
-    protected static function mergeFiles($merger, $files, array $allowed = null, $targetConfig = null)
-    {
-        foreach ($files as $key => $file) {
-            if ($allowed && !in_array($key, $allowed)) {
-                continue;
-            }
-            $file = self::readPath($file);
-
-            $targetConfig = $targetConfig ?: self::getInstance();
-            self::setConfigFile($key, $file);
-            if (!is_file($file)) {
-                continue;
-            }
-            $xml = self::loadXmlFileToMerge($file);
-            $merger->merge($targetConfig, $xml);
-        }
-    }
-
-    /**
-     * Get node array values
-     *
-     * @param string $xpath
-     * @return array|null
-     */
-    public function getNodeArray($xpath)
-    {
-        $result = $this->xpath(self::XPATH_START.$xpath);
-        $result = isset($result[0]) ? (array) $result[0] : array();
-        $result = json_decode(json_encode($result), true);
-
-        //remove XML comments (hack) TODO investigate a problem
-        unset($result['comment']);
-
-        return $result;
-    }
-
-    /**
      * Load file to merge
      *
      * @param string $file
+     *
      * @return self
      * @throws \PreCommit\Exception
      */
@@ -401,95 +544,5 @@ class Config extends \SimpleXMLElement
         } catch (\Exception $e) {
             throw new Exception("Cannot load XML file '$file'");
         }
-    }
-
-    /**
-     * Get config file
-     *
-     * @param string $name
-     * @return null|string
-     */
-    public static function getConfigFile($name)
-    {
-        return isset(self::$configFiles[$name]) ? self::$configFiles[$name] : null;
-    }
-
-    /**
-     * Get config file
-     *
-     * @return null|string
-     */
-    public static function getConfigFiles()
-    {
-        return self::$configFiles;
-    }
-
-    /**
-     * Get node/s by expression
-     *
-     * @param string $xpath
-     * @return array|null|string
-     * @throws Exception
-     */
-    public function getNodesExpr($xpath)
-    {
-        $result = $this->xpath($xpath);
-        if (is_array($result)) {
-            //TODO looks like it's always an array
-            $data = array();
-            foreach ($result as $node) {
-                /** @var Config $node */
-                $data[$node->getName()] = $this->getNodeValue($node);
-            }
-
-            return $data;
-        } elseif ($result instanceof Config) {
-            return $this->getNodeValue($result);
-        }
-
-        return null;
-    }
-
-    /**
-     * Get node value
-     *
-     * @param Config $node
-     * @return string|array
-     */
-    protected function getNodeValue($node)
-    {
-        if ($node->count()) {
-            $data = array();
-            /** @var Config $child */
-            foreach ($node->children() as $child) {
-                $data[$child->getName()] = $this->getNodeValue($child);
-            }
-
-            return $data;
-        } else {
-            return (string) $node;
-        }
-    }
-
-    /**
-     * Get node multi values by xpath
-     *
-     * Multi-values means nodes with the same name in the same place
-     *
-     * @param string $xpath
-     * @return array|Config
-     */
-    public function getMultiNode($xpath)
-    {
-        $last  = null;
-        $arr   = explode('/', $xpath);
-        $last  = array_pop($arr);
-        $xpath = implode('/', $arr);
-
-        $result = $this->getNodeArray($xpath);
-
-        $result = isset($result[$last]) ? (array) $result[$last] : array();
-
-        return $result;
     }
 }

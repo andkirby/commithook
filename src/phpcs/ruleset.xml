@@ -24,6 +24,12 @@
     https://github.com/squizlabs/PHP_CodeSniffer/issues/651
     -->
 
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="ignoreNewlines" value="true" />
+        </properties>
+    </rule>
+
     <!--Problem in code with inheritdoc:-->
     <!--vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PEAR/Sniffs/Commenting/FunctionCommentSniff.php:129-->
 </ruleset>
