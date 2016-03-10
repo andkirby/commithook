@@ -5,6 +5,9 @@
  */
 -->
 <config>
+    <license>
+        <name>cool_company</name>
+    </license>
     <!--Validators setup-->
     <validators>
         <License>
