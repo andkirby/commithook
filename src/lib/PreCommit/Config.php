@@ -4,6 +4,10 @@
  */
 namespace PreCommit;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+
 /**
  * Class for get config
  */
@@ -482,29 +486,46 @@ class Config extends \SimpleXMLElement
      * Merge files
      *
      * @param XmlMerger   $merger
-     * @param array       $files
+     * @param array       $paths
      * @param array       $allowed
      * @param Config|null $targetConfig
      */
     protected static function mergeFiles(
         $merger,
-        $files,
+        $paths,
         array $allowed = null,
         $targetConfig = null
     ) {
-        foreach ($files as $key => $file) {
+        foreach ($paths as $key => $path) {
             if ($allowed && !in_array($key, $allowed)) {
                 continue;
             }
-            $file = self::readPath($file);
+            $path = self::readPath($path);
+
+            if ('.xml' !== substr($path, -4)) {
+                /**
+                 * It's a directory with possible XML files
+                 */
+                $files = array();
+                foreach (self::findConfigFilesInPath($path) as $file) {
+                    $files[] = $file->getRealPath();
+                }
+            } else {
+                self::setConfigFile($key, $path);
+                $fs = new Filesystem();
+                if (!$fs->exists($path)) {
+                    continue;
+                }
+                $files = array($path);
+            }
 
             $targetConfig = $targetConfig ?: self::getInstance();
-            self::setConfigFile($key, $file);
-            if (!is_file($file)) {
-                continue;
+            foreach ($files as $file) {
+                $merger->merge(
+                    $targetConfig,
+                    self::loadXmlFileToMerge($file)
+                );
             }
-            $xml = self::loadXmlFileToMerge($file);
-            $merger->merge($targetConfig, $xml);
         }
     }
 
@@ -544,5 +565,23 @@ class Config extends \SimpleXMLElement
         } catch (\Exception $e) {
             throw new Exception("Cannot load XML file '$file'");
         }
+    }
+
+    /**
+     * Find config files in path
+     *
+     * @param string $path
+     * @return SplFileInfo[]
+     */
+    protected static function findConfigFilesInPath($path)
+    {
+        $fs = new Filesystem();
+        if (!$fs->exists($path)) {
+            return array();
+        }
+
+        $finder = new Finder();
+
+        return $finder->files()->name('*.xml')->notName('root.xml')->in($path);
     }
 }
