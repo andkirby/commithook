@@ -29,10 +29,11 @@ So default files ordering is presented as this list below:
 - `HOME/.commithook/pre-commit.xml` (like previous one but to split up specific configuration for `pre-commit` hook)
 - `HOME/.commithook/commit-msg.xml` (like previous one but to split up specific configuration for `commit-msg` hook)
 - `PROJECT_DIR/commithook.xml` (it may contain a project specific configuration which can be shared among your team)
+- `PROJECT_DIR/.commithook/` (the same like previous, but will load all `*.xml` files)
 - `PROJECT_DIR/commithook-self.xml` (it may contain a local project specific configuration which shouldn't shared to your team)
 
 The file `PROJECT_DIR/commithook.xml` can be added into a project and might be used by all developers.
 
-`PROJECT_DIR` - is your root project directory where CommitHOOK will be used.
+`PROJECT_DIR` - is your root project directory where CommitHook will be used.
 
 [Back](README.md)
