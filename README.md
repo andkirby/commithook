@@ -1,37 +1,12 @@
-# PHP CommitHOOKs
+# CommitHOOKs
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-The main purpose of this project is checking coding standards at first for PHP files.
+The main purpose of this project is checking coding standards.
 
 [![Travis CI](https://travis-ci.org/andkirby/commithook.svg?branch=develop)](https://travis-ci.org/andkirby/commithook)
 Travis Continuous Integration status.
 
-## Installation
-
-### Composer
-
-To install Composer you may follow the link https://getcomposer.org/download/. Just go to your PHP directory and follow the instructions therefrom. ([Composer Intro](https://getcomposer.org/doc/00-intro.md))
-
-Install composer package `andkirby/commithook` by command (you may put it into your global vendor directory):
-```shell
-$ composer global require andkirby/commithook
-```
-### Install
-And install...
-```shell
-$ cd myproject
-$ commithook install
-```
-[More info about installation.](doc/composer-installation.md)
-
-## [Configuring](doc/configuring.md)
-
-## [Set up GIT hooks manually](doc/manual-setup.md)
-
-## Features
-### [Commit Message Validation](doc/commit-msg.md)
-
-### [Ignoring Code Validators](doc/ignore-validator.md)
+Please see more information on [Wiki pages](/wiki).
 
 ## Release notes
 - v2.x-dev
