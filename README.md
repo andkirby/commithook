@@ -6,7 +6,7 @@ The main purpose of this project is checking coding standards.
 [![Travis CI](https://travis-ci.org/andkirby/commithook.svg?branch=develop)](https://travis-ci.org/andkirby/commithook)
 Travis Continuous Integration status.
 
-Please see more information on [Wiki pages](/wiki).
+Please see more information on [Wiki pages](../../wiki).
 
 ## Release notes
 - v2.x-dev
