@@ -46,7 +46,7 @@ class SkipContent implements FilterInterface
     protected function cutCodeBlock($content)
     {
         return (string) preg_replace(
-            '/(\s*\/\/ @'.self::SKIP_TAG_START.')([\S\s])*?(\/\/@'.self::SKIP_TAG_FINISH.')/',
+            '/(\s*\/\/ @'.self::SKIP_TAG_START.')([\S\s])*?(\/\/ @'.self::SKIP_TAG_FINISH.')/',
             '//replaced code because skipped validation (CodeSniffer)',
             $content
         );
