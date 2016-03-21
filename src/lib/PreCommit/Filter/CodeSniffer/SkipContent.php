@@ -2,7 +2,9 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Filter;
+namespace PreCommit\Filter\CodeSniffer;
+
+use PreCommit\Filter\FilterInterface;
 
 /**
  * Content filter for skipped code for validation
@@ -12,15 +14,15 @@ namespace PreCommit\Filter;
 class SkipContent implements FilterInterface
 {
     /**#@+
-     * Skip tags
+     * Skip tags of CodeSniffer
      *
      * For skip code add similar:
-     * [slash][slash]@startSkipCommitHooks
+     * [slash][slash] @codingStandardsIgnoreStart
      * $my->bad()->code();
-     * [slash][slash]@finishSkipCommitHooks
+     * [slash][slash] @codingStandardsIgnoreEnd
      */
-    const SKIP_TAG_START  = 'startSkipCommitHooks';
-    const SKIP_TAG_FINISH = 'finishSkipCommitHooks';
+    const SKIP_TAG_START  = 'codingStandardsIgnoreStart';
+    const SKIP_TAG_FINISH = 'codingStandardsIgnoreEnd';
     /**#@-*/
 
     /**
@@ -43,9 +45,9 @@ class SkipContent implements FilterInterface
      */
     protected function cutCodeBlock($content)
     {
-        return preg_replace(
-            '/(\s*\/\/@'.self::SKIP_TAG_START.')([\S\s])*?(\/\/@'.self::SKIP_TAG_FINISH.')/',
-            '//replaced code because skipped validation',
+        return (string) preg_replace(
+            '/(\s*\/\/ @'.self::SKIP_TAG_START.')([\S\s])*?(\/\/ @'.self::SKIP_TAG_FINISH.')/',
+            '//replaced code because skipped validation (CodeSniffer)',
             $content
         );
     }

@@ -7,3 +7,4 @@ ca.pem
 /test.*
 /node_modules
 /npm-debug.log
+.wiki

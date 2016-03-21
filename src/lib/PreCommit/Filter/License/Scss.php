@@ -2,15 +2,14 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-
 namespace PreCommit\Filter\License;
 
 /**
- * Class Css
- * This filter responsible for adding license block into CSS files
+ * Class Scss
+ * This filter responsible for adding license block into SCSS files
  *
  * @package PreCommit\Filter\License
  */
-class Css extends SimpleCode
+class Scss extends Css
 {
 }

@@ -17,18 +17,18 @@ abstract class AbstractAdapter
 {
     //region Properties
     /**
-     * Error collector
-     *
-     * @var \PreCommit\Processor\ErrorCollector
-     */
-    protected $errorCollector;
-
-    /**
      * Version Control System adapter
      *
      * @var \PreCommit\Vcs\AdapterInterface
      */
     protected static $vcsAdapter;
+
+    /**
+     * Error collector
+     *
+     * @var \PreCommit\Processor\ErrorCollector
+     */
+    protected $errorCollector;
 
     /**
      * Used validators list
@@ -64,15 +64,7 @@ abstract class AbstractAdapter
     public function __construct($options = array())
     {
         if (null === self::$vcsAdapter) {
-            if (is_string($options) || is_object($options) && $options instanceof AdapterInterface) {
-                $this->initVcsAdapter($options);
-            } elseif (isset($options['vcs']) && is_object($options['vcs'])
-                      && $options['vcs'] instanceof AdapterInterface
-            ) {
-                $this->initVcsAdapter($options['vcs']);
-            } else {
-                throw new Exception('VCS adapter is not set.');
-            }
+            $this->initVcsAdapter($options);
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
@@ -85,34 +77,30 @@ abstract class AbstractAdapter
     /**
      * Init VCS adapter
      *
-     * @param string|AdapterInterface $type
+     * @param string|AdapterInterface|array $options
      * @return mixed AdapterInterface
      * @throws Exception
      */
-    protected static function initVcsAdapter($type)
+    protected static function initVcsAdapter($options)
     {
-        if (is_string($type)) {
-            if (strpos($type, '\\') || strpos($type, '_')) {
-                $class = $type;
-            } else {
-                $class = '\\PreCommit\\Vcs\\'.ucfirst($type);
-            }
-            static::$vcsAdapter = new $class();
-        } elseif (is_object($type) && $type instanceof AdapterInterface) {
-            static::$vcsAdapter = $type;
+        if (is_string($options)) {
+            self::initVcsFromString($options);
+        } elseif (isset($options['vcs']) && is_string($options['vcs'])) {
+            self::initVcsFromString($options['vcs']);
+        } elseif (isset($options['vcs']) && is_object($options['vcs'])
+            && $options['vcs'] instanceof AdapterInterface
+            || is_object($options) && $options instanceof AdapterInterface
+        ) {
+            static::$vcsAdapter = $options;
         } else {
             throw new Exception('VCS adapter is not set.');
         }
-    }
 
-    /**
-     * Get VCS object
-     *
-     * @return AdapterInterface
-     */
-    public static function getVcsAdapter()
-    {
-        return static::$vcsAdapter;
+        //set custom affected files
+        static::$vcsAdapter->setAffectedFiles(
+            isset($options['vcsFiles'])
+                ? $options['vcsFiles'] : null
+        );
     }
 
     /**
@@ -123,6 +111,31 @@ abstract class AbstractAdapter
     protected function getErrorCollector()
     {
         return new Error();
+    }
+
+    /**
+     * Init VCS from string
+     *
+     * @param array|string $options
+     */
+    protected static function initVcsFromString($options)
+    {
+        if (strpos($options, '\\') || strpos($options, '_')) {
+            $class = $options;
+        } else {
+            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
+        }
+        static::$vcsAdapter = new $class($options);
+    }
+
+    /**
+     * Get VCS object
+     *
+     * @return AdapterInterface
+     */
+    public static function getVcsAdapter()
+    {
+        return static::$vcsAdapter;
     }
 
     /**
@@ -144,7 +157,9 @@ abstract class AbstractAdapter
         foreach ($this->getErrors() as $file => $fileErrors) {
             $decorLength = 30 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
-            $output .= str_repeat('=', round($decorLength - 0.1))." $file ".str_repeat('=', round($decorLength)).PHP_EOL;
+            $start       = str_repeat('=', round($decorLength - 0.1));
+            $end         = str_repeat('=', round($decorLength));
+            $output .= $start." $file ".$end.PHP_EOL;
             foreach ($fileErrors as $errorsType) {
                 foreach ($errorsType as $error) {
                     $output .= str_replace(array("\n\r"), "\n", $error['message'])."\n";
@@ -238,7 +253,7 @@ abstract class AbstractAdapter
     protected function loadFilter($name, array $options = array())
     {
         if (empty($this->filters[$name])) {
-            $class                = "\\PreCommit\\Filter\\$name";
+            $class                = '\\PreCommit\\Filter\\'.str_replace('-', '\\', $name);
             $this->filters[$name] = new $class($options);
         }
 

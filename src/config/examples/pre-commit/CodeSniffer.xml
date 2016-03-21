@@ -8,11 +8,29 @@
 <!--It can be added into PROJECT/commithook.xml file-->
 <config>
     <hooks>
+        <!--This node can be omitted-->
+        <filetype>
+            <before_all>
+                <filters>
+                    <!--This node not required, enabled by default-->
+                    <CodeSniffer-SkipContent>1</CodeSniffer-SkipContent>
+                </filters>
+            </before_all>
+            <php>
+                <validators>
+                    <!--This node not required, enabled by default-->
+                    <CodeSniffer>1</CodeSniffer>
+                </validators>
+            </php>
+        </filetype>
+
+        <!--Required configuration-->
         <pre-commit>
             <validators>
                 <CodeSniffer>
                     <rule>
-                        <!--Use directory node or name node ONLY-->
+                        <!--Use one node <directory> OR <name> ONLY-->
+                        <!--<directory> has higher priority-->
 
                         <!--Set path to directory of your standard-->
                         <directory>vendor/escapestudios/symfony2-coding-standard/Symfony2</directory>

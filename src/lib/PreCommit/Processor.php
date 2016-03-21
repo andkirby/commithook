@@ -15,11 +15,11 @@ class Processor
      * Factory method
      *
      * @param string $adapter
-     * @param string $vcsType
+     * @param array  $options
      * @return Processor\AbstractAdapter
      * @throws Exception
      */
-    public static function factory($adapter, $vcsType)
+    public static function factory($adapter, $options)
     {
         if (!$adapter) {
             throw new Exception('Adapter name cannot be empty.');
@@ -28,7 +28,7 @@ class Processor
         $class = self::getAdapterClassName($adapter);
 
         try {
-            return new $class($vcsType);
+            return new $class($options);
         } catch (Exception $e) {
             $file = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
             if ($e->getCode() == Autoloader::EXCEPTION_CODE && strpos($e->getMessage(), $file)) {

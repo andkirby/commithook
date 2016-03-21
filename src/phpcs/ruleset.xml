@@ -8,7 +8,9 @@
     <description>The CommitHooks coding standard. (extended from Symfony2)</description>
 
     <!-- Include the whole Symfony2 standard -->
-    <rule ref="../../vendor/escapestudios/symfony2-coding-standard/Symfony2"/>
+    <rule ref="../../vendor/escapestudios/symfony2-coding-standard/Symfony2">
+        <!--<exclude name="Symfony2.Functions.ScopeOrder.Invalid" />-->
+    </rule>
 
     <!--<rule ref="Generic.Debug.JSHint"/>-->
 
@@ -17,11 +19,15 @@
     <!--<exclude-pattern>*/tests/testsuite/*</exclude-pattern>-->
     <exclude-pattern>src/tests/testsuite/PreCommit/Test/Validator/XmlParserTest.php</exclude-pattern>
 
-    <!--<rule ref="Squiz.Strings.ConcatenationSpacing.PaddingFound">-->
-    <!--<severity>0</severity>-->
-    <!--</rule>-->
-    <rule ref="Symfony2.Functions.ScopeOrder.Invalid">
-        <severity>0</severity>
+    <!--
+    Problem with Squiz.Strings.ConcatenationSpacing.PaddingFound
+    https://github.com/squizlabs/PHP_CodeSniffer/issues/651
+    -->
+
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="ignoreNewlines" value="true" />
+        </properties>
     </rule>
 
     <!--Problem in code with inheritdoc:-->

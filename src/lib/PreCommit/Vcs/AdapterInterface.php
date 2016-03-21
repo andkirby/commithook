@@ -19,6 +19,14 @@ interface AdapterInterface
     /**
      * Get affected files
      *
+     * @param array $files
+     * @return string
+     */
+    public function setAffectedFiles(array $files = null);
+
+    /**
+     * Get affected files
+     *
      * @return string
      */
     public function getAffectedFiles();

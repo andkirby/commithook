@@ -10,6 +10,6 @@ namespace PreCommit\Filter\License;
  *
  * @package PreCommit\Filter\License
  */
-class Js extends AbstractSimpleText
+class Js extends SimpleCode
 {
 }
