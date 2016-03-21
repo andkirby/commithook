@@ -102,7 +102,7 @@ class CommitMsg extends AbstractValidator
                 if ($this->getInterpreterResult($message, $expression)) {
                     return true;
                 }
-            } elseif (preg_match($expression, $message->head)) {
+            } elseif (preg_match($expression, $message->body)) {
                 //here should match at least one of plenty
                 return true;
             }
