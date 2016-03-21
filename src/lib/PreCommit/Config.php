@@ -570,6 +570,8 @@ class Config extends \SimpleXMLElement
     /**
      * Find config files in path
      *
+     * It will ignore root.xml file
+     *
      * @param string $path
      * @return SplFileInfo[]
      */
