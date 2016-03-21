@@ -28,6 +28,9 @@
     "bin/commithook",
     "bin/commithook.php"
   ],
+  "suggest": {
+    "squizlabs/php_codesniffer": "Suggested v2.* for using code sniffer"
+  },
   "autoload": {
     "psr-4": {
       "AndKirby\\Crypter\\": "src/lib/Crypter",

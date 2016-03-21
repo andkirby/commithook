@@ -19,16 +19,7 @@
                 </skip>
             </filter>
         </FileFilter>
-        <CodingStandard>
-            <underscore_in_non_public>0</underscore_in_non_public>
-        </CodingStandard>
-        <CodeSniffer>
-            <rule>
-                <directory>src/phpcs</directory>
-            </rule>
-        </CodeSniffer>
     </validators>
-
     <tracker>
         <type>github</type>
         <github>

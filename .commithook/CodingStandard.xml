@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- This is a local configuration file. It is not used in external projects.-->
+<config>
+    <!--Validators setup-->
+    <validators>
+        <CodingStandard>
+            <underscore_in_non_public>0</underscore_in_non_public>
+        </CodingStandard>
+    </validators>
+</config>
