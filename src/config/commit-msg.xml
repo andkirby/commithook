@@ -97,7 +97,8 @@
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
                 <git_flow_finish>/^Finish /</git_flow_finish>
-                <through_commit>/@@through/</through_commit>
+                <!--@@through-->
+                <through_commit>/[\x40][\x40]through/</through_commit>
                 <full>
                     <interpreter>
                         <class>\PreCommit\Interpreter\FullCommitMsg</class>
