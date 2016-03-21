@@ -97,7 +97,7 @@
                 <merge>/^Merge /</merge>
                 <revert>/^Revert /</revert>
                 <git_flow_finish>/^Finish /</git_flow_finish>
-                <!--@@through-->
+                <!--Use this tag @@through for commit message without validation-->
                 <through_commit>/[\x40][\x40]through/</through_commit>
                 <full>
                     <interpreter>
