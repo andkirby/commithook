@@ -7,6 +7,7 @@ namespace PreCommit;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 
 /**
  * Class for get config
@@ -179,17 +180,29 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get config instance
+     * Init config instance
      *
      * @param array $options
      *
      * @return $this
      * @throws Exception
      */
-    public static function getInstance(array $options = array())
+    public static function initInstance(array $options = array())
     {
         if (!self::$instance || !empty($options['file'])) {
-            self::$instance = self::loadInstance($options);
+            if (null === self::$instance) {
+                /**
+                 * Init empty XML object
+                 */
+                /** @var Config $config */
+                self::$instance = simplexml_load_string(
+                    '<?xml version="1.0" encoding="UTF-8"?><config />',
+                    '\\PreCommit\\Config'
+                );
+            }
+
+            self::$instance = self::getXmlMerger()->merge(self::$instance, self::loadInstance($options));
+
             if (empty($options['root_dir'])) {
                 self::setSrcRootDir(realpath(__DIR__.'/../../'));
             }
@@ -199,6 +212,21 @@ class Config extends \SimpleXMLElement
             if (self::getProjectDir() && self::$rootDir && !self::loadCache()) {
                 self::mergeExtraConfig();
             }
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Get config instance
+     *
+     * @return $this
+     * @throws Exception
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+            throw new Exception('Please use Config::initInstance().');
         }
 
         return self::$instance;
@@ -244,6 +272,10 @@ class Config extends \SimpleXMLElement
      */
     public static function setConfigFile($name, $file)
     {
+        //save file to config
+        $writer = new ConfigHelper();
+        $writer->setValueToXml(self::$instance, 'cache/config_files/'.$name, $file);
+
         return self::$configFiles[$name] = $file;
     }
 
@@ -446,8 +478,11 @@ class Config extends \SimpleXMLElement
      */
     public static function getConfigFile($name)
     {
-        return isset(self::$configFiles[$name]) ? self::$configFiles[$name]
-            : null;
+        if (!isset(self::$configFiles[$name])) {
+            //try to load config files list from config
+            self::$configFiles[$name] = self::getInstance()->getNode('cache/config_files/'.$name);
+        }
+        return self::$configFiles[$name];
     }
 
     /**

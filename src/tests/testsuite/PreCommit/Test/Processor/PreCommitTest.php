@@ -17,7 +17,7 @@ class PreCommitTest extends \PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config
-        Config::getInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        Config::initInstance(array('file' => PROJECT_ROOT . '/config.xml'));
         Config::setSrcRootDir(PROJECT_ROOT);
         Config::mergeExtraConfig();
     }

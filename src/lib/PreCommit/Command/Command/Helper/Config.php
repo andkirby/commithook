@@ -132,7 +132,7 @@ XML;
      * @param string         $value
      * @return $this
      */
-    protected function setValueToXml(ConfigInstance $config, $xpath, $value)
+    public function setValueToXml(ConfigInstance $config, $xpath, $value)
     {
         $this->getXmlMerger()->merge(
             $config,

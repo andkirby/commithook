@@ -33,7 +33,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config object
-        Config::getInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::initInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         Config::setSrcRootDir(PROJECT_ROOT);
         $vcsAdapter = self::_getVcsAdapterMock();
 

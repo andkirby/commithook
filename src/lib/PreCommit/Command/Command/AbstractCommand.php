@@ -92,7 +92,7 @@ abstract class AbstractCommand extends Command
         static $config;
         if (null === $config) {
             //TODO Make single load
-            $config = Config::getInstance(
+            $config = Config::initInstance(
                 array(
                     'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
                 )

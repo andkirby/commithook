@@ -117,6 +117,7 @@
     <!--Hooks process setup-->
     <hooks>
         <pre-commit>
+            <!--blind-commit configuration-->
             <ignore>
                 <disable>
                     <!-- Set to 1 in your configuration XML file to skip code validation for the next commit -->

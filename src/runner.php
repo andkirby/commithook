@@ -1,5 +1,8 @@
 <?php
 /**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+/**
  * End point file to run CommitHooks
  *
  * @see        bin/runner.php
@@ -35,7 +38,7 @@ $vcsFiles = isset($vcsFiles) ? $vcsFiles : null;
 if (!isset($rootConfigFile)) {
     $rootConfigFile = COMMIT_HOOKS_ROOT . '/src/config/root.xml';
 }
-$config = \PreCommit\Config::getInstance(array('file' => $rootConfigFile));
+$config = \PreCommit\Config::initInstance(array('file' => $rootConfigFile));
 
 //prepare head block for output
 $output = array();
