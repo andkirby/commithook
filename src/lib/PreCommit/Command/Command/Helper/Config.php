@@ -104,6 +104,81 @@ class Config extends Helper
     }
 
     /**
+     * Clear cache
+     *
+     * @return $this
+     * @throws Exception
+     */
+    public function clearCache()
+    {
+        $list = $this->getCachedConfigFiles();
+        if ($list) {
+            $fs = new Filesystem();
+            $fs->remove($list);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Save value to XML
+     *
+     * @param ConfigInstance $config
+     * @param string         $xpath
+     * @param string         $value
+     * @return $this
+     */
+    public function setValueToXml(ConfigInstance $config, $xpath, $value)
+    {
+        $this->getXmlMerger()->merge(
+            $config,
+            $this->getXmlUpdate($xpath, $value)
+        );
+
+        return $this;
+    }
+
+    /**
+     * Set writer
+     *
+     * @param Config\Writer $writer
+     * @return $this
+     */
+    public function setWriter(Config\Writer $writer)
+    {
+        $this->writer = $writer;
+
+        return $this;
+    }
+
+    /**
+     * Write configuration value by XML path
+     *
+     * @param string $configFile
+     * @param string $xpath
+     * @param string $value
+     * @return bool
+     * @throws \PreCommit\Command\Exception
+     */
+    public function writeValue($configFile, $xpath, $value)
+    {
+        $config = $this->loadConfig($configFile);
+        if ($config->getNode($xpath) == $value) {
+            return false;
+        }
+
+        $this->setValueToXml($config, $xpath, $value);
+
+        $this->getWriter()->write(
+            $config,
+            $configFile
+        );
+        $this->clearCache();
+
+        return true;
+    }
+
+    /**
      * Load config
      *
      * @param string $file
@@ -129,40 +204,6 @@ XML;
     }
 
     /**
-     * Clear cache
-     *
-     * @return $this
-     * @throws Exception
-     */
-    public function clearCache()
-    {
-        $list = $this->getCachedConfigFiles();
-        if ($list) {
-            $fs = new Filesystem();
-            $fs->remove($list);
-        }
-        return $this;
-    }
-
-    /**
-     * Save value to XML
-     *
-     * @param ConfigInstance $config
-     * @param string         $xpath
-     * @param string         $value
-     * @return $this
-     */
-    public function setValueToXml(ConfigInstance $config, $xpath, $value)
-    {
-        $this->getXmlMerger()->merge(
-            $config,
-            $this->getXmlUpdate($xpath, $value)
-        );
-
-        return $this;
-    }
-
-    /**
      * Get config writer
      *
      * @return Config\Writer
@@ -174,19 +215,6 @@ XML;
         }
 
         return $this->writer;
-    }
-
-    /**
-     * Set writer
-     *
-     * @param Config\Writer $writer
-     * @return $this
-     */
-    public function setWriter(Config\Writer $writer)
-    {
-        $this->writer = $writer;
-
-        return $this;
     }
 
     /**
@@ -236,34 +264,6 @@ XML;
         //@finishSkipCommitHooks
 
         return simplexml_load_string($xml);
-    }
-
-    /**
-     * Write configuration value by XML path
-     *
-     * @param string $configFile
-     * @param string $xpath
-     * @param string $value
-     * @return bool
-     * @throws \PreCommit\Command\Exception
-     */
-    public function writeValue($configFile, $xpath, $value)
-    {
-        $config = $this->loadConfig($configFile);
-        if ($config->getNode($xpath) == $value) {
-            return false;
-        }
-
-        $this->setValueToXml($config, $xpath, $value);
-
-        $this->getWriter()->write(
-            $config,
-            $configFile
-        );
-        $this->clearCache();
-
-
-        return true;
     }
 
     /**
