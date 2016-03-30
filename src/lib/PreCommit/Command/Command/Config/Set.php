@@ -129,6 +129,18 @@ class Set extends AbstractCommand
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setApplication(Application $application = null)
+    {
+        parent::setApplication($application);
+        $this->getHelperSet()->set(new Helper\Config());
+        $this->getHelperSet()->set(new Helper\Config\Set());
+        $this->getHelperSet()->set(new Helper\Config\Writer());
+        $this->getHelperSet()->set(new Helper\ClearCache());
+    }
+
+    /**
      * Connection tracker wizard
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
@@ -470,9 +482,7 @@ class Set extends AbstractCommand
      */
     protected function isNameXpath(InputInterface $input)
     {
-        // @codingStandardsIgnoreStart
-        return (bool)$input->getOption('xpath');
-        // @codingStandardsIgnoreEnd
+        return (bool) $input->getOption('xpath');
     }
 
     /**
@@ -590,17 +600,6 @@ class Set extends AbstractCommand
             return $this->getConfig()->getConfigFile('project_local');
         }
         throw new \PreCommit\Exception("Unknown scope '$scope'.");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setApplication(Application $application = null)
-    {
-        parent::setApplication($application);
-        $this->getHelperSet()->set(new Helper\Config());
-        $this->getHelperSet()->set(new Helper\Config\Set());
-        $this->getHelperSet()->set(new Helper\Config\Writer());
     }
 
     /**
