@@ -20,7 +20,7 @@ class Application extends BaseApplication
      *
      * @see src/config.xml
      */
-    const VERSION = '';
+    const VERSION = '2.0.0-dev';
 
     /**
      * Logo
