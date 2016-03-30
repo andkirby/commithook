@@ -33,7 +33,7 @@ class Config extends Helper
     /**
      * Value to write
      *
-     * Format: xpath => value
+     * Format : xpath => value
      *
      * @var array
      */
@@ -111,11 +111,9 @@ class Config extends Helper
      */
     public function clearCache()
     {
-        $list = $this->getCachedConfigFiles();
-        if ($list) {
-            $fs = new Filesystem();
-            $fs->remove($list);
-        }
+        /** @var ClearCache $cleaner */
+        $cleaner = $this->getHelperSet()->get(ClearCache::NAME);
+        $cleaner->clearConfigCache();
 
         return $this;
     }
