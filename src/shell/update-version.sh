@@ -6,6 +6,7 @@
 LCS
 SRC_DIR=$(cd `dirname "${BASH_SOURCE[0]}"`/.. && pwd)
 readonly SRC_DIR
+echo "${SRC_DIR}"
 cd "${SRC_DIR}"
 
 current_branch=$(git branch | grep '*' | grep -Eo '[^* ]+')
@@ -18,6 +19,10 @@ if [ -z $(echo "${answer}" | grep -i "^y") ]; then
 fi
 
 if [ $? != 0 ]; then echo "error: Can't go to master branch."; exit 1; fi
+
+# reset files with the version
+git checkout -- config/root.xml && git checkout -- lib/PreCommit/Command/Application.php
+if [ $? != 0 ]; then echo "error: Can't reset files Application.php and root.xml."; exit 1; fi
 
 # Read current version
 current_version=$(grep -E '<version>[^<]' ${SRC_DIR}/config/root.xml | grep -Eo '[0-9][^<]+')
