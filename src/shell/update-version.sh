@@ -4,7 +4,7 @@
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
 LCS
-SRC_DIR=$(cd `dirname "${BASH_SOURCE[0]}"`/../src && pwd)
+SRC_DIR=$(cd `dirname "${BASH_SOURCE[0]}"`/.. && pwd)
 readonly SRC_DIR
 cd "${SRC_DIR}"
 
