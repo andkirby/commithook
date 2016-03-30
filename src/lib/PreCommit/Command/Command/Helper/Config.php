@@ -6,7 +6,10 @@
 namespace PreCommit\Command\Command\Helper;
 
 use PreCommit\Config as ConfigInstance;
+use PreCommit\Exception;
 use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Helper for writing config
@@ -95,6 +98,7 @@ class Config extends Helper
                 $configFile
             );
         }
+        $this->clearCache();
 
         return $updated;
     }
@@ -122,6 +126,22 @@ XML;
         }
 
         return ConfigInstance::loadInstance(array('file' => $file), false);
+    }
+
+    /**
+     * Clear cache
+     *
+     * @return $this
+     * @throws Exception
+     */
+    public function clearCache()
+    {
+        $list = $this->getCachedConfigFiles();
+        if ($list) {
+            $fs = new Filesystem();
+            $fs->remove($list);
+        }
+        return $this;
     }
 
     /**
@@ -240,7 +260,26 @@ XML;
             $config,
             $configFile
         );
+        $this->clearCache();
+
 
         return true;
+    }
+
+    /**
+     * Get cached config files
+     *
+     * @return array
+     * @throws \PreCommit\Exception
+     */
+    protected function getCachedConfigFiles()
+    {
+        $finder = new Finder();
+        $list   = array();
+        foreach ($finder->files()->in(ConfigInstance::getCacheDir())->name('*.xml') as $file) {
+            $list[] = $file->getRealpath();
+        }
+
+        return $list;
     }
 }
