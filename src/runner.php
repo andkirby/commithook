@@ -80,7 +80,6 @@ PreCommit\Config::setSrcRootDir(COMMIT_HOOKS_ROOT . '/src');
 if (!PreCommit\Config::loadCache()) {
     PreCommit\Config::mergeExtraConfig();
 }
-
 try {
     /**
      * @var \PreCommit\Processor\AbstractAdapter $processor
@@ -90,6 +89,10 @@ try {
         array('vcs' => $vcs, 'vcsFiles' => $vcsFiles)
     );
     $processor->process();
+} catch (\PreCommit\Exception $e) {
+    echo 'Error:'.$e->getMessage();
+    echo PHP_EOL . PHP_EOL;
+    exit(1);
 } catch (\Exception $e) {
     echo 'EXCEPTION:'.$e->getMessage();
     echo PHP_EOL;
