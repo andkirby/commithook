@@ -45,14 +45,22 @@
                         <License>1</License>
                     </validators>
                 </phtml>
-                <xml>
+                <coffee>
                     <filters>
                         <License>1</License>
                     </filters>
                     <validators>
                         <License>1</License>
                     </validators>
-                </xml>
+                </coffee>
+                <js>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </js>
                 <css>
                     <filters>
                         <License>1</License>
@@ -61,6 +69,22 @@
                         <License>1</License>
                     </validators>
                 </css>
+                <scss>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </scss>
+                <xml>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </xml>
                 <sh>
                     <filters>
                         <License>1</License>
