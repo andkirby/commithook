@@ -76,6 +76,54 @@
                         <License>1</License>
                     </validators>
                 </php>
+                <phtml>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </phtml>
+                <js>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </js>
+                <css>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </css>
+                <scss>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </scss>
+                <xml>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </xml>
+                <sh>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </sh>
             </filetype>
         </pre-commit>
     </hooks>
