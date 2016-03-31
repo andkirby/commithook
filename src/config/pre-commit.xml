@@ -199,6 +199,31 @@
                         <RedundantCode>1</RedundantCode>
                     </validators>
                 </js>
+                <coffee>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <RedundantCode>1</RedundantCode>
+                    </validators>
+                </coffee>
+                <css>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </css>
+                <scss>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </scss>
                 <xml>
                     <filters>
                         <License>0</License>
@@ -208,14 +233,14 @@
                         <XmlParser>1</XmlParser>
                     </validators>
                 </xml>
-                <css>
+                <sh>
                     <filters>
                         <License>0</License>
                     </filters>
                     <validators>
                         <License>0</License>
                     </validators>
-                </css>
+                </sh>
                 <after_all>
                     <validators>
                         <TrailingSpace>1</TrailingSpace>
