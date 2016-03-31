@@ -84,6 +84,14 @@
                         <License>1</License>
                     </validators>
                 </phtml>
+                <coffee>
+                    <filters>
+                        <License>1</License>
+                    </filters>
+                    <validators>
+                        <License>1</License>
+                    </validators>
+                </coffee>
                 <js>
                     <filters>
                         <License>1</License>
