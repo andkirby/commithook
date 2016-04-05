@@ -88,36 +88,35 @@ try {
         $hookName,
         array('vcs' => $vcs, 'vcsFiles' => $vcsFiles)
     );
-    $processor->process();
+    $processor->process();//show head block
+    if (PreCommit\Config::getInstance()->getNode('output/show_head')) {
+        echo $output['head'];
+    }
+
+    if (!$processor->getErrors()) {
+        echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/success");
+        echo PHP_EOL;
+        $processor->dispatchEvent('success_end');
+        $processor->dispatchEvent('end', 0);
+        echo PHP_EOL;
+        exit(0);
+    } else {
+        echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/error");
+        echo PHP_EOL;
+        $processor->dispatchEvent('error_end');
+        $processor->dispatchEvent('end', 1);
+        echo $processor->getErrorsOutput();
+        echo PHP_EOL;
+        exit(1);
+    }
 } catch (\PreCommit\Exception $e) {
-    echo 'Error:'.$e->getMessage();
-    echo PHP_EOL . PHP_EOL;
+    echo 'app error: '.$e->getMessage();
+    echo PHP_EOL;
     exit(1);
 } catch (\Exception $e) {
-    echo 'EXCEPTION:'.$e->getMessage();
+    echo 'exception: '.$e->getMessage();
     echo PHP_EOL;
     echo $e->getTraceAsString();
-    echo PHP_EOL . PHP_EOL;
-    exit(1);
-}
-
-//show head block
-if (PreCommit\Config::getInstance()->getNode('output/show_head')) {
-    echo $output['head'];
-}
-
-if (!$processor->getErrors()) {
-    echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/success");
-    $processor->dispatchEvent('success_end');
-    $processor->dispatchEvent('end', 0);
-    echo PHP_EOL . PHP_EOL;
-    exit(0);
-} else {
-    echo PreCommit\Config::getInstance()->getNode("hooks/$hookName/end_message/error");
-    echo PHP_EOL . PHP_EOL;
-    $processor->dispatchEvent('error_end');
-    $processor->dispatchEvent('end', 1);
-    echo $processor->getErrorsOutput();
-    echo PHP_EOL . PHP_EOL;
+    echo PHP_EOL;
     exit(1);
 }
