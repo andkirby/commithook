@@ -6,10 +6,12 @@ namespace PreCommit\Processor;
 
 use PreCommit\Command\Command\Config\IgnoreCommit;
 use PreCommit\Command\Command\Config\Set;
+use PreCommit\Command\Command\Helper\ClearCache;
 use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\FilterInterface;
+use Symfony\Component\Console\Helper\HelperSet;
 
 /**
  * Class abstract process adapter
@@ -48,6 +50,13 @@ class PreCommit extends AbstractAdapter
      */
     protected $omittedValidators;
 
+    /**
+     * Helper set
+     *
+     * @var array
+     */
+    protected $helperSet;
+
     //endregion
 
     /**
@@ -61,6 +70,9 @@ class PreCommit extends AbstractAdapter
         parent::__construct($vcsType);
         $this->setCodePath($this->getVcsAdapter()->getCodePath());
         $this->setFiles($this->getVcsAdapter()->getAffectedFiles());
+
+        $this->helperSet = new HelperSet();
+        $this->initHelperSet();
     }
 
     //region GettersSetters
@@ -139,6 +151,80 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
+     * Run validators gotten by file extension or some key
+     *
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return void             Returns nothing
+     */
+    public function runValidators($ext, $content, $file, $filePath)
+    {
+        foreach ($this->getValidators($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
+                $this->loadValidator($validatorName)
+                    ->validate($content, $file, $filePath);
+            }
+        }
+    }
+
+    /**
+     * Run filters gotten by file extension or some key
+     *
+     * @param string $ext
+     * @param string $content
+     * @param string $file
+     * @param string $filePath
+     * @return string           Return filtered content
+     */
+    public function runFilters($ext, $content, $file, $filePath)
+    {
+        foreach ($this->getFilters($ext) as $validatorName => $status) {
+            if ($status && $status !== 'false') {
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
+                $content = $this->loadFilter($validatorName)
+                    ->filter($content, $file, $filePath);
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Get validators by file type
+     *
+     * @param string $fileType
+     * @return array
+     */
+    public function getValidators($fileType)
+    {
+        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/validators');
+    }
+
+    /**
+     * Get filters by file type
+     *
+     * @param string $fileType
+     * @return array
+     */
+    public function getFilters($fileType)
+    {
+        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/filters');
+    }
+
+    /**
+     * Get config helper
+     *
+     * @return ConfigHelper
+     */
+    public function getConfigHelper()
+    {
+        return $this->getHelperSet()->get(ConfigHelper::NAME);
+    }
+
+    /**
      * Can files processed
      *
      * In this method added checking commit message.
@@ -193,48 +279,6 @@ class PreCommit extends AbstractAdapter
     }
 
     /**
-     * Run validators gotten by file extension or some key
-     *
-     * @param string $ext
-     * @param string $content
-     * @param string $file
-     * @param string $filePath
-     * @return void             Returns nothing
-     */
-    public function runValidators($ext, $content, $file, $filePath)
-    {
-        foreach ($this->getValidators($ext) as $validatorName => $status) {
-            if ($status && $status !== 'false') {
-                /** @noinspection PhpMethodParametersCountMismatchInspection */
-                $this->loadValidator($validatorName)
-                    ->validate($content, $file, $filePath);
-            }
-        }
-    }
-
-    /**
-     * Run filters gotten by file extension or some key
-     *
-     * @param string $ext
-     * @param string $content
-     * @param string $file
-     * @param string $filePath
-     * @return string           Return filtered content
-     */
-    public function runFilters($ext, $content, $file, $filePath)
-    {
-        foreach ($this->getFilters($ext) as $validatorName => $status) {
-            if ($status && $status !== 'false') {
-                /** @noinspection PhpMethodParametersCountMismatchInspection */
-                $content = $this->loadFilter($validatorName)
-                    ->filter($content, $file, $filePath);
-            }
-        }
-
-        return $content;
-    }
-
-    /**
      * Get validators which should be ignored
      *
      * @return array
@@ -255,15 +299,15 @@ class PreCommit extends AbstractAdapter
                 //get validators set
                 $validators = $this->getOmittedTypeValidators($xpath, $type);
                 if ($validators) {
-                    //add observer to remove disable ignoring
+                    //add observer to remove disable blind-commit
+                    // @codingStandardsIgnoreStart
                     $this->addObserver(
                         'success_end',
-                        //@startSkipCommitHooks
                         function () use ($configHelper, $configFile, $xpath) {
                             $configHelper->writeValue($configFile, $xpath, false);
                         }
-                        //@finishSkipCommitHooks
                     );
+                    // @codingStandardsIgnoreEnd
 
                     $this->omittedValidators = array_merge(
                         $this->omittedValidators,
@@ -274,41 +318,6 @@ class PreCommit extends AbstractAdapter
         }
 
         return $this->omittedValidators;
-    }
-
-    /**
-     * Get validators by file type
-     *
-     * @param string $fileType
-     * @return array
-     */
-    public function getValidators($fileType)
-    {
-        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/validators');
-    }
-
-    /**
-     * Get filters by file type
-     *
-     * @param string $fileType
-     * @return array
-     */
-    public function getFilters($fileType)
-    {
-        return $this->getConfig()->getNodeArray('hooks/pre-commit/filetype/'.$fileType.'/filters');
-    }
-
-    /**
-     * Get config helper
-     *
-     * @return ConfigHelper
-     */
-    public function getConfigHelper()
-    {
-        $helper = new ConfigHelper();
-        $helper->setWriter(new ConfigHelper\Writer());
-
-        return $helper;
     }
 
     /**
@@ -358,5 +367,31 @@ class PreCommit extends AbstractAdapter
     protected function getConfig()
     {
         return Config::getInstance();
+    }
+
+    /**
+     * Get helper set
+     *
+     * @return HelperSet
+     */
+    protected function getHelperSet()
+    {
+        return $this->helperSet;
+    }
+
+    /**
+     * Init helper set
+     *
+     * @return $this
+     */
+    protected function initHelperSet()
+    {
+        $this->getHelperSet()->set(new ClearCache());
+
+        $helper = new ConfigHelper();
+        $helper->setWriter(new ConfigHelper\Writer());
+        $this->getHelperSet()->set($helper);
+
+        return $this;
     }
 }
