@@ -48,7 +48,24 @@ class Password extends Crypter implements CrypterInterface
 
             return $this->decrypt($password) ?: null;
         } catch (Exception $e) {
-            throw new UserException('Cannot get tracker password.', 0, $e);
+            throw new UserException('Cannot get password of tracker.', 0, $e);
         }
+    }
+
+    /**
+     * Replace strange \000 character
+     *
+     * {@inheritdoc}
+     */
+    public function decrypt($string, $key = null)
+    {
+        $password = parent::decrypt($string, $key);
+
+        /**
+         * Unknown bug in PhpStorm
+         * Only PHPStorm adds \0 to the tail of password
+         * Perhaps PHP versions conflict
+         */
+        return rtrim($password, "\000");
     }
 }
