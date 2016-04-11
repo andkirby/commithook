@@ -5,6 +5,7 @@
 namespace PreCommit\Issue;
 
 use Github\Client as Api;
+use PreCommit\Exception;
 use PreCommit\Issue\Authorization\Password;
 use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
 
@@ -87,6 +88,63 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * Get issue key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        $issue = $this->getIssue();
+
+        return $issue['number'];
+    }
+
+    //region Caching methods
+
+    /**
+     * Get issue type
+     *
+     * @return string
+     */
+    public function getOriginalType()
+    {
+        $issue = $this->getIssue();
+        if (!empty($issue['labels'])) {
+            foreach ($issue['labels'] as $label) {
+                if (in_array($label['name'], $this->labelTypes)) {
+                    return $label['name'];
+                }
+            }
+        }
+
+        return $this->defaultLabelType;
+    }
+
+    /**
+     * Get status name
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        $issue = $this->getIssue();
+
+        return $this->normalizeName($issue['state']);
+    }
+
+    /**
+     * Cache issue
+     *
+     * @return $this
+     */
+    public function ignoreIssue()
+    {
+        $this->cacheResult($this->getCacheKey(), array());
+
+        return $this;
+    }
+
+    /**
      * Get issue
      *
      * @return array
@@ -116,8 +174,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->issue;
     }
 
-    //region Caching methods
-
     /**
      * Get cache summary string
      *
@@ -130,6 +186,9 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $data ? unserialize($data) : null;
     }
+    //endregion
+
+    //region Interface methods
 
     /**
      * Get cache key
@@ -193,9 +252,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
             )
         );
     }
-    //endregion
-
-    //region Interface methods
 
     /**
      * Get vendor name
@@ -219,11 +275,15 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * Get repository name
      *
      * @return string
+     * @throws Exception
      */
     protected function getRepositoryName()
     {
         $name = $this->getConfig()->getNode('tracker/github/repository');
         if (!$name) {
+            if (!strpos($this->getProject(), '/')) {
+                throw new Exception('Cannot get GitHub repository name');
+            }
             list(, $name) = explode(
                 '/',
                 $this->getProject()
@@ -232,6 +292,10 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
 
         return $name;
     }
+
+    //endregion
+
+    //region API methods
 
     /**
      * Get issue number
@@ -273,6 +337,8 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->api;
     }
 
+    //endregion
+
     /**
      * Get cache directory
      *
@@ -283,10 +349,6 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
         return $this->getConfig()->getCacheDir();
     }
 
-    //endregion
-
-    //region API methods
-
     /**
      * Get project "key"
      *
@@ -295,62 +357,5 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     protected function getProject()
     {
         return $this->getConfig()->getNode('tracker/github/project');
-    }
-
-    /**
-     * Get issue key
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        $issue = $this->getIssue();
-
-        return $issue['number'];
-    }
-
-    /**
-     * Get issue type
-     *
-     * @return string
-     */
-    public function getOriginalType()
-    {
-        $issue = $this->getIssue();
-        if (!empty($issue['labels'])) {
-            foreach ($issue['labels'] as $label) {
-                if (in_array($label['name'], $this->labelTypes)) {
-                    return $label['name'];
-                }
-            }
-        }
-
-        return $this->defaultLabelType;
-    }
-
-    //endregion
-
-    /**
-     * Get status name
-     *
-     * @return string
-     */
-    public function getStatus()
-    {
-        $issue = $this->getIssue();
-
-        return $this->normalizeName($issue['state']);
-    }
-
-    /**
-     * Cache issue
-     *
-     * @return $this
-     */
-    public function ignoreIssue()
-    {
-        $this->cacheResult($this->getCacheKey(), array());
-
-        return $this;
     }
 }
