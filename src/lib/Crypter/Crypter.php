@@ -26,7 +26,7 @@ class Crypter implements CrypterInterface
     /**
      * Encrypt password
      *
-     * @param string      $text
+     * @param string      $text Text to encrypt
      * @param null|string $key  Encrypt key
      * @return string
      * @link http://php.net/manual/ru/function.mcrypt-encrypt.php#refsect1-function.mcrypt-encrypt-examples
@@ -38,13 +38,13 @@ class Crypter implements CrypterInterface
         }
 
         $ivSize = $this->getMsCryptIvSize();
-        $iv     = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+        $iv     = mcrypt_create_iv($ivSize, MCRYPT_DEV_RANDOM);
 
         $cipherText = mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_128,
+            $this->getMcryptCipher(),
             $key,
             $text,
-            MCRYPT_MODE_CBC,
+            $this->getMcryptMode(),
             $iv
         );
 
@@ -54,13 +54,42 @@ class Crypter implements CrypterInterface
     }
 
     /**
+     * Decrypt string
+     *
+     * @param string      $string String to decrypt
+     * @param null|string $key    Encrypt key
+     * @return string
+     */
+    public function decrypt($string, $key = null)
+    {
+        if (null === $key) {
+            $key = $this->getEncryptKey();
+        }
+
+        $cipherText = base64_decode($string);
+        $ivSize     = $this->getMsCryptIvSize();
+
+        $ivDec = substr($cipherText, 0, $ivSize);
+
+        $cipherText = substr($cipherText, $ivSize);
+
+        return mcrypt_decrypt(
+            $this->getMcryptCipher(),
+            $key,
+            $cipherText,
+            $this->getMcryptMode(),
+            $ivDec
+        );
+    }
+
+    /**
      * Get encrypt key
      *
      * @return string
      */
     protected function getEncryptKey()
     {
-        return pack('H*', md5($this->getUuid()).self::$salt);
+        return pack('H*', md5($this->getUuid().self::$salt));
     }
 
     /**
@@ -70,29 +99,27 @@ class Crypter implements CrypterInterface
      */
     protected function getMsCryptIvSize()
     {
-        return mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        return mcrypt_get_iv_size($this->getMcryptCipher(), $this->getMcryptMode());
     }
 
     /**
-     * Get system UUID
+     * Get MCRYPT algorithm
      *
      * @return string
      */
-    private static function getUuid()
+    protected function getMcryptMode()
     {
-        if (null === self::$uuid) {
-            if (self::isWindows()) {
-                self::$uuid = self::getWindowsUuid();
-            } else {
-                self::$uuid = self::getUnixUuid();
-                if (null === self::$uuid) {
-                    self::$uuid = self::getDefaultUuid();
-                }
-            }
-            self::$uuid = base64_encode(self::$uuid);
-        }
+        return MCRYPT_MODE_CBC;
+    }
 
-        return self::$uuid;
+    /**
+     * Get MCRYPT Cipher
+     *
+     * @return string
+     */
+    protected function getMcryptCipher()
+    {
+        return MCRYPT_RIJNDAEL_128;
     }
 
     /**
@@ -154,31 +181,24 @@ class Crypter implements CrypterInterface
     }
 
     /**
-     * Decrypt string
+     * Get system UUID
      *
-     * @param string      $string
-     * @param null|string $key    Encrypt key
      * @return string
      */
-    public function decrypt($string, $key = null)
+    private static function getUuid()
     {
-        if (null === $key) {
-            $key = $this->getEncryptKey();
+        if (null === self::$uuid) {
+            if (self::isWindows()) {
+                self::$uuid = self::getWindowsUuid();
+            } else {
+                self::$uuid = self::getUnixUuid();
+                if (null === self::$uuid) {
+                    self::$uuid = self::getDefaultUuid();
+                }
+            }
+            self::$uuid = base64_encode(self::$uuid);
         }
 
-        $cipherText = base64_decode($string);
-        $ivSize     = $this->getMsCryptIvSize();
-
-        $ivDec = substr($cipherText, 0, $ivSize);
-
-        $cipherText = substr($cipherText, $ivSize);
-
-        return mcrypt_decrypt(
-            MCRYPT_RIJNDAEL_128,
-            $key,
-            $cipherText,
-            MCRYPT_MODE_CBC,
-            $ivDec
-        );
+        return self::$uuid;
     }
 }
