@@ -132,7 +132,7 @@ class SimpleQuestion extends Helper
             $list .= " $key - $title".($default == $key ? ' (Default)' : '')."\n";
         }
 
-        return $question.":\n".$list.($default ? ' ['.$default.'] ' : ' ');
+        return $question.":\n".$list;
     }
 
     /**
@@ -145,11 +145,10 @@ class SimpleQuestion extends Helper
      */
     protected function getFormattedSimpleQuestion($question, $default, array $options)
     {
-        $question .= '%s%s ';
+        $question .= '%s';
         $question = sprintf(
             $question,
-            ($options ? ' ('.implode('/', $options).')' : ''),
-            ($default ? ' ['.$default.']' : '')
+            ($options ? ' ('.implode('/', $options).')' : '')
         );
 
         return $question;
