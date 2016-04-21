@@ -8,7 +8,6 @@ namespace PreCommit\Command\Command\Helper;
 use PreCommit\Config as ConfigInstance;
 use PreCommit\Exception;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -186,16 +185,7 @@ class Config extends Helper
     protected function loadConfig($file)
     {
         if (!file_exists($file)) {
-            //@startSkipCommitHooks
-            $xml
-                = <<<XML
-<?xml version="1.0" encoding="UTF-8"?><config />
-XML;
-            //@finishSkipCommitHooks
-            $this->getWriter()->writeContent(
-                $file,
-                $xml
-            );
+            $this->writeEmptyXmlFile($file);
         }
 
         return ConfigInstance::loadInstance(array('file' => $file), false);
@@ -279,5 +269,23 @@ XML;
         }
 
         return $list;
+    }
+
+    /**
+     * Write empty XML file
+     *
+     * @param string $file
+     * @throws \PreCommit\Command\Exception
+     */
+    protected function writeEmptyXmlFile($file)
+    {
+        //@startSkipCommitHooks
+        $xml
+            = <<<XML
+<?xml version="1.0" encoding="UTF-8"?><config />
+XML;
+        //@finishSkipCommitHooks
+
+        $this->getWriter()->writeContent($file, $xml);
     }
 }
