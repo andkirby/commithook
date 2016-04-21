@@ -14,6 +14,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Base command abstract class
@@ -42,6 +43,13 @@ abstract class AbstractCommand extends Command
      * @var InputInterface
      */
     protected $input;
+
+    /**
+     * Input/Output model
+     *
+     * @var SymfonyStyle
+     */
+    protected $io;
 
     /**
      * Construct
@@ -74,15 +82,6 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->input  = $input;
-        $this->output = $output;
-    }
-
-    /**
      * Get config
      *
      * @return Config
@@ -105,6 +104,16 @@ abstract class AbstractCommand extends Command
         }
 
         return $config;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->input  = $input;
+        $this->output = $output;
+        $this->io     = new SymfonyStyle($input, $output);
     }
 
     /**
