@@ -131,9 +131,8 @@ class SimpleQuestion extends Helper
         foreach ($options as $key => $title) {
             $list .= " $key - $title".($default == $key ? ' (Default)' : '')."\n";
         }
-        $question .= ":\n".$list.($default ? ' ['.$default.']: ' : ' : ');
 
-        return $question;
+        return $question.":\n".$list.($default ? ' ['.$default.'] ' : ' ');
     }
 
     /**
@@ -146,7 +145,7 @@ class SimpleQuestion extends Helper
      */
     protected function getFormattedSimpleQuestion($question, $default, array $options)
     {
-        $question .= '%s%s: ';
+        $question .= '%s%s ';
         $question = sprintf(
             $question,
             ($options ? ' ('.implode('/', $options).')' : ''),
