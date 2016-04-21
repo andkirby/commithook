@@ -56,11 +56,11 @@ class Set extends AbstractCommand
         );
 
     /**
-     * Default options
+     * Tracker connection option names
      *
      * @var array
      */
-    protected $defaultOptions
+    protected $trackerConnectionOptions
         = array(
             'tracker',
             'url',
@@ -98,6 +98,9 @@ class Set extends AbstractCommand
 
         try {
             if ($this->input->getArgument('key') === 'wizard') {
+                /**
+                 * Wizard mode
+                 */
                 $this->connectionWizard();
 
                 if ($this->updated) {
@@ -105,7 +108,16 @@ class Set extends AbstractCommand
                     $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
                     $this->output->writeln('Enjoy!');
                 }
-            } else {
+            } elseif (!$this->input->getArgument('value') && $this->input->getArgument('key')) {
+                /**
+                 * Reading mode
+                 */
+                $xpath = $this->getArgumentXpath();
+                $this->io->writeln($this->getXpathValue($xpath));
+            } elseif ($this->input->getArgument('key') || $this->isNameXpath()) {
+                /**
+                 * Writing mode
+                 */
                 $this->writePredefinedOptions();
                 $this->writeKeyValueOption();
 
@@ -114,6 +126,8 @@ class Set extends AbstractCommand
                         'Configuration updated.'
                     );
                 }
+            } else {
+                $this->io->writeln($this->getProcessedHelp());
             }
         } catch (Exception $e) {
             if ($this->isDebug()) {
@@ -221,7 +235,7 @@ class Set extends AbstractCommand
      */
     protected function writePredefinedOptions($readAll = false)
     {
-        foreach ($this->defaultOptions as $name) {
+        foreach ($this->trackerConnectionOptions as $name) {
             $value = $this->input->getOption($name);
             if (!$readAll && null === $value) {
                 continue;
@@ -247,11 +261,9 @@ class Set extends AbstractCommand
             return $this;
         }
 
-        $xpath = $this->isNameXpath()
-            ? $this->input->getArgument('key')
-            : $this->getXpath($this->input->getArgument('key'));
+        $xpath = $this->getArgumentXpath();
 
-        $value = $this->getValue($xpath);
+        $value = $this->fetchValue($xpath);
         $scope = $this->getScope($xpath);
 
         $this->writeConfig($xpath, $scope, $value);
@@ -464,13 +476,12 @@ class Set extends AbstractCommand
      * @param string          $xpath
      * @return string
      */
-    protected function getValue($xpath)
+    protected function fetchValue($xpath)
     {
         if (!$this->input->getArgument('value')) {
             $question = $this->getSimpleQuestion()->getQuestion(
                 "Set value for XPath '$xpath'",
-                false === strpos($xpath, 'password') ?
-                    $this->getConfig()->getNode($xpath) : null
+                $this->getXpathValue($xpath)
             );
 
             /**
@@ -596,17 +607,17 @@ Files:
     exclude-extension, skip-ext
         Ignore validation for selected files with extension.
     exclude-path, skip-path
-        Ignore validation for file by path.
+        Ignore validation for files by path.
     exclude-file, skip-file
         Ignore validation for file.
     protect-path
-        Protect path from committing.
+        Protect path for committing.
     protect-file
-        Protect file from committing.
+        Protect file for committing.
     allow-path
-        Protect path from committing.
+        Allow path for committing.
     allow-file
-        Protect file from committing.
+        Allow file for committing.
 Issue:
     task
         Active task key. After setting issue key/No can be omitted.
@@ -664,7 +675,7 @@ HELP;
             'Save config in project configuration file. PROJECT_DIR/commithook.xml'
         );
 
-        foreach ($this->defaultOptions as $name) {
+        foreach ($this->trackerConnectionOptions as $name) {
             $this->addOption(
                 $name,
                 null,
@@ -674,5 +685,30 @@ HELP;
         }
 
         return $this;
+    }
+
+    /**
+     * Get argument XPath
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function getArgumentXpath()
+    {
+        return $this->isNameXpath()
+            ? $this->input->getArgument('key')
+            : $this->getXpath($this->input->getArgument('key'));
+    }
+
+    /**
+     * Get value by xpath
+     *
+     * @param string $xpath
+     * @return null|string
+     */
+    protected function getXpathValue($xpath)
+    {
+        return false === strpos($xpath, 'password') ?
+            $this->getConfig()->getNode($xpath) : null;
     }
 }
