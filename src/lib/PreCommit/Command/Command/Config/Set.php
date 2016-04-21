@@ -106,7 +106,7 @@ class Set extends AbstractCommand
                     $output->writeln('Enjoy!');
                 }
             } else {
-                $this->writeDefaultOptions($input, $output);
+                $this->writePredefinedOptions($input, $output);
                 $this->writeKeyValueOption($input, $output);
 
                 if ($this->updated) {
@@ -143,8 +143,8 @@ class Set extends AbstractCommand
     /**
      * Connection tracker wizard
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return $this
      */
     protected function connectionWizard(InputInterface $input, OutputInterface $output)
@@ -224,14 +224,14 @@ class Set extends AbstractCommand
     }
 
     /**
-     * Write default options
+     * Write predefined options
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param bool                                              $readAll
-     * @throws \PreCommit\Command\Exception
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param bool            $readAll
+     * @throws Exception
      */
-    protected function writeDefaultOptions(InputInterface $input, OutputInterface $output, $readAll = false)
+    protected function writePredefinedOptions(InputInterface $input, OutputInterface $output, $readAll = false)
     {
         foreach ($this->defaultOptions as $name) {
             $value = $input->getOption($name);
@@ -247,10 +247,10 @@ class Set extends AbstractCommand
     /**
      * Write key-value option
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return $this
-     * @throws \PreCommit\Command\Exception
+     * @throws Exception
      */
     protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
     {
@@ -299,7 +299,7 @@ class Set extends AbstractCommand
      *
      * @param string $name
      * @return string
-     * @throws \PreCommit\Command\Exception
+     * @throws Exception
      */
     protected function getXpath($name)
     {
@@ -363,10 +363,10 @@ class Set extends AbstractCommand
     /**
      * Get XML path input options
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param string                                            $xpath
-     * @param Question|null                                     $question
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param string          $xpath
+     * @param Question|null   $question
      * @return array
      */
     protected function getScope(
@@ -421,8 +421,8 @@ class Set extends AbstractCommand
     /**
      * Get credentials scope
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return array
      */
     protected function getCredentialsScope(InputInterface $input, OutputInterface $output)
@@ -477,7 +477,7 @@ class Set extends AbstractCommand
     /**
      * Check if name option is XML path
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param InputInterface $input
      * @return mixed
      */
     protected function isNameXpath(InputInterface $input)
@@ -488,9 +488,9 @@ class Set extends AbstractCommand
     /**
      * Get value
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param string                                            $xpath
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param string          $xpath
      * @return string
      */
     protected function getValue(InputInterface $input, OutputInterface $output, $xpath)
@@ -541,8 +541,8 @@ class Set extends AbstractCommand
     /**
      * Get scope option
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return null|string
      */
     protected function getScopeOption(InputInterface $input, OutputInterface $output)
