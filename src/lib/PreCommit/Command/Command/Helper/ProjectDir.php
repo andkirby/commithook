@@ -9,6 +9,7 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Helper for getting project directory
@@ -82,25 +83,6 @@ class ProjectDir extends Helper
     }
 
     /**
-     * Get GIT root directory validator
-     *
-     * @return \Closure
-     */
-    protected function getValidator()
-    {
-        //@startSkipCommitHooks
-        return function ($dir) {
-            $dir = rtrim($dir, '\\/');
-            if (!is_dir($dir.'/.git')) {
-                throw new Exception("Directory '$dir' does not contain '.git' subdirectory.");
-            }
-
-            return $dir;
-        };
-        //@finishSkipCommitHooks
-    }
-
-    /**
      * Ask about GIT project root dir
      *
      * It will skip asking if system is able to identify it.
@@ -119,13 +101,29 @@ class ProjectDir extends Helper
             $this->getValidator()
         );
 
-        $dir = $this->getQuestionHelper()->ask(
-            $input,
-            $output,
-            $question
-        );
+        $io  = new SymfonyStyle($input, $output);
+        $dir = $io->askQuestion($question);
 
         return rtrim($dir, '\\/');
+    }
+
+    /**
+     * Get GIT root directory validator
+     *
+     * @return \Closure
+     */
+    protected function getValidator()
+    {
+        //@startSkipCommitHooks
+        return function ($dir) {
+            $dir = rtrim($dir, '\\/');
+            if (!is_dir($dir.'/.git')) {
+                throw new Exception("Directory '$dir' does not contain '.git' subdirectory.");
+            }
+
+            return $dir;
+        };
+        //@finishSkipCommitHooks
     }
 
     /**

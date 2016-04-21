@@ -17,48 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Install extends AbstractCommand
 {
     /**
-     * Init default helpers
-     *
-     * @return $this
-     */
-    protected function configureCommand()
-    {
-        $this->setName('install');
-        $this->setHelp(
-            'This command can install available hook files into your project.'
-        );
-        $this->setDescription(
-            'This command can install available hook files into your project.'
-        );
-
-        return $this;
-    }
-
-    /**
-     * Init input definitions
-     *
-     * @return $this
-     */
-    protected function configureInput()
-    {
-        parent::configureInput();
-        $this->addOption(
-            'overwrite',
-            '-w',
-            InputOption::VALUE_NONE,
-            'Overwrite exist hook files.'
-        );
-        $this->addOption(
-            'php-binary',
-            '-p',
-            InputOption::VALUE_REQUIRED,
-            'Path to PHP binary file.'
-        );
-
-        return $this;
-    }
-
-    /**
      * Execute command
      *
      * @param InputInterface  $input
@@ -103,6 +61,79 @@ class Install extends AbstractCommand
         }
 
         return 0;
+    }
+
+    /**
+     * Get system path to executable PHP file
+     *
+     * @return null|string
+     */
+    public function getSystemPhpPath()
+    {
+        $file = null;
+        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php')) {
+            $file = PHP_BIN_DIR.'/php';
+        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php.exe')) {
+            $file = PHP_BIN_DIR.'/php.exe';
+        } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
+            $file = PHP_BINARY;
+        } elseif (getenv('PHP_BINARY') && is_file(getenv('PHP_BINARY'))) {
+            $file = getenv('PHP_BINARY');
+            //@startSkipCommitHooks
+        } elseif (isset($_SERVER['_']) && pathinfo($_SERVER['_'], PATHINFO_FILENAME) == 'php') {
+            $file = $_SERVER['_'];
+            //@finishSkipCommitHooks
+        } elseif (is_file('/usr/local/bin/php')) {
+            //try to check Unix system php file
+            $file = '/usr/local/bin/php';
+        }
+        if ($file) {
+            $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
+        }
+
+        return $file;
+    }
+
+    /**
+     * Init default helpers
+     *
+     * @return $this
+     */
+    protected function configureCommand()
+    {
+        $this->setName('install');
+        $this->setHelp(
+            'This command can install available hook files into your project.'
+        );
+        $this->setDescription(
+            'This command can install available hook files into your project.'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Init input definitions
+     *
+     * @return $this
+     */
+    protected function configureInput()
+    {
+        parent::configureInput();
+        $this->addOption(
+            'overwrite',
+            '-w',
+            InputOption::VALUE_NONE,
+            'Overwrite exist hook files.'
+        );
+        $this->addOption(
+            'php-binary',
+            '-p',
+            InputOption::VALUE_REQUIRED,
+            'Path to PHP binary file.'
+        );
+
+        return $this;
     }
 
     /**
@@ -151,9 +182,7 @@ class Install extends AbstractCommand
     protected function createHookFile(OutputInterface $output, InputInterface $input, $file, $body)
     {
         if (!$input->getOption('overwrite') && file_exists($file)
-            && 'y' !== $this->getQuestionHelper()->ask(
-                $input,
-                $output,
+            && 'y' !== $this->io->askQuestion(
                 $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
@@ -210,10 +239,8 @@ class Install extends AbstractCommand
             if ($file) {
                 $output->writeln('Given PHP executable file is not valid.');
             }
-            $file = $this->getQuestionHelper()->ask(
-                $input,
-                $output,
-                $this->getSimpleQuestion()->getQuestion("Please set your PHP executable file", $file)
+            $file = $this->io->askQuestion(
+                $this->getSimpleQuestion()->getQuestion('Please set your PHP executable file', $file)
             );
             //@startSkipCommitHooks
             if (++$i > $max) {
@@ -294,37 +321,6 @@ PHP;
     protected function getRunnerFile()
     {
         return $this->commithookDir.'/bin/runner.php';
-    }
-
-    /**
-     * Get system path to executable PHP file
-     *
-     * @return null|string
-     */
-    public function getSystemPhpPath()
-    {
-        $file = null;
-        if (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php')) {
-            $file = PHP_BIN_DIR.'/php';
-        } elseif (defined('PHP_BIN_DIR') && is_file(PHP_BIN_DIR.'/php.exe')) {
-            $file = PHP_BIN_DIR.'/php.exe';
-        } elseif (defined('PHP_BINARY') && is_file(PHP_BINARY)) {
-            $file = PHP_BINARY;
-        } elseif (getenv('PHP_BINARY') && is_file(getenv('PHP_BINARY'))) {
-            $file = getenv('PHP_BINARY');
-            //@startSkipCommitHooks
-        } elseif (isset($_SERVER['_']) && pathinfo($_SERVER['_'], PATHINFO_FILENAME) == 'php') {
-            $file = $_SERVER['_'];
-            //@finishSkipCommitHooks
-        } elseif (is_file('/usr/local/bin/php')) {
-            //try to check Unix system php file
-            $file = '/usr/local/bin/php';
-        }
-        if ($file) {
-            $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
-        }
-
-        return $file;
     }
 
     /**

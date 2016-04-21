@@ -153,9 +153,7 @@ class Set extends AbstractCommand
 
         //type
         $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
-        $this->trackerType = $this->getQuestionHelper()->ask(
-            $input,
-            $output,
+        $this->trackerType = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 'Tracker type',
                 array_search(
@@ -167,9 +165,7 @@ class Set extends AbstractCommand
         );
 
         //URL
-        $url = $this->getQuestionHelper()->ask(
-            $input,
-            $output,
+        $url = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 "'{$this->trackerType}' URL",
                 $this->getConfig()->getNode($this->getXpath('url'))
@@ -177,9 +173,7 @@ class Set extends AbstractCommand
         );
 
         //username
-        $username = $this->getQuestionHelper()->ask(
-            $input,
-            $output,
+        $username = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 "'{$this->trackerType}' username",
                 $this->getConfig()->getNode($this->getXpath('username'))
@@ -194,13 +188,11 @@ class Set extends AbstractCommand
         );
         $question->setHiddenFallback(false);
         $question->setHiddenFallback(true);
-        $password = $this->getQuestionHelper()->ask($input, $output, $question);
+        $password = $this->io->askQuestion($question);
         $password = '*****' !== $password ? $password : null;
 
         //project key
-        $prjKey = $this->getQuestionHelper()->ask(
-            $input,
-            $output,
+        $prjKey = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 "Current '{$this->trackerType}' project key",
                 $this->getConfig()->getNode($this->getXpath('project'))
@@ -409,9 +401,7 @@ class Set extends AbstractCommand
             return $scope;
         }
 
-        return $this->getQuestionHelper()->ask(
-            $input,
-            $output,
+        return $this->io->askQuestion(
             $question
                 ?: $this->getSimpleQuestion()
                 ->getQuestion("Set config scope ($xpath)", $default, $options)
@@ -510,11 +500,7 @@ class Set extends AbstractCommand
                 $question->setHiddenFallback(true);
             }
 
-            return $this->getQuestionHelper()->ask(
-                $input,
-                $output,
-                $question
-            );
+            return $this->io->askQuestion($question);
         }
 
         return $input->getArgument('value');
