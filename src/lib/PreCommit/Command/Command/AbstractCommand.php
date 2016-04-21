@@ -225,11 +225,10 @@ abstract class AbstractCommand extends Command
     /**
      * Is output verbose
      *
-     * @param OutputInterface $output
      * @return bool
      */
-    protected function isDebug(OutputInterface $output)
+    protected function isDebug()
     {
-        return $output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG;
+        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG;
     }
 }

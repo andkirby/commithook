@@ -97,29 +97,29 @@ class Set extends AbstractCommand
         parent::execute($input, $output);
 
         try {
-            if ($input->getArgument('key') === 'wizard') {
-                $this->connectionWizard($input, $output);
+            if ($this->input->getArgument('key') === 'wizard') {
+                $this->connectionWizard();
 
                 if ($this->updated) {
-                    $output->writeln('Configuration updated.');
-                    $output->writeln('Do not forget to share project commithook.xml file with your team.');
-                    $output->writeln('Enjoy!');
+                    $this->output->writeln('Configuration updated.');
+                    $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
+                    $this->output->writeln('Enjoy!');
                 }
             } else {
-                $this->writePredefinedOptions($input, $output);
-                $this->writeKeyValueOption($input, $output);
+                $this->writePredefinedOptions();
+                $this->writeKeyValueOption();
 
                 if ($this->updated) {
-                    $output->writeln(
+                    $this->output->writeln(
                         'Configuration updated.'
                     );
                 }
             }
         } catch (Exception $e) {
-            if ($this->isDebug($output)) {
+            if ($this->isDebug()) {
                 throw $e;
             } else {
-                $output->writeln($e->getMessage());
+                $this->output->writeln($e->getMessage());
 
                 return 1;
             }
@@ -143,13 +143,11 @@ class Set extends AbstractCommand
     /**
      * Connection tracker wizard
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return $this
      */
-    protected function connectionWizard(InputInterface $input, OutputInterface $output)
+    protected function connectionWizard()
     {
-        $output->writeln('Set up issue tracker connection.');
+        $this->output->writeln('Set up issue tracker connection.');
 
         //type
         $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
@@ -199,10 +197,10 @@ class Set extends AbstractCommand
             )
         );
 
-        $scope = $this->getScope($input, $output, self::XPATH_TRACKER_TYPE);
+        $scope = $this->getScope(self::XPATH_TRACKER_TYPE);
 
         $scopeCredentials = self::OPTION_SCOPE_PROJECT == $scope
-            ? $this->getCredentialsScope($input, $output) : $scope;
+            ? $this->getCredentialsScope() : $scope;
 
         $this->writeConfig(self::XPATH_TRACKER_TYPE, $scope, $this->trackerType);
         $this->writeConfig($this->getXpath('url'), $scope, $url);
@@ -218,20 +216,18 @@ class Set extends AbstractCommand
     /**
      * Write predefined options
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @param bool            $readAll
      * @throws Exception
      */
-    protected function writePredefinedOptions(InputInterface $input, OutputInterface $output, $readAll = false)
+    protected function writePredefinedOptions($readAll = false)
     {
         foreach ($this->defaultOptions as $name) {
-            $value = $input->getOption($name);
+            $value = $this->input->getOption($name);
             if (!$readAll && null === $value) {
                 continue;
             }
-            $xpath = $this->isNameXpath($input) ? $name : $this->getXpath($name);
-            $scope = $this->getScope($input, $output, $xpath);
+            $xpath = $this->isNameXpath() ? $name : $this->getXpath($name);
+            $scope = $this->getScope($xpath);
             $this->writeConfig($xpath, $scope, $value);
         }
     }
@@ -239,26 +235,24 @@ class Set extends AbstractCommand
     /**
      * Write key-value option
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return $this
      * @throws Exception
      */
-    protected function writeKeyValueOption(InputInterface $input, OutputInterface $output)
+    protected function writeKeyValueOption()
     {
-        if (!$input->getArgument('key')) {
+        if (!$this->input->getArgument('key')) {
             /**
              * Ignore if nothing to write
              */
             return $this;
         }
 
-        $xpath = $this->isNameXpath($input)
-            ? $input->getArgument('key')
-            : $this->getXpath($input->getArgument('key'));
+        $xpath = $this->isNameXpath()
+            ? $this->input->getArgument('key')
+            : $this->getXpath($this->input->getArgument('key'));
 
-        $value = $this->getValue($input, $output, $xpath);
-        $scope = $this->getScope($input, $output, $xpath);
+        $value = $this->getValue($xpath);
+        $scope = $this->getScope($xpath);
 
         $this->writeConfig($xpath, $scope, $value);
 
@@ -355,18 +349,12 @@ class Set extends AbstractCommand
     /**
      * Get XML path input options
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @param string          $xpath
      * @param Question|null   $question
      * @return array
      */
-    protected function getScope(
-        InputInterface $input,
-        OutputInterface $output,
-        $xpath,
-        $question = null
-    ) {
+    protected function getScope($xpath, $question = null)
+    {
         $type = null;
         if (self::XPATH_TRACKER_TYPE !== $xpath) {
             $type = $this->getTrackerType();
@@ -396,7 +384,7 @@ class Set extends AbstractCommand
                 break;
         }
 
-        $scope = $this->getScopeOption($input, $output);
+        $scope = $this->getScopeOption();
         if ($scope && in_array($scope, $options)) {
             return $scope;
         }
@@ -411,18 +399,14 @@ class Set extends AbstractCommand
     /**
      * Get credentials scope
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return array
      */
-    protected function getCredentialsScope(InputInterface $input, OutputInterface $output)
+    protected function getCredentialsScope()
     {
         $scopeOptions = $this->scopeOptions;
         unset($scopeOptions[1]);
 
         return $this->getScope(
-            $input,
-            $output,
             $this->getXpath('username'),
             $this->getSimpleQuestion()->getQuestion(
                 "Set config scope credentials",
@@ -467,25 +451,22 @@ class Set extends AbstractCommand
     /**
      * Check if name option is XML path
      *
-     * @param InputInterface $input
-     * @return mixed
+     * @return bool
      */
-    protected function isNameXpath(InputInterface $input)
+    protected function isNameXpath()
     {
-        return (bool) $input->getOption('xpath');
+        return (bool) $this->input->getOption('xpath');
     }
 
     /**
      * Get value
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @param string          $xpath
      * @return string
      */
-    protected function getValue(InputInterface $input, OutputInterface $output, $xpath)
+    protected function getValue($xpath)
     {
-        if (!$input->getArgument('value')) {
+        if (!$this->input->getArgument('value')) {
             $question = $this->getSimpleQuestion()->getQuestion(
                 "Set value for XPath '$xpath'",
                 false === strpos($xpath, 'password') ?
@@ -503,7 +484,7 @@ class Set extends AbstractCommand
             return $this->io->askQuestion($question);
         }
 
-        return $input->getArgument('value');
+        return $this->input->getArgument('value');
     }
 
     /**
@@ -527,19 +508,17 @@ class Set extends AbstractCommand
     /**
      * Get scope option
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return null|string
      */
-    protected function getScopeOption(InputInterface $input, OutputInterface $output)
+    protected function getScopeOption()
     {
-        if ($input->getOption(self::OPTION_SCOPE_GLOBAL)) {
+        if ($this->input->getOption(self::OPTION_SCOPE_GLOBAL)) {
             return self::OPTION_SCOPE_GLOBAL;
         }
-        if ($input->getOption(self::OPTION_SCOPE_PROJECT)) {
+        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT)) {
             return self::OPTION_SCOPE_PROJECT;
         }
-        if ($input->getOption(self::OPTION_SCOPE_PROJECT_SELF)) {
+        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT_SELF)) {
             return self::OPTION_SCOPE_PROJECT_SELF;
         }
 
