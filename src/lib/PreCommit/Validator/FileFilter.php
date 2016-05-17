@@ -17,28 +17,19 @@ class FileFilter extends AbstractValidator
      * XML path to config
      */
     const XPATH_SKIP_PATHS           = 'validators/FileFilter/filter/skip/paths/path';
-
     const XPATH_SKIP_FILES           = 'validators/FileFilter/filter/skip/files/file';
-
     const XPATH_SKIP_FILE_EXTENSIONS = 'validators/FileFilter/filter/skip/extensions';
-
     const XPATH_PROTECT_PATHS        = 'validators/FileFilter/filter/protect/paths/path';
-
     const XPATH_PROTECT_FILES        = 'validators/FileFilter/filter/protect/files/file';
-
     const XPATH_ALLOW_PATHS          = 'validators/FileFilter/filter/allow/paths/path';
-
     const XPATH_ALLOW_FILES          = 'validators/FileFilter/filter/allow/files/file';
-
     /**#@-*/
 
     /**#@+
      * Error codes
      */
     const PROTECTED_PATH = 'protectedPath';
-
     const PROTECTED_FILE = 'protectedFile';
-
     /**#@-*/
 
     /**
