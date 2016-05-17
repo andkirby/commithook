@@ -52,6 +52,13 @@
                     </validators>
                 </php>
             </filetype>
+            <ignore>
+                <validator>
+                    <code>
+                        <CodingStandardMagento>1</CodingStandardMagento>
+                    </code>
+                </validator>
+            </ignore>
         </pre-commit>
     </hooks>
 </config>
