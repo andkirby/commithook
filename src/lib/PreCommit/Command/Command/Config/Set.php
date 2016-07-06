@@ -24,6 +24,11 @@ use Symfony\Component\Console\Question\Question;
  */
 class Set extends AbstractCommand
 {
+    /**
+     * Shell exit code when the same configuration already defined
+     */
+    const SHELL_CODE_CONF_DEFINED = 10;
+
     /**#@+
      * Option scopes
      *
@@ -122,9 +127,19 @@ class Set extends AbstractCommand
                 $this->writeKeyValueOption();
 
                 if ($this->updated) {
-                    $this->output->writeln(
-                        'Configuration updated.'
-                    );
+                    if ($this->isVerbose($output)) {
+                        $this->output->writeln(
+                            'Configuration updated.'
+                        );
+                    }
+                } else {
+                    if ($this->isVerbose($output)) {
+                        $this->output->writeln(
+                            'Configuration already defined.'
+                        );
+                    }
+
+                    return self::SHELL_CODE_CONF_DEFINED;
                 }
             } else {
                 $this->io->writeln($this->getProcessedHelp());
