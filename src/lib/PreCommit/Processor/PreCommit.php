@@ -46,7 +46,9 @@ class PreCommit extends AbstractAdapter
     /**
      * Validators list which should be omitted
      *
-     * @var array
+     * It will have TRUE value for disabling all validators
+     *
+     * @var array|bool
      */
     protected $omittedValidators;
 
@@ -243,7 +245,7 @@ class PreCommit extends AbstractAdapter
     protected function loadValidator($name, array $options = array())
     {
         $omitted = $this->getOmittedValidators();
-        if (isset($omitted[$name])) {
+        if (true === $omitted || isset($omitted[$name])) {
             $name = 'Stub';
         }
 
@@ -281,34 +283,29 @@ class PreCommit extends AbstractAdapter
     /**
      * Get validators which should be ignored
      *
-     * @return array
+     * @return array|bool
      */
     protected function getOmittedValidators()
     {
         if (null === $this->omittedValidators) {
-            /** @var ConfigHelper $configHelper */
-            $configHelper            = $this->getConfigHelper();
-            $configFile              = $this->getConfigFile(Set::OPTION_SCOPE_PROJECT_SELF);
+            $this->addBlindCommitModeRemoving();
+
+            if ($this->isAllValidatorsDisabled()) {
+                //ignore all validators (set TRUE for such mode)
+                $this->omittedValidators = true;
+
+                return $this->omittedValidators;
+            }
+
             $this->omittedValidators = array();
             $types                   = array(
-                'code'       => IgnoreCommit::XPATH_IGNORE_CODE,
-                'protection' => IgnoreCommit::XPATH_IGNORE_PROTECTION,
+                'code'       => IgnoreCommit::XPATH_MODE_CODE,
+                'protection' => IgnoreCommit::XPATH_MODE_PROTECTION,
             );
-
             foreach ($types as $type => $xpath) {
                 //get validators set
                 $validators = $this->getOmittedTypeValidators($xpath, $type);
                 if ($validators) {
-                    //add observer to remove disable blind-commit
-                    // @codingStandardsIgnoreStart
-                    $this->addObserver(
-                        'success_end',
-                        function () use ($configHelper, $configFile, $xpath) {
-                            $configHelper->writeValue($configFile, $xpath, false);
-                        }
-                    );
-                    // @codingStandardsIgnoreEnd
-
                     $this->omittedValidators = array_merge(
                         $this->omittedValidators,
                         $validators
@@ -391,6 +388,51 @@ class PreCommit extends AbstractAdapter
         $helper = new ConfigHelper();
         $helper->setWriter(new ConfigHelper\Writer());
         $this->getHelperSet()->set($helper);
+
+        return $this;
+    }
+
+    /**
+     * Check if all validators are disabled
+     *
+     * @return bool
+     */
+    protected function isAllValidatorsDisabled()
+    {
+        return (bool) $this->getConfig()->getNode(IgnoreCommit::XPATH_MODE_ALL);
+    }
+
+    /**
+     * Add observers to remove "blind-commit" flags
+     *
+     * @return $this
+     * @throws \PreCommit\Exception
+     */
+    protected function addBlindCommitModeRemoving()
+    {
+        /** @var ConfigHelper $configHelper */
+        $configHelper = $this->getConfigHelper();
+        $configFile   = $this->getConfigFile(Set::OPTION_SCOPE_PROJECT_SELF);
+
+        // @codingStandardsIgnoreStart
+        //remove blind commit modes
+        foreach (
+            array(
+                IgnoreCommit::XPATH_MODE_CODE,
+                IgnoreCommit::XPATH_MODE_PROTECTION,
+                IgnoreCommit::XPATH_MODE_ALL,
+            ) as $xpath
+        ) {
+            //add observer to remove blind-commit
+            $this->addObserver(
+                'success_end',
+                function () use ($configHelper, $configFile, $xpath) {
+                    $configHelper->writeValue($configFile, $xpath, false);
+                }
+            );
+        }
+
+        // @codingStandardsIgnoreEnd
 
         return $this;
     }

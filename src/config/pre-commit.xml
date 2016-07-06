@@ -124,6 +124,8 @@
                     <code>0</code>
                     <!-- Set to 1 in your configuration XML file to ignore file/dir protection as well for the next commit -->
                     <protection>0</protection>
+                    <!-- Set to 1 in your configuration XML file to ignore all pre-commit validators for the next commit -->
+                    <all>0</all>
                 </disable>
 
                 <validator>

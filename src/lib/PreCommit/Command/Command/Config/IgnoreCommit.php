@@ -19,19 +19,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 class IgnoreCommit extends Set
 {
     /**
-     * XML path to omitted validators on ignore next commit
+     * XML path expression (mask) to omitted validators on ignore next commit
      */
     const XPATH_IGNORED_VALIDATORS = "hooks/pre-commit/ignore/validator/%s/*[text() = '1' or text() = 'true']";
 
     /**
      * XML path to status of ignoring of next commit
      */
-    const XPATH_IGNORE_CODE = 'hooks/pre-commit/ignore/disable/code';
+    const XPATH_MODE_CODE = 'hooks/pre-commit/ignore/disable/code';
 
     /**
      * XML path to status of ignoring FileFilter for the next commit
      */
-    const XPATH_IGNORE_PROTECTION = 'hooks/pre-commit/ignore/disable/protection';
+    const XPATH_MODE_PROTECTION = 'hooks/pre-commit/ignore/disable/protection';
+
+    /**
+     * XML path to status of ignoring all validators for the next commit
+     */
+    const XPATH_MODE_ALL = 'hooks/pre-commit/ignore/disable/all';
 
     /**
      * Issues tracker type
@@ -70,6 +75,7 @@ class IgnoreCommit extends Set
                 $this->checkOptions($input);
                 $this->disableCodeValidation($input, $input->getOption('disable'));
                 $this->disableProtection($input, $input->getOption('disable'));
+                $this->disableAllValidators($input, $input->getOption('disable'));
 
                 if ($this->isVerbose($output)) {
                     if ($this->updated) {
@@ -84,7 +90,7 @@ class IgnoreCommit extends Set
                 }
             }
         } catch (Exception $e) {
-            if ($this->isDebug($output)) {
+            if ($this->isDebug()) {
                 throw $e;
             }
             $output->writeln($e->getMessage());
@@ -125,7 +131,7 @@ class IgnoreCommit extends Set
      */
     protected function checkOptions(InputInterface $input)
     {
-        if (!$input->getOption('code') && !$input->getOption('protection')) {
+        if (!$input->getOption('code') && !$input->getOption('protection') || $input->getOption('all')) {
             $input->setOption('code', true);
             $input->setOption('protection', true);
         }
@@ -144,7 +150,7 @@ class IgnoreCommit extends Set
     {
         if ($input->getOption('code')) {
             $this->writeConfig(
-                self::XPATH_IGNORE_CODE,
+                self::XPATH_MODE_CODE,
                 static::OPTION_SCOPE_PROJECT_SELF,
                 !$remove
             );
@@ -164,7 +170,27 @@ class IgnoreCommit extends Set
     {
         if ($input->getOption('protection')) {
             $this->writeConfig(
-                self::XPATH_IGNORE_PROTECTION,
+                self::XPATH_MODE_PROTECTION,
+                static::OPTION_SCOPE_PROJECT_SELF,
+                !$remove
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set config for ignoring file protection
+     *
+     * @param InputInterface $input
+     * @param bool           $remove
+     * @return $this
+     */
+    protected function disableAllValidators(InputInterface $input, $remove = false)
+    {
+        if ($input->getOption('all')) {
+            $this->writeConfig(
+                self::XPATH_MODE_ALL,
                 static::OPTION_SCOPE_PROJECT_SELF,
                 !$remove
             );
@@ -220,10 +246,16 @@ HELP;
             'Ignore file protection.'
         );
         $this->addOption(
+            'all',
+            'f',
+            InputOption::VALUE_NONE,
+            'Ignore all validators.'
+        );
+        $this->addOption(
             'disable',
             'r',
             InputOption::VALUE_NONE,
-            'Disable ignoring of the next commit.'
+            'Disable ignoring of the next commit (return to normal mode).'
         );
 
         return $this;
