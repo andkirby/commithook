@@ -12,6 +12,13 @@ use PreCommit\Exception;
 class Git implements AdapterInterface
 {
     /**
+     * Absolute path to GIT repo
+     *
+     * @var string
+     */
+    protected $codePath;
+
+    /**
      * Affected files
      *
      * @var string
@@ -81,25 +88,19 @@ class Git implements AdapterInterface
     }
 
     /**
-     * Get commit message file
-     *
-     * @return string
-     */
-    protected function getCommitMessageFile()
-    {
-        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
-    }
-
-    /**
      * Get path to project
      *
      * @return string
      */
     public function getCodePath()
     {
-        //@startSkipCommitHooks
-        return trim(`git rev-parse --show-toplevel`);
-        //@finishSkipCommitHooks
+        if (null === $this->codePath) {
+            //@startSkipCommitHooks
+            $this->codePath = trim(`git rev-parse --show-toplevel`);
+            //@finishSkipCommitHooks
+        }
+
+        return $this->codePath;
     }
 
     /**
@@ -129,5 +130,15 @@ class Git implements AdapterInterface
         $mergeFile = $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'MERGE_HEAD';
 
         return file_exists($mergeFile);
+    }
+
+    /**
+     * Get commit message file
+     *
+     * @return string
+     */
+    protected function getCommitMessageFile()
+    {
+        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
     }
 }

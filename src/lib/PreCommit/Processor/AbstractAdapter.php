@@ -75,60 +75,6 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Init VCS adapter
-     *
-     * @param string|AdapterInterface|array $options
-     * @return mixed AdapterInterface
-     * @throws Exception
-     */
-    protected static function initVcsAdapter($options)
-    {
-        if (is_string($options)) {
-            self::initVcsFromString($options);
-        } elseif (isset($options['vcs']) && is_string($options['vcs'])) {
-            self::initVcsFromString($options['vcs']);
-        } elseif (isset($options['vcs']) && is_object($options['vcs'])
-            && $options['vcs'] instanceof AdapterInterface
-            || is_object($options) && $options instanceof AdapterInterface
-        ) {
-            static::$vcsAdapter = $options;
-        } else {
-            throw new Exception('VCS adapter is not set.');
-        }
-
-        //set custom affected files
-        static::$vcsAdapter->setAffectedFiles(
-            isset($options['vcsFiles'])
-                ? $options['vcsFiles'] : null
-        );
-    }
-
-    /**
-     * Get error collector
-     *
-     * @return ErrorCollector
-     */
-    protected function getErrorCollector()
-    {
-        return new Error();
-    }
-
-    /**
-     * Init VCS from string
-     *
-     * @param array|string $options
-     */
-    protected static function initVcsFromString($options)
-    {
-        if (strpos($options, '\\') || strpos($options, '_')) {
-            $class = $options;
-        } else {
-            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
-        }
-        static::$vcsAdapter = new $class($options);
-    }
-
-    /**
      * Get VCS object
      *
      * @return AdapterInterface
@@ -214,6 +160,63 @@ abstract class AbstractAdapter
     }
 
     /**
+     * Init VCS adapter
+     *
+     * @param string|AdapterInterface|array $options
+     * @return mixed AdapterInterface
+     * @throws Exception
+     */
+    protected static function initVcsAdapter($options)
+    {
+        if (is_string($options)) {
+            self::initVcsFromString($options);
+        } elseif (isset($options['vcs']) && is_string($options['vcs'])) {
+            self::initVcsFromString($options['vcs']);
+        } elseif (isset($options['vcs']) && is_object($options['vcs'])
+            && $options['vcs'] instanceof AdapterInterface
+            || is_object($options) && $options instanceof AdapterInterface
+        ) {
+            static::$vcsAdapter = $options;
+        } else {
+            throw new Exception('VCS adapter is not set.');
+        }
+
+        //change current directory
+        self::cdToVcsDir();
+
+        //set custom affected files
+        static::$vcsAdapter->setAffectedFiles(
+            isset($options['vcsFiles'])
+                ? $options['vcsFiles'] : null
+        );
+    }
+
+    /**
+     * Get error collector
+     *
+     * @return ErrorCollector
+     */
+    protected function getErrorCollector()
+    {
+        return new Error();
+    }
+
+    /**
+     * Init VCS from string
+     *
+     * @param array|string $options
+     */
+    protected static function initVcsFromString($options)
+    {
+        if (strpos($options, '\\') || strpos($options, '_')) {
+            $class = $options;
+        } else {
+            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
+        }
+        static::$vcsAdapter = new $class($options);
+    }
+
+    /**
      * Load validator
      *
      * @param string $name
@@ -258,5 +261,15 @@ abstract class AbstractAdapter
         }
 
         return $this->filters[$name];
+    }
+
+    /**
+     * Change current directory to VCS root dir
+     *
+     * @return bool
+     */
+    protected static function cdToVcsDir()
+    {
+        return chdir(static::$vcsAdapter->getCodePath());
     }
 }
