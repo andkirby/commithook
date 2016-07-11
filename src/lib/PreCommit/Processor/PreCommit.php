@@ -11,6 +11,7 @@ use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\FilterInterface;
+use PreCommit\Validator as Validator;
 use Symfony\Component\Console\Helper\HelperSet;
 
 /**
@@ -121,7 +122,10 @@ class PreCommit extends AbstractAdapter
             return true;
         }
 
+        /** @var Validator\FileFilter $fileFilter */
         $fileFilter = $this->loadValidator('FileFilter');
+        /** @var Validator\IgnoreContentFilter $ignoreContentFilter */
+        $ignoreContentFilter = $this->loadValidator('IgnoreContentFilter');
 
         foreach ($this->files as $file) {
             $file = trim($file);
@@ -133,7 +137,12 @@ class PreCommit extends AbstractAdapter
 
             $filePath = $this->getFilePath($file);
             $content  = $this->getFileContent($filePath);
-            $ext      = pathinfo($file, PATHINFO_EXTENSION);
+
+            if (!$ignoreContentFilter->validate($content, $file)) {
+                return false;
+            }
+
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
 
             //run validators for non-filtered content
             $this->runValidators('before_all_original', $content, $file, $filePath);
