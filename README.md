@@ -9,7 +9,9 @@ Travis Continuous Integration status.
 Please see more information on [Wiki pages](../../wiki).
 
 ## Release notes
+- Last beta: v2.0.0-beta.16
 - v2.x-dev
+    - ([#83](/../../issues/83)) Added command `validator:disable` for quick disable a validator.
     - ([#13](/../../issues/13)) Added an integration with GitHub (for short commit message).
     - Added an ability to test project files before commit via `commithook test` in GIT directory.
     - Refactored validation commit message.
