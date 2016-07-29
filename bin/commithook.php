@@ -1,7 +1,7 @@
 <?php
 require_once 'autoload-init.php';
 
-use Symfony\Component\Console;
+use PreCommit\Command\Command\Validator;
 use PreCommit\Command\Application;
 use PreCommit\Command\Command\Install;
 use PreCommit\Command\Command\Test;
@@ -17,4 +17,5 @@ $app->add(new Config\Set($root));
 $app->add(new Config\IgnoreCommit($root));
 $app->add(new Test($root));
 $app->add(new ClearCache($root));
+$app->add(new Validator\Disable($root));
 $app->run();
