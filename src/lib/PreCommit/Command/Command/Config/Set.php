@@ -127,13 +127,13 @@ class Set extends AbstractCommand
                 $this->writeKeyValueOption();
 
                 if ($this->updated) {
-                    if ($this->isVerbose($output)) {
+                    if ($this->isVerbose()) {
                         $this->output->writeln(
                             'Configuration updated.'
                         );
                     }
                 } else {
-                    if ($this->isVerbose($output)) {
+                    if ($this->isVerbose()) {
                         $this->output->writeln(
                             'Configuration already defined.'
                         );

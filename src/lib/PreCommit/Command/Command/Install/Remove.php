@@ -16,24 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Remove extends AbstractCommand
 {
     /**
-     * Init default helpers
-     *
-     * @return $this
-     */
-    protected function configureCommand()
-    {
-        $this->setName('remove');
-        $this->setHelp(
-            'This command can remove installed hook files in your project.'
-        );
-        $this->setDescription(
-            'This command can remove installed hook files in your project.'
-        );
-
-        return $this;
-    }
-
-    /**
      * Execute command
      *
      * @param InputInterface  $input
@@ -52,7 +34,7 @@ class Remove extends AbstractCommand
             $files    = $this->getTargetFiles($input, $output);
             $status   = $this->removeHookFiles($output, $hooksDir, $files);
         } catch (Exception $e) {
-            if ($this->isVeryVerbose($output)) {
+            if ($this->isVeryVerbose()) {
                 throw $e;
             } else {
                 $output->writeln($e->getMessage());
@@ -61,7 +43,7 @@ class Remove extends AbstractCommand
             }
         }
         if ($status) {
-            if ($this->isVerbose($output)) {
+            if ($this->isVerbose()) {
                 $output->writeln("Existed CommitHook file(s) has been removed from '$hooksDir'.");
             } else {
                 $output->writeln('Existed CommitHook file(s) has been removed.');
@@ -71,6 +53,24 @@ class Remove extends AbstractCommand
         }
 
         return 0;
+    }
+
+    /**
+     * Init default helpers
+     *
+     * @return $this
+     */
+    protected function configureCommand()
+    {
+        $this->setName('remove');
+        $this->setHelp(
+            'This command can remove installed hook files in your project.'
+        );
+        $this->setDescription(
+            'This command can remove installed hook files in your project.'
+        );
+
+        return $this;
     }
 
     /**
@@ -91,7 +91,7 @@ class Remove extends AbstractCommand
             $file = $hooksDir.DIRECTORY_SEPARATOR.$filename;
             if (!is_file($file)) {
                 //file not found
-                if ($this->isVerbose($output)) {
+                if ($this->isVerbose()) {
                     $output->writeln("Hook file '$filename' not found. Skipped.");
                 }
                 continue;
@@ -100,7 +100,7 @@ class Remove extends AbstractCommand
                     //cannot remove
                     $output->writeln("Hook file '$filename' cannot be removed. Skipped.");
                     continue;
-                } elseif ($this->isVerbose($output)) {
+                } elseif ($this->isVerbose()) {
                     //success removing
                     $output->writeln("Hook file '$filename' has removed.");
                 }

@@ -77,7 +77,7 @@ class IgnoreCommit extends Set
                 $this->disableProtection($input, $input->getOption('disable'));
                 $this->disableAllValidators($input, $input->getOption('disable'));
 
-                if ($this->isVerbose($output)) {
+                if ($this->isVerbose()) {
                     if ($this->updated) {
                         $output->writeln(
                             'Validation will be ignored for the next commit.'

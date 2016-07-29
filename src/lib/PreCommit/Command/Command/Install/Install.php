@@ -41,7 +41,7 @@ class Install extends AbstractCommand
                 $this->getRunnerFile()
             );
         } catch (Exception $e) {
-            if ($this->isVeryVerbose($output)) {
+            if ($this->isVeryVerbose()) {
                 throw $e;
             } else {
                 $output->writeln($e->getMessage());
@@ -50,7 +50,7 @@ class Install extends AbstractCommand
             }
         }
 
-        if ($this->isVerbose($output)) {
+        if ($this->isVerbose()) {
             $output->writeln(
                 "PHP CommitHook files have been created in '$hooksDir'."
             );
@@ -196,7 +196,7 @@ class Install extends AbstractCommand
 
         $this->makeFileExecutable($file);
 
-        if ($this->isVerbose($output)) {
+        if ($this->isVerbose()) {
             $output->writeln("CommitHook file set to '$file'.");
         }
 

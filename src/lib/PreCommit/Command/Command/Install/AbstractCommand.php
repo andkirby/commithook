@@ -53,7 +53,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
     protected function getTargetFiles(InputInterface $input, OutputInterface $output)
     {
         if (!$this->isAskedSpecificFile($input)) {
-            if ($this->isVeryVerbose($output)) {
+            if ($this->isVeryVerbose()) {
                 $output->writeln('All files mode.');
             }
 
@@ -95,7 +95,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
         InputInterface $input,
         OutputInterface $output
     ) {
-        if ($this->isVeryVerbose($output)) {
+        if ($this->isVeryVerbose()) {
             $output->writeln('Specific files mode.');
         }
         $files = array();

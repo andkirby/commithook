@@ -61,7 +61,7 @@ class ClearCache extends AbstractCommand
                 $this->getCacheClearHelper()->clearIssueCache();
             }
         } catch (Exception $e) {
-            if ($this->isVeryVerbose($output)) {
+            if ($this->isVeryVerbose()) {
                 throw $e;
             } else {
                 $output->writeln($e->getMessage());
