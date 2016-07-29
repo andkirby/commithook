@@ -203,23 +203,21 @@ abstract class AbstractCommand extends Command
     /**
      * Is output very verbose
      *
-     * @param OutputInterface $output
      * @return bool
      */
-    protected function isVeryVerbose(OutputInterface $output)
+    protected function isVeryVerbose()
     {
-        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
+        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
     }
 
     /**
      * Is output verbose
      *
-     * @param OutputInterface $output
      * @return bool
      */
-    protected function isVerbose(OutputInterface $output)
+    protected function isVerbose()
     {
-        return $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
+        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
     }
 
     /**
