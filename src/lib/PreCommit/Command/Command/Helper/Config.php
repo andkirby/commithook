@@ -160,11 +160,11 @@ class Config extends Helper
     public function writeValue($configFile, $xpath, $value)
     {
         $config = $this->loadConfig($configFile);
-        if ($config->getNode($xpath) == $value) {
+        if ((string) $value === $config->getNode($xpath)) {
             return false;
         }
 
-        $this->setValueToXml($config, $xpath, $value);
+        $this->setValueToXml($config, $xpath, (string) $value);
 
         $this->getWriter()->write(
             $config,
