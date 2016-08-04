@@ -4,9 +4,42 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "407bee123acdbba83f179d20f564c134",
-    "content-hash": "9a1646f358337fa4c9f981ea712801fd",
+    "hash": "94311c64c52d83d2a9052750bf3e0c21",
+    "content-hash": "0e884cdfe086e7b2e3177787109568ef",
     "packages": [
+        {
+            "name": "andkirby/console-helper",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andkirby/console-helper.git",
+                "reference": "6116cc18576a74ce4509d726df04a547e3a8883a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/6116cc18576a74ce4509d726df04a547e3a8883a",
+                "reference": "6116cc18576a74ce4509d726df04a547e3a8883a",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/console": "~3.1"
+            },
+            "require-dev": {
+                "escapestudios/symfony2-coding-standard": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rikby\\Console\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "Symfony console helpers.",
+            "time": "2016-08-04 17:59:43"
+        },
         {
             "name": "chobie/jira-api-restclient",
             "version": "dev-master",
@@ -2025,6 +2058,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "andkirby/console-helper": 0,
         "symfony/console": 0,
         "symfony/filesystem": 0,
         "symfony/finder": 0,

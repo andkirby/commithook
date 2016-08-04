@@ -5,23 +5,21 @@
 namespace PreCommit\Command\Command;
 
 use PreCommit\Command\Command\Helper\ProjectDir;
-use PreCommit\Command\Command\Helper\SimpleQuestion;
 use PreCommit\Command\Exception;
 use PreCommit\Config;
+use Rikby\Console\Command\AbstractCommand as ConsoleAbstractCommand;
+use Rikby\Console\Helper\SimpleQuestionHelper;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Base command abstract class
  *
  * @package PreCommit\Command\Command
  */
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends ConsoleAbstractCommand
 {
     /**
      * Base commithook directory
@@ -29,27 +27,6 @@ abstract class AbstractCommand extends Command
      * @var null|string
      */
     protected $commithookDir;
-
-    /**
-     * Output
-     *
-     * @var OutputInterface
-     */
-    protected $output;
-
-    /**
-     * Input
-     *
-     * @var InputInterface
-     */
-    protected $input;
-
-    /**
-     * Input/Output model
-     *
-     * @var SymfonyStyle
-     */
-    protected $io;
 
     /**
      * Construct
@@ -74,11 +51,9 @@ abstract class AbstractCommand extends Command
     public function setApplication(Application $application = null)
     {
         parent::setApplication($application);
-        if (!$this->getHelperSet()) {
-            throw new Exception('Helper set is not set.');
-        }
+
         $this->getHelperSet()->set(new ProjectDir());
-        $this->getHelperSet()->set(new SimpleQuestion());
+        $this->getHelperSet()->set(new SimpleQuestionHelper());
     }
 
     /**
@@ -105,34 +80,6 @@ abstract class AbstractCommand extends Command
 
         return $config;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->input  = $input;
-        $this->output = $output;
-        $this->io     = new SymfonyStyle($input, $output);
-    }
-
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->configureCommand();
-        $this->configureInput();
-    }
-
-    /**
-     * Init command
-     *
-     * Set name, description, help
-     *
-     * @return AbstractCommand
-     */
-    abstract protected function configureCommand();
 
     /**
      * Init input definitions
@@ -164,7 +111,7 @@ abstract class AbstractCommand extends Command
         static $dir;
         if (!$dir) {
             $option = $input->getOption('project-dir');
-            $dir    = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
+            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
         }
 
         return $dir;
@@ -178,55 +125,5 @@ abstract class AbstractCommand extends Command
     protected function getProjectDirHelper()
     {
         return $this->getHelperSet()->get(ProjectDir::NAME);
-    }
-
-    /**
-     * Get question helper
-     *
-     * @return QuestionHelper
-     */
-    protected function getQuestionHelper()
-    {
-        return $this->getHelperSet()->get('question');
-    }
-
-    /**
-     * Get question helper
-     *
-     * @return SimpleQuestion
-     */
-    protected function getSimpleQuestion()
-    {
-        return $this->getHelperSet()->get('simple_question');
-    }
-
-    /**
-     * Is output very verbose
-     *
-     * @return bool
-     */
-    protected function isVeryVerbose()
-    {
-        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
-    }
-
-    /**
-     * Is output verbose
-     *
-     * @return bool
-     */
-    protected function isVerbose()
-    {
-        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
-    }
-
-    /**
-     * Is output verbose
-     *
-     * @return bool
-     */
-    protected function isDebug()
-    {
-        return $this->output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG;
     }
 }
