@@ -40,6 +40,7 @@
                     <class>\PreCommit\Filter\ShortCommitMsg\Parser\GitHub</class>
                 </parser>
             </message>
+            <url>https://github.com/</url>
         </github>
 
         <redmine>
