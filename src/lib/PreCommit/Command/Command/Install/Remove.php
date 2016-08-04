@@ -28,11 +28,10 @@ class Remove extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $output,
                 $this->askProjectDir($input, $output)
             );
-            $files    = $this->getTargetFiles($input, $output);
-            $status   = $this->removeHookFiles($output, $hooksDir, $files);
+            $files = $this->getTargetFiles();
+            $status = $this->removeHookFiles($hooksDir, $files);
         } catch (Exception $e) {
             if ($this->isVeryVerbose()) {
                 throw $e;
@@ -82,7 +81,6 @@ class Remove extends AbstractCommand
      * @return bool
      */
     protected function removeHookFiles(
-        OutputInterface $output,
         $hooksDir,
         array $files
     ) {
@@ -92,17 +90,17 @@ class Remove extends AbstractCommand
             if (!is_file($file)) {
                 //file not found
                 if ($this->isVerbose()) {
-                    $output->writeln("Hook file '$filename' not found. Skipped.");
+                    $this->output->writeln("Hook file '$filename' not found. Skipped.");
                 }
                 continue;
             } else {
                 if (!unlink($file)) {
                     //cannot remove
-                    $output->writeln("Hook file '$filename' cannot be removed. Skipped.");
+                    $this->output->writeln("Hook file '$filename' cannot be removed. Skipped.");
                     continue;
                 } elseif ($this->isVerbose()) {
                     //success removing
-                    $output->writeln("Hook file '$filename' has removed.");
+                    $this->output->writeln("Hook file '$filename' has removed.");
                 }
                 $status = true;
             }

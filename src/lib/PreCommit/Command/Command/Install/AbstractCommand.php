@@ -45,22 +45,20 @@ abstract class AbstractCommand extends Command\AbstractCommand
     /**
      * Get target files
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return array
      * @throws Exception
      */
-    protected function getTargetFiles(InputInterface $input, OutputInterface $output)
+    protected function getTargetFiles()
     {
-        if (!$this->isAskedSpecificFile($input)) {
+        if (!$this->isAskedSpecificFile($this->input)) {
             if ($this->isVeryVerbose()) {
-                $output->writeln('All files mode.');
+                $this->output->writeln('All files mode.');
             }
 
             return $this->getAvailableHooks();
         }
 
-        return $this->getOptionTargetFiles($input, $output);
+        return $this->getOptionTargetFiles();
     }
 
     /**
@@ -86,26 +84,22 @@ abstract class AbstractCommand extends Command\AbstractCommand
     /**
      * Get target files from input options
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return array
      * @throws Exception
      */
-    protected function getOptionTargetFiles(
-        InputInterface $input,
-        OutputInterface $output
-    ) {
+    protected function getOptionTargetFiles()
+    {
         if ($this->isVeryVerbose()) {
-            $output->writeln('Specific files mode.');
+            $this->output->writeln('Specific files mode.');
         }
         $files = array();
         foreach ($this->getAvailableHooks() as $hook) {
-            if ($input->getOption($hook)) {
+            if ($this->input->getOption($hook)) {
                 $files[] = $hook;
             }
         }
 
-        $userFile = $input->getOption('hook');
+        $userFile = $this->input->getOption('hook');
         if ($userFile) {
             if (!in_array($userFile, $this->getAvailableHooks())) {
                 throw new Exception("Unknown commithook file '$userFile'.");
@@ -126,7 +120,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
      * @return string
      * @throws Exception
      */
-    protected function getHooksDir(OutputInterface $output, $projectDir)
+    protected function getHooksDir($projectDir)
     {
         $hooksDir = $projectDir.'/.git/hooks';
         if (!is_dir($hooksDir)) {

@@ -29,15 +29,12 @@ class Install extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $output,
                 $this->askProjectDir($input, $output)
             );
             $this->createHooks(
-                $output,
-                $input,
                 $hooksDir,
-                $this->getTargetFiles($input, $output),
-                $this->askPhpPath($input, $output),
+                $this->getTargetFiles(),
+                $this->askPhpPath(),
                 $this->getRunnerFile()
             );
         } catch (Exception $e) {
@@ -139,8 +136,6 @@ class Install extends AbstractCommand
     /**
      * Create hook files
      *
-     * @param OutputInterface $output
-     * @param InputInterface  $input
      * @param string          $hooksDir
      * @param array           $targetHooks
      * @param string          $phpPath
@@ -149,8 +144,6 @@ class Install extends AbstractCommand
      * @throws Exception
      */
     protected function createHooks(
-        OutputInterface $output,
-        InputInterface $input,
         $hooksDir,
         $targetHooks,
         $phpPath,
@@ -159,8 +152,6 @@ class Install extends AbstractCommand
         $body = $this->getHookBody($phpPath, $runnerPath);
         foreach ($targetHooks as $file) {
             $this->createHookFile(
-                $output,
-                $input,
                 $hooksDir.DIRECTORY_SEPARATOR.$file,
                 $body
             );
@@ -172,21 +163,19 @@ class Install extends AbstractCommand
     /**
      * Create hook file
      *
-     * @param OutputInterface $output
-     * @param InputInterface  $input
      * @param string          $file
      * @param string          $body
      * @return $this
      * @throws Exception
      */
-    protected function createHookFile(OutputInterface $output, InputInterface $input, $file, $body)
+    protected function createHookFile($file, $body)
     {
-        if (!$input->getOption('overwrite') && file_exists($file)
+        if (!$this->input->getOption('overwrite') && file_exists($file)
             && 'y' !== $this->io->askQuestion(
                 $this->getSimpleQuestion()->getQuestionConfirm("File '$file' already exists. Overwrite it?")
             )
         ) {
-            $output->writeln('Could not overwrite file '.$file);
+            $this->output->writeln('Could not overwrite file '.$file);
 
             return $this;
         }
@@ -197,7 +186,7 @@ class Install extends AbstractCommand
         $this->makeFileExecutable($file);
 
         if ($this->isVerbose()) {
-            $output->writeln("CommitHook file set to '$file'.");
+            $this->output->writeln("CommitHook file set to '$file'.");
         }
 
         return $this;
@@ -219,37 +208,16 @@ class Install extends AbstractCommand
     /**
      * Ask about PHP executable file
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return array
      * @throws \PreCommit\Command\Exception
      */
-    protected function askPhpPath(InputInterface $input, OutputInterface $output)
+    protected function askPhpPath()
     {
-        $validator = $this->getPhpValidator();
-
-        $file = $input->getOption('php-binary');
-        if (!$file) {
-            $file = $this->getSystemPhpPath();
-        }
-
-        $max = 3;
-        $i   = 0;
-        while (!$file || !$validator($file, $output)) {
-            if ($file) {
-                $output->writeln('Given PHP executable file is not valid.');
-            }
-            $file = $this->io->askQuestion(
-                $this->getSimpleQuestion()->getQuestion('Please set your PHP executable file', $file)
-            );
-            //@startSkipCommitHooks
-            if (++$i > $max) {
-                throw new Exception('Path to PHP executable file is not set.');
-            }
-            //@finishSkipCommitHooks
-        }
-
-        return $file;
+        return $this->getHelperSet()->get('php_bin_get')->askPhpPath(
+            $this->io,
+            $this->input,
+            $this->output
+        );
     }
 
     /**
@@ -305,10 +273,10 @@ PHP;
      */
     protected function getHookBody($phpPath, $runnerPhpPath)
     {
-        $phpPath       = $this->normalizePath($phpPath);
+        $phpPath = $this->normalizePath($phpPath);
         $runnerPhpPath = $this->normalizePath($runnerPhpPath);
-        $template      = $this->getHookTemplate();
-        $template      = str_replace('{PHP_EXE}', $phpPath, $template);
+        $template = $this->getHookTemplate();
+        $template = str_replace('{PHP_EXE}', $phpPath, $template);
 
         return str_replace('{RUNNER_PHP}', $runnerPhpPath, $template);
     }
