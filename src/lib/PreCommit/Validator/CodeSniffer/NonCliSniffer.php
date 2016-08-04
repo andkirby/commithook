@@ -303,7 +303,7 @@ class NonCliSniffer extends \PHP_CodeSniffer
     /**
      * {@inheritdoc}
      */
-    public function initStandard($standards, array $restrictions = array())
+    public function initStandard($standards, array $restrictions = array(), array $exclusions=array())
     {
         $this->tokenListeners = array();
         parent::initStandard($standards, $restrictions);
