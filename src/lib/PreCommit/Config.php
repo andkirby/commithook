@@ -4,10 +4,10 @@
  */
 namespace PreCommit;
 
+use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use PreCommit\Command\Command\Helper\Config as ConfigHelper;
 
 /**
  * Class for get config
@@ -48,90 +48,6 @@ class Config extends \SimpleXMLElement
     protected static $configFiles = array();
 
     /**
-     * Get node/s by expression
-     *
-     * @param string $xpath
-     *
-     * @return array|null|string
-     * @throws Exception
-     */
-    public function getNodesExpr($xpath)
-    {
-        $result = $this->xpath($xpath);
-        if (is_array($result)) {
-            //TODO looks like it's always an array
-            $data = array();
-            foreach ($result as $node) {
-                /** @var Config $node */
-                $data[$node->getName()] = $this->getNodeValue($node);
-            }
-
-            return $data;
-        } elseif ($result instanceof Config) {
-            return $this->getNodeValue($result);
-        }
-
-        return null;
-    }
-
-    /**
-     * Catch exception and show failed XPath
-     *
-     * @param string $path
-     *
-     * @return \SimpleXMLElement[]
-     * @throws \PreCommit\Exception
-     */
-    public function xpath($path)
-    {
-        try {
-            return parent::xpath($path);
-        } catch (\Exception $e) {
-            throw new Exception("Invalid XPath '$path'");
-        }
-    }
-
-    /**
-     * Get node multi values by xpath
-     *
-     * Multi-values means nodes with the same name in the same place
-     *
-     * @param string $xpath
-     * @return array|Config
-     */
-    public function getMultiNode($xpath)
-    {
-        $last  = null;
-        $arr   = explode('/', $xpath);
-        $last  = array_pop($arr);
-        $xpath = implode('/', $arr);
-
-        $result = $this->getNodeArray($xpath);
-
-        $result = isset($result[$last]) ? (array) $result[$last] : array();
-
-        return $result;
-    }
-
-    /**
-     * Get node array values
-     *
-     * @param string $xpath
-     * @return array|null
-     */
-    public function getNodeArray($xpath)
-    {
-        $result = $this->xpath(self::XPATH_START.$xpath);
-        $result = isset($result[0]) ? (array) $result[0] : array();
-        $result = json_decode(json_encode($result), true);
-
-        //remove XML comments (hack) TODO investigate a problem
-        unset($result['comment']);
-
-        return $result;
-    }
-
-    /**
      * Get config cache file
      *
      * @return string
@@ -162,21 +78,6 @@ class Config extends \SimpleXMLElement
         }
 
         return realpath($dir);
-    }
-
-    /**
-     * Get node by xpath
-     *
-     * @param string $xpath
-     *
-     * @return string|null
-     */
-    public function getNode($xpath)
-    {
-        $result = $this->xpath(self::XPATH_START.$xpath);
-        $result = isset($result[0]) ? (string) $result[0] : null;
-
-        return $result;
     }
 
     /**
@@ -243,20 +144,21 @@ class Config extends \SimpleXMLElement
      */
     public static function loadInstance(array $options, $setFile = true)
     {
-        if (!isset($options['file'])) {
+        $file = $options['file'];
+        if (!isset($file)) {
             throw new Exception('Options parameter "file" is required.');
         }
-        if (!file_exists($options['file'])) {
-            $options['file'] = $options['file'].'.dist';
+        if (!file_exists($file)) {
+            $file = $file.'.dist';
         }
-        if (!file_exists($options['file'])) {
+        if (!file_exists($file)) {
             throw new Exception("File '{$options['file']}' not found.");
         }
         /** @var Config $config */
-        $config = simplexml_load_file($options['file'], '\\PreCommit\\Config');
+        $config = simplexml_load_file($file, '\\PreCommit\\Config');
 
         if ($setFile) {
-            self::setConfigFile('root', $options['file']);
+            self::setConfigFile('root', $file);
         }
 
         return $config;
@@ -294,6 +196,17 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Get project dir
+     *
+     * @todo It should be removed from Config
+     * @return string
+     */
+    public static function getProjectDir()
+    {
+        return static::$projectDir;
+    }
+
+    /**
      * Set project dir by hook file
      *
      * @todo It should be removed from Config
@@ -305,17 +218,6 @@ class Config extends \SimpleXMLElement
     public static function setProjectDir($dir)
     {
         static::$projectDir = $dir;
-    }
-
-    /**
-     * Get project dir
-     *
-     * @todo It should be removed from Config
-     * @return string
-     */
-    public static function getProjectDir()
-    {
-        return static::$projectDir;
     }
 
     /**
@@ -496,28 +398,6 @@ class Config extends \SimpleXMLElement
     }
 
     /**
-     * Get node value
-     *
-     * @param Config $node
-     *
-     * @return string|array
-     */
-    protected function getNodeValue($node)
-    {
-        if ($node->count()) {
-            $data = array();
-            /** @var Config $child */
-            foreach ($node->children() as $child) {
-                $data[$child->getName()] = $this->getNodeValue($child);
-            }
-
-            return $data;
-        } else {
-            return (string) $node;
-        }
-    }
-
-    /**
      * Merge files
      *
      * @param XmlMerger   $merger
@@ -620,5 +500,126 @@ class Config extends \SimpleXMLElement
         $finder = new Finder();
 
         return $finder->files()->name('*.xml')->notName('root.xml')->in($path);
+    }
+
+    /**
+     * Get node/s by expression
+     *
+     * @param string $xpath
+     *
+     * @return array|null|string
+     * @throws Exception
+     */
+    public function getNodesExpr($xpath)
+    {
+        $result = $this->xpath($xpath);
+        if (is_array($result)) {
+            //TODO looks like it's always an array
+            $data = array();
+            foreach ($result as $node) {
+                /** @var Config $node */
+                $data[$node->getName()] = $this->getNodeValue($node);
+            }
+
+            return $data;
+        } elseif ($result instanceof Config) {
+            return $this->getNodeValue($result);
+        }
+
+        return null;
+    }
+
+    /**
+     * Catch exception and show failed XPath
+     *
+     * @param string $path
+     *
+     * @return \SimpleXMLElement[]
+     * @throws \PreCommit\Exception
+     */
+    public function xpath($path)
+    {
+        try {
+            return parent::xpath($path);
+        } catch (\Exception $e) {
+            throw new Exception("Invalid XPath '$path'");
+        }
+    }
+
+    /**
+     * Get node multi values by xpath
+     *
+     * Multi-values means nodes with the same name in the same place
+     *
+     * @param string $xpath
+     * @return array|Config
+     */
+    public function getMultiNode($xpath)
+    {
+        $last = null;
+        $arr = explode('/', $xpath);
+        $last = array_pop($arr);
+        $xpath = implode('/', $arr);
+
+        $result = $this->getNodeArray($xpath);
+
+        $result = isset($result[$last]) ? (array)$result[$last] : array();
+
+        return $result;
+    }
+
+    /**
+     * Get node array values
+     *
+     * @param string $xpath
+     * @return array|null
+     */
+    public function getNodeArray($xpath)
+    {
+        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = isset($result[0]) ? (array)$result[0] : array();
+        $result = json_decode(json_encode($result), true);
+
+        //remove XML comments (hack) TODO investigate a problem
+        unset($result['comment']);
+
+        return $result;
+    }
+
+    /**
+     * Get node by xpath
+     *
+     * @param string $xpath
+     *
+     * @return string|null
+     */
+    public function getNode($xpath)
+    {
+        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = isset($result[0]) ? (string)$result[0] : null;
+
+        return $result;
+    }
+
+    /**
+     * Get node value
+     *
+     * @param Config $node
+     *
+     * @return string|array
+     */
+    protected function getNodeValue($node)
+    {
+        if ($node->count()) {
+            $data = array();
+            /** @var Config $child */
+            foreach ($node->children() as $child) {
+                $data[$child->getName()] = $this->getNodeValue($child);
+            }
+
+            return $data;
+        } else {
+            return (string)$node;
+        }
     }
 }
