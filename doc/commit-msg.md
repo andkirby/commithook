@@ -21,26 +21,7 @@ There are available commit verbs:
 *NOTE:* Actually this can be extended. Please take a look [some specific customization of commit message format](https://gist.github.com/andkirby/12175e1a46d2a9e6f2bb).
 
 #### JIRA Integration
-Since v1.7.0b an integration with JIRA issues tracker is available.
-How it works?
-At first you have to set up authorization to JIRA. All what we need: URL to JIRA, username, password.
-Open file CommitHook XML configuration file:
-```xml
-<?xml version="1.0"?>
-<config>
-    ...
-    <task_tracker>jira</task_tracker>
-    <jira>
-        <url>http://jira.example.com</url>
-        <username>my.name</username>
-        <password>some-password</password>
-    </jira>
-    ...
-</config>
-```
-If it's a global configuration you may put it in `~/.commithook/commithook.xml` (`%USERPROFILE%/.commithook/commithook.xml` for Windows CLI, or the same path for GitBash).
-(*in next releases a password will be protected.*)
-`issue_type` config node isn't supported now but it will be needed for different issue trackers (future feature).
+Please take a look [wizard example](example-wizard.md).
 
 ##### Short Issue Commit
 So, if you want to be ~~lazy~~ productive... :)

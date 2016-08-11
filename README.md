@@ -8,6 +8,8 @@ Travis Continuous Integration status.
 
 Please see more information on [Wiki pages](../../wiki).
 
+[Installation Wizard](doc/example-wizard.md)
+
 ## Release notes
 - Last beta: v2.0.0-beta.16
 - v2.x-dev
