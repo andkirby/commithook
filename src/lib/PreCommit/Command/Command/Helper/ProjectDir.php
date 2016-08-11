@@ -7,7 +7,6 @@ namespace PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
 use Rikby\Console\Helper\SimpleQuestionHelper;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -135,15 +134,5 @@ class ProjectDir extends Helper
     protected function getSimpleQuestion()
     {
         return $this->getHelperSet()->get('simple_question');
-    }
-
-    /**
-     * Get dialog helper
-     *
-     * @return QuestionHelper
-     */
-    protected function getQuestionHelper()
-    {
-        return $this->getHelperSet()->get('question');
     }
 }
