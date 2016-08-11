@@ -5,8 +5,8 @@
 namespace PreCommit\Console\Command\Config;
 
 use AndKirby\Crypter\Crypter;
-use PreCommit\Command\Exception;
 use PreCommit\Console\Command\AbstractCommand;
+use PreCommit\Console\Exception;
 use PreCommit\Console\Helper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;

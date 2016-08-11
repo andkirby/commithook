@@ -4,9 +4,9 @@
  */
 namespace PreCommit\Console\Command\Validator;
 
-use PreCommit\Command\Exception;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
+use PreCommit\Console\Exception;
 use PreCommit\Console\Helper\ValidatorHelper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\Table;
@@ -98,7 +98,7 @@ class ListAll extends Set
 
         $table = new Table($this->output);
         $table
-            ->setHeaders(['Name', 'Type', 'On',])
+            ->setHeaders(['Name', 'Type', 'On'])
             ->setRows($rows);
         $table->render();
 

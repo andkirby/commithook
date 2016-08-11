@@ -4,8 +4,8 @@
  */
 namespace PreCommit\Console\Command;
 
-use PreCommit\Command\Exception;
 use PreCommit\Config;
+use PreCommit\Console\Exception;
 use Rikby\Console\Command\AbstractCommand as ConsoleAbstractCommand;
 use Rikby\Console\Helper\GitDirHelper;
 use Rikby\Console\Helper\PhpBinHelper;
@@ -44,7 +44,7 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
      * Set extra helper ProjectDir
      *
      * @param Application $application An Application instance
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      * @api
      */
     public function setApplication(Application $application = null)

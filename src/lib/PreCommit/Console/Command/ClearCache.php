@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Console\Command;
 
-use PreCommit\Command\Exception;
+use PreCommit\Console\Exception;
 use PreCommit\Console\Helper\ClearCacheHelper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +24,7 @@ class ClearCache extends AbstractCommand
      * Init helpers
      *
      * @param Application $application An Application instance
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      * @api
      */
     public function setApplication(Application $application = null)

@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Console\Command;
 
-use PreCommit\Command\Exception;
+use PreCommit\Console\Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -94,7 +94,7 @@ class Test extends AbstractCommand
      * @param InputInterface                                    $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return array
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      */
     protected function getCustomTestFiles(InputInterface $input, OutputInterface $output)
     {

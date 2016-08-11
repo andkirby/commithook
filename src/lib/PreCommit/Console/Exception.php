@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command;
+namespace PreCommit\Console;
 
 use PreCommit\Exception as TopException;
 

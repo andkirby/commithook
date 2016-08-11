@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command;
+namespace PreCommit\Console;
 
 use Symfony\Component\Console\Application as BaseApplication;
 
@@ -22,6 +22,7 @@ class Application extends BaseApplication
      */
     const VERSION = '2.0.0-dev';
 
+// @codingStandardsIgnoreStart
     /**
      * Logo
      *
@@ -35,6 +36,7 @@ class Application extends BaseApplication
 /     /  /_ /   (___/(_)/ / /_/ / /_(_(__ /  /_(_)(_)/ |_/_)_
 
 LOGO;
+// @codingStandardsIgnoreEnd
 
     /**
      * Construct

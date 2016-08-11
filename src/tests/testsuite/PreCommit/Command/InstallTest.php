@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Command;
 
-use PreCommit\Command\Command\Install;
+use PreCommit\Console\Command\Install\Install;
 
 /**
  * Test CLI install command
@@ -18,14 +18,14 @@ class InstallTest extends \PHPUnit_Framework_TestCase
      *
      * @var string
      */
-    protected $_tmp;
+    protected $tmp;
 
     /**
      * Bin directory
      *
      * @var string
      */
-    protected $_bin;
+    protected $bin;
 
     /**
      * Test hook files installation
@@ -33,34 +33,40 @@ class InstallTest extends \PHPUnit_Framework_TestCase
     public function testInstall()
     {
         //install commit hooks
-        $output = `cd {$this->_tmp} && git init && php -f {$this->_bin}/commithook.php install -n`;
+        // @codingStandardsIgnoreStart
+        $output = `cd {$this->tmp} && git init && php -f {$this->bin}/commithook.php install -n`;
+        // @codingStandardsIgnoreEnd
 
         //test success output
         $this->assertContains('PHP CommitHook files have been created.', $output);
 
-        $preCommitFile = $this->_tmp . '/.git/hooks/pre-commit';
-        $CommitMsgFile = $this->_tmp . '/.git/hooks/commit-msg';
+        $preCommitFile = $this->tmp.'/.git/hooks/pre-commit';
+        $commitMsgFile = $this->tmp.'/.git/hooks/commit-msg';
 
         //test commit hooks files are exist
         $this->assertFileExists($preCommitFile);
-        $this->assertFileExists($CommitMsgFile);
+        $this->assertFileExists($commitMsgFile);
 
         //test commit hook file contains proper body
         $install = new Install('');
         $phpExe = $install->getSystemPhpPath();
 
         $ds = DIRECTORY_SEPARATOR;
+// @codingStandardsIgnoreStart
         $body = <<<BODY
 #!/usr/bin/env $phpExe
 <?php
 \$hookName = __FILE__;
-require_once '{$this->_bin}{$ds}runner.php';
+require_once '{$this->bin}{$ds}runner.php';
 BODY;
+// @codingStandardsIgnoreEnd
         $this->assertEquals(
-            $body, file_get_contents($preCommitFile)
+            $body,
+            file_get_contents($preCommitFile)
         );
         $this->assertEquals(
-            $body, file_get_contents($CommitMsgFile)
+            $body,
+            file_get_contents($commitMsgFile)
         );
     }
 
@@ -69,17 +75,19 @@ BODY;
      */
     protected function setUp()
     {
-        $this->_bin = realpath(__DIR__ . '/../../../../../bin');
-        $this->_tmp = realpath(__DIR__ . '/../../../tmp');
-        if (!$this->_tmp) {
+        $this->bin = realpath(__DIR__.'/../../../../../bin');
+        $this->tmp = realpath(__DIR__.'/../../../tmp');
+        if (!$this->tmp) {
             $this->fail('Temp directory not found.');
         }
-        if (!$this->_bin) {
+        if (!$this->bin) {
             $this->fail('"bin" directory is not set.');
         }
+        // @codingStandardsIgnoreStart
         if (false === strpos(`git --version 2>&1`, 'git version')) {
             $this->fail('VCS GIT console command not found.');
         }
+        // @codingStandardsIgnoreEnd
     }
 
     /**
@@ -87,8 +95,10 @@ BODY;
      */
     protected function tearDown()
     {
-        if (is_dir($this->_tmp)) {
-            `rm -rf {$this->_tmp}/*`;
+        if (is_dir($this->tmp)) {
+            // @codingStandardsIgnoreStart
+            `rm -rf {$this->tmp}/*`;
+            // @codingStandardsIgnoreEnd
         }
         parent::tearDown();
     }

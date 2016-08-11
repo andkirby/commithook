@@ -142,7 +142,7 @@ class ConfigHelper extends Helper
      * @param string $xpath
      * @param string $value
      * @return bool
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      */
     public function writeValue($configFile, $xpath, $value)
     {
@@ -160,6 +160,19 @@ class ConfigHelper extends Helper
         $this->clearCache();
 
         return true;
+    }
+
+    /**
+     * Set writer
+     *
+     * @param Config\WriterHelper $writer
+     * @return $this
+     */
+    public function setWriter(Config\WriterHelper $writer)
+    {
+        $this->writer = $writer;
+
+        return $this;
     }
 
     /**
@@ -193,19 +206,6 @@ class ConfigHelper extends Helper
     }
 
     /**
-     * Set writer
-     *
-     * @param Config\WriterHelper $writer
-     * @return $this
-     */
-    public function setWriter(Config\WriterHelper $writer)
-    {
-        $this->writer = $writer;
-
-        return $this;
-    }
-
-    /**
      * Get XML merger
      *
      * @return \PreCommit\XmlMerger
@@ -224,10 +224,10 @@ class ConfigHelper extends Helper
      */
     protected function getXmlUpdate($xpath, $value)
     {
-        $nodes    = explode('/', $xpath);
+        $nodes = explode('/', $xpath);
         $startXml = '';
-        $endXml   = '';
-        $last     = count($nodes) - 1;
+        $endXml = '';
+        $last = count($nodes) - 1;
         foreach ($nodes as $level => $node) {
             if ($last === $level) {
                 $startXml .= "<$node>$value</$node>\n";
@@ -237,7 +237,7 @@ class ConfigHelper extends Helper
             }
         }
         $startXml = rtrim($startXml);
-        $endXml   = rtrim($endXml);
+        $endXml = rtrim($endXml);
 
         //@startSkipCommitHooks
         $xml
@@ -263,7 +263,7 @@ XML;
     protected function getCachedConfigFiles()
     {
         $finder = new Finder();
-        $list   = array();
+        $list = array();
         foreach ($finder->files()->in(ConfigInstance::getCacheDir())->name('*.xml') as $file) {
             $list[] = $file->getRealpath();
         }
@@ -275,7 +275,7 @@ XML;
      * Write empty XML file
      *
      * @param string $file
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      */
     protected function writeEmptyXmlFile($file)
     {

@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Console\Command\Install;
 
-use PreCommit\Command\Exception;
+use PreCommit\Console\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -209,7 +209,7 @@ class Install extends AbstractCommand
      * Ask about PHP executable file
      *
      * @return array
-     * @throws \PreCommit\Command\Exception
+     * @throws \PreCommit\Console\Exception
      */
     protected function askPhpPath()
     {

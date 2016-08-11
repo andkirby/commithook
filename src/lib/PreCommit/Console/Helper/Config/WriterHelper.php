@@ -4,8 +4,8 @@
  */
 namespace PreCommit\Console\Helper\Config;
 
-use PreCommit\Command\Exception;
 use PreCommit\Config;
+use PreCommit\Console\Exception;
 use Symfony\Component\Console\Helper\Helper;
 
 /**

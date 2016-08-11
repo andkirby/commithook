@@ -4,8 +4,8 @@
  */
 namespace PreCommit\Console\Command\Config;
 
-use PreCommit\Command\Exception;
 use PreCommit\Console\Command\AbstractCommand;
+use PreCommit\Console\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

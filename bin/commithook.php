@@ -1,12 +1,12 @@
 <?php
 require_once 'autoload-init.php';
 
-use PreCommit\Command\Application;
-use PreCommit\Command\Command\ClearCache;
-use PreCommit\Command\Command\Config;
-use PreCommit\Command\Command\Install;
-use PreCommit\Command\Command\Test;
-use PreCommit\Command\Command\Validator;
+use PreCommit\Console\Application;
+use PreCommit\Console\Command\ClearCache;
+use PreCommit\Console\Command\Config;
+use PreCommit\Console\Command\Install;
+use PreCommit\Console\Command\Test;
+use PreCommit\Console\Command\Validator;
 
 $root = realpath(__DIR__ . '/..');
 
