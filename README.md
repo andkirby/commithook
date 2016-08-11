@@ -16,3 +16,5 @@ $ composer global require andkirby/commithook
 
 ## OS environment
 Tested on Windows in GIT Bash. Feel free [to put](../../issues/new "Add a new issue") your faced issue.
+
+[Release notes](doc/release-notes.md)
