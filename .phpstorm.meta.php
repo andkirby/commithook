@@ -13,6 +13,7 @@ namespace PHPSTORM_META {
             'process' instanceof \Symfony\Component\Console\Helper\ProcessHelper,
             'debug_formatter' instanceof \Symfony\Component\Console\Helper\DebugFormatterHelper,
             'descriptor' instanceof \Symfony\Component\Console\Helper\DescriptorHelper,
+            'code_validator' instanceof \PreCommit\Command\Command\Helper\ValidatorHelper,
         ],
     ];
 }
