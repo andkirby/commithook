@@ -1,3 +1,7 @@
+[Back](../README.md)
+
+## `~/.bashrc`
+
 You may try to use this script with shortcuts for your local `~/.bashrc`.
 
 Please update paths if needed.
@@ -31,3 +35,5 @@ Now you may reload file:
 ```shell
 $ . ~/.bashrc
 ```
+
+[Back](../README.md)
