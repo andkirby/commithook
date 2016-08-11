@@ -1,6 +1,8 @@
 [Back](../README.md)
 
-# Wizard Installation example
+# Wizard configuration example
+
+If you haven't install commithook please follow to [the composer install documentation](composer-installation.md).
 
 ### Define environment commands
 Perhaps you may find useful example of `~/.bashrc` file.
