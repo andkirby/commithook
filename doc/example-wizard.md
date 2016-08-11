@@ -51,6 +51,8 @@ Enjoy!
 Let's check generated files.
 ```
 $ cat commithook.xml
+```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
@@ -61,6 +63,8 @@ $ cat commithook.xml
 </config>
 
 $ cat ~/.commithook/commithook.xml
+```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
