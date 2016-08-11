@@ -1,6 +1,6 @@
 [Back](../README.md)
 
-# Wizard project configuration example
+# Project configuration example
 
 ### Wizard
 #### Wizard for JIRA integration
