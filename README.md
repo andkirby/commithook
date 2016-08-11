@@ -15,6 +15,6 @@ $ composer global require andkirby/commithook
 [Commit message format](doc/commit-msg.md)
 
 ## OS environment
-Tested on Windows in GIT Bash. Feel free [to put](../../issues/new "Add a new issue") your faced issue.
+Tested on Windows in GIT Bash. Feel free [to create](../../issues/new "Add a new issue") your faced issue.
 
 [Release notes](doc/release-notes.md)
