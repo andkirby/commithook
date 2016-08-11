@@ -70,11 +70,16 @@ and for tasks - `Implemented`. Of course if you're making refactoring
 or applying code review you have to set related verb.
 
 ###### Option #4
-Also, you may declare "active task" by similar command:
+Also, you may declare "active task" by similar command and don't care about numbers in commit messages:
 ```shell
 $ commithook config task 256
 ```
 The value can be checked w/o last argument.
+And a message will be simplest:
+```
+ - Added missed email validator.
+ - Reformatted code
+```
 
 ##### JIRA issue type configuration map
 There is predefined configuration:
