@@ -10,9 +10,9 @@ Travis Continuous Integration status.
 $ composer global require andkirby/commithook
 ```
 ## Main setup documentation stack  
-[GIT integration: hook files installation](doc/hooks-installation.md)
-[Configuration Wizard](doc/example-wizard.md)
-[Commit message format](doc/commit-msg.md)
+- [GIT integration: hook files installation](doc/hooks-installation.md)
+- [Configuration Wizard](doc/example-wizard.md)
+- [Commit message format](doc/commit-msg.md)
 
 ## OS environment
 Tested on Windows in GIT Bash. Feel free [to create](../../issues/new "Add a new issue") your faced issue.
