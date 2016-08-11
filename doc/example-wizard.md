@@ -1,25 +1,20 @@
 [Back](../README.md)
 
-# Wizard configuration example
-
-If you haven't install commithook please follow to [the composer install documentation](composer-installation.md).
-
-### Define environment commands
-Perhaps you may find useful example of `~/.bashrc` file.
-It's [here](example-bashrc.md).
+# Project configuration example
 
 ### Wizard
 #### Wizard for JIRA integration
+Let's init empty directory with GIT.
 ```shell
-u.sername@HOST MINGW64 MINGW64 /d/home/prj1
 $ mkdir /d/home/prj1
+
 $ cd /d/home/prj1
 
-u.sername@HOST MINGW64 MINGW64 /d/home/prj1
 $ git init
-Initialized empty Git repository in D:/home/1/.git/
-
-u.sername@HOST MINGW64 /d/home/prj1 (master)
+Initialized empty Git repository in D:/home/prj1/.git/
+```
+Now we may start wizard.
+```
 $ commithook config wizard
 Set up issue tracker connection.
 
@@ -54,8 +49,7 @@ Do not forget to share project commithook.xml file with your team.
 Enjoy!
 ```
 Let's check generated files.
-```
-u.sername@HOST MINGW64 /d/home/prj1 (master)
+```xml
 $ cat commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -66,7 +60,6 @@ $ cat commithook.xml
     </tracker>
 </config>
 
-u.sername@HOST MINGW64 /d/home/prj1 (master)
 $ cat ~/.commithook/commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -79,6 +72,10 @@ $ cat ~/.commithook/commithook.xml
         </jira>
     </tracker>
 </config>
+```
+To reset your password you may wizard again or use command:
+```
+$ commithook config --global --tracker jira password pass123
 ```
 
 #### Define path to PHP interpreter
@@ -94,6 +91,7 @@ _**NOTE:** You may set this up per project. Just use `--project-self` instead `-
 ```
 $ commithook install
 ```
+[Here](hooks-installation.md) full documentation.
 
 ### PHPCodeSniffer integration
 _**NOTE:** all files within directories `.commithook` and `.coding-standards` should be shared with your team. So just add those into VCS._
@@ -152,8 +150,11 @@ Content:
     </validators>
 </config>
 ```
+### Share commithook files with your team
 ```
 $ git add .commithook .coding-standards commithook.xml
+$ git commit -m '@@through Added commithook files.'
+$ git push
 ```
 ### Checking
 Let's test.
