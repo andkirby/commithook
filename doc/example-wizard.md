@@ -4,14 +4,17 @@
 
 ### Wizard
 #### Wizard for JIRA integration
+Let's init empty directory with GIT.
 ```shell
 $ mkdir /d/home/prj1
 
 $ cd /d/home/prj1
 
 $ git init
-Initialized empty Git repository in D:/home/1/.git/
-
+Initialized empty Git repository in D:/home/prj1/.git/
+```
+Now we may start wizard.
+```
 $ commithook config wizard
 Set up issue tracker connection.
 
@@ -147,8 +150,11 @@ Content:
     </validators>
 </config>
 ```
+### Share commithook files with your team
 ```
 $ git add .commithook .coding-standards commithook.xml
+$ git commit -m '@@through Added commithook files.'
+$ git push
 ```
 ### Checking
 Let's test.
