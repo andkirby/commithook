@@ -1,15 +1,9 @@
 [Back](README.md)
-## Installation
+## GIT hook files installation
 
-### Set up via command line
+Before you start please be sure that command `commithook` works for your. If not, try to use [`.bashrc` file configuration](example-bashrc.md).
 
-This feature is available since v1.6.3. _(Simple install command `commithook-install` is available since v1.6.0 but it was removed in later versions.)_
-
-#### `commithook install`: Generate files
-
-**NOTE:** Since v1.6.6 you may run via **_alias_** command **`php commithook.php`**. It could be helpful if you have some global PHP version but would like to use another one to run PHP CommitHooks. (This problem faced on Windows with **XAMPP** and another PHP version) If you'll install PHP CommitHooks into your global PHP you shouldn't face this issue.
-
-Before you start please be sure that shell can run files from `vendor/bin` directory ([read more](#set-up-composer-vendorbin-directory)). Or use absolute path `/path/to/vendor/bin/commithook`.
+#### `commithook install`: Generate files in `.git/hooks/` directory
 
 Go to your project root directory and install commithook files:
 ```shell
