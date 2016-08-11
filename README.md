@@ -11,7 +11,7 @@ Please see more information on [Wiki pages](../../wiki).
 [Installation Wizard](doc/example-wizard.md)
 
 ## OS environment
-Tested on Windows. Feel free [to put](../../issues/new "Add a new issue") your faced issues on [the project issues page](../../issues "Issues").
+Tested on Windows in GIT Bash. Feel free [to put](../../issues/new "Add a new issue") your faced issue.
 
 ## Release notes
 - Last beta: v2.0.0-beta.16
