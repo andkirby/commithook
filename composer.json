@@ -12,7 +12,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=5.5",
-    "andkirby/console-helper": "@stable",
+    "andkirby/console-helper": "~0.4@stable",
     "symfony/console": "~3.0@stable",
     "symfony/filesystem": "~2.5@stable",
     "symfony/finder": "~2.5@stable",

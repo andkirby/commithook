@@ -4,16 +4,14 @@
  */
 namespace PreCommit\Command\Command;
 
-use PreCommit\Command\Command\Helper\ProjectDir;
 use PreCommit\Command\Exception;
 use PreCommit\Config;
 use Rikby\Console\Command\AbstractCommand as ConsoleAbstractCommand;
+use Rikby\Console\Helper\GitDirHelper;
 use Rikby\Console\Helper\PhpBinHelper;
 use Rikby\Console\Helper\SimpleQuestionHelper;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command abstract class
@@ -53,7 +51,7 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
     {
         parent::setApplication($application);
 
-        $this->getHelperSet()->set(new ProjectDir());
+        $this->getHelperSet()->set(new GitDirHelper());
         $this->getHelperSet()->set(new SimpleQuestionHelper());
         $this->getHelperSet()->set(new PhpBinHelper());
     }
@@ -103,17 +101,19 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
     /**
      * Ask about GIT project root dir
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      * @return array
      * @throws Exception
      */
-    protected function askProjectDir(InputInterface $input, OutputInterface $output)
+    protected function askProjectDir()
     {
         static $dir;
         if (!$dir) {
-            $option = $input->getOption('project-dir');
-            $dir = $this->getProjectDirHelper()->getProjectDir($input, $output, $option);
+            $dir = $this->getProjectDirHelper()->getGitDirectory(
+                $this->input,
+                $this->output,
+                $this->input->getOption('project-dir'),
+                $this->io
+            );
         }
 
         return $dir;
@@ -122,10 +122,10 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
     /**
      * Get project dir helper
      *
-     * @return ProjectDir
+     * @return GitDirHelper
      */
     protected function getProjectDirHelper()
     {
-        return $this->getHelperSet()->get(ProjectDir::NAME);
+        return $this->getHelperSet()->get(GitDirHelper::NAME);
     }
 }
