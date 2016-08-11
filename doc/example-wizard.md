@@ -1,4 +1,10 @@
-# Installation example
+[Back](../README.md)
+
+# Wizard Installation example
+
+### Define environment commands
+Perhaps you may find useful example of `~/.bashrc` file.
+It's [here](example-bashrc.md).
 
 ### Wizard
 #### Wizard for JIRA integration
@@ -82,6 +88,10 @@ It will update file `~/.commithook/commithook.xml`.
 
 _**NOTE:** You may set this up per project. Just use `--project-self` instead `--global`._
 
+### Install GIT hook files
+```
+$ commithook install
+```
 
 ### PHPCodeSniffer integration
 _**NOTE:** all files within directories `.commithook` and `.coding-standards` should be shared with your team. So just add those into VCS._
@@ -91,7 +101,7 @@ Fetch PHPCS package:
 $ composer global require squizlabs/php_codesniffer:~2.0@stable
 ```
 
-Now you need to set up PHPCS. Example with using magento-ecg standards.
+Now you need to set up PHPCS. Example with using `magento-ecg` standards.
 ```shell
 $ mkdir -p .coding-standards/phpcs
 ```
@@ -157,3 +167,5 @@ Ooops! Something wrong in your files.
 ========================== test.php ==========================
 Line: 1:7. (phpcs W) Use of echo language construct is discouraged.
 ```
+
+[Back](../README.md)
