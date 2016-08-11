@@ -64,7 +64,10 @@ abstract class AbstractAdapter
     public function __construct($options = array())
     {
         if (null === self::$vcsAdapter) {
-            $this->initVcsAdapter($options);
+            static::$vcsAdapter = $this->initVcsAdapter($options);
+
+            //change current directory
+            $this->cdToVcsDir();
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
@@ -103,8 +106,8 @@ abstract class AbstractAdapter
         foreach ($this->getErrors() as $file => $fileErrors) {
             $decorLength = 30 - strlen($file) / 2;
             $decorLength = $decorLength > 2 ? $decorLength : 3; //minimal decor line "==="
-            $start       = str_repeat('=', round($decorLength - 0.1));
-            $end         = str_repeat('=', round($decorLength));
+            $start = str_repeat('=', round($decorLength - 0.1));
+            $end = str_repeat('=', round($decorLength));
             $output .= $start." $file ".$end.PHP_EOL;
             foreach ($fileErrors as $errorsType) {
                 foreach ($errorsType as $error) {
@@ -160,35 +163,51 @@ abstract class AbstractAdapter
     }
 
     /**
+     * Init VCS from string
+     *
+     * @param array|string $options
+     * @return AbstractAdapter
+     */
+    protected function initVcsFromString($options)
+    {
+        if (strpos($options, '\\') || strpos($options, '_')) {
+            $class = $options;
+        } else {
+            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
+        }
+
+        return new $class($options);
+    }
+
+    /**
      * Init VCS adapter
      *
      * @param string|AdapterInterface|array $options
      * @return mixed AdapterInterface
      * @throws Exception
      */
-    protected static function initVcsAdapter($options)
+    protected function initVcsAdapter($options)
     {
         if (is_string($options)) {
-            self::initVcsFromString($options);
+            $vcsAdapter = $this->initVcsFromString($options);
         } elseif (isset($options['vcs']) && is_string($options['vcs'])) {
-            self::initVcsFromString($options['vcs']);
+            $vcsAdapter = $this->initVcsFromString($options['vcs']);
         } elseif (isset($options['vcs']) && is_object($options['vcs'])
             && $options['vcs'] instanceof AdapterInterface
             || is_object($options) && $options instanceof AdapterInterface
         ) {
-            static::$vcsAdapter = $options;
+            $vcsAdapter = isset($options['vcs']) ? $options['vcs'] : $options;
         } else {
             throw new Exception('VCS adapter is not set.');
         }
 
-        //change current directory
-        self::cdToVcsDir();
-
         //set custom affected files
-        static::$vcsAdapter->setAffectedFiles(
+        $vcsAdapter->setAffectedFiles(
             isset($options['vcsFiles'])
                 ? $options['vcsFiles'] : null
         );
+
+        return $vcsAdapter;
     }
 
     /**
@@ -202,21 +221,6 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Init VCS from string
-     *
-     * @param array|string $options
-     */
-    protected static function initVcsFromString($options)
-    {
-        if (strpos($options, '\\') || strpos($options, '_')) {
-            $class = $options;
-        } else {
-            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
-        }
-        static::$vcsAdapter = new $class($options);
-    }
-
-    /**
      * Load validator
      *
      * @param string $name
@@ -226,8 +230,8 @@ abstract class AbstractAdapter
     protected function loadValidator($name, array $options = array())
     {
         if (empty($this->validators[$name])) {
-            $class                   = '\\PreCommit\\Validator\\'.str_replace('-', '\\', $name);
-            $options                 = array_merge($this->getValidatorDefaultOptions(), $options);
+            $class = '\\PreCommit\\Validator\\'.str_replace('-', '\\', $name);
+            $options = array_merge($this->getValidatorDefaultOptions(), $options);
             $this->validators[$name] = new $class($options);
         }
 
@@ -256,7 +260,7 @@ abstract class AbstractAdapter
     protected function loadFilter($name, array $options = array())
     {
         if (empty($this->filters[$name])) {
-            $class                = '\\PreCommit\\Filter\\'.str_replace('-', '\\', $name);
+            $class = '\\PreCommit\\Filter\\'.str_replace('-', '\\', $name);
             $this->filters[$name] = new $class($options);
         }
 
@@ -268,8 +272,8 @@ abstract class AbstractAdapter
      *
      * @return bool
      */
-    protected static function cdToVcsDir()
+    protected function cdToVcsDir()
     {
-        return chdir(static::$vcsAdapter->getCodePath());
+        return chdir(self::$vcsAdapter->getCodePath());
     }
 }

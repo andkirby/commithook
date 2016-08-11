@@ -46,6 +46,10 @@ class Processor
      */
     protected static function getAdapterClassName($adapter)
     {
+        if (false !== strpos($adapter, '\\')) {
+            return $adapter;
+        }
+
         $adapter = explode('-', $adapter);
         foreach ($adapter as &$part) {
             $part = ucfirst($part);

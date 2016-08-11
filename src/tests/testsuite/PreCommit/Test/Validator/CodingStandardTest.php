@@ -34,14 +34,14 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
     static public function setUpBeforeClass()
     {
         //init config object
-        Config::initInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        Config::initInstance(array('file' => PROJECT_ROOT.'/config/root.xml'));
         Config::setSrcRootDir(PROJECT_ROOT);
         Config::mergeExtraConfig();
 
-        $vcsAdapter = self::_getVcsAdapterMock();
+        $vcsAdapter = self::getVcsAdapterMock();
 
         /** @var Processor\PreCommit $processor */
-        $processor = Processor::factory('pre-commit', $vcsAdapter);
+        $processor = Processor::factory('pre-commit', array('vcs' => $vcsAdapter));
         $processor->setCodePath(PROJECT_ROOT)
             ->setFiles(array(self::$_classTest));
         $processor->process();
@@ -53,52 +53,18 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      *
      * @return object
      */
-    protected static function _getVcsAdapterMock()
+    protected static function getVcsAdapterMock()
     {
         $generator = new \PHPUnit_Framework_MockObject_Generator();
         $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects(self::once())
             ->method('getAffectedFiles')
             ->will(self::returnValue(array()));
+        $vcsAdapter->expects(self::once())
+            ->method('setAffectedFiles')
+            ->will(self::returnSelf());
+
         return $vcsAdapter;
-    }
-
-    /**
-     * Get specific errors list
-     *
-     * @param string $file
-     * @param string $code
-     * @param bool $returnLines
-     * @param object $model
-     * @return array
-     * @throws \PHPUnit_Framework_Exception
-     */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
-    {
-        if (!$model) {
-            $model = self::$_model;
-        }
-        $errors = $model->getErrors();
-        if (!isset($errors[$file])) {
-            throw new \PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
-        }
-        $errors = $errors[$file];
-
-        $this->assertArrayHasKey($code, $errors);
-        if (!isset($errors[$code])) {
-            throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
-        }
-
-        $list = array();
-        $key = $returnLines ? 'line' : 'value';
-        foreach ($errors[$code] as $item) {
-            if ($key == 'value' && isset($item['line'])) {
-                $list[$item['line']] = $item[$key];
-            } else {
-                $list[] = $item[$key];
-            }
-        }
-        return $list;
     }
 
     /**
@@ -112,7 +78,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
         );
 
         //TODO implement group comment validation
-        $expected = array (
+        $expected = array(
             '$a =1;',
             '$a= 1;',
             '$a=1;',
@@ -167,8 +133,8 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_CONDITION_ASSIGNMENT
         );
-        $expected = array (
-            'if ($a = rand()) {'
+        $expected = array(
+            'if ($a = rand()) {',
         );
         $this->assertEquals($expected, array_values($errors));
     }
@@ -182,7 +148,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_REDUNDANT_SPACES
         );
-        $expected = array (
+        $expected = array(
             'public function test2Do( $param ) {',
             "print_r('test',  true);",
             "print_r('test' , true);",
@@ -208,7 +174,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
         );
-        $expected = array ('78');
+        $expected = array('78');
         $this->assertEquals($expected, $errors);
     }
 
@@ -221,7 +187,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_SPACE_BRACKET
         );
-        $expected = array (
+        $expected = array(
             'catch (Exception $e) {',
             '} catch (Exception $e) {$i = 1;}',
             'try { $i = 1; } catch (Exception $e) {$i = 1;}',
@@ -267,7 +233,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID
         );
-        $expected = array (
+        $expected = array(
             'public function _publicFunc()',
             'public function PublicFunc()',
         );
@@ -276,7 +242,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID
         );
-        $expected = array (
+        $expected = array(
             'protected function protectedFunc()',
             'private function privateFunc()',
         );
@@ -286,7 +252,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             self::$_classTest,
             CodingStandard::CODE_PHP_METHOD_SCOPE
         );
-        $expected = array (
+        $expected = array(
             'static function staticFunc()',
             'function func()',
         );
@@ -323,7 +289,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
     public function testSkipPublicMethodNaming()
     {
         $this->markTestIncomplete();
-        $vcsAdapter = self::_getVcsAdapterMock();
+        $vcsAdapter = self::getVcsAdapterMock();
 
         /** @var Processor\PreCommit $processor */
         $processor = Processor::factory('pre-commit', $vcsAdapter);
@@ -379,12 +345,12 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testSplitContentComplex()
     {
-        $content = file_get_contents(__DIR__ . '/../_fixture/TestClassSplit.php');
+        $content = file_get_contents(__DIR__.'/../_fixture/TestClassSplit.php');
         $options['errorCollector'] = new ErrorCollector();
         $validator = new CodingStandard($options);
         $parsed = $validator->splitContent($content);
 
-        $expected = array (
+        $expected = array(
             '<?php',
             '',
             'class Some_testClass2',
@@ -429,5 +395,44 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             '',
         );
         $this->assertEquals($expected, array_values($parsed));
+    }
+
+    /**
+     * Get specific errors list
+     *
+     * @param string $file
+     * @param string $code
+     * @param bool   $returnLines
+     * @param object $model
+     * @return array
+     * @throws \PHPUnit_Framework_Exception
+     */
+    protected function _getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
+    {
+        if (!$model) {
+            $model = self::$_model;
+        }
+        $errors = $model->getErrors();
+        if (!isset($errors[$file])) {
+            throw new \PHPUnit_Framework_Exception('Errors for file '.self::$_classTest.' not found.');
+        }
+        $errors = $errors[$file];
+
+        $this->assertArrayHasKey($code, $errors);
+        if (!isset($errors[$code])) {
+            throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
+        }
+
+        $list = array();
+        $key = $returnLines ? 'line' : 'value';
+        foreach ($errors[$code] as $item) {
+            if ($key == 'value' && isset($item['line'])) {
+                $list[$item['line']] = $item[$key];
+            } else {
+                $list[] = $item[$key];
+            }
+        }
+
+        return $list;
     }
 }
