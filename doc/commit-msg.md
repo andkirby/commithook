@@ -1,4 +1,4 @@
-[Back](README.md)
+[Back](../README.md)
 ### Commit Message Validation
 Default commit message format is:
 ```
