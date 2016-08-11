@@ -2,11 +2,10 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command\Config;
+namespace PreCommit\Console\Command\Config;
 
-use PreCommit\Command\Command\AbstractCommand;
-use PreCommit\Command\Command\Helper;
 use PreCommit\Command\Exception;
+use PreCommit\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * CommitHooks command disable code validation for the next commit
  *
- * @package PreCommit\Command\Command\Config
+ * @package PreCommit\Console\Command\Config
  */
 class IgnoreCommit extends Set
 {

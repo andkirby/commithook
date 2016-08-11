@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command;
+namespace PreCommit\Console\Command;
 
 use PreCommit\Command\Exception;
 use PreCommit\Config;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 /**
  * Base command abstract class
  *
- * @package PreCommit\Command\Command
+ * @package PreCommit\Console\Command
  */
 abstract class AbstractCommand extends ConsoleAbstractCommand
 {

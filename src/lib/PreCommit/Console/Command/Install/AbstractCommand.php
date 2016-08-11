@@ -2,10 +2,10 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command\Install;
+namespace PreCommit\Console\Command\Install;
 
-use PreCommit\Command\Command;
 use PreCommit\Command\Exception;
+use PreCommit\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Base "install" command abstract class
  *
- * @package PreCommit\Command\Command
+ * @package PreCommit\Console\Command
  */
 abstract class AbstractCommand extends Command\AbstractCommand
 {

@@ -2,10 +2,10 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command;
+namespace PreCommit\Console\Command;
 
-use PreCommit\Command\Command\Helper\ClearCacheHelper;
 use PreCommit\Command\Exception;
+use PreCommit\Console\Command\Helper\ClearCacheHelper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

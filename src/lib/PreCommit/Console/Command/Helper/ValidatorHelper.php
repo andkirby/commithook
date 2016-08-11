@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command\Helper;
+namespace PreCommit\Console\Command\Helper;
 
 use PreCommit\Config as AppConfig;
 use Symfony\Component\Console\Helper\Helper;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\Helper;
 /**
  * Helper for getting project directory
  *
- * @package PreCommit\Command\Command\Helper
+ * @package PreCommit\Console\Command\Helper
  */
 class ValidatorHelper extends Helper
 {

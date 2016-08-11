@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command\Install;
+namespace PreCommit\Console\Command\Install;
 
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputInterface;

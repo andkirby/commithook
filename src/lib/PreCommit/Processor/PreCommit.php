@@ -4,12 +4,12 @@
  */
 namespace PreCommit\Processor;
 
-use PreCommit\Command\Command\Config\IgnoreCommit;
-use PreCommit\Command\Command\Config\Set;
-use PreCommit\Command\Command\Helper\ClearCacheHelper;
-use PreCommit\Command\Command\Helper\Config\WriterHelper;
-use PreCommit\Command\Command\Helper\ConfigHelper;
 use PreCommit\Config as Config;
+use PreCommit\Console\Command\Config\IgnoreCommit;
+use PreCommit\Console\Command\Config\Set;
+use PreCommit\Console\Command\Helper\ClearCacheHelper;
+use PreCommit\Console\Command\Helper\Config\WriterHelper;
+use PreCommit\Console\Command\Helper\ConfigHelper;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\FilterInterface;
 use PreCommit\Validator as Validator;

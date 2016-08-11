@@ -2,11 +2,11 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command\Validator;
+namespace PreCommit\Console\Command\Validator;
 
-use PreCommit\Command\Command\AbstractCommand;
-use PreCommit\Command\Command\Config\Set;
 use PreCommit\Command\Exception;
+use PreCommit\Console\Command\AbstractCommand;
+use PreCommit\Console\Command\Config\Set;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * CommitHooks command disable code validation for the next commit
  *
- * @package PreCommit\Command\Command\Config
+ * @package PreCommit\Console\Command\Config
  */
 class Disable extends Set
 {

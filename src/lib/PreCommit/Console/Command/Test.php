@@ -2,7 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Command\Command;
+namespace PreCommit\Console\Command;
 
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,6 +21,37 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class Test extends AbstractCommand
 {
+    /**
+     * Execute command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws Exception
+     */
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+        !defined('TEST_MODE') && define('TEST_MODE', true);
+
+        $customFiles = $this->getCustomTestFiles($input, $output);
+
+        /**
+         * Define $vcsFiles for runner.php
+         *
+         * @see src/runner.php:87
+         * @var array|null $vcsFiles
+         */
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $vcsFiles = $customFiles ?: null;
+
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $hookFile = $this->askProjectDir($input, $output).'/.git/hooks/pre-commit';
+        require_once __DIR__.'/../../../../runner.php';
+
+        return 0;
+    }
+
     /**
      * Init default helpers
      *
@@ -55,37 +86,6 @@ class Test extends AbstractCommand
         );
 
         return $this;
-    }
-
-    /**
-     * Execute command
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int
-     * @throws Exception
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::execute($input, $output);
-        !defined('TEST_MODE') && define('TEST_MODE', true);
-
-        $customFiles = $this->getCustomTestFiles($input, $output);
-
-        /**
-         * Define $vcsFiles for runner.php
-         *
-         * @see src/runner.php:87
-         * @var array|null $vcsFiles
-         */
-        /** @noinspection PhpUnusedLocalVariableInspection */
-        $vcsFiles = $customFiles ?: null;
-
-        /** @noinspection PhpUnusedLocalVariableInspection */
-        $hookFile = $this->askProjectDir($input, $output).'/.git/hooks/pre-commit';
-        require_once __DIR__.'/../../../../runner.php';
-
-        return 0;
     }
 
     /**
