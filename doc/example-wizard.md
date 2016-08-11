@@ -1,12 +1,6 @@
 [Back](../README.md)
 
-# Wizard configuration example
-
-If you haven't install commithook please follow to [the composer install documentation](composer-installation.md).
-
-### Define environment commands
-Perhaps you may find useful example of `~/.bashrc` file.
-It's [here](example-bashrc.md).
+# Wizard project configuration example
 
 ### Wizard
 #### Wizard for JIRA integration
@@ -80,6 +74,10 @@ $ cat ~/.commithook/commithook.xml
     </tracker>
 </config>
 ```
+To reset your password you may wizard again or use command:
+```
+$ commithook config --global --tracker jira password pass123
+```
 
 #### Define path to PHP interpreter
 Default path: `c:/xampp/php/php.exe`
@@ -94,6 +92,7 @@ _**NOTE:** You may set this up per project. Just use `--project-self` instead `-
 ```
 $ commithook install
 ```
+[Here](hooks-installation.md) full documentation.
 
 ### PHPCodeSniffer integration
 _**NOTE:** all files within directories `.commithook` and `.coding-standards` should be shared with your team. So just add those into VCS._
