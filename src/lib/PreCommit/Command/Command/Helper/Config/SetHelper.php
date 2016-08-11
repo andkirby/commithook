@@ -11,7 +11,7 @@ use Symfony\Component\Console\Helper\Helper;
  *
  * @package PreCommit\Command\Command\Helper
  */
-class Set extends Helper
+class SetHelper extends Helper
 {
     /**
      * Helper name

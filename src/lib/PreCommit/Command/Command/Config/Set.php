@@ -36,8 +36,8 @@ class Set extends AbstractCommand
      * project:      PROJECT_DIR/commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
-    const OPTION_SCOPE_GLOBAL       = 'global';
-    const OPTION_SCOPE_PROJECT      = 'project';
+    const OPTION_SCOPE_GLOBAL = 'global';
+    const OPTION_SCOPE_PROJECT = 'project';
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
     /**#@-*/
 
@@ -163,10 +163,10 @@ class Set extends AbstractCommand
     public function setApplication(Application $application = null)
     {
         parent::setApplication($application);
-        $this->getHelperSet()->set(new Helper\Config());
-        $this->getHelperSet()->set(new Helper\Config\Set());
-        $this->getHelperSet()->set(new Helper\Config\Writer());
-        $this->getHelperSet()->set(new Helper\ClearCache());
+        $this->getHelperSet()->set(new Helper\ConfigHelper());
+        $this->getHelperSet()->set(new Helper\Config\SetHelper());
+        $this->getHelperSet()->set(new Helper\Config\WriterHelper());
+        $this->getHelperSet()->set(new Helper\ClearCacheHelper());
     }
 
     /**
@@ -179,7 +179,7 @@ class Set extends AbstractCommand
         $this->output->writeln('Set up issue tracker connection.');
 
         //type
-        $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
+        $options = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
         $this->trackerType = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 'Tracker type',
@@ -245,7 +245,7 @@ class Set extends AbstractCommand
     /**
      * Write predefined options
      *
-     * @param bool            $readAll
+     * @param bool $readAll
      * @throws Exception
      */
     protected function writePredefinedOptions($readAll = false)
@@ -376,8 +376,8 @@ class Set extends AbstractCommand
     /**
      * Get XML path input options
      *
-     * @param string          $xpath
-     * @param Question|null   $question
+     * @param string        $xpath
+     * @param Question|null $question
      * @return array
      */
     protected function getScope($xpath, $question = null)
@@ -488,7 +488,7 @@ class Set extends AbstractCommand
     /**
      * Get value
      *
-     * @param string          $xpath
+     * @param string $xpath
      * @return string
      */
     protected function fetchValue($xpath)
@@ -567,21 +567,22 @@ class Set extends AbstractCommand
     /**
      * Get config helper
      *
-     * @return Helper\Config
+     * @return Helper\ConfigHelper
      */
     protected function getConfigHelper()
     {
-        return $this->getHelperSet()->get(Helper\Config::NAME);
+        return $this->getHelperSet()->get('commithook_config');
     }
 
     /**
      * Get config file related to scope
      *
-     * @param string $scope
+     * @param string      $scope
+     * @param string|null $name
      * @return null|string
      * @throws \PreCommit\Exception
      */
-    protected function getConfigFile($scope)
+    protected function getConfigFile($scope, $name = null)
     {
         if (self::OPTION_SCOPE_GLOBAL == $scope) {
             return $this->getConfig()->getConfigFile('userprofile');

@@ -14,6 +14,9 @@ namespace PHPSTORM_META {
             'debug_formatter' instanceof \Symfony\Component\Console\Helper\DebugFormatterHelper,
             'descriptor' instanceof \Symfony\Component\Console\Helper\DescriptorHelper,
             'code_validator' instanceof \PreCommit\Command\Command\Helper\ValidatorHelper,
+            'commithook_config' instanceof \PreCommit\Command\Command\Helper\ConfigHelper,
+            'commithook_config_set' instanceof \PreCommit\Command\Command\Helper\Config\SetHelper,
+            'commithook_config_writer' instanceof \PreCommit\Command\Command\Helper\Config\WriterHelper,
         ],
     ];
 }

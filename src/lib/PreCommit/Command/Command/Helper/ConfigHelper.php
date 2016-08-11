@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @package PreCommit\Command\Command\Helper
  */
-class Config extends Helper
+class ConfigHelper extends Helper
 {
     /**
      * Helper name
@@ -25,7 +25,7 @@ class Config extends Helper
     /**
      * Writer
      *
-     * @var Config\Writer
+     * @var Config\WriterHelper
      */
     protected $writer;
 
@@ -110,8 +110,8 @@ class Config extends Helper
      */
     public function clearCache()
     {
-        /** @var ClearCache $cleaner */
-        $cleaner = $this->getHelperSet()->get(ClearCache::NAME);
+        /** @var ClearCacheHelper $cleaner */
+        $cleaner = $this->getHelperSet()->get(ClearCacheHelper::NAME);
         $cleaner->clearConfigCache();
 
         return $this;
@@ -131,19 +131,6 @@ class Config extends Helper
             $config,
             $this->getXmlUpdate($xpath, $value)
         );
-
-        return $this;
-    }
-
-    /**
-     * Set writer
-     *
-     * @param Config\Writer $writer
-     * @return $this
-     */
-    public function setWriter(Config\Writer $writer)
-    {
-        $this->writer = $writer;
 
         return $this;
     }
@@ -194,15 +181,28 @@ class Config extends Helper
     /**
      * Get config writer
      *
-     * @return Config\Writer
+     * @return Config\WriterHelper
      */
     protected function getWriter()
     {
         if ($this->writer === null) {
-            $this->writer = $this->getHelperSet()->get(Config\Writer::NAME);
+            $this->writer = $this->getHelperSet()->get(Config\WriterHelper::NAME);
         }
 
         return $this->writer;
+    }
+
+    /**
+     * Set writer
+     *
+     * @param Config\WriterHelper $writer
+     * @return $this
+     */
+    public function setWriter(Config\WriterHelper $writer)
+    {
+        $this->writer = $writer;
+
+        return $this;
     }
 
     /**

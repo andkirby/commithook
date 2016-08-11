@@ -6,8 +6,9 @@ namespace PreCommit\Processor;
 
 use PreCommit\Command\Command\Config\IgnoreCommit;
 use PreCommit\Command\Command\Config\Set;
-use PreCommit\Command\Command\Helper\ClearCache;
-use PreCommit\Command\Command\Helper\Config as ConfigHelper;
+use PreCommit\Command\Command\Helper\ClearCacheHelper;
+use PreCommit\Command\Command\Helper\Config\WriterHelper;
+use PreCommit\Command\Command\Helper\ConfigHelper;
 use PreCommit\Config as Config;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\FilterInterface;
@@ -392,10 +393,10 @@ class PreCommit extends AbstractAdapter
      */
     protected function initHelperSet()
     {
-        $this->getHelperSet()->set(new ClearCache());
+        $this->getHelperSet()->set(new ClearCacheHelper());
 
         $helper = new ConfigHelper();
-        $helper->setWriter(new ConfigHelper\Writer());
+        $helper->setWriter(new WriterHelper());
         $this->getHelperSet()->set($helper);
 
         return $this;

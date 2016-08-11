@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Command\Command;
 
-use PreCommit\Command\Command\Helper\ClearCache as ClearCacheHelper;
+use PreCommit\Command\Command\Helper\ClearCacheHelper;
 use PreCommit\Command\Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;

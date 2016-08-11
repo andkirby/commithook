@@ -16,7 +16,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @package PreCommit\Command\Command\Helper
  */
-class ClearCache extends Helper
+class ClearCacheHelper extends Helper
 {
     /**
      * Helper name

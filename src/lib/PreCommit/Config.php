@@ -4,7 +4,7 @@
  */
 namespace PreCommit;
 
-use PreCommit\Command\Command\Helper\Config as ConfigHelper;
+use PreCommit\Command\Command\Helper\ConfigHelper as ConfigHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;

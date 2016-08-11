@@ -13,7 +13,7 @@ use Symfony\Component\Console\Helper\Helper;
  *
  * @package PreCommit\Command\Command\Helper
  */
-class Writer extends Helper
+class WriterHelper extends Helper
 {
     /**
      * Helper name
