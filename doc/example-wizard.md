@@ -86,6 +86,11 @@ _**NOTE:** You may set this up per project. Just use `--project-self` instead `-
 ### PHPCodeSniffer integration
 _**NOTE:** all files within directories `.commithook` and `.coding-standards` should be shared with your team. So just add those into VCS._
 
+Fetch PHPCS package:
+```
+$ composer global require squizlabs/php_codesniffer:~2.0@stable
+```
+
 Now you need to set up PHPCS. Example with using magento-ecg standards.
 ```shell
 $ mkdir -p .coding-standards/phpcs
