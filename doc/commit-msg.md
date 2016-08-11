@@ -28,11 +28,10 @@ So, if you want to be ~~lazy~~ productive... :)
 If you tired of copy-pasting issue key and summary that there is good news.
 If you'd like to speed up of writing commit-verb that there is good news.
 
-First option.
-You may write it shortly:
+###### Option #1
+You may write it shortly with using JIRA project key:
 ```
-F PRJNM-256
- - Added missed email validator.
+F PRJNM-256 Added missed email validator.
 ```
 The system will connect to JIRA and get an issue summary. Also it will recognize the commit-verb.
 There are following short-names:
@@ -41,21 +40,9 @@ There are following short-names:
 - `R` for `Refactored`
 - `C` for `CR Changes`
 
-Actually, you can be more ~~lazy~~ productive and avoid using project. Usually it's the one for all commits.
-Please put following config into `PROJECT_DIR/commithook.xml` and commit this file to share it with your team if haven't done this yet.
 
-**Config to set default JIRA project**
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-    <jira>
-        <project>PRJNM</project>
-    </jira>
-</config>
-```
-Of course it will used only when commit message will contain the issue number without project key.
-
-Still complexly? :) Commit message can be more simpler.
+###### Option #2
+And JIRA project key can be omitted.
 
 Second option. Omit project key.
 ```
@@ -64,15 +51,32 @@ F 256
 ```
 In this case the system will find a project key and set it (it should be set in this case).
 
-Third option. Omit verb.
+###### Option #3
+You may omit verbs `F` and `I`. It will be identified by issue type. 
 ```
-256
- - Added missed email validator.
+256 Added missed email validator.
+```
+or verb `R` for refactoring (`C` - for `CR Changes`)
+```
+R 256 Reformatted code
+```
+or for list
+```
+256 Added missed email validator.
+ - Reformatted code
 ```
 In this case the system will take default verb by issue type. For bug - `Fixed`
 and for tasks - `Implemented`. Of course if you're making refactoring
 or applying code review you have to set related verb.
 
+###### Option #4
+Also, you may declare "active task" by similar command:
+```shell
+$ commithook config task 256
+```
+The value can be checked w/o last argument.
+
+##### JIRA issue type configuration map
 There is predefined configuration:
 ```xml
 <?xml version="1.0"?>
@@ -100,12 +104,12 @@ There is predefined configuration:
     ...
 </config>
 ```
+You extend it with adding new nodes by adding new config node. E.g. we need to map `NEW_TYPE` to type `task`.
+```
+$ commithook config --xpath hooks/commit-msg/message/issue/type/tracker/jira/default/NEW_TYPE task
+```
 
-Please do not forget check issue numbers always!! It's just to be more ~~lazy~~ productive! ;D
-
-###### Caching
-Information about JIRA issues cached in file `HOME/.commithook/cache/issues-prjnm-v0` where
-- `prjnm` is your JIRA project key,
-- `v0` version of cache schema.
+#### Be aware about numbers. :)
+Please always keep an eye on issue numbers. That's all just to be more ~~lazy~~ productive! ;D
 
 [Back](../README.md)
