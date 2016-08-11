@@ -9,7 +9,7 @@ Travis Continuous Integration status.
 ```shell
 $ composer global require andkirby/commithook
 ```
-## Main setup documentation stack  
+## Main documentation  
 - [GIT integration: hook files installation](doc/hooks-installation.md)
 - [Configuration Wizard](doc/example-wizard.md)
 - [Commit message format](doc/commit-msg.md)
