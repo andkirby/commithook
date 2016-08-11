@@ -5,15 +5,13 @@
 ### Wizard
 #### Wizard for JIRA integration
 ```shell
-u.sername@HOST MINGW64 MINGW64 /d/home/prj1
 $ mkdir /d/home/prj1
+
 $ cd /d/home/prj1
 
-u.sername@HOST MINGW64 MINGW64 /d/home/prj1
 $ git init
 Initialized empty Git repository in D:/home/1/.git/
 
-u.sername@HOST MINGW64 /d/home/prj1 (master)
 $ commithook config wizard
 Set up issue tracker connection.
 
@@ -49,7 +47,6 @@ Enjoy!
 ```
 Let's check generated files.
 ```
-u.sername@HOST MINGW64 /d/home/prj1 (master)
 $ cat commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -60,7 +57,6 @@ $ cat commithook.xml
     </tracker>
 </config>
 
-u.sername@HOST MINGW64 /d/home/prj1 (master)
 $ cat ~/.commithook/commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
