@@ -2,14 +2,14 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Console\Command\Helper\Config;
+namespace PreCommit\Console\Helper\Config;
 
 use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Helper for writing config
  *
- * @package PreCommit\Console\Command\Helper
+ * @package PreCommit\Console\Helper
  */
 class SetHelper extends Helper
 {

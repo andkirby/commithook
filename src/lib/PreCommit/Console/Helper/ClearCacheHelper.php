@@ -3,7 +3,7 @@
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
 
-namespace PreCommit\Console\Command\Helper;
+namespace PreCommit\Console\Helper;
 
 use PreCommit\Config as ConfigInstance;
 use PreCommit\Exception;
@@ -14,7 +14,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * Helper for writing config
  *
- * @package PreCommit\Console\Command\Helper
+ * @package PreCommit\Console\Helper
  */
 class ClearCacheHelper extends Helper
 {

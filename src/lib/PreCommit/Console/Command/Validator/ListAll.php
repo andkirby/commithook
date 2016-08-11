@@ -7,7 +7,7 @@ namespace PreCommit\Console\Command\Validator;
 use PreCommit\Command\Exception;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
-use PreCommit\Console\Command\Helper\ValidatorHelper;
+use PreCommit\Console\Helper\ValidatorHelper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;

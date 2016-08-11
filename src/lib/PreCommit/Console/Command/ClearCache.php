@@ -5,7 +5,7 @@
 namespace PreCommit\Console\Command;
 
 use PreCommit\Command\Exception;
-use PreCommit\Console\Command\Helper\ClearCacheHelper;
+use PreCommit\Console\Helper\ClearCacheHelper;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
