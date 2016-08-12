@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "95fa3d1ecba23d20cc01f3433654be1d",
-    "content-hash": "919b503322ba29b65d4fdf6dd6272460",
+    "hash": "47127f8ff0fadbcccfe30676a11b83b9",
+    "content-hash": "89f2cbe485a561811a00546208e840c3",
     "packages": [
         {
             "name": "andkirby/console-helper",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/andkirby/console-helper.git",
-                "reference": "e44f390e0856ef7b4646d88ff0ac98cc82b63111"
+                "reference": "6b3c244eb145699eca802a566da279a197af40f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/e44f390e0856ef7b4646d88ff0ac98cc82b63111",
-                "reference": "e44f390e0856ef7b4646d88ff0ac98cc82b63111",
+                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/6b3c244eb145699eca802a566da279a197af40f1",
+                "reference": "6b3c244eb145699eca802a566da279a197af40f1",
                 "shasum": ""
             },
             "require": {
@@ -38,7 +38,7 @@
                 "GPL-3.0"
             ],
             "description": "Symfony console helpers.",
-            "time": "2016-08-05 15:19:54"
+            "time": "2016-08-08 07:59:30"
         },
         {
             "name": "chobie/jira-api-restclient",
@@ -2007,28 +2007,29 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "30eed06dd6bc88410a4ff7f77b6d22f3ce13dbde"
+                "reference": "bb2d123231c095735130cc8f6d31385a44c7b308"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/30eed06dd6bc88410a4ff7f77b6d22f3ce13dbde",
-                "reference": "30eed06dd6bc88410a4ff7f77b6d22f3ce13dbde",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/bb2d123231c095735130cc8f6d31385a44c7b308",
+                "reference": "bb2d123231c095735130cc8f6d31385a44c7b308",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^5.3.3|^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.6"
+                "phpunit/phpunit": "^4.6",
+                "sebastian/version": "^1.0.1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.2-dev"
                 }
             },
             "autoload": {
@@ -2052,11 +2053,11 @@
                 "check",
                 "validate"
             ],
-            "time": "2015-08-24 13:29:44"
+            "time": "2016-08-09 15:02:57"
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "andkirby/console-helper": 0,
         "symfony/console": 0,
@@ -2064,7 +2065,11 @@
         "symfony/finder": 0,
         "chobie/jira-api-restclient": 20,
         "zendframework/zend-cache": 0,
-        "phpunit/phpunit": 0
+        "knplabs/github-api": 0,
+        "phpunit/phpunit": 0,
+        "squizlabs/php_codesniffer": 0,
+        "escapestudios/symfony2-coding-standard": 0,
+        "symfony/process": 0
     },
     "prefer-stable": true,
     "prefer-lowest": false,

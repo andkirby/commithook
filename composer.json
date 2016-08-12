@@ -1,7 +1,8 @@
 {
   "name": "andkirby/commithook",
   "description": "PHP Commit Hooks",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
   "license": "GPL-3.0",
   "authors": [
     {
@@ -9,14 +10,13 @@
       "email": "bizkirby@gmail.com"
     }
   ],
-  "prefer-stable": true,
   "require": {
     "php": ">=5.5",
     "andkirby/console-helper": "~0.4@stable",
     "symfony/console": "~3.0@stable",
     "symfony/filesystem": "~2.5@stable",
     "symfony/finder": "~2.5@stable",
-    "chobie/jira-api-restclient": "2.0.x-dev",
+    "chobie/jira-api-restclient": "~2.0@dev",
     "zendframework/zend-cache": "~2.5@stable",
     "knplabs/github-api": "~1.4@stable"
   },
