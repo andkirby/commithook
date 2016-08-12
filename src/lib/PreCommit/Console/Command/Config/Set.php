@@ -620,21 +620,6 @@ Tracker:
         Password for issue tracker authorization.
     project
         Project key in selected issue tracker.
-Files:
-    exclude-extension, skip-ext
-        Ignore validation for selected files with extension.
-    exclude-path, skip-path
-        Ignore validation for files by path.
-    exclude-file, skip-file
-        Ignore validation for file.
-    protect-path
-        Protect path for committing.
-    protect-file
-        Protect file for committing.
-    allow-path
-        Allow path for committing.
-    allow-file
-        Allow file for committing.
 HELP;
         //@finishSkipCommitHooks
 
