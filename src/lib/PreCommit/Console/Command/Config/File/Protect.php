@@ -95,7 +95,7 @@ class Protect extends Set
      */
     protected function configureCommand()
     {
-        $this->setName('config:protect');
+        $this->setName('files:protect');
 
         $help = 'This command can define path to prohibit committing changes.';
 

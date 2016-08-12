@@ -97,7 +97,7 @@ class Allow extends Set
      */
     protected function configureCommand()
     {
-        $this->setName('config:allow');
+        $this->setName('files:allow');
 
         $help = 'This command can define path to allow committing changes. It can as an extra layer over a protect path.';
 

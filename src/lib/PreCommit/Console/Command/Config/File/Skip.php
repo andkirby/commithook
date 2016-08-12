@@ -101,7 +101,7 @@ class Skip extends Set
      */
     protected function configureCommand()
     {
-        $this->setName('config:skip');
+        $this->setName('files:skip');
 
         $help = 'Skip validation for a path.';
 
