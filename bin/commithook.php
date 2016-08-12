@@ -17,6 +17,7 @@ $app->add(new Config\Set($root));
 $app->add(new Config\IgnoreCommit($root));
 $app->add(new Config\Task($root));
 $app->add(new Config\File\Skip($root));
+$app->add(new Config\File\Protect($root));
 $app->add(new Test($root));
 $app->add(new ClearCache($root));
 $app->add(new Validator\Disable($root));
