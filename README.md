@@ -8,6 +8,16 @@ Travis Continuous Integration status.
 
 #### Latest release: `v2.0.0-beta.18`
 
+### Install last version
+
+Due to reason the package requires one package which is not stable, please use this configuration for your composer.json:
+```
+{
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
+```
+Now install the package.
 ```shell
 $ composer global require andkirby/commithook:~2.0@beta
 ```
@@ -15,6 +25,7 @@ $ composer global require andkirby/commithook:~2.0@beta
 - [GIT integration: hook files installation](doc/hooks-installation.md)
 - [Configuration Wizard](doc/example-wizard.md)
 - [Commit message format](doc/commit-msg.md)
+- [Exclude code validation](doc/exclude-code-validation.md)
 
 ## OS environment
 Tested on Windows in GIT Bash. Feel free [to create](../../issues/new "Add a new issue") your faced issue.
