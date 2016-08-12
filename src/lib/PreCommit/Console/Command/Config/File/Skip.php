@@ -157,4 +157,16 @@ class Skip extends Set
 
         return $this;
     }
+
+    /**
+     * Get default scope
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return int
+     */
+    protected function getDefaultScope($xpath, $type)
+    {
+        return 2;
+    }
 }
