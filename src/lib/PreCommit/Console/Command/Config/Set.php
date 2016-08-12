@@ -739,6 +739,32 @@ HELP;
             $this->output->writeln('    config:task');
             $this->output->writeln('');
         }
+        if ('exclude-extension' == $this->getKey() || 'skip-ext' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    config:skip --ext YOUR_EXTENSION');
+            $this->output->writeln('');
+        }
+        if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
+            || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
+        ) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    config:skip YOUR_PATH');
+            $this->output->writeln('');
+        }
+        if ('protected-path' == $this->getKey() || 'protected-file' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    config:protect YOUR_PATH');
+            $this->output->writeln('');
+        }
+        if ('allow-path' == $this->getKey() || 'allow-file' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    config:allow YOUR_PATH');
+            $this->output->writeln('');
+        }
 
         return $this;
     }
