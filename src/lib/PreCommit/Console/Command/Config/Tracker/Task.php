@@ -2,9 +2,10 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Console\Command\Config;
+namespace PreCommit\Console\Command\Config\Tracker;
 
 use PreCommit\Console\Command\AbstractCommand;
+use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -63,7 +64,7 @@ class Task extends Set
      */
     protected function configureCommand()
     {
-        $this->setName('config:task');
+        $this->setName('tracker:task');
 
         $help = 'This command can set active task key. After setting issue key/number can be omitted.';
 
