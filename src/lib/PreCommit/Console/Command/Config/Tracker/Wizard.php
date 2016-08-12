@@ -29,7 +29,25 @@ class Wizard extends Set
     {
         AbstractCommand::execute($input, $output);
 
-        return $this->processValue();
+        $this->connectionWizard();
+
+        //TODO Fix setting project name for GitHub
+
+        if ($this->updated) {
+            $this->output->writeln('Configuration updated.');
+            $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
+            $this->output->writeln('Enjoy!');
+        }
+
+        return 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getScopeOption()
+    {
+        return null;
     }
 
     /**
