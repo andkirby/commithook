@@ -196,7 +196,7 @@ class Set extends AbstractCommand
         $this->output->writeln('Set up issue tracker connection.');
 
         //type
-        $options = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
+        $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
         $this->trackerType = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 'Tracker type',
@@ -403,32 +403,16 @@ class Set extends AbstractCommand
         if (self::XPATH_TRACKER_TYPE !== $xpath) {
             $type = $this->getTrackerType();
         }
-        $options = $this->scopeOptions;
-        switch ($xpath) {
-            case 'tracker/'.$type.'/active_task':
-                return self::OPTION_SCOPE_PROJECT_SELF;
-                break;
-            case 'tracker/'.$type.'/project':
-                return self::OPTION_SCOPE_PROJECT;
-                break;
 
-            case self::XPATH_TRACKER_TYPE:
-            case 'tracker/'.$type.'/url':
-                $default = 1;
-                break;
+        $default = $this->getDefaultScope($xpath, $type);
 
-            case 'tracker/'.$type.'/username':
-            case 'tracker/'.$type.'/password':
-                $default = 1;
-                unset($options[2]);
-                break;
-
-            default:
-                $default = 3;
-                break;
+        if ($this->isFirmScope($xpath, $type)) {
+            return $default;
         }
 
-        $scope = $this->getScopeOption();
+        $scope   = $this->getScopeOption();
+        $options = $this->getAvailableScopeOptions($xpath, $type);
+
         if ($scope && in_array($scope, $options)) {
             return $scope;
         }
@@ -436,7 +420,7 @@ class Set extends AbstractCommand
         return $this->io->askQuestion(
             $question
                 ?: $this->getSimpleQuestion()
-                ->getQuestion("Set config scope ($xpath)", $default, $options)
+                        ->getQuestion("Set config scope ($xpath)", $default, $options)
         );
     }
 
@@ -683,27 +667,7 @@ HELP;
             'XPath mode. "key" parameter will be considered as a full XML path.'
         );
 
-        /**
-         * Scope options
-         */
-        $this->addOption(
-            'global',
-            '-g',
-            InputOption::VALUE_NONE,
-            'Save config in global configuration file.'
-        );
-        $this->addOption(
-            'project-self',
-            '-s',
-            InputOption::VALUE_NONE,
-            'Save config in project private(!) configuration file. PROJECT_DIR/commithook-self.xml'
-        );
-        $this->addOption(
-            'project',
-            '-P',
-            InputOption::VALUE_NONE,
-            'Save config in project configuration file. PROJECT_DIR/commithook.xml'
-        );
+        $this->setScopeOptions();
 
         foreach ($this->trackerConnectionOptions as $name) {
             $this->addOption(
@@ -777,5 +741,118 @@ HELP;
         }
 
         return $this;
+    }
+
+    /**
+     * Set scope options
+     *
+     * @return $this
+     */
+    protected function setScopeOptions()
+    {
+        /**
+         * Scope options
+         */
+        $this->addOption(
+            'global',
+            '-g',
+            InputOption::VALUE_NONE,
+            'Save config in global configuration file.'
+        );
+        $this->addOption(
+            'project-self',
+            '-s',
+            InputOption::VALUE_NONE,
+            'Save config in project private(!) configuration file. PROJECT_DIR/commithook-self.xml'
+        );
+        $this->addOption(
+            'project',
+            '-P',
+            InputOption::VALUE_NONE,
+            'Save config in project configuration file. PROJECT_DIR/commithook.xml'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Get default scope ID
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return int
+     */
+    protected function getDefaultScope($xpath, $type)
+    {
+        switch ($xpath) {
+            case 'tracker/'.$type.'/active_task':
+                $default = self::OPTION_SCOPE_PROJECT_SELF;
+                break;
+            case 'tracker/'.$type.'/project':
+                $default = self::OPTION_SCOPE_PROJECT;
+                break;
+
+            case self::XPATH_TRACKER_TYPE:
+            case 'tracker/'.$type.'/url':
+                $default = 1;
+                break;
+
+            case 'tracker/'.$type.'/username':
+            case 'tracker/'.$type.'/password':
+                $default = 1;
+                break;
+
+            default:
+                $default = 3;
+                break;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get available scope options
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return array
+     */
+    protected function getAvailableScopeOptions($xpath, $type)
+    {
+        $options = $this->scopeOptions;
+        switch ($xpath) {
+            case 'tracker/'.$type.'/username':
+            case 'tracker/'.$type.'/password':
+                unset($options[2]);
+                break;
+
+            //no default
+        }
+
+        return $options;
+    }
+
+    /**
+     * Check if firm scope
+     *
+     * In this case default scope must be used
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return bool
+     */
+    protected function isFirmScope($xpath, $type)
+    {
+        $firm = false;
+        switch ($xpath) {
+            case 'tracker/'.$type.'/active_task':
+            case 'tracker/'.$type.'/project':
+                $firm = true;
+                break;
+
+            //no default
+        }
+
+        return $firm;
     }
 }
