@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * CommitHooks command disable code validation for the next commit
+ * CommitHooks command for setting "active task"
  *
  * @package PreCommit\Console\Command\Config
  */

@@ -101,6 +101,8 @@ class Set extends AbstractCommand
     {
         parent::execute($input, $output);
 
+        $this->showDeprecationInfo();
+
         $code = 0;
         try {
             if ($this->getKey() === 'wizard') {
@@ -649,9 +651,6 @@ Files:
         Allow path for committing.
     allow-file
         Allow file for committing.
-Issue:
-    task
-        Active task key. After setting issue key/No can be omitted.
 HELP;
         //@finishSkipCommitHooks
 
@@ -756,10 +755,27 @@ HELP;
     /**
      * Get value for config
      *
-     * @return mixed
+     * @return null|string
      */
     protected function getValue()
     {
         return $this->input->getArgument('value');
+    }
+
+    /**
+     * Show notifications about deprecated commands
+     *
+     * @return $this
+     */
+    protected function showDeprecationInfo()
+    {
+        if ('task' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    config:task');
+            $this->output->writeln('');
+        }
+
+        return $this;
     }
 }
