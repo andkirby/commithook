@@ -21,11 +21,11 @@ Now install the package.
 ```shell
 $ composer global require andkirby/commithook:~2.0@beta
 ```
-## Main documentation  
+## Main documentation
 - [GIT integration: hook files installation](doc/hooks-installation.md)
 - [Configuration Wizard](doc/example-wizard.md)
 - [Commit message format](doc/commit-msg.md)
-- [Exclude code validation](doc/exclude-code-validation.md)
+- [Manage code validation/protect code](doc/exclude-code-validation.md)
 
 ## OS environment
 Tested on Windows in GIT Bash. Feel free [to create](../../issues/new "Add a new issue") your faced issue.
