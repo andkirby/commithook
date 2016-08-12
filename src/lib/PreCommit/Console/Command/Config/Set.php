@@ -101,8 +101,9 @@ class Set extends AbstractCommand
     {
         parent::execute($input, $output);
 
+        $code = 0;
         try {
-            if ($this->input->getArgument('key') === 'wizard') {
+            if ($this->getKey() === 'wizard') {
                 /**
                  * Wizard mode
                  */
@@ -113,36 +114,8 @@ class Set extends AbstractCommand
                     $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
                     $this->output->writeln('Enjoy!');
                 }
-            } elseif (!$this->input->getArgument('value') && $this->input->getArgument('key')) {
-                /**
-                 * Reading mode
-                 */
-                $xpath = $this->getArgumentXpath();
-                $this->io->writeln($this->getXpathValue($xpath));
-            } elseif ($this->input->getArgument('key') || $this->isNameXpath()) {
-                /**
-                 * Writing mode
-                 */
-                $this->writePredefinedOptions();
-                $this->writeKeyValueOption();
-
-                if ($this->updated) {
-                    if ($this->isVerbose()) {
-                        $this->output->writeln(
-                            'Configuration updated.'
-                        );
-                    }
-                } else {
-                    if ($this->isVerbose()) {
-                        $this->output->writeln(
-                            'Configuration already defined.'
-                        );
-                    }
-
-                    return self::SHELL_CODE_CONF_DEFINED;
-                }
             } else {
-                $this->io->writeln($this->getProcessedHelp());
+                $code = $this->processValue();
             }
         } catch (Exception $e) {
             if ($this->isDebug()) {
@@ -154,7 +127,7 @@ class Set extends AbstractCommand
             }
         }
 
-        return 0;
+        return $code;
     }
 
     /**
@@ -167,6 +140,48 @@ class Set extends AbstractCommand
         $this->getHelperSet()->set(new Helper\Config\SetHelper());
         $this->getHelperSet()->set(new Helper\Config\WriterHelper());
         $this->getHelperSet()->set(new Helper\ClearCacheHelper());
+    }
+
+    /**
+     * Process pair key-value
+     *
+     * @return int
+     */
+    protected function processValue()
+    {
+        if (!$this->getValue() && $this->getKey()) {
+            /**
+             * Reading mode
+             */
+            $xpath = $this->getArgumentXpath();
+            $this->io->writeln($this->getXpathValue($xpath));
+        } elseif ($this->getKey() || $this->isNameXpath()) {
+            /**
+             * Writing mode
+             */
+            $this->writePredefinedOptions();
+            $this->writeKeyValueOption();
+
+            if ($this->updated) {
+                if ($this->isVerbose()) {
+                    $this->output->writeln(
+                        'Configuration updated.'
+                    );
+                }
+            } else {
+                if ($this->isVerbose()) {
+                    $this->output->writeln(
+                        'Configuration already defined.'
+                    );
+                }
+
+                return self::SHELL_CODE_CONF_DEFINED;
+            }
+        } else {
+            $this->io->writeln($this->getProcessedHelp());
+        }
+
+        return 0;
     }
 
     /**
@@ -269,7 +284,7 @@ class Set extends AbstractCommand
      */
     protected function writeKeyValueOption()
     {
-        if (!$this->input->getArgument('key')) {
+        if (!$this->getKey()) {
             /**
              * Ignore if nothing to write
              */
@@ -493,7 +508,7 @@ class Set extends AbstractCommand
      */
     protected function fetchValue($xpath)
     {
-        if (!$this->input->getArgument('value')) {
+        if (!$this->getValue()) {
             $question = $this->getSimpleQuestion()->getQuestion(
                 "Set value for XPath '$xpath'",
                 $this->getXpathValue($xpath)
@@ -510,7 +525,7 @@ class Set extends AbstractCommand
             return $this->io->askQuestion($question);
         }
 
-        return $this->input->getArgument('value');
+        return $this->getValue();
     }
 
     /**
@@ -712,8 +727,8 @@ HELP;
     protected function getArgumentXpath()
     {
         return $this->isNameXpath()
-            ? $this->input->getArgument('key')
-            : $this->getXpath($this->input->getArgument('key'));
+            ? $this->getKey()
+            : $this->getXpath($this->getKey());
     }
 
     /**
@@ -726,5 +741,25 @@ HELP;
     {
         return false === strpos($xpath, 'password') ?
             $this->getConfig()->getNode($xpath) : null;
+    }
+
+    /**
+     * Get key config name
+     *
+     * @return mixed
+     */
+    protected function getKey()
+    {
+        return $this->input->getArgument('key');
+    }
+
+    /**
+     * Get value for config
+     *
+     * @return mixed
+     */
+    protected function getValue()
+    {
+        return $this->input->getArgument('value');
     }
 }
