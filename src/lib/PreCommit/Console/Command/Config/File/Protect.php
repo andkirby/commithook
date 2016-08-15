@@ -59,14 +59,14 @@ class Protect extends Set
                 throw new Exception('No value defined.');
             }
 
-            $path = $this->askProjectDir().'/'.$this->getValue();
-            if (is_dir($path)) {
-                $this->key = 'protect-path';
-            } elseif (is_file($path)) {
-                $this->key = 'protect-file';
-            } else {
+            $path = $this->askProjectDir().'/'
+                .$this->getHelperSet()->get('commithook_config_file')->filterPath($this->getValue());
+
+            if (!is_dir($path) && !is_file($path)) {
                 throw new Exception("Unknown path '{$this->getValue()}'.");
             }
+
+            $this->key = 'protect';
         }
 
         return $this->key;

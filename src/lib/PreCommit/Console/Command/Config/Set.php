@@ -132,6 +132,7 @@ class Set extends AbstractCommand
         $this->getHelperSet()->set(new Helper\Config\SetHelper());
         $this->getHelperSet()->set(new Helper\Config\WriterHelper());
         $this->getHelperSet()->set(new Helper\ClearCacheHelper());
+        $this->getHelperSet()->set(new Helper\Config\FileHelper());
     }
 
     /**
@@ -286,6 +287,16 @@ class Set extends AbstractCommand
 
             case 'protect-file':
                 $name = 'validators/FileFilter/filter/protect/files/file';
+                break;
+
+            case 'protect':
+                $name = 'validators/FileFilter/filter/protect/path';
+                if ($this->getValue()) {
+                    $name = $this->getHelperSet()->get('commithook_config_file')->getXpathForPath(
+                        $name,
+                        $this->getValue()
+                    );
+                }
                 break;
 
             case 'allow-path':
