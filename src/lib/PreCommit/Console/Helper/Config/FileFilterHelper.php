@@ -12,7 +12,7 @@ use Symfony\Component\Console\Helper\Helper;
  *
  * @package PreCommit\Console\Helper
  */
-class FileHelper extends Helper
+class FileFilterHelper extends Helper
 {
     /**
      * Helper name

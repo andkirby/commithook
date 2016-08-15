@@ -132,7 +132,7 @@ class Set extends AbstractCommand
         $this->getHelperSet()->set(new Helper\Config\SetHelper());
         $this->getHelperSet()->set(new Helper\Config\WriterHelper());
         $this->getHelperSet()->set(new Helper\ClearCacheHelper());
-        $this->getHelperSet()->set(new Helper\Config\FileHelper());
+        $this->getHelperSet()->set(new Helper\Config\FileFilterHelper());
     }
 
     /**
