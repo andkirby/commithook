@@ -1,5 +1,0 @@
-#!/usr/bin/env c:\xampp\php\php.exe
-<?php
-$hookName = __FILE__;
-$runnerPhp = realpath(__DIR__ . '/../../../commithook/bin/runner.php');
-require_once $runnerPhp;
