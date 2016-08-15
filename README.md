@@ -27,6 +27,14 @@ $ composer global require andkirby/commithook:~2.0@beta
 - [Commit message format](doc/commit-msg.md)
 - [Manage code validation/protect code](doc/exclude-code-validation.md)
 
+## Tips & tricks
+### Redundant gaps in code
+You may quickly find gaps in your code by regular expression:
+```
+(\n\s*\n\s*\})|(\n\s*\n\s*\n)|(\{\n\s*\n)
+```
+Just use it in your IDE.
+
 ## OS environment
 Tested on Windows in GIT Bash. Feel free [to create](../../issues/new "Add a new issue") your faced issue.
 
