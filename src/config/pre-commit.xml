@@ -47,18 +47,10 @@
                         -->
                     </path>
 
-                    <!-- ____ DEPRECATED ____ -->
-                    <!-- Skip validation by these paths -->
-                    <!--<paths>-->
-                    <!--<path>libs/</path>-->
-                    <!--</paths>-->
-
-                    <!-- Skip validation by these file paths -->
-                    <!--<files>-->
-                    <!--<file>index.php</file>-->
-                    <!--</files>-->
-                    <!-- ____ DEPRECATED EOF ____ -->
+                    <!-- Nodes paths and files are DEPRECATED -->
                 </skip>
+
+                <!--Protect a path-->
                 <protect>
                     <path>
                         <!--
@@ -72,17 +64,10 @@
                         -->
                     </path>
 
-                    <!-- ____ DEPRECATED ____ -->
-                    <!--<files>-->
-                        <!--<file>index.php</file>-->
-                    <!--</files>-->
-                    <!--<paths>-->
-                        <!--<path>libs/</path>-->
-                    <!--</paths>-->
-                    <!-- ____ DEPRECATED EOF ____ -->
+                    <!-- Nodes paths and files are DEPRECATED -->
                 </protect>
 
-                <!-- "allow" layer has priority over protect -->
+                <!-- "allow" layer has priority over "protect" -->
                 <allow>
                     <path>
                         <!--
@@ -96,11 +81,7 @@
                         -->
                     </path>
 
-                    <!-- ____ DEPRECATED ____ -->
-                    <!--<paths>-->
-                        <!--<path>some/path</path>-->
-                    <!--</paths>-->
-                    <!-- ____ DEPRECATED EOF ____ -->
+                    <!-- Nodes paths and files are DEPRECATED -->
                 </allow>
             </filter>
         </FileFilter>
@@ -198,7 +179,7 @@
 
             <filetype>
                 <!--Run validators before any filter because filters run always before validators-->
-                <before_all_original />
+                <before_all_original/>
                 <!--Run validators, filters before specific validators-->
                 <before_all>
                     <filters>
