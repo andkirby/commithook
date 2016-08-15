@@ -167,7 +167,7 @@ class PathMatch
                 if (preg_match('#^'.$reg.'#', $file)) {
                     return true;
                 }
-            } elseif ('/' === $path || 0 === strpos($file, $path)) {
+            } elseif ('/' === $path || $file === $path || 0 === strpos($file, rtrim($path, '/').'/')) {
                 return true;
             }
         }

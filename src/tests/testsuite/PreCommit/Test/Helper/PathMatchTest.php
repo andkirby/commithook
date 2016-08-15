@@ -179,6 +179,43 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test started slash in rule
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testPathWithSlash()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['/test/11/']);
+        $this->assertTrue($match->test('/test/11/foo/'));
+    }
+
+    /**
+     * Test without slash in rule in the end
+     */
+    public function testPathWithoutSlash()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['/test/11']);
+        $this->assertTrue($match->test('/test/11/foo/'));
+        $this->assertFalse($match->test('/test/1112313'));
+    }
+
+    /**
+     * Test started slash in rule
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testPathWithoutSlashWithAsterisk()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['/test/11*']);
+        $this->assertFalse($match->test('/test/11/foo/'));
+        $this->assertTrue($match->test('/test/11aaa/foo/'));
+        $this->assertTrue($match->test('/test/1112313'));
+    }
+
+    /**
      * Test simple match with asterisk (*)
      *
      * E.g.: test/11 should not match with test/1111
@@ -186,12 +223,7 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     public function testProtectedMatchWithUnknownDirectory()
     {
         $match = new PathMatch();
-        $match->setProtected(
-            [
-                'test/*/11/',
-                'test/22/',
-            ]
-        );
+        $match->setProtected(['test/*/11/', 'test/22/']);
 
         $this->assertFalse($match->test('test/cc/11/test.1'));
     }
