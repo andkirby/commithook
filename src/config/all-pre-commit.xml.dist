@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <!--Validators setup-->
+    <validators>
+        <CodingStandard>
+            <underscore_in_non_public>1</underscore_in_non_public>
+        </CodingStandard>
+        <FileFilter>
+            <filter>
+                <!-- "skip" validation list -->
+                <skip>
+                    <!-- Skip validation for files with such extensions -->
+                    <extensions>
+                        <!--Images-->
+                        <jpg>jpg</jpg>
+                        <png>png</png>
+                        <gif>gif</gif>
+                        <bmp>bmp</bmp>
+                        <bmp>ico</bmp>
+                        <svg>svg</svg>
+                        <!--Archives-->
+                        <zip>zip</zip>
+                        <rar>rar</rar>
+                        <gz>gz</gz>
+                        <tar>tar</tar>
+                        <!--Fonts-->
+                        <ttf>ttf</ttf>
+                        <fon>fon</fon>
+                        <eot>eot</eot>
+                        <woff>woff</woff>
+                    </extensions>
+
+                    <path>
+                        <libs>libs</libs>
+                        <index_php>index.php</index_php>
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </skip>
+
+                <!--Protect a path-->
+                <protect>
+                    <path>
+                        <libs>libs</libs>
+                        <index_php>index.php</index_php>
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </protect>
+
+                <!-- "allow" layer has priority over "protect" -->
+                <allow>
+                    <path>
+                        <libs>libs</libs>
+                        <index_php>index.php</index_php>
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </allow>
+            </filter>
+        </FileFilter>
+        <CodeSniffer>
+            <rule>
+                <!-- Name of existed standard -->
+                <name>Zend</name>
+
+                <!-- Path to directory with standard -->
+                <directory>path/to/dir</directory>
+            </rule>
+            <message>
+                <!--Show source in error messages-->
+                <show_source>0</show_source>
+            </message>
+        </CodeSniffer>
+        <JsHint>
+            <execution>
+                <!--Interpreter type. Used to get config by XPath code/interpreter/TYPE-->
+                <interpreter_type>nodejs</interpreter_type>
+
+                <!--Path to executable file of JSHint file which should be interpreted by the interpreter-->
+                <linter>/path/to/jshint/bin/jshint</linter>
+
+                <!--Command which will be executed to run linter-->
+                <command>%interpreter% %linter% --config "%config%" %file%</command>
+            </execution>
+            <config>
+                <file>
+                    <!--If you have .jshintrc or packages.json in your project root it will be set automatically by CommitHook-->
+
+                    <!--Default configuration (from PhpStorm 10.0.1)-->
+                    <default>config/jshint/phpstorm-default.json</default>
+
+                    <!--Predefined system files list-->
+                    <predefined>
+                        <jshintrc>PROJECT_DIR/.jshintrc</jshintrc>
+                        <packages>PROJECT_DIR/packages.json</packages>
+                    </predefined>
+
+                    <!--Custom configuration file-->
+                    <!--You may use variables PROJECT_DIR or HOME-->
+                    <!--Relative path will be considered as a path in project-->
+                    <custom/>
+
+                    <!--Finding JSHint config file priorities:
+                    1. custom
+                    2. predefined/*
+                    3. default
+                    -->
+                </file>
+            </config>
+        </JsHint>
+    </validators>
+
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <!--blind-commit configuration-->
+            <ignore>
+                <disable>
+                    <!-- Set to 1 in your configuration XML file to skip code validation for the next commit -->
+                    <code>0</code>
+                    <!-- Set to 1 in your configuration XML file to ignore file/dir protection as well for the next commit -->
+                    <protection>0</protection>
+                    <!-- Set to 1 in your configuration XML file to ignore all pre-commit validators for the next commit -->
+                    <all>0</all>
+                </disable>
+
+                <validator>
+                    <!-- Validators list-->
+                    <code>
+                        <!-- PHP, JS -->
+                        <CodeSniffer>1</CodeSniffer>
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
+
+                        <!-- PHTML -->
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
+
+                        <!-- Tabs, BOM, line separators-->
+                        <FileStyle>1</FileStyle>
+
+                        <!-- Checking license -->
+                        <License>1</License>
+                    </code>
+                    <protection>
+                        <FileFilter>1</FileFilter>
+                    </protection>
+                </validator>
+            </ignore>
+
+            <filetype>
+                <!--Run validators before any filter because filters run always before validators-->
+                <before_all_original/>
+                <!--Run validators, filters before specific validators-->
+                <before_all>
+                    <filters>
+                        <OriginContent>1</OriginContent>
+                        <SkipContent>1</SkipContent>
+                        <CodeSniffer-SkipContent>1</CodeSniffer-SkipContent>
+                    </filters>
+                    <validators>
+                        <UnresolvedConflict>1</UnresolvedConflict>
+                    </validators>
+                </before_all>
+                <php>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <CodeSniffer>0</CodeSniffer>
+                        <PhpClass>1</PhpClass>
+                        <PhpDoc>1</PhpDoc>
+                        <CodingStandard>1</CodingStandard>
+                        <RedundantCode>1</RedundantCode>
+                        <ParentThis>1</ParentThis>
+                    </validators>
+                </php>
+                <phtml>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <RedundantCode>1</RedundantCode>
+                        <CodingStandardPhtml>1</CodingStandardPhtml>
+                    </validators>
+                </phtml>
+                <js>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <RedundantCode>1</RedundantCode>
+                    </validators>
+                </js>
+                <coffee>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <RedundantCode>1</RedundantCode>
+                    </validators>
+                </coffee>
+                <css>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </css>
+                <scss>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </scss>
+                <xml>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                        <XmlParser>1</XmlParser>
+                    </validators>
+                </xml>
+                <sh>
+                    <filters>
+                        <License>0</License>
+                    </filters>
+                    <validators>
+                        <License>0</License>
+                    </validators>
+                </sh>
+                <after_all>
+                    <validators>
+                        <TrailingSpace>1</TrailingSpace>
+                        <FileStyle>1</FileStyle>
+                    </validators>
+                </after_all>
+            </filetype>
+            <end_message>
+                <success>Your code is valid.</success>
+                <error>Ooops! Something wrong in your files.</error>
+            </end_message>
+        </pre-commit>
+    </hooks>
+</config>
