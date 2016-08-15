@@ -143,6 +143,42 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test started slash in rule
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testStartSlashInRule()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['/test/11/']);
+        $this->assertFalse($match->test('test/11/test.1'));
+    }
+
+    /**
+     * Test started slash in rule
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testStartSlashInTestedValue()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['test/11/']);
+        $this->assertFalse($match->test('/test/11/test.1'));
+    }
+
+    /**
+     * Test started slash in rule
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testStartSlashInBoth()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(['/test/11/']);
+        $this->assertTrue($match->test('/test/11/test.1'));
+    }
+
+    /**
      * Test simple match with asterisk (*)
      *
      * E.g.: test/11 should not match with test/1111
