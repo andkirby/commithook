@@ -103,22 +103,8 @@ class Set extends AbstractCommand
 
         $this->showDeprecationInfo();
 
-        $code = 0;
         try {
-            if ($this->getKey() === 'wizard') {
-                /**
-                 * Wizard mode
-                 */
-                $this->connectionWizard();
-
-                if ($this->updated) {
-                    $this->output->writeln('Configuration updated.');
-                    $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
-                    $this->output->writeln('Enjoy!');
-                }
-            } else {
-                $code = $this->processValue();
-            }
+            return $this->processValue();
         } catch (Exception $e) {
             if ($this->isDebug()) {
                 throw $e;
@@ -128,8 +114,6 @@ class Set extends AbstractCommand
                 return 1;
             }
         }
-
-        return $code;
     }
 
     /**
