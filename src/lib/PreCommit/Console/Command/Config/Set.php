@@ -380,7 +380,7 @@ class Set extends AbstractCommand
         }
 
         $result = $this->getConfigHelper()->writeValue(
-            $this->getConfigFile($scope),
+            $this->getConfigFile($scope, $xpath),
             $xpath,
             $value
         );
@@ -495,21 +495,43 @@ class Set extends AbstractCommand
     /**
      * Get config file related to scope
      *
-     * @param string      $scope
-     * @param string|null $name
+     * @param string $scope
+     * @param string $xpath
      * @return null|string
      * @throws \PreCommit\Exception
      */
-    protected function getConfigFile($scope, $name = null)
+    protected function getConfigFile($scope, $xpath)
     {
         if (self::OPTION_SCOPE_GLOBAL == $scope) {
             return $this->getConfig()->getConfigFile('userprofile');
         } elseif (self::OPTION_SCOPE_PROJECT == $scope) {
-            return $this->getConfig()->getConfigFile('project');
+            return $this->getConfigProjectFileByXpath($xpath)
+                ?: $this->getConfig()->getConfigFile('project');
         } elseif (self::OPTION_SCOPE_PROJECT_SELF == $scope) {
             return $this->getConfig()->getConfigFile('project_local');
         }
+
         throw new \PreCommit\Exception("Unknown scope '$scope'.");
+    }
+
+    /**
+     * Get config file by xpath for project scope
+     *
+     * It will get validator/filter name and make file path in PROJECT_DIR/.commithook/
+     *
+     * @param string $xpath
+     * @return string|null
+     */
+    protected function getConfigProjectFileByXpath($xpath)
+    {
+        if (!preg_match('~^validators/([A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~^hooks/pre-commit/filetype/[A-z_-]+/[A-z_-]+/([A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~^hooks/pre-commit/ignore/validator/code/([A-z0-9_-]+)~', $xpath, $matches)
+        ) {
+            return null;
+        }
+
+        return dirname($this->getConfig()->getConfigFile('project')).'/.commithook/'.$matches[1].'.xml';
     }
 
     /**
