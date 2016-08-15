@@ -17,6 +17,7 @@ namespace PHPSTORM_META {
             'commithook_config' instanceof \PreCommit\Console\Helper\ConfigHelper,
             'commithook_config_set' instanceof \PreCommit\Console\Helper\Config\SetHelper,
             'commithook_config_writer' instanceof \PreCommit\Console\Helper\Config\WriterHelper,
+            'commithook_config_file' instanceof \PreCommit\Console\Helper\Config\FileHelper,
         ],
     ];
 }
