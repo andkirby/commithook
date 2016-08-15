@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./framework/bootstrap.php" clors="true">
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
+        bootstrap="./framework/bootstrap.php" colors="true">
     <testsuite name="Php Hooks Unit Tests">
         <directory>testsuite/</directory>
     </testsuite>
