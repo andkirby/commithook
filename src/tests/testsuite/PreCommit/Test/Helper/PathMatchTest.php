@@ -15,6 +15,17 @@ use PreCommit\Helper\PathMatch;
 class PathMatchTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Test default match
+     *
+     * No rules. Everything allowed
+     */
+    public function testDefaultMatch()
+    {
+        $match = new PathMatch();
+        $this->assertFalse($match->test('test/11/test.1'));
+    }
+
+    /**
      * Test simple match
      *
      * E.g.: test/11 should not match with test/1111
@@ -22,19 +33,34 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     public function testSimpleMatch()
     {
         $match = new PathMatch();
-        $match->setAllowed(
-            [
-                'test/11/',
-                'test/22/',
-            ]
-        );
-        $match->setProtected(
-            [
-                'test/aa',
-            ]
-        );
-
+        $match->setAllowed(['test/11/', 'test/22/']);
         $this->assertTrue($match->test('test/11/test.1'));
+    }
+
+    /**
+     * Test match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testAllowedByDefault()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(true);
+
+        $this->assertTrue($match->test('test/33333/test.1'));
+    }
+
+    /**
+     * Test match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testDisallowedByDefault()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(false);
+
+        $this->assertFalse($match->test('test/33333/test.1'));
     }
 
     /**
@@ -47,19 +73,44 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
         $match = new PathMatch();
         $match->setAllowedByDefault(true);
 
-        $match->setAllowed(
-            [
-                'test/11/',
-                'test/22/',
-            ]
-        );
-        $match->setProtected(
-            [
-                'test',
-            ]
-        );
+        $match->setAllowed(['test/11/', 'test/22/']);
+        $match->setProtected(['test']);
 
         $this->assertTrue($match->test('test/11/test.1'));
+    }
+
+    /**
+     * Test match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testPushToProtectRoot()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(true);
+
+        $match->setAllowed(['test/11/', 'test/22/']);
+        $match->setProtected(['']);
+
+        $this->assertTrue($match->test('test/11/test.1'));
+        $this->assertFalse($match->test('test/33333/test.1'));
+    }
+
+    /**
+     * Test match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testPushToProtectSlashRoot()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(true);
+
+        $match->setAllowed(['test/11/', 'test/22/']);
+        $match->setProtected(['/']);
+
+        $this->assertTrue($match->test('test/11/test.1'));
+        $this->assertFalse($match->test('test/33333/test.1'));
     }
 
     /**
@@ -72,17 +123,8 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
         $match = new PathMatch();
         $match->setAllowedByDefault(true);
 
-        $match->setAllowed(
-            [
-                'test/11',
-                'test/22',
-            ]
-        );
-        $match->setProtected(
-            [
-                'test',
-            ]
-        );
+        $match->setAllowed(['test/11', 'test/22']);
+        $match->setProtected(['test']);
 
         $this->assertFalse($match->test('test/33333/test.1'));
     }
@@ -95,18 +137,13 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     public function testMatchWithUnknownDirectory()
     {
         $match = new PathMatch();
-        $match->setAllowed(
-            [
-                'test/*/11/',
-                'test/22/',
-            ]
-        );
+        $match->setAllowed(['test/*/11/', 'test/22/']);
 
         $this->assertTrue($match->test('test/cc/11/test.1'));
     }
 
     /**
-     * Test simple match
+     * Test simple match with asterisk (*)
      *
      * E.g.: test/11 should not match with test/1111
      */
@@ -124,7 +161,7 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test simple match
+     * Test simple match with recursive asterisk (**)
      *
      * E.g.: test/11 should not match with test/1111
      */

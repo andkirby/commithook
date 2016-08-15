@@ -6,7 +6,34 @@
 namespace PreCommit\Helper;
 
 /**
- * Class PathMatch
+ * This class may match paths by rules
+ *
+ * Examples:
+ * 1) All protected, empty rules
+ *   - allowedByDefault = FALSE
+ * 2) All allowed, empty rules
+ *   - allowedByDefault = TRUE
+ * 3) All protected, aa/cc is allowed, but aa/cc/bb is protected
+ *   - allowedByDefault = FALSE
+ *   - aa/cc/bb - protected
+ *   - aa/cc    - allowed
+ *  Result:
+ *     aa/cc/bb/file => FALSE
+ *     aa/cc/gg/file => TRUE
+ * 4) All allowed, aa/cc is protected, but aa/cc/bb is allowed
+ *   - allowedByDefault = TRUE
+ *   - aa/cc/bb - allowed
+ *   - aa/cc    - protected
+ *  Result:
+ *     aa/cc/bb/file => TRUE
+ *     aa/cc/gg/file => FALSE
+ *
+ * Asterisk can be used in paths.
+ * Examples:
+ * 1) Using asterisk (*) for match any node in path
+ *      path/[::asterisk::]/to == path/some/to
+ * 2) Using double asterisk (**) for recursive match
+ *      path/[::asterisk::][::asterisk::]/to == path/any/an/other/to
  *
  * @package PreCommit\Helper
  */
@@ -32,7 +59,7 @@ class PathMatch
      * @see PathMatch::setAllowedByDefault()
      * @var bool
      */
-    protected $allowedOnProtected = false;
+    protected $allowedByDefault = false;
 
     /**
      * Set allowed by default
@@ -44,13 +71,13 @@ class PathMatch
      */
     public function setAllowedByDefault($flag = true)
     {
-        $this->allowedOnProtected = (bool) $flag;
+        $this->allowedByDefault = (bool) $flag;
 
         return $this;
     }
 
     /**
-     * Test file path
+     * Test path
      *
      * @param string $file
      * @return bool
@@ -59,21 +86,23 @@ class PathMatch
     {
         $file = str_replace('\\', '/', $file);
 
-        if ($this->allowedOnProtected
-            && $this->protected && $this->matchList($this->protected, $file)
-            && $this->allowed && !$this->matchList($this->allowed, $file)
+        if ($this->allowedByDefault
+            && ($this->protected && $this->matchList($this->protected, $file)
+                && $this->allowed && !$this->matchList($this->allowed, $file))
         ) {
             /**
-             * In this case "allowed" list will be ended rule and will have highest priority
+             * In this case "allowed" list will be ended rule and will have highest priority.
+             * If there is no "allowed" or "protected" list it will be ignored.
              */
             return false;
-        } elseif (!$this->allowedOnProtected
-            && ($this->protected && $this->matchList($this->protected, $file)
+        } elseif (!$this->allowedByDefault
+            && (!$this->allowed || $this->protected && $this->matchList($this->protected, $file)
                 || $this->allowed && !$this->matchList($this->allowed, $file))
         ) {
             /**
-             * In this case "protected" list will be ended rule and will have highest priority
-             * It will return TRUE only if "allowed" list covers a path
+             * In this case "protected" list will be ended rule and will have highest priority.
+             * It will return TRUE only if "allowed" list covers a path.
+             * If there is no "allowed" or "protected" list it will be ignored.
              */
             return false;
         }
@@ -118,6 +147,7 @@ class PathMatch
     {
         foreach ($list as $path) {
             $path = str_replace('\\', '/', $path);
+            $path = $path ?: '/';
             if (false !== strpos($path, '*')) {
                 $reg = $path;
                 //unknown directories structure
@@ -137,7 +167,7 @@ class PathMatch
                 if (preg_match('#^'.$reg.'#', $file)) {
                     return true;
                 }
-            } elseif (0 === strpos($file, $path)) {
+            } elseif ('/' === $path || 0 === strpos($file, $path)) {
                 return true;
             }
         }
