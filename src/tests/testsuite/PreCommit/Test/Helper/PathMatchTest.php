@@ -23,18 +23,68 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new PathMatch();
         $match->setAllowed(
-            array(
+            [
                 'test/11/',
                 'test/22/',
-            )
+            ]
         );
         $match->setProtected(
-            array(
+            [
                 'test/aa',
-            )
+            ]
         );
 
         $this->assertTrue($match->test('test/11/test.1'));
+    }
+
+    /**
+     * Test match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testTopProtectWithChildAllowed()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(true);
+
+        $match->setAllowed(
+            [
+                'test/11/',
+                'test/22/',
+            ]
+        );
+        $match->setProtected(
+            [
+                'test',
+            ]
+        );
+
+        $this->assertTrue($match->test('test/11/test.1'));
+    }
+
+    /**
+     * Test non-match allowed list within protected path
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testTopProtectWithNoChildAllowed()
+    {
+        $match = new PathMatch();
+        $match->setAllowedByDefault(true);
+
+        $match->setAllowed(
+            [
+                'test/11',
+                'test/22',
+            ]
+        );
+        $match->setProtected(
+            [
+                'test',
+            ]
+        );
+
+        $this->assertFalse($match->test('test/33333/test.1'));
     }
 
     /**
@@ -46,10 +96,10 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new PathMatch();
         $match->setAllowed(
-            array(
+            [
                 'test/*/11/',
                 'test/22/',
-            )
+            ]
         );
 
         $this->assertTrue($match->test('test/cc/11/test.1'));
@@ -64,10 +114,10 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new PathMatch();
         $match->setProtected(
-            array(
+            [
                 'test/*/11/',
                 'test/22/',
-            )
+            ]
         );
 
         $this->assertFalse($match->test('test/cc/11/test.1'));
@@ -82,10 +132,10 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new PathMatch();
         $match->setAllowed(
-            array(
+            [
                 'test/**/11/',
                 'test/22/',
-            )
+            ]
         );
 
         $this->assertTrue($match->test('test/a/b/c/11/test.1'));
