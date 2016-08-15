@@ -28,37 +28,50 @@ class FileHelper extends Helper
     }
 
     /**
-     * Get full XPath for path value
+     * Get converted path as XML node name
      *
-     * It means for adding path 'my/protected/path' into XPath validators/FileFilter/filter/protect/path
-     * the method should get base xpath (validators/FileFilter/filter/protect/path) and value ('my/protected/path').
-     * Result will be validators/FileFilter/filter/protect/path/my_protected_path
-     *
-     * @param string $baseXpath E.g.: validators/FileFilter/filter/protect/path
      * @param string $path
      * @return null|string
      * @throws Exception
      */
-    public function getXpathForPath($baseXpath, $path)
+    public function path2XmlNode($path)
     {
-        return $baseXpath.'/'.preg_replace('[^A-z0-9_-]', '_', $this->filterPath($path));
+        /**
+         * Element names cannot start with the letters xml (or XML, or Xml, etc)
+         * Element names must start with a letter or underscore
+         *
+         * @link http://www.w3schools.com/xml/xml_elements.asp
+         */
+        $path = preg_replace('#^([^A-z_]|xml)#i', '_$1', $this->normalizePath($path));
+
+        /**
+         * Element names can contain letters, digits, hyphens, underscores, and periods
+         */
+        return preg_replace('#[^A-z0-9_.-]#', '_', $path);
     }
 
     /**
      * Filter path
      *
      * @param string $path
+     * @param bool   $asDir
+     * @param bool   $useRoot Allow to use root value,
+     *                        if FALSE and $asDir = FALSE it will be converted into empty value
      * @return string
-     * @throws Exception
      */
-    public function filterPath($path)
+    public function normalizePath($path, $asDir = false, $useRoot = true)
     {
-        $updated = str_replace('\\', '/', trim($path, ' /\\'));
-
-        if (!$updated) {
-            throw new Exception("Value '{$path}' cannot be used.'");
+        $path = str_replace('\\', '/', trim($path));
+        if ($useRoot && $path === '/') {
+            return $path;
         }
 
-        return $updated;
+        $path = rtrim($path, '/');
+
+        if (true === $asDir) {
+            $path .= '/';
+        }
+
+        return $path;
     }
 }

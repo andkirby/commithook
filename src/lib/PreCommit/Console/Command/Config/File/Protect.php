@@ -38,6 +38,8 @@ class Protect extends Set
         AbstractCommand::execute($input, $output);
 
         if ($this->getValue()) {
+            $this->normalizePathValue();
+
             return $this->processValue();
         } else {
             $this->showSetValues();
@@ -55,17 +57,6 @@ class Protect extends Set
     protected function getKey()
     {
         if (null === $this->key) {
-            if (!$this->getValue()) {
-                throw new Exception('No value defined.');
-            }
-
-            $path = $this->askProjectDir().'/'
-                .$this->getHelperSet()->get('commithook_config_file')->filterPath($this->getValue());
-
-            if (!is_dir($path) && !is_file($path)) {
-                throw new Exception("Unknown path '{$this->getValue()}'.");
-            }
-
             $this->key = 'protect';
         }
 
@@ -145,6 +136,38 @@ class Protect extends Set
 
         $this->key = 'protect-file';
         $this->processValue();
+
+        $this->key = 'protect';
+        $this->processValue();
+
+        return $this;
+    }
+
+    /**
+     * Filter value
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function normalizePathValue()
+    {
+        $this->setValue(
+            $this->getHelperSet()->get('commithook_config_file')
+                ->normalizePath($this->getValue())
+        );
+
+        /**
+         * Check empty value but "/" can be accepted
+         */
+        if (!$this->getValue()) {
+            throw new Exception('No value defined.');
+        }
+
+        $path = $this->askProjectDir().'/'.ltrim($this->getValue(), '/');
+
+        if (!is_dir($path) && !is_file($path)) {
+            throw new Exception("Unknown path '{$this->getValue()}'.");
+        }
 
         return $this;
     }

@@ -40,8 +40,8 @@ class Set extends AbstractCommand
      * project:      PROJECT_DIR/commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
-    const OPTION_SCOPE_GLOBAL = 'global';
-    const OPTION_SCOPE_PROJECT = 'project';
+    const OPTION_SCOPE_GLOBAL       = 'global';
+    const OPTION_SCOPE_PROJECT      = 'project';
     const OPTION_SCOPE_PROJECT_SELF = 'project-self';
     /**#@-*/
 
@@ -58,11 +58,11 @@ class Set extends AbstractCommand
      * @var array
      */
     protected $scopeOptions
-        = array(
+        = [
             1 => self::OPTION_SCOPE_GLOBAL,
             2 => self::OPTION_SCOPE_PROJECT,
             3 => self::OPTION_SCOPE_PROJECT_SELF,
-        );
+        ];
 
     /**
      * Tracker connection option names
@@ -70,12 +70,12 @@ class Set extends AbstractCommand
      * @var array
      */
     protected $trackerConnectionOptions
-        = array(
+        = [
             'tracker',
             'url',
             'username',
             'password',
-        );
+        ];
 
     /**
      * Issues tracker type
@@ -235,7 +235,7 @@ class Set extends AbstractCommand
                 break;
 
             default:
-                return array();
+                return [];
         }
         $keys = array_keys(array_fill(1, count($values), 1));
 
@@ -292,10 +292,10 @@ class Set extends AbstractCommand
             case 'protect':
                 $name = 'validators/FileFilter/filter/protect/path';
                 if ($this->getValue()) {
-                    $name = $this->getHelperSet()->get('commithook_config_file')->getXpathForPath(
-                        $name,
-                        $this->getValue()
-                    );
+                    $name = $name.'/'
+                        .$this->getHelperSet()->get('commithook_config_file')->path2XmlNode(
+                            $this->getValue()
+                        );
                 }
                 break;
 
@@ -338,7 +338,7 @@ class Set extends AbstractCommand
             return $default;
         }
 
-        $scope = $this->getScopeOption();
+        $scope   = $this->getScopeOption();
         $options = $this->getAvailableScopeOptions($xpath, $type);
 
         if ($scope && in_array($scope, $options)) {
@@ -662,6 +662,17 @@ HELP;
     }
 
     /**
+     * Set value
+     *
+     * @param string $value
+     * @return mixed
+     */
+    protected function setValue($value)
+    {
+        return $this->input->setArgument('value', $value);
+    }
+
+    /**
      * Show notifications about deprecated commands
      *
      * @return bool
@@ -804,7 +815,6 @@ HELP;
             case 'tracker/'.$type.'/password':
                 unset($options[2]);
                 break;
-
             //no default
         }
 
@@ -828,7 +838,6 @@ HELP;
             case 'tracker/'.$type.'/project':
                 $firm = true;
                 break;
-
             //no default
         }
 
