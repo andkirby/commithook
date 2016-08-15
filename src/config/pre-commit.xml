@@ -35,30 +35,72 @@
                         <woff>woff</woff>
                     </extensions>
 
+                    <path>
+                        <!--
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- ____ DEPRECATED ____ -->
                     <!-- Skip validation by these paths -->
-                    <paths>
-                        <!--<path>libs/</path>-->
-                    </paths>
+                    <!--<paths>-->
+                    <!--<path>libs/</path>-->
+                    <!--</paths>-->
 
                     <!-- Skip validation by these file paths -->
-                    <files>
-                        <!--<file>index.php</file>-->
-                    </files>
+                    <!--<files>-->
+                    <!--<file>index.php</file>-->
+                    <!--</files>-->
+                    <!-- ____ DEPRECATED EOF ____ -->
                 </skip>
                 <protect>
-                    <files>
-                        <file>index.php</file>
-                    </files>
+                    <path>
+                        <!--
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- ____ DEPRECATED ____ -->
+                    <!--<files>-->
+                        <!--<file>index.php</file>-->
+                    <!--</files>-->
                     <!--<paths>-->
                         <!--<path>libs/</path>-->
                     <!--</paths>-->
+                    <!-- ____ DEPRECATED EOF ____ -->
                 </protect>
 
                 <!-- "allow" layer has priority over protect -->
                 <allow>
-                    <paths>
+                    <path>
+                        <!--
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- ____ DEPRECATED ____ -->
+                    <!--<paths>-->
                         <!--<path>some/path</path>-->
-                    </paths>
+                    <!--</paths>-->
+                    <!-- ____ DEPRECATED EOF ____ -->
                 </allow>
             </filter>
         </FileFilter>
