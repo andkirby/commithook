@@ -28,6 +28,10 @@ class Set extends AbstractCommand
      * Shell exit code when the same configuration already defined
      */
     const SHELL_CODE_CONF_DEFINED = 10;
+    /**
+     * Shell exit code for deprecated way
+     */
+    const SHELL_CODE_COMMAND_DEPRECATED = 11;
 
     /**#@+
      * Option scopes
@@ -101,7 +105,9 @@ class Set extends AbstractCommand
     {
         parent::execute($input, $output);
 
-        $this->showDeprecationInfo();
+        if ($this->checkDeprecatedKey()) {
+            return self::SHELL_CODE_COMMAND_DEPRECATED;
+        }
 
         try {
             return $this->processValue();
@@ -180,7 +186,7 @@ class Set extends AbstractCommand
         $this->output->writeln('Set up issue tracker connection.');
 
         //type
-        $options           = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
+        $options = $this->getXpathOptions(self::XPATH_TRACKER_TYPE);
         $this->trackerType = $this->io->askQuestion(
             $this->getSimpleQuestion()->getQuestion(
                 'Tracker type',
@@ -394,7 +400,7 @@ class Set extends AbstractCommand
             return $default;
         }
 
-        $scope   = $this->getScopeOption();
+        $scope = $this->getScopeOption();
         $options = $this->getAvailableScopeOptions($xpath, $type);
 
         if ($scope && in_array($scope, $options)) {
@@ -404,7 +410,7 @@ class Set extends AbstractCommand
         return $this->io->askQuestion(
             $question
                 ?: $this->getSimpleQuestion()
-                        ->getQuestion("Set config scope ($xpath)", $default, $options)
+                ->getQuestion("Set config scope ($xpath)", $default, $options)
         );
     }
 
@@ -698,44 +704,62 @@ HELP;
     /**
      * Show notifications about deprecated commands
      *
-     * @return $this
+     * @return bool
      */
-    protected function showDeprecationInfo()
+    protected function checkDeprecatedKey()
     {
+        if ('wizard' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    tracker:wizard');
+            $this->output->writeln('');
+
+            return true;
+        }
         if ('task' == $this->getKey()) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
-            $this->output->writeln('    config:task');
+            $this->output->writeln('    tracker:task NUMBER');
             $this->output->writeln('');
+
+            return true;
         }
         if ('exclude-extension' == $this->getKey() || 'skip-ext' == $this->getKey()) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
-            $this->output->writeln('    config:skip --ext YOUR_EXTENSION');
+            $this->output->writeln('    files:skip --ext YOUR_EXTENSION');
             $this->output->writeln('');
+
+            return true;
         }
         if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
             || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
         ) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
-            $this->output->writeln('    config:skip YOUR_PATH');
+            $this->output->writeln('    files:skip YOUR_PATH');
             $this->output->writeln('');
+
+            return true;
         }
         if ('protected-path' == $this->getKey() || 'protected-file' == $this->getKey()) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
-            $this->output->writeln('    config:protect YOUR_PATH');
+            $this->output->writeln('    files:protect YOUR_PATH');
             $this->output->writeln('');
+
+            return true;
         }
         if ('allow-path' == $this->getKey() || 'allow-file' == $this->getKey()) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
-            $this->output->writeln('    config:allow YOUR_PATH');
+            $this->output->writeln('    files:allow YOUR_PATH');
             $this->output->writeln('');
+
+            return true;
         }
 
-        return $this;
+        return false;
     }
 
     /**
