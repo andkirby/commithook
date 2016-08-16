@@ -4,50 +4,15 @@
  */
 namespace PreCommit\Console\Command\Config\File;
 
-use PreCommit\Console\Command\AbstractCommand;
-use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * This command can define path to allow committing changes
+ * This command can define path for allowing to commit a file
  *
- * It can as an extra layer over a protect path.
- *
- * @package PreCommit\Console\Command\Config
+ * @package PreCommit\Console\Command\Config\File
  */
-class Allow extends Set
+class Allow extends Protect
 {
-    /**
-     * Key name for processing
-     *
-     * @var string
-     */
-    protected $key;
-
-    /**
-     * Execute command
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int
-     * @throws Exception
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        AbstractCommand::execute($input, $output);
-
-        if ($this->getValue()) {
-            return $this->processValue();
-        } else {
-            $this->showSetValues();
-
-            return 0;
-        }
-    }
-
     /**
      * Get key name
      *
@@ -57,82 +22,10 @@ class Allow extends Set
     protected function getKey()
     {
         if (null === $this->key) {
-            if (!$this->getValue()) {
-                throw new Exception('No value defined.');
-            }
-
-            $path = $this->askProjectDir().'/'.$this->getValue();
-            if (is_dir($path)) {
-                $this->key = 'allow-path';
-            } elseif (is_file($path)) {
-                $this->key = 'allow-file';
-            } else {
-                throw new Exception("Unknown path '{$this->getValue()}'.");
-            }
+            $this->key = 'allow';
         }
 
         return $this->key;
-    }
-
-    /**
-     * Init input definitions
-     *
-     * @return $this
-     */
-    protected function configureInput()
-    {
-        AbstractCommand::configureInput();
-
-        $this->addArgument('value', InputArgument::OPTIONAL);
-
-        $this->setScopeOptions();
-
-        return $this;
-    }
-
-    /**
-     * Init default helpers
-     *
-     * @return $this
-     */
-    protected function configureCommand()
-    {
-        $this->setName('files:allow');
-
-        $help = 'This command can define path to allow committing changes. It can as an extra layer over a protect path.';
-
-        $this->setHelp($help);
-        $this->setDescription($help);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isNameXpath()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function writePredefinedOptions($readAll = false)
-    {
-        return;
-    }
-
-    /**
-     * Get default scope
-     *
-     * @param string $xpath
-     * @param string $type
-     * @return int
-     */
-    protected function getDefaultScope($xpath, $type)
-    {
-        return 2;
     }
 
     /**
@@ -147,6 +40,26 @@ class Allow extends Set
 
         $this->key = 'allow-file';
         $this->processValue();
+
+        $this->key = 'allow';
+        $this->processValue();
+
+        return $this;
+    }
+
+    /**
+     * Init default helpers
+     *
+     * @return $this
+     */
+    protected function configureCommand()
+    {
+        $this->setName('files:allow');
+
+        $help = 'This command can define path to prohibit committing changes.';
+
+        $this->setHelp($help);
+        $this->setDescription($help);
 
         return $this;
     }

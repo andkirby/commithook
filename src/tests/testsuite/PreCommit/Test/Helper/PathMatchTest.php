@@ -211,7 +211,7 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
         $match = new PathMatch();
         $match->setAllowed(['/test/11*']);
         $this->assertFalse($match->test('/test/11/foo/'));
-        $this->assertTrue($match->test('/test/11aaa/foo/'));
+        $this->assertFalse($match->test('/test/11aaa/foo/'));
         $this->assertTrue($match->test('/test/1112313'));
     }
 

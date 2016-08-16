@@ -11,6 +11,13 @@
             <underscore_in_non_public>1</underscore_in_non_public>
         </CodingStandard>
         <FileFilter>
+            <!--
+            1 - all files will be allowed to commit,
+                only protected won't if they are not matched with "allow" list
+            0 - or all will be protected to commit,
+                only allowed won't if they are not matched with "protected" list instead
+            -->
+            <allowed_by_default>1</allowed_by_default>
             <filter>
                 <!-- "skip" validation list -->
                 <skip>
@@ -21,7 +28,7 @@
                         <png>png</png>
                         <gif>gif</gif>
                         <bmp>bmp</bmp>
-                        <bmp>ico</bmp>
+                        <ico>ico</ico>
                         <svg>svg</svg>
                         <!--Archives-->
                         <zip>zip</zip>

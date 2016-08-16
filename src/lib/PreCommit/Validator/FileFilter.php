@@ -5,6 +5,7 @@
 namespace PreCommit\Validator;
 
 use PreCommit\Config;
+use PreCommit\Helper\PathMatch;
 
 /**
  * Class FileFilter validator
@@ -13,23 +14,29 @@ use PreCommit\Config;
  */
 class FileFilter extends AbstractValidator
 {
+    /**
+     * XML path to skipped extensions
+     */
+    const XPATH_SKIP_FILE_EXTENSIONS = 'validators/FileFilter/filter/skip/extensions';
+
     /**#@+
      * XML path to config
      */
-    const XPATH_SKIP_PATHS           = 'validators/FileFilter/filter/skip/paths/path';
-    const XPATH_SKIP_FILES           = 'validators/FileFilter/filter/skip/files/file';
-    const XPATH_SKIP_FILE_EXTENSIONS = 'validators/FileFilter/filter/skip/extensions';
-    const XPATH_PROTECT_PATHS        = 'validators/FileFilter/filter/protect/paths/path';
-    const XPATH_PROTECT_FILES        = 'validators/FileFilter/filter/protect/files/file';
-    const XPATH_ALLOW_PATHS          = 'validators/FileFilter/filter/allow/paths/path';
-    const XPATH_ALLOW_FILES          = 'validators/FileFilter/filter/allow/files/file';
+    const XPATH_SKIP_PATH    = 'validators/FileFilter/filter/skip/path';
+    const XPATH_PROTECT_PATH = 'validators/FileFilter/filter/protect/path';
+    const XPATH_ALLOW_PATH   = 'validators/FileFilter/filter/allow/path';
     /**#@-*/
+
+    /**
+     * XPath to flag of allowing path default to process files to commit
+     */
+    const XPATH_ALLOW_BY_DEFAULT = 'validators/FileFilter/allowed_by_default';
 
     /**#@+
      * Error codes
      */
     const PROTECTED_PATH = 'protectedPath';
-    const PROTECTED_FILE = 'protectedFile';
+    const PROTECTED_ALL  = 'protectedAll';
     /**#@-*/
 
     /**
@@ -37,11 +44,10 @@ class FileFilter extends AbstractValidator
      *
      * @var array
      */
-    protected $errorMessages
-        = array(
-            self::PROTECTED_PATH => 'This file cannot be updated or added because it located in the protected path "%value%".',
-            self::PROTECTED_FILE => 'This file cannot be updated or added because it protected.',
-        );
+    protected $errorMessages = [
+        self::PROTECTED_PATH => 'This file cannot be updated or added because it located in the protected path "%value%".',
+        self::PROTECTED_ALL  => 'This file cannot be updated or added because this path protected by default.',
+    ];
 
     /**
      * Get ability to process file
@@ -56,142 +62,64 @@ class FileFilter extends AbstractValidator
             return false;
         }
 
-        if ($this->isFileAllowed($file)) {
-            //file is allowed to edit, no need to check protection
-            return !$this->isFileSkipped($file);
-        }
-
-        return !$this->isFileProtected($file) && !$this->isFileSkipped($file);
-    }
-
-    /**
-     * Check file from ignore list
-     *
-     * @param string $file
-     * @return bool
-     */
-    protected function isFileAllowed($file)
-    {
-        if ($this->isFileAllowedByPath($file)) {
+        $matchSkip = new PathMatch();
+        $matchSkip->setAllowed($this->getPathList(self::XPATH_SKIP_PATH));
+        if ($matchSkip->test($file) || $this->isExtensionSkipped($file)) {
             return true;
         }
-        $list = Config::getInstance()->getMultiNode(self::XPATH_ALLOW_FILES);
-        foreach ($list as $item) {
-            if (strpos($file, $item) === 0) {
-                return true;
-            }
+
+        $match = new PathMatch();
+        $match->setAllowedByDefault($this->getValue(self::XPATH_ALLOW_BY_DEFAULT));
+        $match->setAllowed($this->getPathList(self::XPATH_ALLOW_PATH));
+        $match->setProtected($this->getPathList(self::XPATH_PROTECT_PATH));
+
+        if ($match->test($file)) {
+            return true;
+        }
+
+        if (!$match->getMatch() && !$match->getAllowedByDefault()) {
+            $this->addError($file, self::PROTECTED_ALL);
+        } else {
+            $this->addError($file, self::PROTECTED_PATH, $match->getMatch());
         }
 
         return false;
     }
 
     /**
-     * Check file from skip list
+     * Get path list
+     *
+     * @param string $xpath
+     * @return array|null
+     */
+    protected function getPathList($xpath)
+    {
+        return Config::getInstance()->getNodeArray($xpath);
+    }
+
+    /**
+     * Check if extension is skipped
      *
      * @param string $file
      * @return bool
      */
-    protected function isFileSkipped($file)
+    protected function isExtensionSkipped($file)
     {
-        if ($this->isFileSkippedByPath($file)) {
-            return true;
-        }
-
         //check extension in skip list
-        $listExtensions = Config::getInstance()->getNodeArray(self::XPATH_SKIP_FILE_EXTENSIONS);
+        $listExtensions = $this->getPathList(self::XPATH_SKIP_FILE_EXTENSIONS);
         $fileExt        = pathinfo($file, PATHINFO_EXTENSION);
-        if (in_array($fileExt, $listExtensions)) {
-            return true;
-        }
 
-        //check file path in skip list
-        $list = Config::getInstance()->getMultiNode(self::XPATH_SKIP_FILES);
-        foreach ($list as $item) {
-            $item = (string) $item;
-            if (strpos($file, $item) === 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return in_array($fileExt, $listExtensions);
     }
 
     /**
-     * Check file from ignore list
+     * Get xpath value
      *
-     * @param string $file
-     * @return bool
+     * @param string $xpath
+     * @return array|null
      */
-    protected function isFileProtected($file)
+    protected function getValue($xpath)
     {
-        if ($this->isFileProtectedByPath($file)) {
-            return true;
-        }
-        $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_FILES);
-        foreach ($list as $item) {
-            if (strpos($file, $item) === 0) {
-                $this->addError($file, self::PROTECTED_FILE, $item);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if file in allowed path
-     *
-     * @param string $file
-     * @return bool
-     */
-    protected function isFileAllowedByPath($file)
-    {
-        $list = Config::getInstance()->getMultiNode(self::XPATH_ALLOW_PATHS);
-        foreach ($list as $item) {
-            if (strpos($file, (string) $item) === 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check file in the skip paths list
-     *
-     * @param string $file
-     * @return bool
-     */
-    protected function isFileSkippedByPath($file)
-    {
-        $list = Config::getInstance()->getMultiNode(self::XPATH_SKIP_PATHS);
-        foreach ($list as $item) {
-            if (strpos($file, (string) $item) === 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check file from ignore list
-     *
-     * @param string $file
-     * @return bool
-     */
-    protected function isFileProtectedByPath($file)
-    {
-        $list = Config::getInstance()->getMultiNode(self::XPATH_PROTECT_PATHS);
-        foreach ($list as $item) {
-            if (strpos($file, (string) $item) === 0) {
-                $this->addError($file, self::PROTECTED_PATH, $item);
-
-                return true;
-            }
-        }
-
-        return false;
+        return Config::getInstance()->getNode($xpath);
     }
 }

@@ -136,6 +136,77 @@ class Set extends AbstractCommand
     }
 
     /**
+     * Show notifications about deprecated commands
+     *
+     * @return bool
+     */
+    protected function checkDeprecatedKey()
+    {
+        if ('wizard' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    tracker:wizard');
+            $this->output->writeln('');
+
+            return true;
+        }
+        if ('task' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    tracker:task NUMBER');
+            $this->output->writeln('');
+
+            return true;
+        }
+        if ('exclude-extension' == $this->getKey() || 'skip-ext' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    files:skip --ext YOUR_EXTENSION');
+            $this->output->writeln('');
+
+            return true;
+        }
+        if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
+            || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
+        ) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    files:skip YOUR_PATH');
+            $this->output->writeln('');
+
+            return true;
+        }
+        if ('protected-path' == $this->getKey() || 'protected-file' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    files:protect YOUR_PATH');
+            $this->output->writeln('');
+
+            return true;
+        }
+        if ('allow-path' == $this->getKey() || 'allow-file' == $this->getKey()) {
+            $this->output->writeln('This command is deprecated. Please use');
+            $this->output->writeln('');
+            $this->output->writeln('    files:allow YOUR_PATH');
+            $this->output->writeln('');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get key config name
+     *
+     * @return mixed
+     */
+    protected function getKey()
+    {
+        return $this->input->getArgument('key');
+    }
+
+    /**
      * Process pair key-value
      *
      * @return int
@@ -178,68 +249,36 @@ class Set extends AbstractCommand
     }
 
     /**
-     * Write predefined options
+     * Get value for config
      *
-     * @param bool $readAll
-     * @throws Exception
+     * @return null|string
      */
-    protected function writePredefinedOptions($readAll = false)
+    protected function getValue()
     {
-        foreach ($this->trackerConnectionOptions as $name) {
-            $value = $this->input->getOption($name);
-            if (!$readAll && null === $value) {
-                continue;
-            }
-            $xpath = $this->isNameXpath() ? $name : $this->getXpath($name);
-            $scope = $this->getScope($xpath);
-            $this->writeConfig($xpath, $scope, $value);
-        }
+        return $this->input->getArgument('value');
     }
 
     /**
-     * Write key-value option
+     * Get argument XPath
      *
-     * @return $this
+     * @return string
      * @throws Exception
      */
-    protected function writeKeyValueOption()
+    protected function getArgumentXpath()
     {
-        if (!$this->getKey()) {
-            /**
-             * Ignore if nothing to write
-             */
-            return $this;
-        }
-
-        $xpath = $this->getArgumentXpath();
-
-        $value = $this->fetchValue($xpath);
-        $scope = $this->getScope($xpath);
-
-        $this->writeConfig($xpath, $scope, $value);
-
-        return $this;
+        return $this->isNameXpath()
+            ? $this->getKey()
+            : $this->getXpath($this->getKey());
     }
 
     /**
-     * Get XML path input options
+     * Check if name option is XML path
      *
-     * @param string $xpath
-     * @return array
+     * @return bool
      */
-    protected function getXpathOptions($xpath)
+    protected function isNameXpath()
     {
-        switch ($xpath) {
-            case self::XPATH_TRACKER_TYPE:
-                $values = array_values($this->getConfig()->getNodeArray('tracker/available_type'));
-                break;
-
-            default:
-                return [];
-        }
-        $keys = array_keys(array_fill(1, count($values), 1));
-
-        return array_combine($keys, $values);
+        return (bool) $this->input->getOption('xpath');
     }
 
     /**
@@ -268,7 +307,13 @@ class Set extends AbstractCommand
 
             case 'exclude-extension':
             case 'skip-ext':
-                $name = 'validators/FileFilter/filter/skip/path';
+                $name = 'validators/FileFilter/filter/skip/extensions';
+                if ($this->shouldWriteValue()) {
+                    $name = $name.'/'
+                        .$this->getHelperSet()->get('commithook_config_file')->path2XmlNode(
+                            $this->getValue()
+                        );
+                }
                 break;
 
             case 'exclude-path':
@@ -289,9 +334,11 @@ class Set extends AbstractCommand
                 $name = 'validators/FileFilter/filter/protect/files/file';
                 break;
 
+            case 'skip':
+            case 'allow':
             case 'protect':
-                $name = 'validators/FileFilter/filter/protect/path';
-                if ($this->getValue()) {
+                $name = 'validators/FileFilter/filter/'.$name.'/path';
+                if ($this->shouldWriteValue()) {
                     $name = $name.'/'
                         .$this->getHelperSet()->get('commithook_config_file')->path2XmlNode(
                             $this->getValue()
@@ -319,9 +366,78 @@ class Set extends AbstractCommand
     }
 
     /**
+     * Get issues tracker type
+     *
+     * @return string
+     */
+    protected function getTrackerType()
+    {
+        if ($this->trackerType) {
+            return $this->trackerType;
+        }
+        $this->trackerType = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
+        if (!$this->trackerType) {
+            new Exception('Tracker type is not set. Please use command: commithook config --tracker [TRACKER]');
+        }
+
+        return $this->trackerType;
+    }
+
+    /**
+     * Check if it should write value
+     *
+     * @return null|string
+     */
+    protected function shouldWriteValue()
+    {
+        return (bool) $this->getValue() || $this->shouldUnset();
+    }
+
+    /**
+     * Check if should remove value
+     *
+     * @return bool
+     */
+    protected function shouldUnset()
+    {
+        return $this->input->hasParameterOption('--unset');
+    }
+
+    /**
+     * Get value by xpath
+     *
+     * @param string $xpath
+     * @return null|string
+     */
+    protected function getXpathValue($xpath)
+    {
+        return false === strpos($xpath, 'password') ?
+            $this->getConfig()->getNode($xpath) : null;
+    }
+
+    /**
+     * Write predefined options
+     *
+     * @param bool $readAll
+     * @throws Exception
+     */
+    protected function writePredefinedOptions($readAll = false)
+    {
+        foreach ($this->trackerConnectionOptions as $name) {
+            $value = $this->input->getOption($name);
+            if (!$readAll && null === $value) {
+                continue;
+            }
+            $xpath = $this->isNameXpath() ? $name : $this->getXpath($name);
+            $scope = $this->getScope($xpath);
+            $this->writeConfig($xpath, $scope, $value);
+        }
+    }
+
+    /**
      * Get XML path input options
      *
-     * @param string        $xpath
+     * @param string $xpath
      * @param Question|null $question
      * @return array
      */
@@ -353,23 +469,102 @@ class Set extends AbstractCommand
     }
 
     /**
-     * Get credentials scope
+     * Get default scope ID
      *
+     * @param string $xpath
+     * @param string $type
+     * @return int
+     */
+    protected function getDefaultScope($xpath, $type)
+    {
+        switch ($xpath) {
+            case 'tracker/'.$type.'/active_task':
+                $default = self::OPTION_SCOPE_PROJECT_SELF;
+                break;
+            case 'tracker/'.$type.'/project':
+                $default = self::OPTION_SCOPE_PROJECT;
+                break;
+
+            case self::XPATH_TRACKER_TYPE:
+            case 'tracker/'.$type.'/url':
+                $default = 1;
+                break;
+
+            case 'tracker/'.$type.'/username':
+            case 'tracker/'.$type.'/password':
+                $default = 1;
+                break;
+
+            default:
+                $default = 3;
+                break;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Check if firm scope
+     *
+     * In this case default scope must be used
+     *
+     * @param string $xpath
+     * @param string $type
+     * @return bool
+     */
+    protected function isFirmScope($xpath, $type)
+    {
+        $firm = false;
+        switch ($xpath) {
+            case 'tracker/'.$type.'/active_task':
+            case 'tracker/'.$type.'/project':
+                $firm = true;
+                break;
+            //no default
+        }
+
+        return $firm;
+    }
+
+    /**
+     * Get scope option
+     *
+     * @return null|string
+     */
+    protected function getScopeOption()
+    {
+        if ($this->input->getOption(self::OPTION_SCOPE_GLOBAL)) {
+            return self::OPTION_SCOPE_GLOBAL;
+        }
+        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT)) {
+            return self::OPTION_SCOPE_PROJECT;
+        }
+        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT_SELF)) {
+            return self::OPTION_SCOPE_PROJECT_SELF;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get available scope options
+     *
+     * @param string $xpath
+     * @param string $type
      * @return array
      */
-    protected function getCredentialsScope()
+    protected function getAvailableScopeOptions($xpath, $type)
     {
-        $scopeOptions = $this->scopeOptions;
-        unset($scopeOptions[1]);
+        $options = $this->scopeOptions;
+        switch ($xpath) {
+            case 'tracker/'.$type.'/username':
+            case 'tracker/'.$type.'/password':
+                unset($options[2]);
+                break;
+            //no default
+        }
 
-        return $this->getScope(
-            $this->getXpath('username'),
-            $this->getSimpleQuestion()->getQuestion(
-                "Set config scope credentials",
-                1,
-                $scopeOptions
-            )
-        );
+        return $options;
     }
 
     /**
@@ -402,82 +597,6 @@ class Set extends AbstractCommand
         $this->updated = $result ?: $this->updated;
 
         return $this;
-    }
-
-    /**
-     * Check if name option is XML path
-     *
-     * @return bool
-     */
-    protected function isNameXpath()
-    {
-        return (bool) $this->input->getOption('xpath');
-    }
-
-    /**
-     * Get value
-     *
-     * @param string $xpath
-     * @return string
-     */
-    protected function fetchValue($xpath)
-    {
-        if (!$this->getValue()) {
-            $question = $this->getSimpleQuestion()->getQuestion(
-                "Set value for XPath '$xpath'",
-                $this->getXpathValue($xpath)
-            );
-
-            /**
-             * Ask value without showing input for passwords
-             */
-            if (false !== strpos($xpath, 'password')) {
-                $question->setHidden(true);
-                $question->setHiddenFallback(true);
-            }
-
-            return $this->io->askQuestion($question);
-        }
-
-        return $this->getValue();
-    }
-
-    /**
-     * Get issues tracker type
-     *
-     * @return string
-     */
-    protected function getTrackerType()
-    {
-        if ($this->trackerType) {
-            return $this->trackerType;
-        }
-        $this->trackerType = $this->getConfig()->getNode(self::XPATH_TRACKER_TYPE);
-        if (!$this->trackerType) {
-            new Exception('Tracker type is not set. Please use command: commithook config --tracker [TRACKER]');
-        }
-
-        return $this->trackerType;
-    }
-
-    /**
-     * Get scope option
-     *
-     * @return null|string
-     */
-    protected function getScopeOption()
-    {
-        if ($this->input->getOption(self::OPTION_SCOPE_GLOBAL)) {
-            return self::OPTION_SCOPE_GLOBAL;
-        }
-        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT)) {
-            return self::OPTION_SCOPE_PROJECT;
-        }
-        if ($this->input->getOption(self::OPTION_SCOPE_PROJECT_SELF)) {
-            return self::OPTION_SCOPE_PROJECT_SELF;
-        }
-
-        return null;
     }
 
     /**
@@ -546,6 +665,104 @@ class Set extends AbstractCommand
     }
 
     /**
+     * Write key-value option
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function writeKeyValueOption()
+    {
+        if (!$this->getKey()) {
+            /**
+             * Ignore if nothing to write
+             */
+            return $this;
+        }
+
+        $xpath = $this->getArgumentXpath();
+
+        $value = $this->fetchValue($xpath);
+        $scope = $this->getScope($xpath);
+
+        $this->writeConfig($xpath, $scope, $value);
+
+        return $this;
+    }
+
+    /**
+     * Get value
+     *
+     * @param string $xpath
+     * @return string
+     */
+    protected function fetchValue($xpath)
+    {
+        if ($this->shouldUnset()) {
+            return '';
+        }
+
+        if (!$this->shouldWriteValue()) {
+            $question = $this->getSimpleQuestion()->getQuestion(
+                "Set value for XPath '$xpath'",
+                $this->getXpathValue($xpath)
+            );
+
+            /**
+             * Ask value without showing input for passwords
+             */
+            if (false !== strpos($xpath, 'password')) {
+                $question->setHidden(true);
+                $question->setHiddenFallback(true);
+            }
+
+            return $this->io->askQuestion($question);
+        }
+
+        return $this->getValue();
+    }
+
+    /**
+     * Get XML path input options
+     *
+     * @param string $xpath
+     * @return array
+     */
+    protected function getXpathOptions($xpath)
+    {
+        switch ($xpath) {
+            case self::XPATH_TRACKER_TYPE:
+                $values = array_values($this->getConfig()->getNodeArray('tracker/available_type'));
+                break;
+
+            default:
+                return [];
+        }
+        $keys = array_keys(array_fill(1, count($values), 1));
+
+        return array_combine($keys, $values);
+    }
+
+    /**
+     * Get credentials scope
+     *
+     * @return array
+     */
+    protected function getCredentialsScope()
+    {
+        $scopeOptions = $this->scopeOptions;
+        unset($scopeOptions[1]);
+
+        return $this->getScope(
+            $this->getXpath('username'),
+            $this->getSimpleQuestion()->getQuestion(
+                "Set config scope credentials",
+                1,
+                $scopeOptions
+            )
+        );
+    }
+
+    /**
      * Init default helpers
      *
      * @return $this
@@ -592,6 +809,8 @@ HELP;
         $this->addArgument('key', InputArgument::OPTIONAL);
         $this->addArgument('value', InputArgument::OPTIONAL);
 
+        $this->setUnsetOption();
+
         /**
          * When this parameter set key must be an XML path
          */
@@ -617,120 +836,15 @@ HELP;
     }
 
     /**
-     * Get argument XPath
+     * Set unset option
      *
-     * @return string
-     * @throws Exception
+     * @return $this
      */
-    protected function getArgumentXpath()
+    protected function setUnsetOption()
     {
-        return $this->isNameXpath()
-            ? $this->getKey()
-            : $this->getXpath($this->getKey());
-    }
+        $this->addOption('unset', InputOption::VALUE_NONE);
 
-    /**
-     * Get value by xpath
-     *
-     * @param string $xpath
-     * @return null|string
-     */
-    protected function getXpathValue($xpath)
-    {
-        return false === strpos($xpath, 'password') ?
-            $this->getConfig()->getNode($xpath) : null;
-    }
-
-    /**
-     * Get key config name
-     *
-     * @return mixed
-     */
-    protected function getKey()
-    {
-        return $this->input->getArgument('key');
-    }
-
-    /**
-     * Get value for config
-     *
-     * @return null|string
-     */
-    protected function getValue()
-    {
-        return $this->input->getArgument('value');
-    }
-
-    /**
-     * Set value
-     *
-     * @param string $value
-     * @return mixed
-     */
-    protected function setValue($value)
-    {
-        return $this->input->setArgument('value', $value);
-    }
-
-    /**
-     * Show notifications about deprecated commands
-     *
-     * @return bool
-     */
-    protected function checkDeprecatedKey()
-    {
-        if ('wizard' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    tracker:wizard');
-            $this->output->writeln('');
-
-            return true;
-        }
-        if ('task' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    tracker:task NUMBER');
-            $this->output->writeln('');
-
-            return true;
-        }
-        if ('exclude-extension' == $this->getKey() || 'skip-ext' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    files:skip --ext YOUR_EXTENSION');
-            $this->output->writeln('');
-
-            return true;
-        }
-        if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
-            || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
-        ) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    files:skip YOUR_PATH');
-            $this->output->writeln('');
-
-            return true;
-        }
-        if ('protected-path' == $this->getKey() || 'protected-file' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    files:protect YOUR_PATH');
-            $this->output->writeln('');
-
-            return true;
-        }
-        if ('allow-path' == $this->getKey() || 'allow-file' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    files:allow YOUR_PATH');
-            $this->output->writeln('');
-
-            return true;
-        }
-
-        return false;
+        return $this;
     }
 
     /**
@@ -766,81 +880,13 @@ HELP;
     }
 
     /**
-     * Get default scope ID
+     * Set value
      *
-     * @param string $xpath
-     * @param string $type
-     * @return int
+     * @param string $value
+     * @return mixed
      */
-    protected function getDefaultScope($xpath, $type)
+    protected function setValue($value)
     {
-        switch ($xpath) {
-            case 'tracker/'.$type.'/active_task':
-                $default = self::OPTION_SCOPE_PROJECT_SELF;
-                break;
-            case 'tracker/'.$type.'/project':
-                $default = self::OPTION_SCOPE_PROJECT;
-                break;
-
-            case self::XPATH_TRACKER_TYPE:
-            case 'tracker/'.$type.'/url':
-                $default = 1;
-                break;
-
-            case 'tracker/'.$type.'/username':
-            case 'tracker/'.$type.'/password':
-                $default = 1;
-                break;
-
-            default:
-                $default = 3;
-                break;
-        }
-
-        return $default;
-    }
-
-    /**
-     * Get available scope options
-     *
-     * @param string $xpath
-     * @param string $type
-     * @return array
-     */
-    protected function getAvailableScopeOptions($xpath, $type)
-    {
-        $options = $this->scopeOptions;
-        switch ($xpath) {
-            case 'tracker/'.$type.'/username':
-            case 'tracker/'.$type.'/password':
-                unset($options[2]);
-                break;
-            //no default
-        }
-
-        return $options;
-    }
-
-    /**
-     * Check if firm scope
-     *
-     * In this case default scope must be used
-     *
-     * @param string $xpath
-     * @param string $type
-     * @return bool
-     */
-    protected function isFirmScope($xpath, $type)
-    {
-        $firm = false;
-        switch ($xpath) {
-            case 'tracker/'.$type.'/active_task':
-            case 'tracker/'.$type.'/project':
-                $firm = true;
-                break;
-            //no default
-        }
-
-        return $firm;
+        return $this->input->setArgument('value', $value);
     }
 }

@@ -62,6 +62,25 @@ class PathMatch
     protected $allowedByDefault = false;
 
     /**
+     * Matched path
+     *
+     * @var string
+     */
+    protected $matched;
+
+    /**
+     * Set allowed by default
+     *
+     * Allowed list will have higher priority upon protected one if TRUE
+     *
+     * @return bool
+     */
+    public function getAllowedByDefault()
+    {
+        return $this->allowedByDefault;
+    }
+
+    /**
      * Set allowed by default
      *
      * Allowed list will have higher priority upon protected one if TRUE
@@ -77,37 +96,13 @@ class PathMatch
     }
 
     /**
-     * Test path
+     * Get matched path
      *
-     * @param string $file
-     * @return bool
+     * @return string
      */
-    public function test($file)
+    public function getMatch()
     {
-        $file = str_replace('\\', '/', $file);
-
-        if ($this->allowedByDefault
-            && ($this->protected && $this->matchList($this->protected, $file)
-                && $this->allowed && !$this->matchList($this->allowed, $file))
-        ) {
-            /**
-             * In this case "allowed" list will be ended rule and will have highest priority.
-             * If there is no "allowed" or "protected" list it will be ignored.
-             */
-            return false;
-        } elseif (!$this->allowedByDefault
-            && (!$this->allowed || $this->protected && $this->matchList($this->protected, $file)
-                || $this->allowed && !$this->matchList($this->allowed, $file))
-        ) {
-            /**
-             * In this case "protected" list will be ended rule and will have highest priority.
-             * It will return TRUE only if "allowed" list covers a path.
-             * If there is no "allowed" or "protected" list it will be ignored.
-             */
-            return false;
-        }
-
-        return true;
+        return $this->matched;
     }
 
     /**
@@ -137,9 +132,43 @@ class PathMatch
     }
 
     /**
+     * Test path
+     *
+     * @param string $file
+     * @return bool
+     */
+    public function test($file)
+    {
+        $file = str_replace('\\', '/', $file);
+
+        if ($this->allowedByDefault
+            && ($this->protected && $this->matchList($this->protected, $file)
+                && (!$this->allowed || !$this->matchList($this->allowed, $file)))
+        ) {
+            /**
+             * In this case "allowed" list will be ended rule and will have highest priority.
+             * If there is no "allowed" or "protected" list it will be ignored.
+             */
+            return false;
+        } elseif (!$this->allowedByDefault
+            && (!$this->allowed || $this->protected && $this->matchList($this->protected, $file)
+                || $this->allowed && !$this->matchList($this->allowed, $file))
+        ) {
+            /**
+             * In this case "protected" list will be ended rule and will have highest priority.
+             * It will return TRUE only if "allowed" list covers a path.
+             * If there is no "allowed" or "protected" list it will be ignored.
+             */
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Match path to with nodes in a list
      *
-     * @param array  $list
+     * @param array $list
      * @param string $file
      * @return bool
      */
@@ -153,7 +182,7 @@ class PathMatch
                 //unknown directories structure
                 $reg = str_replace('**', '([^<>:"/\|?__ASTERISK__]|\x2F)+', $reg);
                 //unknown directory
-                $reg = str_replace('*', '[^<>:"/\|?*]+', $reg);
+                $reg = str_replace('*', '[^<>:"/\|?*]*', $reg);
                 $reg = str_replace('__ASTERISK__', '*', $reg);
 
                 $reg = str_replace('.', '\.', $reg);
@@ -165,9 +194,13 @@ class PathMatch
                 }
 
                 if (preg_match('#^'.$reg.'#', $file)) {
+                    $this->matched = $path;
+
                     return true;
                 }
             } elseif ('/' === $path || $file === $path || 0 === strpos($file, rtrim($path, '/').'/')) {
+                $this->matched = $path;
+
                 return true;
             }
         }

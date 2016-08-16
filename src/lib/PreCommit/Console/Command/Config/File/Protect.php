@@ -41,11 +41,66 @@ class Protect extends Set
             $this->normalizePathValue();
 
             return $this->processValue();
+        } elseif ($this->shouldUnset()) {
+            return $this->processValue();
         } else {
             $this->showSetValues();
 
             return 0;
         }
+    }
+
+    /**
+     * Filter value
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function normalizePathValue()
+    {
+        $this->setValue(
+            $this->getHelperSet()->get('commithook_config_file')
+                ->normalizePath($this->getValue())
+        );
+
+        /**
+         * Check empty value but "/" can be accepted
+         */
+        if (!$this->getValue()) {
+            throw new Exception('No value defined.');
+        }
+
+        $path = $this->askProjectDir().'/'.ltrim($this->getValue(), '/');
+
+        /**
+         * Check exist path
+         *
+         * Ignore paths with masks
+         */
+        if (false === strpos($this->getValue(), '*') && !is_dir($path) && !is_file($path)) {
+            throw new Exception("Unknown path '{$this->getValue()}'.");
+        }
+
+        return $this;
+    }
+
+    /**
+     * Show set values
+     *
+     * @return $this
+     */
+    protected function showSetValues()
+    {
+        $this->key = 'protect-path';
+        $this->processValue();
+
+        $this->key = 'protect-file';
+        $this->processValue();
+
+        $this->key = 'protect';
+        $this->processValue();
+
+        return $this;
     }
 
     /**
@@ -75,6 +130,7 @@ class Protect extends Set
         $this->addArgument('value', InputArgument::OPTIONAL);
 
         $this->setScopeOptions();
+        $this->setUnsetOption();
 
         return $this;
     }
@@ -125,50 +181,14 @@ class Protect extends Set
     }
 
     /**
-     * Show set values
+     * Get value by xpath
      *
-     * @return $this
+     * @param string $xpath
+     * @return null|string
      */
-    protected function showSetValues()
+    protected function getXpathValue($xpath)
     {
-        $this->key = 'protect-path';
-        $this->processValue();
-
-        $this->key = 'protect-file';
-        $this->processValue();
-
-        $this->key = 'protect';
-        $this->processValue();
-
-        return $this;
-    }
-
-    /**
-     * Filter value
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected function normalizePathValue()
-    {
-        $this->setValue(
-            $this->getHelperSet()->get('commithook_config_file')
-                ->normalizePath($this->getValue())
-        );
-
-        /**
-         * Check empty value but "/" can be accepted
-         */
-        if (!$this->getValue()) {
-            throw new Exception('No value defined.');
-        }
-
-        $path = $this->askProjectDir().'/'.ltrim($this->getValue(), '/');
-
-        if (!is_dir($path) && !is_file($path)) {
-            throw new Exception("Unknown path '{$this->getValue()}'.");
-        }
-
-        return $this;
+        return preg_match('#/(paths|files)/path$#', $xpath) ?
+            $this->getConfig()->getMultiNode($xpath) : $this->getConfig()->getNodeArray($xpath);
     }
 }
