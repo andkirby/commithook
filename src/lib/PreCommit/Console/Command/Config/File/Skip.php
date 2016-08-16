@@ -103,7 +103,7 @@ class Skip extends Protect
     {
         parent::configureInput();
 
-        $this->addOption('extension', null, 'Extensions mode.', InputOption::VALUE_NONE);
+        $this->addOption('extension', null, InputOption::VALUE_NONE, 'Extensions mode.');
 
         return $this;
     }
