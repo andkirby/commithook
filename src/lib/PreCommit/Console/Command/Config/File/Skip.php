@@ -44,10 +44,10 @@ class Skip extends Protect
      *
      * @return $this|string
      */
-    protected function normalizePathValue()
+    protected function normalizeValue()
     {
         if (!$this->isExtension()) {
-            parent::normalizePathValue();
+            parent::normalizeValue();
         }
 
         return $this;

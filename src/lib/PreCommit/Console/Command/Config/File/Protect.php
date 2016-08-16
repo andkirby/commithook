@@ -38,7 +38,7 @@ class Protect extends Set
         AbstractCommand::execute($input, $output);
 
         if ($this->getValue()) {
-            $this->normalizePathValue();
+            $this->normalizeValue();
 
             return $this->processValue();
         } elseif ($this->shouldUnset()) {
@@ -56,7 +56,7 @@ class Protect extends Set
      * @return string
      * @throws Exception
      */
-    protected function normalizePathValue()
+    protected function normalizeValue()
     {
         $this->setValue(
             $this->getHelperSet()->get('commithook_config_file')
