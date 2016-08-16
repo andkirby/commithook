@@ -3,13 +3,21 @@
 <config>
     <!--Validators setup-->
     <validators>
-        <CodingStandard>
-            <underscore_in_non_public>0</underscore_in_non_public>
-        </CodingStandard>
         <CodeSniffer>
             <rule>
                 <directory>src/phpcs</directory>
             </rule>
         </CodeSniffer>
     </validators>
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <validators>
+                        <CodeSniffer>1</CodeSniffer>
+                    </validators>
+                </php>
+            </filetype>
+        </pre-commit>
+    </hooks>
 </config>
