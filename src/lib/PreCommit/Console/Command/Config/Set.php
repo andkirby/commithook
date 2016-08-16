@@ -213,7 +213,7 @@ class Set extends AbstractCommand
      */
     protected function processValue()
     {
-        if (!$this->getValue() && $this->getKey()) {
+        if (null === $this->getValue() && $this->getKey()) {
             /**
              * Reading mode
              */
