@@ -73,7 +73,7 @@ $ cat ~/.commithook/commithook.xml
     </tracker>
 </config>
 ```
-To reset your password you may wizard again or use command:
+To reset your password you may use command:
 ```
 $ commithook config --global --tracker jira password pass123
 ```
@@ -94,12 +94,29 @@ $ commithook install
 [Here](hooks-installation.md) full documentation.
 
 ### PHPCodeSniffer integration
+
 _**NOTE:** all files within directories `.commithook` and `.coding-standards` should be shared with your team. So just add those into VCS._
 
 Fetch PHPCS package:
 ```
 $ composer global require squizlabs/php_codesniffer:~2.0@stable
 ```
+
+#### Fast install (Magento 1.x ECG standards)
+
+```
+$ cd my-project
+$ curl https://codeload.github.com/andkirby/commithook-standard/tar.gz/magento-ecg | tar zxf -
+$ mv -f commithook-standards-magento-ecg/.co* .
+$ rm -rf commithook-standards-magento-ecg/
+```
+
+Fetch magento-ecg standards
+```
+$ composer --working-dir=.coding-standards require magento-ecg/coding-standard:~2.0 -o
+```
+
+#### Step by step
 
 Now you need to set up PHPCS. Example with using `magento-ecg` standards.
 ```shell
@@ -136,6 +153,7 @@ Declare PHPCS rule file in file `.commithook/CodeSniffer.xml`.
 $ mkdir .commithook
 $ vim .commithook/CodeSniffer.xml
 ```
+
 Content:
 ```xml
 <?xml version="1.0"?>
@@ -150,6 +168,7 @@ Content:
     </validators>
 </config>
 ```
+
 ### Share commithook files with your team
 ```
 $ git add .commithook .coding-standards commithook.xml
