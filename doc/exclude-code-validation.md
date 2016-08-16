@@ -1,4 +1,4 @@
-Ignoring code validation
+## Ignoring code validation
 
 ### Ignore code block
 ```
@@ -19,19 +19,17 @@ To skip validation for a file/directory please use
 
 `commithook files:skip path/to`
 
+For unset:
+`commithook files:skip path/to --unset`
+
 To skip validation for an extension please use
 
-`commithook files:skip --extension path/to`
+`commithook files:skip --extension jpg`
 
-### Prohibit changes
-#### Protect path
-To prohibit committing changes for a file/directory please use
+This extensions list already defined:
+`jpg png gif bmp ico svg zip rar gz tar ttf fon eot woff`
 
-`commithook files:protect path/to`
+For unset:
+`commithook files:skip --extension jpg --unset`
 
-#### Allow changes
-To allow committing changes for a file/directory please use
 
-`commithook files:allow path/to`
-
-This command should be used to allow committing within protected path.
