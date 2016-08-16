@@ -218,7 +218,7 @@ class Set extends AbstractCommand
              * Reading mode
              */
             $xpath = $this->getArgumentXpath();
-            $this->io->writeln($this->getXpathValue($xpath));
+            $this->io->writeln($this->getShowValue($xpath));
         } elseif ($this->getKey() || $this->isNameXpath()) {
             /**
              * Writing mode
@@ -888,5 +888,16 @@ HELP;
     protected function setValue($value)
     {
         return $this->input->setArgument('value', $value);
+    }
+
+    /**
+     * Get show value
+     *
+     * @param string $xpath
+     * @return null|string
+     */
+    protected function getShowValue($xpath)
+    {
+        return $this->getXpathValue($xpath);
     }
 }
