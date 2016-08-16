@@ -12,7 +12,7 @@ alias php='/c/xampp/php/php.exe'
 
 # commithook
 alias commithook='~/vendor/bin/commithook'
-alias task='commithook config task'
+alias task='commithook tracker:task'
 
 # Composer
 export COMPOSER_HOME=~/.composer # not required for non-Windows systems

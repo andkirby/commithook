@@ -40,7 +40,6 @@ There are following short-names:
 - `R` for `Refactored`
 - `C` for `CR Changes`
 
-
 ###### Option #2
 And JIRA project key can be omitted.
 
@@ -52,7 +51,7 @@ F 256
 In this case the system will find a project key and set it (it should be set in this case).
 
 ###### Option #3
-You may omit verbs `F` and `I`. It will be identified by issue type. 
+You may omit verbs `F` and `I`. It will be identified by issue type.
 ```
 256 Added missed email validator.
 ```
@@ -72,7 +71,7 @@ or applying code review you have to set related verb.
 ###### Option #4
 Also, you may declare "active task" by similar command and don't care about numbers in commit messages:
 ```shell
-$ commithook config task 256
+$ commithook tracker:task 256
 ```
 The value can be checked w/o last argument.
 And a message will be simplest:
