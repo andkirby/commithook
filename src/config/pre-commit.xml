@@ -162,7 +162,7 @@
                     <!-- Validators list-->
                     <code>
                         <!-- PHP, JS -->
-                        <CodeSniffer>1</CodeSniffer>
+                        <CodeSniffer>0</CodeSniffer>
                         <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
