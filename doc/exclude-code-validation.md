@@ -21,7 +21,7 @@ To skip validation for a file/directory please use
 
 To skip validation for an extension please use
 
-`commithook files:skip --ext path/to`
+`commithook files:skip --extension path/to`
 
 ### Prohibit changes
 #### Protect path
