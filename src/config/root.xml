@@ -6,7 +6,7 @@
 -->
 <config>
     <!--Please update also PreCommit\Composer\Application::VERSION-->
-    <version>2.0.0-dev</version>
+    <version>2.0.0-beta.18</version>
     <supported_hooks>
         <hook>pre-commit</hook>
         <hook>commit-msg</hook>
