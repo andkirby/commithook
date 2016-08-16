@@ -11,3 +11,4 @@ Also you may use following template to create commit-msg and pre-commit files:
 <?php
 $hookName = __FILE__;
 require_once '/path/to/commithook/bin/runner.php';
+```

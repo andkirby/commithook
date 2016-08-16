@@ -1,4 +1,5 @@
-[Back](README.md)
+[Back](../README.md)
+
 ## GIT hook files installation
 
 Before you start please be sure that command `commithook` works for your. If not, try to use [`.bashrc` file configuration](example-bashrc.md).
@@ -43,4 +44,4 @@ To remove CommitHook files from your project you may use command:
 $ commithook remove
 ```
 
-[Back](README.md)
+[Back](../README.md)

@@ -1,3 +1,5 @@
+[Back](../README.md)
+
 ## Ignoring code validation
 
 ### Ignore code block
@@ -31,5 +33,7 @@ This extensions list already defined:
 
 For unset:
 `commithook files:skip --extension jpg --unset`
+
+[Back](../README.md)
 
 

@@ -1,3 +1,5 @@
+[Back](../README.md)
+
 ## Release notes
 - Last beta: v2.0.0-beta.16
 - v2.x-dev
@@ -31,3 +33,5 @@
 - v1.2.3 Fixed case when operator name used in variable.
 - v1.2.2 Bugfix for case:
 `<?php if ($i != $recommendationsCount-1) echo ","?>`
+
+[Back](../README.md)
