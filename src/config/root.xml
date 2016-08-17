@@ -18,16 +18,25 @@
     <!--Additional configuration file-->
     <additional_config>
         <main xs:type="ConfigFile">config/commithook.xml</main>
+        <!--Per module/validator/filter-->
+        <modules xs:type="ConfigFile">config/modules/</modules>
+        <validators xs:type="ConfigFile">config/validators/</validators>
+        <filters xs:type="ConfigFile">config/filters/</filters>
+        <!--Common config-->
         <pre-commit xs:type="ConfigFile">config/pre-commit.xml</pre-commit>
         <commit-msg xs:type="ConfigFile">config/commit-msg.xml</commit-msg>
         <magento xs:type="ConfigFile">config/pre-commit-magento.xml</magento>
         <local xs:type="ConfigFile">../commithook-local.xml</local>
+        <!--User-->
         <userprofile xs:type="ConfigFile">HOME/.commithook/commithook.xml</userprofile>
         <userprofile-pre-commit xs:type="ConfigFile">HOME/.commithook/pre-commit.xml</userprofile-pre-commit>
         <userprofile-commit-msg xs:type="ConfigFile">HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
+        <!--Project, project dir-->
         <project_all xs:type="ConfigFile">PROJECT_DIR/.commithook/</project_all>
         <project xs:type="ConfigFile">PROJECT_DIR/commithook.xml</project>
+        <!--Project, user dir-->
         <project_local xs:type="ConfigFile">HOME/.commithook/projects/PROJECT_NAME/commithook.xml</project_local>
     </additional_config>
+
     <cache_dir>HOME/.commithook/cache</cache_dir>
 </config>
