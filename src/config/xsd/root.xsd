@@ -9,11 +9,13 @@
 
     <!--Version type-->
     <xs:simpleType name="VersionType">
-        <xs:restriction base="xs:string">
-            <xs:annotation>
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
                 Version node.
                 Examples: 1.2.4, 1.2.4-patch, 1.2.4-patch.4, 1.2.4-beta.5, 1.2.4-alpha.6, 1.2.4-alpha
-            </xs:annotation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
             <xs:pattern value="(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))"/>
         </xs:restriction>
     </xs:simpleType>
