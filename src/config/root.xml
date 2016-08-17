@@ -33,7 +33,8 @@
         <userprofile-commit-msg xs:type="ConfigFile">HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
         <!--Project, project dir-->
         <project_all xs:type="ConfigFile">PROJECT_DIR/.commithook/</project_all>
-        <project xs:type="ConfigFile">PROJECT_DIR/commithook.xml</project>
+        <project_old xs:type="ConfigFile">PROJECT_DIR/commithook.xml</project_old>
+        <project xs:type="ConfigFile">PROJECT_DIR/.commithook.xml</project>
         <!--Project, user dir-->
         <project_local xs:type="ConfigFile">HOME/.commithook/projects/PROJECT_NAME/commithook.xml</project_local>
     </additional_config>
