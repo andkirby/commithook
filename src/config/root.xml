@@ -4,7 +4,8 @@
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
 -->
-<config>
+<config xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+        xs:noNamespaceSchemaLocation="xsd/root.xsd">
     <!--Please update also PreCommit\Composer\Application::VERSION-->
     <version>2.0.0-dev</version>
     <supported_hooks>
