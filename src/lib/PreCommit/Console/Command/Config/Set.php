@@ -37,7 +37,7 @@ class Set extends AbstractCommand
      * Option scopes
      *
      * project-self: ~/.commithook/projects/PROJECT_NAME/commithook.xml
-     * project:      PROJECT_DIR/commithook.xml
+     * project:      PROJECT_DIR/.commithook.xml
      * global:       ~/.commithook/commithook.xml
      */
     const OPTION_SCOPE_GLOBAL       = 'global';
@@ -404,6 +404,17 @@ class Set extends AbstractCommand
     }
 
     /**
+     * Get show value
+     *
+     * @param string $xpath
+     * @return null|string
+     */
+    protected function getShowValue($xpath)
+    {
+        return $this->getXpathValue($xpath);
+    }
+
+    /**
      * Get value by xpath
      *
      * @param string $xpath
@@ -437,7 +448,7 @@ class Set extends AbstractCommand
     /**
      * Get XML path input options
      *
-     * @param string $xpath
+     * @param string        $xpath
      * @param Question|null $question
      * @return array
      */
@@ -636,7 +647,7 @@ class Set extends AbstractCommand
             return $this->getConfig()->getConfigFile('userprofile');
         } elseif (self::OPTION_SCOPE_PROJECT == $scope) {
             return $this->getConfigProjectFileByXpath($xpath)
-                ?: $this->getConfig()->getConfigFile('project');
+                ?: $this->getProjectConfigFile();
         } elseif (self::OPTION_SCOPE_PROJECT_SELF == $scope) {
             return $this->getConfig()->getConfigFile('project_local');
         }
@@ -661,7 +672,21 @@ class Set extends AbstractCommand
             return null;
         }
 
-        return dirname($this->getConfig()->getConfigFile('project')).'/.commithook/'.$matches[1].'.xml';
+        return dirname($this->getProjectConfigFile()).'/.commithook/'.$matches[1].'.xml';
+    }
+
+    /**
+     * Get project config file
+     *
+     * @return null|string
+     */
+    protected function getProjectConfigFile()
+    {
+        if (is_file($this->getConfig()->getConfigFile('project_old'))) {
+            return $this->getConfig()->getConfigFile('project_old');
+        }
+
+        return $this->getConfig()->getConfigFile('project');
     }
 
     /**
@@ -873,7 +898,7 @@ HELP;
             'project',
             '-P',
             InputOption::VALUE_NONE,
-            'Save config in project configuration file. PROJECT_DIR/commithook.xml'
+            'Save config in project configuration file. PROJECT_DIR/.commithook.xml'
         );
 
         return $this;
@@ -888,16 +913,5 @@ HELP;
     protected function setValue($value)
     {
         return $this->input->setArgument('value', $value);
-    }
-
-    /**
-     * Get show value
-     *
-     * @param string $xpath
-     * @return null|string
-     */
-    protected function getShowValue($xpath)
-    {
-        return $this->getXpathValue($xpath);
     }
 }
