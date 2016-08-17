@@ -2,13 +2,16 @@
     <xs:element name="config">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="version" type="VersionType" />
+                <xs:element name="version" type="Version" minOccurs="0" />
+                <xs:element name="supported_hooks" type="HooksList" minOccurs="0" />
+                <xs:element name="additional_config" type="ConfigFiles" minOccurs="0" />
+                <xs:element name="cache_dir" type="ConfigFile" minOccurs="0" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
     <!--Version type-->
-    <xs:simpleType name="VersionType">
+    <xs:simpleType name="Version">
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 Version node.
@@ -16,7 +19,44 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:pattern value="(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))"/>
+            <xs:pattern
+                    value="(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--Hooks list-->
+    <xs:complexType name="HooksList">
+        <xs:sequence>
+            <xs:element name="hook" type="Hook" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Hook type-->
+    <xs:simpleType name="Hook">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Hook filename.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z_-]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--Additional config files-->
+    <xs:complexType name="ConfigFiles">
+        <xs:sequence>
+            <xs:any processContents="strict" namespace="##local" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Hook type-->
+    <xs:simpleType name="ConfigFile">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Path to config file.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(([A-z]:)|\.\.|config|HOME|PROJECT_DIR)/[A-z_\-./]+" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

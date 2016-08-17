@@ -7,7 +7,7 @@
 <config xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
         xs:noNamespaceSchemaLocation="xsd/root.xsd">
 
-    <!--Please update also PreCommit\Composer\Application::VERSION-->
+    <!--Please update also PreCommit\Console\Application::VERSION-->
     <version>2.x-dev</version>
 
     <supported_hooks>
@@ -17,17 +17,17 @@
 
     <!--Additional configuration file-->
     <additional_config>
-        <main>config/commithook.xml</main>
-        <pre-commit>config/pre-commit.xml</pre-commit>
-        <commit-msg>config/commit-msg.xml</commit-msg>
-        <magento>config/pre-commit-magento.xml</magento>
-        <local>../commithook-local.xml</local>
-        <userprofile>HOME/.commithook/commithook.xml</userprofile>
-        <userprofile-pre-commit>HOME/.commithook/pre-commit.xml</userprofile-pre-commit>
-        <userprofile-commit-msg>HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
-        <project_all>PROJECT_DIR/.commithook/</project_all>
-        <project>PROJECT_DIR/commithook.xml</project>
-        <project_local>HOME/.commithook/projects/PROJECT_NAME/commithook.xml</project_local>
+        <main xs:type="ConfigFile">config/commithook.xml</main>
+        <pre-commit xs:type="ConfigFile">config/pre-commit.xml</pre-commit>
+        <commit-msg xs:type="ConfigFile">config/commit-msg.xml</commit-msg>
+        <magento xs:type="ConfigFile">config/pre-commit-magento.xml</magento>
+        <local xs:type="ConfigFile">../commithook-local.xml</local>
+        <userprofile xs:type="ConfigFile">HOME/.commithook/commithook.xml</userprofile>
+        <userprofile-pre-commit xs:type="ConfigFile">HOME/.commithook/pre-commit.xml</userprofile-pre-commit>
+        <userprofile-commit-msg xs:type="ConfigFile">HOME/.commithook/commit-msg.xml</userprofile-commit-msg>
+        <project_all xs:type="ConfigFile">PROJECT_DIR/.commithook/</project_all>
+        <project xs:type="ConfigFile">PROJECT_DIR/commithook.xml</project>
+        <project_local xs:type="ConfigFile">HOME/.commithook/projects/PROJECT_NAME/commithook.xml</project_local>
     </additional_config>
     <cache_dir>HOME/.commithook/cache</cache_dir>
 </config>
