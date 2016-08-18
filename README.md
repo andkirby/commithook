@@ -9,6 +9,7 @@ Travis Continuous Integration status.
 #### Latest release is `v2.0.0-beta.25`
 
 ### Install latest version
+#### Install globally
 To get last beta version please define your `minimum-stability`.
 ```
 {
@@ -25,6 +26,16 @@ $ composer global require chobie/jira-api-restclient ^2.0@dev
 Now fetch the package:
 ```shell
 $ composer global require andkirby/commithook ~2.0@beta
+```
+
+#### Installation via `create-project`
+```shell
+composer create-project andkirby/commithook /path/to/commithook/ ~2.0@beta
+```
+
+And to binary file will be:
+```
+/path/to/commithook/bin/commithook list
 ```
 ## Main documentation
 - [GIT integration: hook files installation](doc/hooks-installation.md)
