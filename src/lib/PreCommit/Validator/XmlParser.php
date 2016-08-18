@@ -15,7 +15,6 @@ class XmlParser extends AbstractValidator
      * Error codes
      */
     const CODE_XML_ERROR = 'xmlParse';
-
     /**#@-*/
 
     /**
@@ -23,10 +22,9 @@ class XmlParser extends AbstractValidator
      *
      * @var array
      */
-    protected $errorMessages
-        = array(
+    protected $errorMessages = [
             self::CODE_XML_ERROR => '%value%',
-        );
+        ];
 
     /**
      * Validate XML
@@ -38,26 +36,9 @@ class XmlParser extends AbstractValidator
     public function validate($content, $file)
     {
         try {
-            libxml_use_internal_errors(true);
-            $doc = new \DOMDocument('1.0', 'utf-8');
-            $doc->loadXML($content);
+            $this->loadXml($content);
 
-            $xmlErrors = libxml_get_errors();
-
-            if (empty($xmlErrors)) {
-                return true;
-            }
-
-            $error = $xmlErrors[0];
-            if ($error->level < 3) {
-                return true;
-            }
-            $this->addError(
-                $file,
-                self::CODE_XML_ERROR,
-                str_replace("\n", '', $error->message),
-                $error->line
-            );
+            $this->processErrors($file, libxml_get_errors());
         } catch (\Exception $e) {
             $this->addError(
                 $file,
@@ -67,5 +48,48 @@ class XmlParser extends AbstractValidator
         }
 
         return !$this->errorCollector->hasErrors();
+    }
+
+    /**
+     * Load xml
+     *
+     * @param string $content
+     * @return \DOMDocument
+     */
+    protected function loadXml($content)
+    {
+        libxml_use_internal_errors(true);
+        $doc = new \DOMDocument('1.0', 'utf-8');
+        $doc->loadXML($content);
+
+        return $doc;
+    }
+
+    /**
+     * Process errors
+     *
+     * @param string $file
+     * @param array  $xmlErrors
+     * @return $this
+     */
+    protected function processErrors($file, $xmlErrors)
+    {
+        if (empty($xmlErrors)) {
+            return $this;
+        }
+
+        $error = $xmlErrors[0];
+        if ($error->level < 3) {
+            return $this;
+        }
+
+        $this->addError(
+            $file,
+            self::CODE_XML_ERROR,
+            str_replace("\n", '', $error->message),
+            $error->line
+        );
+
+        return $this;
     }
 }
