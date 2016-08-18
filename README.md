@@ -1,7 +1,9 @@
 # CommitHOOKs
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-The main purpose of this project is checking coding standards.
+The main purpose of this project is
+ - checking coding standards before commit (with using PHP CodeSniffer)
+ - filling up commit messages automatically to proper format ([details](doc/commit-msg.md))
 
 [![Travis CI](https://travis-ci.org/andkirby/commithook.svg?branch=develop)](https://travis-ci.org/andkirby/commithook)
 Travis Continuous Integration status.
@@ -28,14 +30,22 @@ Now fetch the package:
 $ composer global require andkirby/commithook ~2.0@beta
 ```
 
+##### Sample `.bashrc`
+Here is [an example of `.bashrc` file](doc/example-bashrc.md) for global using.
+
 #### Installation via `create-project`
 ```shell
 composer create-project andkirby/commithook /path/to/commithook/ ~2.0@beta
 ```
 
-And to binary file will be:
+And path to binary file will be:
 ```
-/path/to/commithook/bin/commithook list
+$ /path/to/commithook/bin/commithook list
+```
+
+You may add alias in your `.bashrc` file.
+```
+alias commithook='/path/to/commithook/bin/commithook'
 ```
 ## Main documentation
 - [Configuration Wizard](doc/example-wizard.md)
