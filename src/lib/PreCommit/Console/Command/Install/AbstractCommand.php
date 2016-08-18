@@ -8,7 +8,6 @@ use PreCommit\Console\Command;
 use PreCommit\Console\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base "install" command abstract class
@@ -39,7 +38,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
      */
     protected function getAvailableHooks()
     {
-        return array('commit-msg', 'pre-commit');
+        return ['commit-msg', 'pre-commit'];
     }
 
     /**
@@ -92,7 +91,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
         if ($this->isVeryVerbose()) {
             $this->output->writeln('Specific files mode.');
         }
-        $files = array();
+        $files = [];
         foreach ($this->getAvailableHooks() as $hook) {
             if ($this->input->getOption($hook)) {
                 $files[] = $hook;
@@ -115,8 +114,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
     /**
      * Get GIT hooks directory path
      *
-     * @param OutputInterface $output
-     * @param string          $projectDir
+     * @param string $projectDir
      * @return string
      * @throws Exception
      */
