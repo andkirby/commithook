@@ -38,10 +38,11 @@ And to binary file will be:
 /path/to/commithook/bin/commithook list
 ```
 ## Main documentation
-- [GIT integration: hook files installation](doc/hooks-installation.md)
 - [Configuration Wizard](doc/example-wizard.md)
+- [GIT integration: hook files installation](doc/hooks-installation.md)
 - [Commit message format](doc/commit-msg.md)
-- [Manage code validation/protect code](doc/exclude-code-validation.md)
+- [Ignore validation](doc/exclude-code-validation.md)
+- [Protect code](doc/protect-code.md)
 
 ## Tips & tricks
 ### Redundant gaps in code
