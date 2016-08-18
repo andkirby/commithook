@@ -16,7 +16,7 @@
     "symfony/console": "~3.0@stable",
     "symfony/filesystem": "~2.5@stable",
     "symfony/finder": "~2.5@stable",
-    "chobie/jira-api-restclient": "~2.0@dev",
+    "chobie/jira-api-restclient": "^2.0@dev",
     "zendframework/zend-cache": "~2.5@stable",
     "knplabs/github-api": "~1.4@stable"
   },
