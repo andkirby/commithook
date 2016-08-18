@@ -182,7 +182,7 @@ class Jira implements InterpreterInterface
             $project = $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/project');
             if (!$project) {
                 throw new Exception(
-                    'JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file "commithook.xml" within current project.'
+                    'JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file ".commithook.xml" within current project.'
                 );
             }
             $issueNo = "$project-$issueNo";

@@ -1,0 +1,5 @@
+# Include this file with command:
+#    git config --local include.path "$PWD/.gitconfig"
+
+[alias]
+    ver = !bash src/shell/version.sh

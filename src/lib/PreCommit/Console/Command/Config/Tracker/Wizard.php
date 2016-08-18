@@ -35,7 +35,7 @@ class Wizard extends Set
 
         if ($this->updated) {
             $this->output->writeln('Configuration updated.');
-            $this->output->writeln('Do not forget to share project commithook.xml file with your team.');
+            $this->output->writeln('Do not forget to share project commithook files with your team.');
             $this->output->writeln('Enjoy!');
         }
 

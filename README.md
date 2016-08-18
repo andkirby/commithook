@@ -6,20 +6,25 @@ The main purpose of this project is checking coding standards.
 [![Travis CI](https://travis-ci.org/andkirby/commithook.svg?branch=develop)](https://travis-ci.org/andkirby/commithook)
 Travis Continuous Integration status.
 
-#### Latest release: `v2.0.0-beta.20`
+#### Latest release is `v2.0.0-beta.25`
 
-### Install last version
-
-Due to reason the package requires one package which is not stable, please use this configuration for your composer.json:
+### Install latest version
+To get last beta version please define your `minimum-stability`.
 ```
 {
-  "minimum-stability": "dev",
+  "minimum-stability": "beta",
   "prefer-stable": true
 }
 ```
-Now install the package.
+
+Due to reason the package requires one package which still in "dev", please fetch it first:
 ```shell
-$ composer global require andkirby/commithook:~2.0@beta
+$ composer global require chobie/jira-api-restclient ^2.0@dev
+```
+
+Now fetch the package:
+```shell
+$ composer global require andkirby/commithook ~2.0@beta
 ```
 ## Main documentation
 - [GIT integration: hook files installation](doc/hooks-installation.md)
