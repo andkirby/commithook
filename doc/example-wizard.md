@@ -2,18 +2,9 @@
 
 # Project configuration example
 
-### Wizard
-#### Wizard for JIRA integration
-Let's init empty directory with GIT.
-```shell
-$ mkdir /d/home/prj1
-
-$ cd /d/home/prj1
-
-$ git init
-Initialized empty Git repository in D:/home/prj1/.git/
-```
-Now we may start wizard.
+### Issue tracker integration
+#### Example for JIRA
+Go to your project directory and run wizard.
 ```
 $ commithook tracker:wizard
 Set up issue tracker connection.
@@ -48,9 +39,11 @@ Configuration updated.
 Do not forget to share project .commithook.xml file with your team.
 Enjoy!
 ```
-Let's check generated files.
-```xml
+You may check generated files.
+```
 $ cat .commithook.xml
+```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
@@ -59,8 +52,11 @@ $ cat .commithook.xml
         </jira>
     </tracker>
 </config>
-
+```
+```
 $ cat ~/.commithook/.commithook.xml
+```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
@@ -73,7 +69,7 @@ $ cat ~/.commithook/.commithook.xml
     </tracker>
 </config>
 ```
-To reset your password you may use command:
+_**NOTE:** To reset your password you may use command:_
 ```
 $ commithook config --global --tracker jira password pass123
 ```
@@ -116,7 +112,7 @@ Fetch magento-ecg standards
 $ composer --working-dir=.coding-standards install -o
 ```
 
-#### Step by step
+#### Install step by step
 
 Now you need to set up PHPCS. Example with using `magento-ecg` standards.
 ```shell
@@ -148,46 +144,23 @@ Ignore vendor dir within `.coding-standards/` directory.
 $ echo vendor >> .coding-standards/.gitignore
 ```
 
-Declare PHPCS rule file in file `.commithook/CodeSniffer.xml`.
+Declare PHPCS rule.
 ```
-$ mkdir .commithook
-$ vim .commithook/CodeSniffer.xml
+$ commithook config --xpath validators/CodeSniffer/rule/directory .coding-standards/phpcs
+```
+Enable PHPCS validator.
+```
+$ commithook validator:disable --enable CodeSniffer
 ```
 
-Content:
-```xml
-<?xml version="1.0"?>
-<config>
-    <!--Validators setup-->
-    <validators>
-        <CodeSniffer>
-            <rule>
-                <directory>.coding-standards/phpcs</directory>
-            </rule>
-        </CodeSniffer>
-    </validators>
-</config>
-```
+### Test integration
+You may make quick test for the integration [here](test-code.md).
 
 ### Share commithook files with your team
 ```
 $ git add .commithook .coding-standards .commithook.xml
 $ git commit -m '@@through Added commithook files.'
 $ git push
-```
-### Checking
-Let's test.
-```
-$ echo '<?php echo 111;' > test.php
-$ git add test.php
-$ commithook test
-PHP CommitHooks v2.0.0-beta.XX
-Please report all hook bugs to the GitHub project.
-http://github.com/andkirby/commithook
-
-Ooops! Something wrong in your files.
-========================== test.php ==========================
-Line: 1:7. (phpcs W) Use of echo language construct is discouraged.
 ```
 
 [Back](../README.md)
