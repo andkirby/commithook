@@ -45,12 +45,12 @@ Set up issue tracker connection.
  > 1
 
 Configuration updated.
-Do not forget to share project commithook.xml file with your team.
+Do not forget to share project .commithook.xml file with your team.
 Enjoy!
 ```
 Let's check generated files.
 ```xml
-$ cat commithook.xml
+$ cat .commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
@@ -60,7 +60,7 @@ $ cat commithook.xml
     </tracker>
 </config>
 
-$ cat ~/.commithook/commithook.xml
+$ cat ~/.commithook/.commithook.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tracker>
@@ -83,7 +83,7 @@ Default path: `c:/xampp/php/php.exe`
 ```
 $ commithook config --xpath code/interpreter/php d:/s/php-5.5.38/php.exe --global
 ```
-It will update file `~/.commithook/commithook.xml`.
+It will update file `~/.commithook/.commithook.xml`.
 
 _**NOTE:** You may set this up per project. Just use `--project-self` instead `--global`._
 
@@ -113,7 +113,7 @@ $ rm -rf commithook-standards-magento-ecg/
 
 Fetch magento-ecg standards
 ```
-$ composer --working-dir=.coding-standards require magento-ecg/coding-standard:~2.0 -o
+$ composer --working-dir=.coding-standards install -o
 ```
 
 #### Step by step
@@ -171,7 +171,7 @@ Content:
 
 ### Share commithook files with your team
 ```
-$ git add .commithook .coding-standards commithook.xml
+$ git add .commithook .coding-standards .commithook.xml
 $ git commit -m '@@through Added commithook files.'
 $ git push
 ```
