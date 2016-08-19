@@ -9,7 +9,7 @@
  * @deprecated Deprecated to direct using since v1.6.4.
  *             All code will be pushed to use /bin/runner.php
  */
-
+// @codingStandardsIgnoreFile
 /**
  * Stub
 */
@@ -110,10 +110,16 @@ try {
         exit(1);
     }
 } catch (\PreCommit\Exception $e) {
+    if (TEST_MODE) {
+        throw $e;
+    }
     echo 'app error: '.$e->getMessage();
     echo PHP_EOL;
     exit(1);
 } catch (\Exception $e) {
+    if (TEST_MODE) {
+        throw $e;
+    }
     echo 'exception: '.$e->getMessage();
     echo PHP_EOL;
     echo $e->getTraceAsString();
