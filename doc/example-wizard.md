@@ -15,7 +15,7 @@ Initialized empty Git repository in D:/home/prj1/.git/
 ```
 Now we may start wizard.
 ```
-$ commithook config wizard
+$ commithook tracker:wizard
 Set up issue tracker connection.
 
  Tracker type:
