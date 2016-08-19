@@ -46,7 +46,7 @@ class Test extends AbstractCommand
         $vcsFiles = $customFiles ?: null;
 
         /** @noinspection PhpUnusedLocalVariableInspection */
-        $hookFile = $this->askProjectDir($input, $output).'/.git/hooks/pre-commit';
+        $hookFile = $this->askProjectDir().'/.git/hooks/pre-commit';
         require_once __DIR__.'/../../../../runner.php';
 
         return 0;
