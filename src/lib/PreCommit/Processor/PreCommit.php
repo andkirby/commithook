@@ -174,7 +174,7 @@ class PreCommit extends AbstractAdapter
     public function runValidators($ext, $content, $file, $filePath)
     {
         foreach ($this->getValidators($ext) as $validatorName => $status) {
-            if ($status && $status !== 'false') {
+            if ((int) $status && $status !== 'false') {
                 /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $this->loadValidator($validatorName)
                     ->validate($content, $file, $filePath);

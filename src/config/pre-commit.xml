@@ -162,7 +162,7 @@
                     <!-- Validators list-->
                     <code>
                         <!-- PHP, JS -->
-                        <CodeSniffer>0</CodeSniffer>
+                        <CodeSniffer>1</CodeSniffer>
                         <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
@@ -204,7 +204,7 @@
                     </filters>
                     <validators>
                         <License>0</License>
-                        <CodeSniffer>1</CodeSniffer>
+                        <CodeSniffer>0</CodeSniffer>
                         <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
