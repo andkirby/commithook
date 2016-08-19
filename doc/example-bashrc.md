@@ -7,17 +7,9 @@ You may try to use this script with shortcuts for your local `~/.bashrc`.
 Please update paths if needed.
 
 ```shell
-# php
-alias php='/c/xampp/php/php.exe'
-
-# commithook
-alias commithook='~/vendor/bin/commithook'
-alias task='commithook tracker:task'
-
 # Composer
 export COMPOSER_HOME='~/.composer' # not required for non-Windows systems
 export COMPOSER_CACHE_DIR='~/.composer/cache' # not required for non-Windows systems
-alias composer='php ~/composer.phar'
 
 if [ -z "$ORIGINAL_PATH" ]; then
     # this variable prevents adding the same path on reload file
