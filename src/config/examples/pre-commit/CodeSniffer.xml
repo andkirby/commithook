@@ -5,7 +5,7 @@
  */
 -->
 <!--Example of config how to set up CodeSniffer standard for a project-->
-<!--It can be added into PROJECT/commithook.xml file-->
+<!--It can be added into PROJECT/.commithook.xml file-->
 <config>
     <hooks>
         <!--This node can be omitted-->
