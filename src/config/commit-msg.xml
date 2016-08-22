@@ -219,7 +219,7 @@
                             </jira>
                             <github>
                                 <default>
-                                    <!--JIRA issue-type map to general issue-type-->
+                                    <!--GitHub issue-type map to general tags-->
                                     <!-- Tasks -->
                                     <enhancement>task</enhancement>
                                     <!-- Bugs -->
