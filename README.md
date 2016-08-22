@@ -3,8 +3,20 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The main purpose of this project is
- - checking coding standards before commit (with using PHP CodeSniffer)
+ - checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)
  - filling up commit messages automatically to proper format ([details](doc/commit-msg.md))
+ 
+## The simplest commit message you could ever make
+```
+$ git add myfile.php
+$ git commit -m 'I have done something good!'
+```
+Last command will generate commit message:
+```
+Implemented #33: Make smth good now
+ - I have done something good!
+```
+See more details [here](doc/commit-msg.md).
 
 ## Installation
 ### Latest release is `v2.0.0-beta.25`
