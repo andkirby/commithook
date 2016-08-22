@@ -4,15 +4,10 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "license": "GPL-3.0",
-  "authors": [
-    {
-      "name": "Andrew Roslik",
-      "email": "bizkirby@gmail.com"
-    }
-  ],
   "require": {
     "php": ">=5.5",
     "andkirby/console-helper": "^0.8@stable",
+    "rikby/crypter": "~1.0@stable",
     "symfony/console": "~3.0@stable",
     "symfony/filesystem": "~2.5@stable",
     "symfony/finder": "~2.5@stable",
@@ -35,7 +30,6 @@
   },
   "autoload": {
     "psr-4": {
-      "AndKirby\\Crypter\\": "src/lib/Crypter",
       "PreCommit\\": "src/lib/PreCommit",
       "PreCommit\\Test\\": "src/tests/testsuite/PreCommit/Test"
     }

@@ -4,8 +4,8 @@
  */
 namespace PreCommit\Issue\Authorization;
 
-use AndKirby\Crypter\Crypter as Crypter;
-use AndKirby\Crypter\CrypterInterface as CrypterInterface;
+use Rikby\Crypter\Crypter as Crypter;
+use Rikby\Crypter\CrypterInterface as CrypterInterface;
 use PreCommit\Config;
 use PreCommit\Exception as UserException;
 use PreCommit\Exception;

@@ -4,7 +4,7 @@
  */
 namespace PreCommit\Console\Command\Config;
 
-use AndKirby\Crypter\Crypter;
+use Rikby\Crypter\Crypter;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Exception;
 use PreCommit\Console\Helper;
