@@ -67,14 +67,42 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
         if (null === $config) {
             //TODO Make single load
             $config = Config::initInstance(
-                array(
-                    'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
-                )
+                [
+                    'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'.
+                        DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
+                ]
             );
             Config::setProjectDir($this->askProjectDir());
             if (!Config::loadCache()) {
                 Config::mergeExtraConfig();
             }
+            $config = Config::getInstance();
+        }
+
+        return $config;
+    }
+
+    /**
+     * Get base config (without project files)
+     *
+     * @return Config
+     */
+    public function getConfigBase()
+    {
+        static $config;
+        if (null === $config) {
+            //TODO Make single load
+            $config = Config::initInstance(
+                [
+                    'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'
+                        .DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
+                ]
+            );
+
+            if (!Config::loadCache()) {
+                Config::mergeExtraConfig();
+            }
+
             $config = Config::getInstance();
         }
 
@@ -125,6 +153,10 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
      */
     protected function getProjectDirHelper()
     {
-        return $this->getHelperSet()->get(GitDirHelper::NAME);
+        if ($this->getHelperSet()) {
+            return $this->getHelperSet()->get(GitDirHelper::NAME);
+        } else {
+            return new GitDirHelper();
+        }
     }
 }
