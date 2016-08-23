@@ -4,10 +4,10 @@
  */
 namespace PreCommit\Console\Command\Config;
 
-use Rikby\Crypter\Crypter;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Exception;
 use PreCommit\Console\Helper;
+use Rikby\Crypter\Crypter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -892,7 +892,8 @@ HELP;
             'project-self',
             '-s',
             InputOption::VALUE_NONE,
-            'Save config in project private(!) configuration file. PROJECT_DIR/commithook-self.xml'
+            'Save config in project private(!) configuration file. '
+            .'~/.commithook/projects/PROJECT_DIR_NAME/commithook.xml'
         );
         $this->addOption(
             'project',
