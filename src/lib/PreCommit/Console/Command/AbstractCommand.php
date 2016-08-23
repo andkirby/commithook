@@ -71,7 +71,7 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
                     'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
                 )
             );
-            Config::setProjectDir($this->askProjectDir($this->input, $this->output));
+            Config::setProjectDir($this->askProjectDir());
             if (!Config::loadCache()) {
                 Config::mergeExtraConfig();
             }
@@ -111,8 +111,7 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
             $dir = $this->getProjectDirHelper()->getGitDirectory(
                 $this->input,
                 $this->output,
-                $this->input->getOption('project-dir'),
-                $this->io
+                $this->input->getOption('project-dir')
             );
         }
 
