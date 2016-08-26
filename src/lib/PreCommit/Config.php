@@ -468,11 +468,12 @@ class Config extends \SimpleXMLElement
      * Get node array values
      *
      * @param string $xpath
+     * @param bool   $useBase
      * @return array|null
      */
-    public function getNodeArray($xpath)
+    public function getNodeArray($xpath, $useBase = true)
     {
-        $result = $this->xpath(self::XPATH_START.$xpath);
+        $result = $this->xpath(($useBase ? self::XPATH_START : '').$xpath);
         $result = isset($result[0]) ? (array) $result[0] : [];
         $result = json_decode(json_encode($result), true);
 
