@@ -326,7 +326,7 @@ class CodingStandard extends AbstractValidator
             }
 
             //check function naming and scope
-            if (strpos($str, ' function ')) {
+            if (strpos($str, ' function ') && preg_match('#^ {4}[a-z][a-z ]+#', $str, $matches)) {
                 if (!$this->isSkipMethodNameValidation($content, $str)) {
                     if (preg_match('/^\s*(static )?public /', $str)
                         && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
