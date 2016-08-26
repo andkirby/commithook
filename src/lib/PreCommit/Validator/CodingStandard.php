@@ -49,7 +49,7 @@ class CodingStandard extends AbstractValidator
      * @var array
      */
     protected $errorMessages
-        = array(
+        = [
             self::CODE_PHP_TRY                                           => "Syntax in TRY instruction is wrong. Original line: %value%",
             self::CODE_PHP_CATCH                                         => "Syntax in CATCH instruction is wrong. Original line: %value%",
             self::CODE_PHP_IF_ELSE_BRACE                                 => 'Syntax of {} in IF..ELSE instruction is wrong. Original line: %value%',
@@ -66,7 +66,7 @@ class CodingStandard extends AbstractValidator
             self::CODE_PHP_GAPS                                          => 'File contains at least two gaps in succession %value% time(s).',
             self::CODE_PHP_BRACKET_GAPS                                  => 'File contains at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
             self::CODE_PHP_UNDERSCORE_IN_VAR                             => 'Underscore in variable(s): %vars%. Original line: %value%',
-        );
+        ];
 
     /**
      * Validate content
@@ -81,6 +81,113 @@ class CodingStandard extends AbstractValidator
         $this->validateCodeStyleByLines($content, $file);
 
         return !$this->errorCollector->hasErrors();
+    }
+
+    /**
+     * Cut from content text in quotes and comments
+     *
+     * @param string $content
+     * @todo Refactor method
+     * @return array
+     */
+    public static function splitContent($content)
+    {
+        $parsedArr = [];
+        $length    = strlen($content);
+
+        $cleanedText = '';
+        $state       = 0;
+        $line        = 1;
+        for ($i = 0; $i < $length; $i++) {
+            $byte = $content[$i];
+            switch ($state) {
+                case 1: //in single quotes
+                    if ($byte == '\'' && $i > 1
+                        && ($content[$i - 1] != '\\'
+                            || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')
+                    ) {
+                        $state = 0;
+                    }
+                    $cleanedText .= $byte;
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A"
+                               && $content[$i + 1] != "\x0D")
+                    ) {
+                        $line++;
+                    }
+                    if ($state === 0) {
+                        @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
+                    }
+                    break;
+
+                case 2: //in double quotes
+                    if ($byte == '"' && $i > 1 && $content[$i - 1] != '\\') {
+                        $state = 0;
+                    }
+                    $cleanedText .= $byte;
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0D" && $content[$i + 1] != "\x0D")
+                    ) {
+                        $line++;
+                    }
+                    break;
+
+                case 3: //in // comments
+                    if (preg_match('/[\x00-\x0D]/', $byte)) {
+                        $state = 0;
+                    }
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    ) {
+                        $line++;
+                    }
+                    break;
+
+                case 4: //in /**/ comments
+                    if ($byte == '*' && $i < $length - 1 && $content[$i + 1] == '/') {
+                        $state = 0;
+                        $i++;
+                    }
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    ) {
+                        $line++;
+                    }
+                    break;
+
+                default:
+                    if ("\x0A" == $byte
+                        || "\x0D" == $byte
+                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
+                    ) {
+                        $line++;
+                    }
+
+                    if ($byte == '\'' && $i > 1 && $content[$i - 1] != '\\') {
+                        $state = 1;
+                    } elseif ($byte == '"' && $i > 1 && $content[$i - 1] != '\\') {
+                        $state = 2;
+                    } elseif ($byte == '/' && $i < $length - 1 && $content[$i + 1] == '/') {
+                        $i++;
+                        $state = 3;
+                        continue;
+                    } elseif ($byte == '/' && $i < $length - 1 && $content[$i + 1] == '*') {
+                        $i++;
+                        $state = 4;
+                        continue;
+                    }
+
+                    //outside comments and quotes
+                    $cleanedText .= $byte;
+                    @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
+            }
+        }
+
+        return $parsedArr;
     }
 
     /**
@@ -105,7 +212,7 @@ class CodingStandard extends AbstractValidator
             $findings = $match[0];
             sort($findings);
             $findings = array_unique($findings);
-            $lines    = array();
+            $lines    = [];
             foreach ($findings as $find) {
                 $lines = array_merge($lines, $this->findLines($find, $content));
             }
@@ -255,14 +362,14 @@ class CodingStandard extends AbstractValidator
                 && false === strpos($str, ' static ')
                 && preg_match_all('/[:]?\$\w*_\w*/', $str, $matches)
             ) {
-                $vars = array();
+                $vars = [];
                 foreach ($matches as $value) {
                     if (0 !== strpos($value[0], ':')) {
                         $vars[] = $value[0];
                     }
                 }
                 if ($vars) {
-                    $values = array('value' => $currentString, 'vars' => implode(',', $vars));
+                    $values = ['value' => $currentString, 'vars' => implode(',', $vars)];
                     $this->addError($file, self::CODE_PHP_UNDERSCORE_IN_VAR, $values, $line);
                 }
             }
@@ -282,113 +389,6 @@ class CodingStandard extends AbstractValidator
     protected function findLines($find, $content, $once = false)
     {
         return LineFinder::findLines($find, $content, $once);
-    }
-
-    /**
-     * Cut from content text in quotes and comments
-     *
-     * @param string $content
-     * @todo Refactor method
-     * @return array
-     */
-    public static function splitContent($content)
-    {
-        $parsedArr = array();
-        $length    = strlen($content);
-
-        $cleanedText = '';
-        $state       = 0;
-        $line        = 1;
-        for ($i = 0; $i < $length; $i++) {
-            $byte = $content[$i];
-            switch ($state) {
-                case 1: //in single quotes
-                    if ($byte == '\'' && $i > 1
-                        && ($content[$i - 1] != '\\'
-                            || $content[$i - 1] == '\\' && $content[$i - 2] == '\\')
-                    ) {
-                        $state = 0;
-                    }
-                    $cleanedText .= $byte;
-                    if ("\x0A" == $byte
-                        || "\x0D" == $byte
-                           && ($i < $length - 1 && $content[$i + 1] != "\x0A"
-                               && $content[$i + 1] != "\x0D")
-                    ) {
-                        $line++;
-                    }
-                    if ($state === 0) {
-                        @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
-                    }
-                    break;
-
-                case 2: //in double quotes
-                    if ($byte == '"' && $i > 1 && $content[$i - 1] != '\\') {
-                        $state = 0;
-                    }
-                    $cleanedText .= $byte;
-                    if ("\x0A" == $byte
-                        || "\x0D" == $byte
-                           && ($i < $length - 1 && $content[$i + 1] != "\x0D" && $content[$i + 1] != "\x0D")
-                    ) {
-                        $line++;
-                    }
-                    break;
-
-                case 3: //in // comments
-                    if (preg_match('/[\x00-\x0D]/', $byte)) {
-                        $state = 0;
-                    }
-                    if ("\x0A" == $byte
-                        || "\x0D" == $byte
-                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
-                    ) {
-                        $line++;
-                    }
-                    break;
-
-                case 4: //in /**/ comments
-                    if ($byte == '*' && $i < $length - 1 && $content[$i + 1] == '/') {
-                        $state = 0;
-                        $i++;
-                    }
-                    if ("\x0A" == $byte
-                        || "\x0D" == $byte
-                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
-                    ) {
-                        $line++;
-                    }
-                    break;
-
-                default:
-                    if ("\x0A" == $byte
-                        || "\x0D" == $byte
-                           && ($i < $length - 1 && $content[$i + 1] != "\x0A" && $content[$i + 1] != "\x0D")
-                    ) {
-                        $line++;
-                    }
-
-                    if ($byte == '\'' && $i > 1 && $content[$i - 1] != '\\') {
-                        $state = 1;
-                    } elseif ($byte == '"' && $i > 1 && $content[$i - 1] != '\\') {
-                        $state = 2;
-                    } elseif ($byte == '/' && $i < $length - 1 && $content[$i + 1] == '/') {
-                        $i++;
-                        $state = 3;
-                        continue;
-                    } elseif ($byte == '/' && $i < $length - 1 && $content[$i + 1] == '*') {
-                        $i++;
-                        $state = 4;
-                        continue;
-                    }
-
-                    //outside comments and quotes
-                    $cleanedText .= $byte;
-                    @$parsedArr[$line] .= ("\x0A" == $byte || "\x0D" == $byte) ? '' : $byte;
-            }
-        }
-
-        return $parsedArr;
     }
 
     /**
