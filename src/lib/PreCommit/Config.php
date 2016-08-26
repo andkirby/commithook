@@ -318,6 +318,9 @@ class Config extends \SimpleXMLElement
     {
         $merger = new XmlMerger();
         $merger->addCollectionNode(
+            'supported_hooks/hook'
+        );
+        $merger->addCollectionNode(
             'validators/FileFilter/filter/skip/files/file'
         );
         $merger->addCollectionNode(
