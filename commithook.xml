@@ -1,25 +1,6 @@
 <?xml version="1.0"?>
 <!-- This is a local configuration file. It is not used in external projects.-->
 <config>
-    <!--Validators setup-->
-    <validators>
-        <FileFilter>
-            <filter>
-                <skip>
-                    <files>
-                        <file>src/lib/PreCommit/Command/Application.php</file>
-                        <file>src/runner.php</file>
-                    </files>
-                    <paths>
-                        <path>bin/</path>
-                        <path>src/tests/testsuite/PreCommit/Test/Filter/_fixture</path>
-                        <path>src/tests/testsuite/PreCommit/Test/_fixture</path>
-                        <!--<path>src/tests/</path>-->
-                    </paths>
-                </skip>
-            </filter>
-        </FileFilter>
-    </validators>
     <tracker>
         <type>github</type>
         <github>
