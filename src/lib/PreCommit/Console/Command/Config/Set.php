@@ -450,7 +450,7 @@ class Set extends AbstractCommand
      *
      * @param string        $xpath
      * @param Question|null $question
-     * @return array
+     * @return int
      */
     protected function getScope($xpath, $question = null)
     {
@@ -459,7 +459,7 @@ class Set extends AbstractCommand
             $type = $this->getTrackerType();
         }
 
-        $default = $this->getDefaultScope($xpath, $type);
+        $default = (int) $this->getDefaultScope($xpath, $type);
 
         if ($this->isFirmScope($xpath, $type)) {
             return $default;
