@@ -109,17 +109,7 @@ class Set extends AbstractCommand
             return self::SHELL_CODE_COMMAND_DEPRECATED;
         }
 
-        try {
-            return $this->processValue();
-        } catch (Exception $e) {
-            if ($this->isDebug()) {
-                throw $e;
-            } else {
-                $this->output->writeln($e->getMessage());
-
-                return 1;
-            }
-        }
+        return $this->processValue();
     }
 
     /**
