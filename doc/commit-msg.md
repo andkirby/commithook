@@ -1,6 +1,6 @@
 [Back](../README.md)
 
-### Commit Message Validation
+# Commit Message Validation
 Default commit message format is:
 ```
 [Commit verb] [Issue Key]: [Issue Summary]
@@ -21,15 +21,26 @@ There are available commit verbs:
 
 *NOTE:* Actually this can be extended. Please take a look [some specific customization of commit message format](https://gist.github.com/andkirby/12175e1a46d2a9e6f2bb).
 
-#### JIRA Integration
+# Short commit message
+
+Your valid commit message may looks like this:
+```
+I did it!
+```
+
+There are integrations with task trackers
+- JIRA
+- GitHub
+
+## JIRA Integration
 Please take a look [wizard example](example-wizard.md).
 
-##### Short Issue Commit
+## Short Issue Commit
 So, if you want to be ~~lazy~~ productive... :)
 If you tired of copy-pasting issue key and summary that there is good news.
 If you'd like to speed up of writing commit-verb that there is good news.
 
-###### Option #1
+### Option #1 (JIRA only): Omit issue summary
 You may write it shortly with using JIRA project key:
 ```
 F PRJNM-256 Added missed email validator.
@@ -41,17 +52,16 @@ There are following short-names:
 - `R` for `Refactored`
 - `C` for `CR Changes`
 
-###### Option #2
-And JIRA project key can be omitted.
+### Option #2: Omit project key.
 
-Second option. Omit project key.
+And a project key can be omitted.
 ```
 F 256
  - Added missed email validator.
 ```
 In this case the system will find a project key and set it (it should be set in this case).
 
-###### Option #3
+### Option #3: Omit verbs
 You may omit verbs `F` and `I`. It will be identified by issue type.
 ```
 256 Added missed email validator.
@@ -69,7 +79,7 @@ In this case the system will take default verb by issue type. For bug - `Fixed`
 and for tasks - `Implemented`. Of course if you're making refactoring
 or applying code review you have to set related verb.
 
-###### Option #4
+### Option #4
 Also, you may declare "active task" by similar command and don't care about numbers in commit messages:
 ```shell
 $ commithook tracker:task 256
@@ -81,7 +91,7 @@ And a message will be simplest:
  - Reformatted code
 ```
 
-##### JIRA issue type configuration map
+## JIRA issue type configuration map
 There is predefined configuration:
 ```xml
 <?xml version="1.0"?>
@@ -114,7 +124,7 @@ You extend it with adding new nodes by adding new config node. E.g. we need to m
 $ commithook config --xpath hooks/commit-msg/message/issue/type/tracker/jira/default/NEW_TYPE task
 ```
 
-#### Be aware about numbers. :)
+## Be aware about numbers. :)
 Please always keep an eye on issue numbers. That's all just to be more ~~lazy~~ productive! ;D
 
 [Back](../README.md)
