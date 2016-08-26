@@ -483,6 +483,34 @@ class Config extends \SimpleXMLElement
     }
 
     /**
+     * Convert current node to array
+     *
+     * @param bool $removeComments
+     * @return mixed
+     */
+    public function toArray($removeComments = true)
+    {
+        $result = json_decode(json_encode($this), true);
+
+        if ($removeComments) {
+            //remove XML comments (hack) TODO investigate a problem
+            unset($result['comment']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if node has comments
+     *
+     * @return bool
+     */
+    public function hasComment()
+    {
+        return isset($this->toArray(false)['comment']);
+    }
+
+    /**
      * Get node by xpath
      *
      * @param string $xpath

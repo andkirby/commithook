@@ -36,7 +36,7 @@ class ConfigHelper extends Helper
      *
      * @var array
      */
-    protected $values = array();
+    protected $values = [];
 
     /**
      * {@inheritdoc}
@@ -53,7 +53,7 @@ class ConfigHelper extends Helper
      */
     public function reset()
     {
-        $this->values = array();
+        $this->values = [];
 
         return $this;
     }
@@ -127,10 +127,19 @@ class ConfigHelper extends Helper
      */
     public function setValueToXml(ConfigInstance $config, $xpath, $value)
     {
-        $this->getXmlMerger()->merge(
-            $config,
-            $this->getXmlUpdate($xpath, $value)
-        );
+        if (null === $value) {
+            $nodeValue = $config->xpath($xpath);
+            /** @var ConfigInstance $nodeValue */
+            $nodeValue = $nodeValue ? $nodeValue[0] : null;
+            if ($nodeValue) {
+                $this->removeNode($config, $xpath);
+            }
+        } else {
+            $this->getXmlMerger()->merge(
+                $config,
+                $this->getXmlUpdate($xpath, $value)
+            );
+        }
 
         return $this;
     }
@@ -151,7 +160,7 @@ class ConfigHelper extends Helper
             return false;
         }
 
-        $this->setValueToXml($config, $xpath, (string) $value);
+        $this->setValueToXml($config, $xpath, ($value === null ? null : (string) $value));
 
         $this->getWriter()->write(
             $config,
@@ -176,6 +185,81 @@ class ConfigHelper extends Helper
     }
 
     /**
+     * Remove empty nodes
+     *
+     * @param string              $xpath
+     * @param ConfigInstance      $config
+     * @param ConfigInstance|null $parent
+     * @return $this
+     */
+    public function removeEmptyXpath($xpath, $config, $parent = null)
+    {
+        $names = explode('/', $xpath);
+        $this->removeIfNodeEmpty($names, $config, $parent);
+
+        return $this;
+    }
+
+    /**
+     * Remove if node is empty
+     *
+     * @see ConfigHelper::removeEmptyXpath()
+     * @param array               $names  Node names list in sequence from XPath
+     * @param ConfigInstance      $node
+     * @param ConfigInstance|null $parent
+     * @return $this
+     */
+    public function removeIfNodeEmpty($names, $node, $parent = null)
+    {
+        if ($node && $node->children()) {
+            $parentParent = $parent;
+            $parent       = $node;
+            /** @var ConfigInstance $node */
+            $node = $node->{current($names)};
+            if (!next($names)) {
+                return $this;
+            }
+
+            $this->removeIfNodeEmpty($names, $node, $parent);
+
+            if ($parentParent) {
+                //try to remove original parent
+                $this->removeIfNodeEmpty($names, $parent, $parentParent);
+            }
+        } elseif ($node && $parent && !$node->hasComment()) {
+            unset($parent->{$node->getName()});
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove node
+     *
+     * @param ConfigInstance $config
+     * @param string         $xpath
+     * @return $this
+     */
+    public function removeNode(ConfigInstance $config, $xpath)
+    {
+        $names = explode('/', $xpath);
+        $max   = count($names);
+
+        $configNode = $config;
+        foreach ($names as $i => $name) {
+            if ($i !== $max - 1) {
+                $configNode = $configNode->{$name};
+            } else {
+                unset($configNode->{$name});
+            }
+        }
+
+        $this->removeEmptyXpath($xpath, $config);
+
+        return $this;
+    }
+
+    /**
      * Load config
      *
      * @param string $file
@@ -188,7 +272,7 @@ class ConfigHelper extends Helper
             $this->writeEmptyXmlFile($file);
         }
 
-        return ConfigInstance::loadInstance(array('file' => $file), false);
+        return ConfigInstance::loadInstance(['file' => $file], false);
     }
 
     /**
@@ -224,10 +308,10 @@ class ConfigHelper extends Helper
      */
     protected function getXmlUpdate($xpath, $value)
     {
-        $nodes = explode('/', $xpath);
+        $nodes    = explode('/', $xpath);
         $startXml = '';
-        $endXml = '';
-        $last = count($nodes) - 1;
+        $endXml   = '';
+        $last     = count($nodes) - 1;
         foreach ($nodes as $level => $node) {
             if ($last === $level) {
                 $startXml .= "<$node>$value</$node>\n";
@@ -237,7 +321,7 @@ class ConfigHelper extends Helper
             }
         }
         $startXml = rtrim($startXml);
-        $endXml = rtrim($endXml);
+        $endXml   = rtrim($endXml);
 
         //@startSkipCommitHooks
         $xml
@@ -263,7 +347,7 @@ XML;
     protected function getCachedConfigFiles()
     {
         $finder = new Finder();
-        $list = array();
+        $list   = [];
         foreach ($finder->files()->in(ConfigInstance::getCacheDir())->name('*.xml') as $file) {
             $list[] = $file->getRealpath();
         }

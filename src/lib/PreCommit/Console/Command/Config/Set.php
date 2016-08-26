@@ -400,7 +400,7 @@ class Set extends AbstractCommand
      */
     protected function shouldUnset()
     {
-        return $this->input->hasParameterOption('--unset');
+        return $this->input->hasParameterOption(['--unset', '-u']);
     }
 
     /**
@@ -599,7 +599,7 @@ class Set extends AbstractCommand
         $result = $this->getConfigHelper()->writeValue(
             $this->getConfigFile($scope, $xpath),
             $xpath,
-            $value
+            ($this->shouldUnset() ? null : $value)
         );
         if (self::XPATH_TRACKER_TYPE === $xpath) {
             $this->trackerType = $value;
@@ -867,7 +867,7 @@ HELP;
      */
     protected function setUnsetOption()
     {
-        $this->addOption('unset', InputOption::VALUE_NONE);
+        $this->addOption('unset', 'u', InputOption::VALUE_NONE, 'Remove exist value.');
 
         return $this;
     }
