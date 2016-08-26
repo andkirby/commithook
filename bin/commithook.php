@@ -25,4 +25,5 @@ $app->add(new Test($root));
 $app->add(new ClearCache($root));
 $app->add(new Validator\Disable($root));
 $app->add(new Validator\ListAll($root));
+$app->add(new Config\Message($root));
 $app->run();

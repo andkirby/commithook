@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <console>
+        <message>
+            <description>Commit message configuration.</description>
+            <args>
+                <explode>
+                    <xpath type="bool">filters/CommitMsg-Explode/explode_to_list</xpath>
+                    <description>Enable splitting commit message up to the list.</description>
+                    <scope>
+                        <default>global</default>
+                    </scope>
+                </explode>
+                <explode-string>
+                    <xpath>filters/CommitMsg-Explode/explode_string</xpath>
+                    <description>Use a delimiter to split up commit message to a list.</description>
+                    <scope>
+                        <default>global</default>
+                    </scope>
+                </explode-string>
+            </args>
+        </message>
+    </console>
+    <filters>
+        <CommitMsg-Explode>
+            <explode_to_list>0</explode_to_list>
+            <explode_string>. </explode_string>
+        </CommitMsg-Explode>
+    </filters>
+</config>
