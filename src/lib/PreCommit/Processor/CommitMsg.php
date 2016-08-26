@@ -68,6 +68,9 @@ class CommitMsg extends AbstractAdapter
             if (!$commitMsg->validate($message, null, true)) {
                 $message = $this->loadFilter('ShortCommitMsg')
                     ->filter($message);
+
+                $message = $this->loadFilter('CommitMsg-Explode')
+                    ->filter($message);
             }
 
             $this->loadValidator('IssueType')
