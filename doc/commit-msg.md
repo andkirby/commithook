@@ -27,6 +27,10 @@ Your valid commit message may looks like this:
 ```
 I did it!
 ```
+But due to using short verbs like `I` or `R`, etc., please use `-` in the beginning. It will be considered as verb instead.
+```
+- I did it!
+```
 
 There are integrations with task trackers
 - JIRA
