@@ -5,7 +5,7 @@
 namespace PreCommit\Validator;
 
 use PreCommit\Exception as Exception;
-use PreCommit\Processor\ErrorCollector as Error;
+use PreCommit\Processor\ErrorCollector;
 
 /**
  * Class AbstractValidator
@@ -24,7 +24,7 @@ abstract class AbstractValidator
     /**
      * Error collector
      *
-     * @var Error
+     * @var ErrorCollector
      */
     protected $errorCollector = array();
 
@@ -45,7 +45,7 @@ abstract class AbstractValidator
      */
     public function __construct(array $options)
     {
-        if (isset($options['errorCollector']) && $options['errorCollector'] instanceof Error) {
+        if (isset($options['errorCollector']) && $options['errorCollector'] instanceof ErrorCollector) {
             $this->errorCollector = $options['errorCollector'];
             unset($options['errorCollector']);
         } else {
