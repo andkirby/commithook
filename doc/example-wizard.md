@@ -91,7 +91,7 @@ Fetch PHPCS package:
 $ composer global require squizlabs/php_codesniffer:~2.0@stable
 ```
 
-#### Fast install (Magento 1.x ECG standards)
+#### Option #1. Fast install (Magento 1.x ECG standards)
 
 ```
 $ cd my-project
@@ -105,7 +105,7 @@ Fetch magento-ecg standards
 $ composer --working-dir=.coding-standards install -o
 ```
 
-#### Install step by step
+#### Option #2. Install step by step
 
 Now you need to set up PHPCS. Example with using `magento-ecg` standards.
 ```shell
