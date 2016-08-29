@@ -96,7 +96,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     {
         $issue = $this->getIssue();
 
-        return $issue['number'];
+        return '#'.$issue['number'];
     }
 
     //region Caching methods
@@ -148,7 +148,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      * Get issue
      *
      * @return array
-     * @throws \PreCommit\Issue\Exception
+     * @throws Exception
      */
     protected function getIssue()
     {
