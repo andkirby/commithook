@@ -191,4 +191,15 @@ class Protect extends Set
         return preg_match('#/(paths|files)/path$#', $xpath) ?
             $this->getConfig()->getMultiNode($xpath) : $this->getConfig()->getNodeArray($xpath);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function showValue()
+    {
+        $value = $this->getShowValue($this->getArgumentXpath());
+        $value && $this->io->writeln(implode(PHP_EOL, $value));
+
+        return $this;
+    }
 }

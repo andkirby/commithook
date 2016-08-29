@@ -204,15 +204,7 @@ class Set extends AbstractCommand
     protected function processValue()
     {
         if ($this->getKey() && !$this->shouldWriteValue()) {
-            /**
-             * Reading mode
-             */
-            $xpath = $this->getArgumentXpath();
-            $value = $this->getShowValue($xpath);
-            if ($value && $value !== trim($value)) {
-                $value = "\"$value\"";
-            }
-            $value && $this->io->writeln($value);
+            $this->showValue();
         } elseif ($this->getKey() && $this->shouldWriteValue()) {
             /**
              * Writing mode
@@ -240,6 +232,23 @@ class Set extends AbstractCommand
         }
 
         return 0;
+    }
+
+    /**
+     * Show value in output
+     *
+     * @return $this
+     */
+    protected function showValue()
+    {
+        $xpath = $this->getArgumentXpath();
+        $value = $this->getShowValue($xpath);
+        if ($value && $value !== trim($value)) {
+            $value = "\"$value\"";
+        }
+        $value && $this->io->writeln($value);
+
+        return $this;
     }
 
     /**
