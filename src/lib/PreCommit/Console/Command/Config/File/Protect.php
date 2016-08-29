@@ -155,7 +155,7 @@ class Protect extends Set
     /**
      * {@inheritdoc}
      */
-    protected function isNameXpath()
+    protected function hasXpathOption()
     {
         return false;
     }

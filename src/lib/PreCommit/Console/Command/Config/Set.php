@@ -203,13 +203,17 @@ class Set extends AbstractCommand
      */
     protected function processValue()
     {
-        if (null === $this->getValue() && $this->getKey() && !$this->shouldUnset()) {
+        if ($this->getKey() && !$this->shouldWriteValue()) {
             /**
              * Reading mode
              */
             $xpath = $this->getArgumentXpath();
-            $this->io->writeln($this->getShowValue($xpath));
-        } elseif ($this->getKey() || $this->isNameXpath()) {
+            $value = $this->getShowValue($xpath);
+            if ($value && $value !== trim($value)) {
+                $value = "\"$value\"";
+            }
+            $value && $this->io->writeln($value);
+        } elseif ($this->getKey() && $this->shouldWriteValue()) {
             /**
              * Writing mode
              */
@@ -256,7 +260,7 @@ class Set extends AbstractCommand
      */
     protected function getArgumentXpath()
     {
-        return $this->isNameXpath()
+        return $this->hasXpathOption()
             ? $this->getKey()
             : $this->getXpath($this->getKey());
     }
@@ -266,9 +270,9 @@ class Set extends AbstractCommand
      *
      * @return bool
      */
-    protected function isNameXpath()
+    protected function hasXpathOption()
     {
-        return (bool) $this->input->getOption('xpath');
+        return $this->input->hasParameterOption('--xpath');
     }
 
     /**
@@ -283,6 +287,7 @@ class Set extends AbstractCommand
         if (!$name) {
             throw new Exception('Empty config name.');
         }
+        $helperConfigFile = $this->getHelperSet()->get('commithook_config_file');
         switch ($name) {
             case 'password':
             case 'username':
@@ -299,10 +304,7 @@ class Set extends AbstractCommand
             case 'skip-ext':
                 $name = 'validators/FileFilter/filter/skip/extensions';
                 if ($this->shouldWriteValue()) {
-                    $name = $name.'/'
-                        .$this->getHelperSet()->get('commithook_config_file')->path2XmlNode(
-                            $this->getValue()
-                        );
+                    $name = $name.'/'.$helperConfigFile->path2XmlNode($this->getValue());
                 }
                 break;
 
@@ -329,10 +331,7 @@ class Set extends AbstractCommand
             case 'protect':
                 $name = 'validators/FileFilter/filter/'.$name.'/path';
                 if ($this->shouldWriteValue()) {
-                    $name = $name.'/'
-                        .$this->getHelperSet()->get('commithook_config_file')->path2XmlNode(
-                            $this->getValue()
-                        );
+                    $name = $name.'/'.$helperConfigFile->path2XmlNode($this->getValue());
                 }
                 break;
 
@@ -380,7 +379,7 @@ class Set extends AbstractCommand
      */
     protected function shouldWriteValue()
     {
-        return (bool) $this->getValue() || $this->shouldUnset();
+        return null !== $this->getValue() || $this->shouldSet() || $this->shouldUnset();
     }
 
     /**
@@ -391,6 +390,16 @@ class Set extends AbstractCommand
     protected function shouldUnset()
     {
         return $this->input->hasParameterOption(['--unset', '-u']);
+    }
+
+    /**
+     * Check if should remove value
+     *
+     * @return bool
+     */
+    protected function shouldSet()
+    {
+        return $this->input->hasParameterOption(['--set', '-t']);
     }
 
     /**
@@ -429,7 +438,7 @@ class Set extends AbstractCommand
             if (!$readAll && null === $value) {
                 continue;
             }
-            $xpath = $this->isNameXpath() ? $name : $this->getXpath($name);
+            $xpath = $this->hasXpathOption() ? $name : $this->getXpath($name);
             $scope = $this->getScope($xpath);
             $this->writeConfig($xpath, $scope, $value);
         }
@@ -716,7 +725,7 @@ class Set extends AbstractCommand
             return '';
         }
 
-        if (!$this->shouldWriteValue()) {
+        if (null === $this->getValue() && $this->shouldSet()) {
             $question = $this->getSimpleQuestion()->getQuestion(
                 "Set value for XPath '$xpath'",
                 $this->getXpathValue($xpath)
@@ -760,7 +769,7 @@ class Set extends AbstractCommand
     /**
      * Get credentials scope
      *
-     * @return array
+     * @return int
      */
     protected function getCredentialsScope()
     {
@@ -770,7 +779,7 @@ class Set extends AbstractCommand
         return $this->getScope(
             $this->getXpath('username'),
             $this->getSimpleQuestion()->getQuestion(
-                "Set config scope credentials",
+                'Set config scope credentials',
                 1,
                 $scopeOptions
             )
@@ -821,10 +830,11 @@ HELP;
     protected function configureInput()
     {
         parent::configureInput();
-        $this->addArgument('key', InputArgument::OPTIONAL);
+        $this->addArgument('key', InputArgument::REQUIRED);
         $this->addArgument('value', InputArgument::OPTIONAL);
 
         $this->setUnsetOption();
+        $this->setSetOption();
 
         /**
          * When this parameter set key must be an XML path
@@ -833,7 +843,7 @@ HELP;
             'xpath',
             '-x',
             InputOption::VALUE_NONE,
-            'XPath mode. "key" parameter will be considered as a full XML path.'
+            'XPath mode. "key" parameter will be considered as an XML path.'
         );
 
         $this->setScopeOptions();
@@ -858,6 +868,18 @@ HELP;
     protected function setUnsetOption()
     {
         $this->addOption('unset', 'u', InputOption::VALUE_NONE, 'Remove exist value.');
+
+        return $this;
+    }
+
+    /**
+     * Set unset option
+     *
+     * @return $this
+     */
+    protected function setSetOption()
+    {
+        $this->addOption('set', 't', InputOption::VALUE_NONE, 'Set value in dialog.');
 
         return $this;
     }

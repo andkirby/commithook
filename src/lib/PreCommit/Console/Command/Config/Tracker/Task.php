@@ -77,7 +77,7 @@ class Task extends Set
     /**
      * {@inheritdoc}
      */
-    protected function isNameXpath()
+    protected function hasXpathOption()
     {
         return false;
     }
