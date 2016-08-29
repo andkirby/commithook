@@ -4,13 +4,18 @@
  */
 namespace PreCommit\Console\Command\Config\Tracker;
 
-use PreCommit\Config;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
 use PreCommit\Issue;
+use PreCommit\Message;
+use PreCommit\Processor\ErrorCollector;
+use PreCommit\Validator\IssueStatus;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -32,6 +37,8 @@ class Task extends Set
     {
         AbstractCommand::execute($input, $output);
 
+        $this->setFormatterStyle();
+
         return $this->processValue();
     }
 
@@ -42,23 +49,60 @@ class Task extends Set
      */
     protected function processValue()
     {
-        if ($this->getValue()) {
-            $issue = Issue::factory($this->getValue());
-
-            $issue->getStatus(); //load issue
-
-            if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
-                $this->output->writeln(
-                    'Switched to issue <info>'.$issue->getKey().'</info> (<comment>'.$issue->getStatus().'</comment>).'
-                );
-                $this->output->writeln('');
-                $this->output->writeln(
-                    '  <comment>'.$issue->getSummary().'</comment>'
-                );
-            }
+        $issue = null;
+        if ($this->canChangeTask()) {
+            $issue = $this->loadIssue($this->getValue());
         }
 
-        return parent::processValue();
+        $status = parent::processValue();
+
+        if ($issue && $this->canShowIssueInfo()) {
+            //$valid = $this->isIssueStatusValid($issue);
+
+            $this->output->writeln('Active issue has been updated.');
+            $this->output->writeln(
+                $this->getIssueOutputInfo($issue)
+            );
+        }
+
+        if ($this->updated && $this->clearIssuesCache() !== 0) {
+            $this->output->writeln(
+                '<error>Cannot clear issues cache. Try to run command "commithook clear --issues".</error>'
+            );
+        }
+
+        return $status;
+    }
+
+    /**
+     * Check if should write value
+     *
+     * Added checking --info option, it should not if passed.
+     *
+     * @return bool
+     */
+    protected function shouldWriteValue()
+    {
+        return parent::shouldWriteValue() && !$this->hasInfoOption();
+    }
+
+    /**
+     * Show full task information
+     *
+     * @return $this
+     */
+    protected function showValue()
+    {
+        if ($this->hasInfoOption()) {
+            $key = $this->getValue() ?: $this->getXpathValue($this->getXpath($this->getKey()));
+            if ($key) {
+                $this->output->writeln($this->getIssueOutputInfo($this->loadIssue($key)));
+            }
+        } else {
+            parent::showValue();
+        }
+
+        return $this;
     }
 
     /**
@@ -81,8 +125,19 @@ class Task extends Set
         AbstractCommand::configureInput();
 
         $this->addArgument('value', InputArgument::OPTIONAL);
+        $this->addOption('info', 'i', InputOption::VALUE_NONE, 'Show detailed information about an issue.');
 
         return $this;
+    }
+
+    /**
+     * Check if has --info option
+     *
+     * @return bool
+     */
+    protected function hasInfoOption()
+    {
+        return $this->input->hasParameterOption(['-i', '--info']);
     }
 
     /**
@@ -116,5 +171,105 @@ class Task extends Set
     protected function writePredefinedOptions($readAll = false)
     {
         return;
+    }
+
+    /**
+     * Clear issues cache
+     */
+    protected function clearIssuesCache()
+    {
+        $clearCache = $this->getApplication()->find('clear-cache');
+        $input      = new ArrayInput(['--issues']);
+
+        return $clearCache->run($input, $this->output);
+    }
+
+    /**
+     * Check if can show issue info
+     *
+     * @return bool
+     */
+    protected function canShowIssueInfo()
+    {
+        return $this->updated
+               && $this->output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL;
+    }
+
+    /**
+     * Load issue
+     *
+     * @param string $key
+     * @return Issue\AdapterInterface
+     */
+    protected function loadIssue($key)
+    {
+        $issue = Issue::factory($key);
+        $issue->getStatus();
+
+        return $issue;
+    }
+
+    /**
+     * Validate status
+     *
+     * @param Issue\AdapterInterface $issue
+     * @return bool
+     */
+    protected function isIssueStatusValid(Issue\AdapterInterface $issue)
+    {
+        $statusValidator    = new IssueStatus(['errorCollector' => new ErrorCollector()]);
+        $messageStub        = new Message();
+        $messageStub->issue = $issue;
+
+        return $statusValidator->validate($messageStub, null);
+    }
+
+    /**
+     * Check if can change task
+     *
+     * @return bool
+     */
+    protected function canChangeTask()
+    {
+        $exist = $this->getXpathValue($this->getXpath($this->getKey()));
+
+        return $this->getValue() && (!$exist || $exist && $exist !== $this->getValue());
+    }
+
+    /**
+     * Get output issue info
+     *
+     * @param Issue\AdapterInterface $issue
+     * @return string
+     */
+    protected function getIssueOutputInfo(Issue\AdapterInterface $issue)
+    {
+        $first = sprintf(
+            'Issue %s %s (%s).',
+            "<{$issue->getType()}>{$issue->getType()}</{$issue->getType()}>",
+            "<info>{$issue->getKey()}</info>",
+            "<comment>{$issue->getStatus()}</comment>"
+        );
+
+        return $first
+               .PHP_EOL
+               .'<comment>summary:</comment> '.$issue->getSummary()
+               .PHP_EOL
+               .'<comment>type:</comment>    '.$issue->getOriginalType();
+    }
+
+    /**
+     * Set up formatter style
+     *
+     * @return $this
+     */
+    protected function setFormatterStyle()
+    {
+        $style = new OutputFormatterStyle('cyan');
+        $this->output->getFormatter()->setStyle('task', $style);
+        $style = new OutputFormatterStyle('red');
+        $this->output->getFormatter()->setStyle('bug', $style);
+
+        return $this;
     }
 }
