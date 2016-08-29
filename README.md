@@ -9,12 +9,12 @@ The main purpose of this project is
 ## The simplest commit message you could ever make
 ```
 $ git add myfile.php
-$ git commit -m 'I have done something good!'
+$ git commit -m 'Added my file.'
 ```
 Last command will generate commit message:
 ```
 Implemented #33: Make smth good now
- - I have done something good!
+ - Added my file.
 ```
 See more details [here](doc/commit-msg.md).
 
