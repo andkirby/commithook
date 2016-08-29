@@ -15,9 +15,7 @@ interface AdapterInterface
      * Issue types
      */
     const TYPE_BUG  = 'bug';
-
     const TYPE_TASK = 'task';
-
     /**#@-*/
 
     /**
@@ -30,28 +28,28 @@ interface AdapterInterface
     /**
      * Get issue summary
      *
-     * @return $this
+     * @return string
      */
     public function getSummary();
 
     /**
      * Get issue summary
      *
-     * @return $this
+     * @return string
      */
     public function getKey();
 
     /**
      * Get issue type
      *
-     * @return $this
+     * @return string
      */
     public function getType();
 
     /**
      * Get original issue type
      *
-     * @return $this
+     * @return string
      */
     public function getOriginalType();
 
