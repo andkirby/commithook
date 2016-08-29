@@ -28,9 +28,9 @@ class IssueStatus extends AbstractValidator
      * @var array
      */
     protected $errorMessages
-        = array(
-            self::CODE_WRONG_ISSUE_STATUS => 'The issue status "%value%" does not support to add new commit.',
-        );
+        = [
+            self::CODE_WRONG_ISSUE_STATUS => 'The issue "%issue%" status "%value%" does not support to add new commit.',
+        ];
 
     /**
      * Commit message type name
@@ -45,7 +45,7 @@ class IssueStatus extends AbstractValidator
      * @param array $options
      * @throws \PreCommit\Exception
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
 
@@ -67,7 +67,14 @@ class IssueStatus extends AbstractValidator
         if ($message->issue && $message->issue->getStatus()
             && !$this->isAllowed($message->issue->getStatus())
         ) {
-            $this->addError('Commit Message', self::CODE_WRONG_ISSUE_STATUS, $message->issue->getStatus());
+            $this->addError(
+                'Commit Message',
+                self::CODE_WRONG_ISSUE_STATUS,
+                [
+                    'value' => $message->issue->getStatus(),
+                    'issue'  => $message->issue->getKey(),
+                ]
+            );
         }
 
         return !$this->errorCollector->hasErrors();
@@ -81,12 +88,14 @@ class IssueStatus extends AbstractValidator
     protected function getStatuses()
     {
         $statuses = (array) $this->getConfig()->getNodesExpr(
-            'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/'.$this->type.'/*[text() = \'1\' or text() = \'true\']'
+            'validators/IssueStatus/issue/status/'
+            .$this->getTrackerType().'/allowed/'.$this->type.'/*[text() = \'1\' or text() = \'true\']'
         );
 
         if (!$statuses) {
             $statuses = (array) $this->getConfig()->getNodesExpr(
-                'validators/IssueStatus/issue/status/'.$this->getTrackerType().'/allowed/default/*[text() = \'1\' or text() = \'true\']'
+                'validators/IssueStatus/issue/status/'
+                .$this->getTrackerType().'/allowed/default/*[text() = \'1\' or text() = \'true\']'
             );
         }
 
