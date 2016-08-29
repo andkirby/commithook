@@ -4,6 +4,7 @@
  */
 namespace PreCommit\Console\Command\Config\Tracker;
 
+use PreCommit\Config;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
@@ -46,9 +47,12 @@ class Task extends Set
      * Process value
      *
      * @return int
+     * @throws Exception
      */
     protected function processValue()
     {
+        $this->validateCommand();
+
         $issue = null;
         if ($this->canChangeTask()) {
             $issue = $this->loadIssue($this->getValue());
@@ -271,5 +275,21 @@ class Task extends Set
         $this->output->getFormatter()->setStyle('bug', $style);
 
         return $this;
+    }
+
+    /**
+     * Check if tracker type is defined
+     *
+     * @throws Exception
+     */
+    protected function validateCommand()
+    {
+        if (!Config::getInstance()->getNode('tracker/type')) {
+            throw new Exception(
+                'Tracker type is not defined.'
+                .PHP_EOL.'Please define it via command "commithook config --project tracker %value%"'
+                .PHP_EOL.'Allowed values: jira, github.'
+            );
+        }
     }
 }
