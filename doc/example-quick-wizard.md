@@ -11,7 +11,6 @@ $ commithook install
 ```
 
 ## Set up issue tracker integration
-Run wizard for integration ([detailed info](hooks-installation.md):
 ```
 $ commithook tracker:wizard
 ```
