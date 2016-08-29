@@ -11,7 +11,9 @@ use Rikby\Console\Helper\GitDirHelper;
 use Rikby\Console\Helper\PhpBinHelper;
 use Rikby\Console\Helper\SimpleQuestionHelper;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command abstract class
@@ -63,10 +65,11 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
      */
     public function getConfig()
     {
-        static $config;
-        if (null === $config) {
+        static $loaded;
+        if (null === $loaded) {
+            $loaded = true;
             //TODO Make single load
-            $config = Config::initInstance(
+            Config::initInstance(
                 [
                     'file' => $this->commithookDir.DIRECTORY_SEPARATOR.'src'.
                         DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'root.xml',
@@ -76,10 +79,9 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
             if (!Config::loadCache()) {
                 Config::mergeExtraConfig();
             }
-            $config = Config::getInstance();
         }
 
-        return $config;
+        return Config::getInstance();
     }
 
     /**
@@ -107,6 +109,23 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
         }
 
         return $config;
+    }
+
+    /**
+     * Initialize configuration
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+
+        // init configuration
+        $this->getConfig();
+
+        return 0;
     }
 
     /**
