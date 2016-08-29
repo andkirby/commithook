@@ -48,9 +48,11 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 ## Main documentation
 - [Configuration Wizard](doc/example-quick-wizard.md)
 - [GIT integration: hook files installation](doc/hooks-installation.md)
-- [Commit message format](doc/commit-msg.md)
 - [Ignore validation](doc/exclude-code-validation.md)
 - [Protect code](doc/protect-code.md)
+- [Commit message format](doc/commit-msg.md)
+- [Active task in commit message](doc/active-task.md)
+- [Auto-explode commit message into the list.](doc/config-message.md)
 
 ## Tips & tricks
 ### Redundant gaps in code
