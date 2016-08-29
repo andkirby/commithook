@@ -50,6 +50,14 @@ abstract class AbstractConfiguredCommand extends Set
      */
     protected function processValue()
     {
+        if (!$this->getKey()) {
+            //show help if key is not defined
+            $this->io->writeln("This command may set up configuration.");
+            $this->io->writeln("Please use \"<comment>commithook {$this->getDefinedName()} --help</comment>\" to get more information.");
+
+            return 0;
+        }
+
         $this->validateConfigKey();
 
         if (null === $this->getValue() && $this->getKey() && !$this->shouldUnset()) {
@@ -246,8 +254,8 @@ abstract class AbstractConfiguredCommand extends Set
         $this->setUnsetOption();
         $this->setScopeOptions();
 
-        $this->addArgument('key', InputArgument::REQUIRED, 'Parameter key.');
-        $this->addArgument('value', InputArgument::OPTIONAL, 'Parameter value.');
+        $this->addArgument('key', InputArgument::OPTIONAL, 'Configuration key.');
+        $this->addArgument('value', InputArgument::OPTIONAL, 'Configuration value.');
 
         return $this;
     }
