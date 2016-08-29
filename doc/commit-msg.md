@@ -74,6 +74,8 @@ Also, you may declare "active task" by similar command and don't care about numb
 ```shell
 $ commithook tracker:task 256
 ```
+More info about command `tracker:task` [here](active-task.md).
+
 The value can be checked w/o last argument.
 And a message will be simplest:
 ```
