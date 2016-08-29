@@ -184,6 +184,18 @@
                 </validator>
             </ignore>
 
+            <filetype_for_all>
+                <!--
+                This extensions list will used for before_all_original, before_all, and after_all placeholders
+                -->
+                <scss>scss</scss>
+                <css>css</css>
+                <json>json</json>
+                <less>less</less>
+                <html>html</html>
+                <htm>htm</htm>
+            </filetype_for_all>
+
             <filetype>
                 <!--Run validators before any filter because filters run always before validators-->
                 <before_all_original/>

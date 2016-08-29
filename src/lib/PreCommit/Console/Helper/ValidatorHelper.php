@@ -5,6 +5,7 @@
 namespace PreCommit\Console\Helper;
 
 use PreCommit\Config as AppConfig;
+use PreCommit\Helper\FileType;
 use Symfony\Component\Console\Helper\Helper;
 
 /**
@@ -22,10 +23,6 @@ class ValidatorHelper extends Helper
      * XML path expression (mask) to disabled validators
      */
     const XPATH_ALL_VALIDATORS = "hooks/pre-commit/filetype/%s/validators";
-    /**
-     * XML path to all file types
-     */
-    const XPATH_FILE_TYPES = 'hooks/pre-commit/filetype/*';
 
     /**
      * File types list
@@ -52,7 +49,7 @@ class ValidatorHelper extends Helper
     {
         if ($this->fileTypes === null) {
             $nodes = $config->getNodesExpr(
-                self::XPATH_FILE_TYPES
+                FileType::XPATH_FILE_TYPES
             );
 
             $this->fileTypes = array_keys($nodes);

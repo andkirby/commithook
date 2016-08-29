@@ -12,6 +12,7 @@ use PreCommit\Console\Helper\Config\WriterHelper;
 use PreCommit\Console\Helper\ConfigHelper;
 use PreCommit\Exception as Exception;
 use PreCommit\Filter\FilterInterface;
+use PreCommit\Helper\FileType;
 use PreCommit\Validator as Validator;
 use Symfony\Component\Console\Helper\HelperSet;
 
@@ -136,15 +137,18 @@ class PreCommit extends AbstractAdapter
                 continue;
             }
 
+            if (!$this->canProcessFile($file)) {
+                continue;
+            }
+
             $filePath = $this->getFilePath($file);
             $content  = $this->getFileContent($filePath);
 
             if (!$ignoreContentFilter->validate($content, $file)) {
-                return false;
+                continue;
             }
 
             $ext = pathinfo($file, PATHINFO_EXTENSION);
-
             //run validators for non-filtered content
             $this->runValidators('before_all_original', $content, $file, $filePath);
 
@@ -247,6 +251,22 @@ class PreCommit extends AbstractAdapter
     protected function canProcess()
     {
         return !$this->getVcsAdapter()->isMergeInProgress();
+    }
+
+    /**
+     * Check if can process file
+     *
+     * @param string $file
+     * @return array
+     */
+    protected function canProcessFile($file)
+    {
+        $type = new FileType();
+
+        return in_array(
+            pathinfo($file, PATHINFO_EXTENSION),
+            $type->getFileTypes()
+        );
     }
 
     /**
