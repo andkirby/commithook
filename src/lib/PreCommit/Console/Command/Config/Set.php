@@ -484,9 +484,9 @@ class Set extends AbstractCommand
             $type = $this->getTrackerType();
         }
 
-        $default = (int) $this->getDefaultScope($xpath, $type);
+        $default = $this->getDefaultScope($xpath, $type);
 
-        if ($this->isFirmScope($xpath, $type)) {
+        if ($this->isFirmScope($xpath, $type) || $this->useDefaultScopeByDefault()) {
             return $default;
         }
 
@@ -502,6 +502,18 @@ class Set extends AbstractCommand
                 ?: $this->getSimpleQuestion()
                 ->getQuestion("Set config scope ($xpath)", $default, $options)
         );
+    }
+
+    /**
+     * Use default scope by default
+     *
+     * Ie do not ask question
+     *
+     * @return bool
+     */
+    protected function useDefaultScopeByDefault()
+    {
+        return false;
     }
 
     /**
@@ -522,17 +534,20 @@ class Set extends AbstractCommand
                 break;
 
             case self::XPATH_TRACKER_TYPE:
+                $default = self::OPTION_SCOPE_PROJECT;
+                break;
+
             case 'tracker/'.$type.'/url':
-                $default = 1;
+                $default = self::OPTION_SCOPE_GLOBAL;
                 break;
 
             case 'tracker/'.$type.'/username':
             case 'tracker/'.$type.'/password':
-                $default = 1;
+                $default = self::OPTION_SCOPE_GLOBAL;
                 break;
 
             default:
-                $default = 3;
+                $default = self::OPTION_SCOPE_PROJECT_SELF;
                 break;
         }
 
@@ -554,6 +569,7 @@ class Set extends AbstractCommand
         switch ($xpath) {
             case 'tracker/'.$type.'/active_task':
             case 'tracker/'.$type.'/project':
+            case 'tracker/type':
                 $firm = true;
                 break;
             //no default

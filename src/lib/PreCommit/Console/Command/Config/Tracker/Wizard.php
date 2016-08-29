@@ -105,7 +105,7 @@ class Wizard extends Set
             ? $this->getCredentialsScope() : $scope;
 
         $this->writeConfig(Set::XPATH_TRACKER_TYPE, $scope, $this->trackerType);
-        $this->writeConfig($this->getXpath('url'), $scope, $url);
+        $this->writeConfig($this->getXpath('url'), $this->getScope($this->getXpath('url')), $url);
         $this->writeConfig($this->getXpath('username'), $scopeCredentials, $username);
         if (null !== $password) {
             $this->writeConfig($this->getXpath('password'), $scopeCredentials, $password);
@@ -113,6 +113,14 @@ class Wizard extends Set
         $this->writeConfig($this->getXpath('project'), Set::OPTION_SCOPE_PROJECT, $prjKey);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function useDefaultScopeByDefault()
+    {
+        return true;
     }
 
     /**
