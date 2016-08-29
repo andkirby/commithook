@@ -2,6 +2,14 @@
 
 ## Ignoring code validation
 
+
+### Ignore for a commit
+This command may make next as a blind commit.
+```
+$ commithook blind-commit
+```
+More info by command `commithook blind-commit --help`.
+
 ### Ignore code block
 ```
 // @codingStandardsIgnoreStart
