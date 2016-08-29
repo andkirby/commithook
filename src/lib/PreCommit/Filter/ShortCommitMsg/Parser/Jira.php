@@ -36,7 +36,7 @@ class Jira implements InterpreterInterface, IssueParserInterface
      * @param array $options
      * @throws \PreCommit\Exception
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         if (isset($options['type'])) {
             $this->type = $options['type'];
@@ -79,6 +79,43 @@ class Jira implements InterpreterInterface, IssueParserInterface
         $message->verb      = $this->getVerb($verb);
 
         return $message;
+    }
+
+    /**
+     * Convert issue number to issue key
+     *
+     * Add project key to issue number when it did not set.
+     *
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    public function getActiveIssueKey()
+    {
+        return $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/active_task');
+    }
+
+    /**
+     * Convert issue number to issue key
+     *
+     * Add project key to issue number when it did not set.
+     *
+     * @param string $issueNo
+     * @return string
+     * @throws \PreCommit\Exception
+     */
+    public function normalizeIssueKey($issueNo)
+    {
+        if ((string) (int) $issueNo === $issueNo) {
+            $project = $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/project');
+            if (!$project) {
+                throw new Exception(
+                    'JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file ".commithook.xml" within current project.'
+                );
+            }
+            $issueNo = "$project-$issueNo";
+        }
+
+        return $issueNo;
     }
 
     /**
@@ -154,43 +191,6 @@ class Jira implements InterpreterInterface, IssueParserInterface
     }
 
     /**
-     * Convert issue number to issue key
-     *
-     * Add project key to issue number when it did not set.
-     *
-     * @return string
-     * @throws \PreCommit\Exception
-     */
-    public function getActiveIssueKey()
-    {
-        return $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/active_task');
-    }
-
-    /**
-     * Convert issue number to issue key
-     *
-     * Add project key to issue number when it did not set.
-     *
-     * @param string $issueNo
-     * @return string
-     * @throws \PreCommit\Exception
-     */
-    public function normalizeIssueKey($issueNo)
-    {
-        if ((string) (int) $issueNo === $issueNo) {
-            $project = $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/project');
-            if (!$project) {
-                throw new Exception(
-                    'JIRA project key is not set. Please add it to issue-key or add by XPath "tracker/jira/project" in project configuration file ".commithook.xml" within current project.'
-                );
-            }
-            $issueNo = "$project-$issueNo";
-        }
-
-        return $issueNo;
-    }
-
-    /**
      * Interpret message title
      *
      * @param string $message
@@ -216,7 +216,7 @@ class Jira implements InterpreterInterface, IssueParserInterface
                 return false;
             }
 
-            return array(null, $this->normalizeIssueKey($issueNo), null);
+            return [null, $this->normalizeIssueKey($issueNo), null];
         }
 
         $commitVerb = trim($m[2]);
@@ -238,7 +238,7 @@ class Jira implements InterpreterInterface, IssueParserInterface
                 return false;
             }
 
-            return array($commitVerb, $this->normalizeIssueKey($issueNo), null);
+            return [$commitVerb, $this->normalizeIssueKey($issueNo), null];
         }
 
         //TODO Fix this hardcoded logic
@@ -270,7 +270,7 @@ class Jira implements InterpreterInterface, IssueParserInterface
             end($m);
             $issueNo = trim(current($m));
             if (preg_match("/^$issueKeyRegular$/", $issueNo)) {
-                $m = array(); //no user message in first row, only issue key.
+                $m = []; //no user message in first row, only issue key.
             } else {
                 $issueNo = null;
             }
@@ -293,7 +293,7 @@ class Jira implements InterpreterInterface, IssueParserInterface
             $userMessage = trim(array_pop($m));
         }
 
-        return array($commitVerb, $issueKey, $userMessage);
+        return [$commitVerb, $issueKey, $userMessage];
     }
 
     /**
