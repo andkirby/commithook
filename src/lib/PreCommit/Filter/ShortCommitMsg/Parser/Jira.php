@@ -8,14 +8,13 @@ use PreCommit\Config;
 use PreCommit\Exception;
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Issue;
-use PreCommit\Message;
 
 /**
  * Class filter to parse short message
  *
  * @package PreCommit\Filter\ShortCommitMsg\Jira
  */
-class Jira implements InterpreterInterface
+class Jira implements InterpreterInterface, IssueParserInterface
 {
     /**
      * Issue adapter
@@ -162,7 +161,7 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function getActiveIssueKey()
+    public function getActiveIssueKey()
     {
         return $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/active_task');
     }
@@ -176,7 +175,7 @@ class Jira implements InterpreterInterface
      * @return string
      * @throws \PreCommit\Exception
      */
-    protected function normalizeIssueKey($issueNo)
+    public function normalizeIssueKey($issueNo)
     {
         if ((string) (int) $issueNo === $issueNo) {
             $project = $this->getConfig()->getNode('tracker/'.$this->getTrackerType().'/project');
@@ -195,7 +194,7 @@ class Jira implements InterpreterInterface
      * Interpret message title
      *
      * @param string $message
-     * @return array
+     * @return array|bool
      * @throws \PreCommit\Exception
      * @todo Too long and complex code
      */

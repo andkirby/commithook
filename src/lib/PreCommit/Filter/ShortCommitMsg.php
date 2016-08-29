@@ -4,9 +4,10 @@
  */
 namespace PreCommit\Filter;
 
+use PreCommit\Filter\ShortCommitMsg\Parser;
 use PreCommit\Config;
 use PreCommit\Exception;
-use PreCommit\Issue;
+use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Message;
 
 /**
@@ -65,15 +66,11 @@ class ShortCommitMsg implements Message\FilterInterface
     /**
      * Get parser
      *
-     * @return \PreCommit\Filter\ShortCommitMsg\Parser\Jira
+     * @return Parser\IssueParserInterface|InterpreterInterface
      */
     protected function getParser()
     {
-        $class = $this->getConfig()->getNode(
-            'tracker/'.$this->getTrackerType().'/message/parser/class'
-        );
-
-        return new $class();
+        return Parser::factory(null);
     }
 
     /**
