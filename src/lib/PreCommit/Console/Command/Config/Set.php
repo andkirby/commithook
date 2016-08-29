@@ -203,32 +203,49 @@ class Set extends AbstractCommand
      */
     protected function processValue()
     {
-        if ($this->getKey() && !$this->shouldWriteValue()) {
+        if (!$this->getKey()) {
+            //show help if key is not defined
+            $this->io->writeln($this->getProcessedHelp());
+
+            return 0;
+        }
+
+        if (!$this->shouldWriteValue()) {
             $this->showValue();
-        } elseif ($this->getKey() && $this->shouldWriteValue()) {
-            /**
-             * Writing mode
-             */
-            $this->writePredefinedOptions();
-            $this->writeKeyValueOption();
 
-            if ($this->updated) {
-                if ($this->isVerbose()) {
-                    $this->output->writeln(
-                        'Configuration updated.'
-                    );
-                }
-            } else {
-                if ($this->isVerbose()) {
-                    $this->output->writeln(
-                        'Configuration already defined.'
-                    );
-                }
+            return 0;
+        }
 
-                return self::SHELL_CODE_CONF_DEFINED;
+        return $this->processWriteValue();
+    }
+
+    /**
+     * Process writing value
+     *
+     * @return int
+     */
+    protected function processWriteValue()
+    {
+        /**
+         * Writing mode
+         */
+        $this->writePredefinedOptions();
+        $this->writeKeyValueOption();
+
+        if ($this->updated) {
+            if ($this->isVerbose()) {
+                $this->output->writeln(
+                    'Configuration updated.'
+                );
             }
         } else {
-            $this->io->writeln($this->getProcessedHelp());
+            if ($this->isVerbose()) {
+                $this->output->writeln(
+                    'Configuration already defined.'
+                );
+            }
+
+            return self::SHELL_CODE_CONF_DEFINED;
         }
 
         return 0;
