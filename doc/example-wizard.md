@@ -28,13 +28,6 @@ Set up issue tracker connection.
  Current 'jira' project key:
  > PRJ1
 
- Set config scope (tracker/type):
-  1 - global (Default)
-  2 - project
-  3 - project-self
- [1]:
- > 1
-
 Configuration updated.
 Do not forget to share project .commithook.xml file with your team.
 Enjoy!
