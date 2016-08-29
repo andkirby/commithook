@@ -330,7 +330,7 @@ class Jira implements InterpreterInterface
      * Initialize issue adapter
      *
      * @param string $issueKey
-     * @return \PreCommit\Issue\AdapterInterface
+     * @return $this
      * @throws \PreCommit\Exception
      */
     protected function initIssue($issueKey)
