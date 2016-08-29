@@ -8,6 +8,7 @@ use PreCommit\Config;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
+use PreCommit\Filter\ShortCommitMsg\Parser;
 use PreCommit\Issue;
 use PreCommit\Message;
 use PreCommit\Processor\ErrorCollector;
@@ -55,7 +56,9 @@ class Task extends Set
 
         $issue = null;
         if ($this->canChangeTask()) {
-            $issue = $this->loadIssue($this->getValue());
+            $issue = $this->loadIssue(
+                $this->normalizeIssueKey($this->getValue())
+            );
         }
 
         $status = parent::processValue();
@@ -99,6 +102,7 @@ class Task extends Set
     {
         if ($this->hasInfoOption()) {
             $key = $this->getValue() ?: $this->getXpathValue($this->getXpath($this->getKey()));
+            $key = $this->normalizeIssueKey($key);
             if ($key) {
                 $this->output->writeln($this->getIssueOutputInfo($this->loadIssue($key)));
             }
@@ -248,10 +252,11 @@ class Task extends Set
      */
     protected function getIssueOutputInfo(Issue\AdapterInterface $issue)
     {
+        $key   = $issue->getKey();
         $first = sprintf(
             'Issue %s %s (%s).',
             "<{$issue->getType()}>{$issue->getType()}</{$issue->getType()}>",
-            "<info>{$issue->getKey()}</info>",
+            "<info>{$key}</info>",
             "<comment>{$issue->getStatus()}</comment>"
         );
 
@@ -291,5 +296,16 @@ class Task extends Set
                 .PHP_EOL.'Allowed values: jira, github.'
             );
         }
+    }
+
+    /**
+     * Normalize issue key
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function normalizeIssueKey($key)
+    {
+        return Parser::factory(null)->normalizeIssueKey($key);
     }
 }
