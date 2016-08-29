@@ -51,6 +51,7 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 - [Ignore validation](doc/exclude-code-validation.md)
 - [Protect code](doc/protect-code.md)
 - [Commit message format](doc/commit-msg.md)
+- [Ignore commit message validation](doc/commit-msg-ignore.md)
 - [Active task in commit message](doc/active-task.md)
 - [Auto-explode commit message into the list.](doc/config-message.md)
 
