@@ -4,9 +4,11 @@
  */
 namespace PreCommit\Console\Command\Config\Tracker;
 
+use PreCommit\Config;
 use PreCommit\Console\Command\AbstractCommand;
 use PreCommit\Console\Command\Config\Set;
 use PreCommit\Console\Exception;
+use PreCommit\Issue;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,6 +33,32 @@ class Task extends Set
         AbstractCommand::execute($input, $output);
 
         return $this->processValue();
+    }
+
+    /**
+     * Process value
+     *
+     * @return int
+     */
+    protected function processValue()
+    {
+        if ($this->getValue()) {
+            $issue = Issue::factory($this->getValue());
+
+            $issue->getStatus(); //load issue
+
+            if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
+                $this->output->writeln(
+                    'Switched to issue <info>'.$issue->getKey().'</info> (<comment>'.$issue->getStatus().'</comment>).'
+                );
+                $this->output->writeln('');
+                $this->output->writeln(
+                    '  <comment>'.$issue->getSummary().'</comment>'
+                );
+            }
+        }
+
+        return parent::processValue();
     }
 
     /**
