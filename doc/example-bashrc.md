@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## `~/.bashrc`
 
@@ -25,4 +25,4 @@ Now you may reload file:
 $ . ~/.bashrc
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)

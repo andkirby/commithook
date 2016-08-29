@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## Ignoring code validation
 
@@ -42,6 +42,6 @@ This extensions list already defined:
 For unset:
 `commithook files:skip --extension jpg --unset`
 
-[Back](../README.md)
+[Back to top](../README.md)
 
 

@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 # Active task in commit message
 You may declare "active task" by similar command and don't care about numbers in commit messages:
@@ -37,4 +37,4 @@ Read info about task `321`:
 commithook tracker:task 321 --info
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)

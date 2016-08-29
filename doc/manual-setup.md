@@ -1,3 +1,5 @@
+[Back to top](../README.md)
+
 ## Set up GIT hooks manually
 
 To set up GIT hooks you have to set up your commit-msg and pre-commit files.
@@ -12,3 +14,5 @@ Also you may use following template to create commit-msg and pre-commit files:
 $hookName = __FILE__;
 require_once '/path/to/commithook/bin/runner.php';
 ```
+
+[Back to top](../README.md)

@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## Prohibit changes
 
@@ -34,4 +34,4 @@ You switch it to OFF:
 In this case "protected" list will be ended rule and will have highest priority.
 It will pass a commit only if "allowed" list covers a path.
 
-[Back](../README.md)
+[Back to top](../README.md)

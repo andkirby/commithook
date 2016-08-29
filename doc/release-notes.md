@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## Release notes
 - Last beta: v2.0.0-beta.16
@@ -34,4 +34,4 @@
 - v1.2.2 Bugfix for case:
 `<?php if ($i != $recommendationsCount-1) echo ","?>`
 
-[Back](../README.md)
+[Back to top](../README.md)

@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 # Test code before commit
 You may test your code before commit by the command:
@@ -15,4 +15,4 @@ $ commithook test
 ```
 And take a look at errors list.
 
-[Back](../README.md)
+[Back to top](../README.md)

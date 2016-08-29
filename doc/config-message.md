@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 # Commit Message configuration
 ## Explode message
@@ -43,4 +43,4 @@ Implemented #33: Make smth good now
  - And I have done that.
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)

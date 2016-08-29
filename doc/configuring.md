@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## Configuring
 
@@ -37,4 +37,4 @@ The file `PROJECT_DIR/commithook.xml` can be added into a project and might be u
 
 `PROJECT_DIR` - is your root project directory where CommitHook will be used.
 
-[Back](../README.md)
+[Back to top](../README.md)

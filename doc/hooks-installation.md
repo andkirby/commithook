@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## GIT hook files installation
 
@@ -44,4 +44,4 @@ To remove CommitHook files from your project you may use command:
 $ commithook remove
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)

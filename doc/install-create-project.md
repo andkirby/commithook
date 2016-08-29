@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 ## Installation via `create-project`
 ```shell
@@ -15,4 +15,4 @@ You may add alias in your `.bashrc` file.
 alias commithook='/path/to/commithook/bin/commithook'
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)

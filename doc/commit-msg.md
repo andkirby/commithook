@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 # Commit Message Validation
 Default commit message format is:
@@ -136,4 +136,4 @@ $ commithook config --xpath hooks/commit-msg/message/issue/type/tracker/jira/def
 ## Be aware about numbers. :)
 Please always keep an eye on issue numbers. That's all just to be more ~~lazy~~ productive! ;D
 
-[Back](../README.md)
+[Back to top](../README.md)

@@ -1,4 +1,4 @@
-[Back](../README.md)
+[Back to top](../README.md)
 
 # Project configuration example
 
@@ -156,4 +156,4 @@ $ git commit -m '@@through Added commithook files.'
 $ git push
 ```
 
-[Back](../README.md)
+[Back to top](../README.md)
