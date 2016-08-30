@@ -44,6 +44,9 @@
 
                     <path>
                         <!--
+                        Command for adding:
+                        $ commithook files:skip path/to
+
                         Examples:
 
                         Ignore libs/ directory
@@ -61,6 +64,9 @@
                 <protect>
                     <path>
                         <!--
+                        Command for adding:
+                        $ commithook files:protect path/to
+
                         Examples:
 
                         Ignore libs/ directory
@@ -78,6 +84,9 @@
                 <allow>
                     <path>
                         <!--
+                        Examples:Command for adding:
+                        $ commithook files:allow path/to
+
                         Examples:
 
                         Ignore libs/ directory
