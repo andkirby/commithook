@@ -148,14 +148,6 @@ class Set extends AbstractCommand
 
             return true;
         }
-        if ('exclude-extension' == $this->getKey() || 'skip-ext' == $this->getKey()) {
-            $this->output->writeln('This command is deprecated. Please use');
-            $this->output->writeln('');
-            $this->output->writeln('    files:skip --ext YOUR_EXTENSION');
-            $this->output->writeln('');
-
-            return true;
-        }
         if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
             || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
         ) {
@@ -326,32 +318,6 @@ class Set extends AbstractCommand
                 $name = self::XPATH_TRACKER_TYPE;
                 break;
 
-            case 'exclude-extension':
-            case 'skip-ext':
-                $name = 'validators/FileFilter/filter/skip/extensions';
-                if ($this->shouldWriteValue()) {
-                    $name = $name.'/'.$helperConfigFile->path2XmlNode($this->getValue());
-                }
-                break;
-
-            case 'exclude-path':
-            case 'skip-path':
-                $name = 'validators/FileFilter/filter/skip/paths/path';
-                break;
-
-            case 'exclude-file':
-            case 'skip-file':
-                $name = 'validators/FileFilter/filter/skip/files/file';
-                break;
-
-            case 'protect-path':
-                $name = 'validators/FileFilter/filter/protect/paths/path';
-                break;
-
-            case 'protect-file':
-                $name = 'validators/FileFilter/filter/protect/files/file';
-                break;
-
             case 'skip':
             case 'allow':
             case 'protect':
@@ -359,14 +325,6 @@ class Set extends AbstractCommand
                 if ($this->shouldWriteValue()) {
                     $name = $name.'/'.$helperConfigFile->path2XmlNode($this->getValue());
                 }
-                break;
-
-            case 'allow-path':
-                $name = 'validators/FileFilter/filter/allow/paths/path';
-                break;
-
-            case 'allow-file':
-                $name = 'validators/FileFilter/filter/allow/files/file';
                 break;
 
             case 'task':
@@ -702,7 +660,8 @@ class Set extends AbstractCommand
      * It will get validator/filter name and make file path in PROJECT_DIR/.commithook/
      *
      * @param string $xpath
-     * @return string|null
+     * @return null|string
+     * @throws Exception
      */
     protected function getConfigProjectFileByXpath($xpath)
     {
@@ -713,7 +672,13 @@ class Set extends AbstractCommand
             return null;
         }
 
-        return dirname($this->getProjectConfigFile()).'/.commithook/'.$matches[1].'.xml';
+        $path = $this->getProjectConfigFile();
+
+        if (!$path) {
+            throw new Exception('Path cannot be empty.');
+        }
+
+        return dirname($path).'/.commithook/'.$matches[1].'.xml';
     }
 
     /**
@@ -768,23 +733,34 @@ class Set extends AbstractCommand
         }
 
         if (null === $this->getValue() && $this->shouldSet()) {
-            $question = $this->getSimpleQuestion()->getQuestion(
-                "Set value for XPath '$xpath'",
-                $this->getXpathValue($xpath)
-            );
-
-            /**
-             * Ask value without showing input for passwords
-             */
-            if (false !== strpos($xpath, 'password')) {
-                $question->setHidden(true);
-                $question->setHiddenFallback(true);
-            }
-
-            return $this->io->askQuestion($question);
+            return $this->askValue($xpath);
         }
 
         return $this->getValue();
+    }
+
+    /**
+     * Ask value
+     *
+     * @param string $xpath
+     * @return string
+     */
+    protected function askValue($xpath)
+    {
+        $question = $this->getSimpleQuestion()->getQuestion(
+            "Set value for XPath '$xpath'",
+            $this->getXpathValue($xpath)
+        );
+
+        /**
+         * Ask value without showing input for passwords
+         */
+        if (false !== strpos($xpath, 'password')) {
+            $question->setHidden(true);
+            $question->setHiddenFallback(true);
+        }
+
+        return $this->io->askQuestion($question);
     }
 
     /**

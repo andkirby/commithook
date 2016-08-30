@@ -23,34 +23,10 @@ class Skip extends Protect
     protected function getKey()
     {
         if (null === $this->key) {
-            $this->key = $this->isExtension() ? 'skip-ext' : 'skip';
+            $this->key = 'skip';
         }
 
         return $this->key;
-    }
-
-    /**
-     * Check if extension is requested
-     *
-     * @return bool
-     */
-    protected function isExtension()
-    {
-        return $this->input->hasParameterOption('--extension');
-    }
-
-    /**
-     * Ignore normalizing value for extension mode
-     *
-     * @return $this|string
-     */
-    protected function normalizeValue()
-    {
-        if (!$this->isExtension()) {
-            parent::normalizeValue();
-        }
-
-        return $this;
     }
 
     /**
@@ -77,33 +53,8 @@ class Skip extends Protect
      */
     protected function showSetValues()
     {
-        if ($this->isExtension()) {
-            $this->key = 'skip-ext';
-            $this->processValue();
-        } else {
-            $this->key = 'skip-path';
-            $this->processValue();
-
-            $this->key = 'skip-file';
-            $this->processValue();
-
-            $this->key = 'skip';
-            $this->processValue();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Init input definitions
-     *
-     * @return $this
-     */
-    protected function configureInput()
-    {
-        parent::configureInput();
-
-        $this->addOption('extension', null, InputOption::VALUE_NONE, 'Extensions mode.');
+        $this->key = 'skip';
+        $this->processValue();
 
         return $this;
     }
