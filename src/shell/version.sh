@@ -26,8 +26,8 @@ if [ 'v' = "${target_version::1}" ]; then
 fi
 
 if ! [[ "${target_version}" =~ ^${version_regex}$ ]]; then
-    echo "error: Version '${target_version}' is not valid."
-    exit 1
+    cat ${xml_file} | grep -Eo '<version>[^<]+' | grep -Eo '[0-9][^<]+'
+    exit 0
 fi
 
 # Update version in XML file
