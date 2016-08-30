@@ -665,9 +665,11 @@ class Set extends AbstractCommand
      */
     protected function getConfigProjectFileByXpath($xpath)
     {
-        if (!preg_match('~^validators/([A-z0-9_-]+)~', $xpath, $matches)
-            && !preg_match('~^hooks/pre-commit/filetype/[A-z_-]+/[A-z_-]+/([A-z0-9_-]+)~', $xpath, $matches)
-            && !preg_match('~^hooks/pre-commit/ignore/validator/code/([A-z0-9_-]+)~', $xpath, $matches)
+        if (!preg_match('~^validators/([A-Z][A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~^filters/([A-Z][A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~/filters/([A-Z][A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~^hooks/pre-commit/filetype/[A-z_-]+/[A-z_-]+/([A-Z][A-z0-9_-]+)~', $xpath, $matches)
+            && !preg_match('~^hooks/pre-commit/ignore/validator/code/([A-Z][A-z0-9_-]+)~', $xpath, $matches)
         ) {
             return null;
         }
