@@ -1,7 +1,7 @@
 [Back to top](../README.md)
 
 # Active task in commit message
-You may declare "active task" by similar command and don't care about numbers in commit messages:
+You may declare "active task" by the command and don't care about numbers in commit messages:
 ```shell
 $ commithook tracker:task 256
 ```
