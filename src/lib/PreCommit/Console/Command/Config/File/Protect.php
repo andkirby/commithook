@@ -91,12 +91,6 @@ class Protect extends Set
      */
     protected function showSetValues()
     {
-        $this->key = 'protect-path';
-        $this->processValue();
-
-        $this->key = 'protect-file';
-        $this->processValue();
-
         $this->key = 'protect';
         $this->processValue();
 
@@ -133,6 +127,16 @@ class Protect extends Set
         $this->setUnsetOption();
 
         return $this;
+    }
+
+    /**
+     * Removed using scope.
+     *
+     * @return bool
+     */
+    protected function useDefaultScopeByDefault()
+    {
+        return true;
     }
 
     /**
@@ -177,7 +181,7 @@ class Protect extends Set
      */
     protected function getDefaultScope($xpath, $type)
     {
-        return 2;
+        return self::OPTION_SCOPE_PROJECT;
     }
 
     /**
@@ -197,7 +201,7 @@ class Protect extends Set
      */
     protected function showValue()
     {
-        $value = $this->getShowValue($this->getArgumentXpath());
+        $value = (array) $this->getConfig()->getNodesExpr($this->getArgumentXpath().'/*');
         $value && $this->io->writeln(implode(PHP_EOL, $value));
 
         return $this;

@@ -35,12 +35,6 @@ class Allow extends Protect
      */
     protected function showSetValues()
     {
-        $this->key = 'allow-path';
-        $this->processValue();
-
-        $this->key = 'allow-file';
-        $this->processValue();
-
         $this->key = 'allow';
         $this->processValue();
 
