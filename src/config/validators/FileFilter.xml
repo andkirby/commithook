@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <validators>
+        <FileFilter>
+            <!--
+            1 - all files will be allowed to commit,
+                only protected won't if they are not matched with "allow" list
+            0 - or all will be protected to commit,
+                only allowed won't if they are not matched with "protected" list instead
+            -->
+            <allowed_by_default>1</allowed_by_default>
+            <filter>
+                <!-- "skip" validation list -->
+                <skip>
+                    <path>
+                        <!--
+                        Command for adding:
+                        $ commithook files:skip path/to
+
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </skip>
+
+                <!--Protect a path-->
+                <protect>
+                    <path>
+                        <!--
+                        Command for adding:
+                        $ commithook files:protect path/to
+
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </protect>
+
+                <!-- "allow" layer has priority over "protect" -->
+                <allow>
+                    <path>
+                        <!--
+                        Examples:Command for adding:
+                        $ commithook files:allow path/to
+
+                        Examples:
+
+                        Ignore libs/ directory
+                        <libs>libs/</libs>
+
+                        Ignore index.php file
+                        <index_php>index.php</index_php>
+                        -->
+                    </path>
+
+                    <!-- Nodes paths and files are DEPRECATED -->
+                </allow>
+            </filter>
+        </FileFilter>
+    </validators>
+</config>
