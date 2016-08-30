@@ -21,27 +21,6 @@
             <filter>
                 <!-- "skip" validation list -->
                 <skip>
-                    <!-- Skip validation for files with such extensions -->
-                    <extensions>
-                        <!--Images-->
-                        <jpg>jpg</jpg>
-                        <png>png</png>
-                        <gif>gif</gif>
-                        <bmp>bmp</bmp>
-                        <ico>ico</ico>
-                        <svg>svg</svg>
-                        <!--Archives-->
-                        <zip>zip</zip>
-                        <rar>rar</rar>
-                        <gz>gz</gz>
-                        <tar>tar</tar>
-                        <!--Fonts-->
-                        <ttf>ttf</ttf>
-                        <fon>fon</fon>
-                        <eot>eot</eot>
-                        <woff>woff</woff>
-                    </extensions>
-
                     <path>
                         <!--
                         Command for adding:
