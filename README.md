@@ -5,7 +5,9 @@
 The main purpose of this project is
  - checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)
  - filling up commit messages automatically to proper format ([details](doc/commit-msg.md))
- 
+
+Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
+
 ## The simplest commit message you could ever make
 ```
 $ git add myfile.php
@@ -19,7 +21,7 @@ Implemented #33: Make smth good now
 See more details [here](doc/commit-msg.md).
 
 ## Installation
-### Latest release is `v2.0.0-beta.28`
+### Latest release is `v2.0.0-beta.29`
 ### Install globally
 To get last beta version please define your `minimum-stability`.
 ```
@@ -54,6 +56,12 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 - [Ignore commit message validation](doc/commit-msg-ignore.md)
 - [Active task in commit message](doc/active-task.md)
 - [Auto-explode commit message into the list.](doc/config-message.md)
+
+## Problems
+#### Code validators doesn't work with GIT cache
+The code validation with GIT but it doesn't support git cache. It means if you added a file (`git add file.php`), changed it, and trying to commit (without adding it into GIT cache). In commit, of course, you will get code from cache but validators will validate your real file. ([#113](../../issues/113))
+#### Minor bugs in short commit message
+[#92](../../issues/92), [#91](../../issues/91), [#32](../../issues/32)
 
 ## Tips & tricks
 ### Redundant gaps in code

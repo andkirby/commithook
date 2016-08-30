@@ -2,7 +2,7 @@
 
 # Commit Message configuration
 ## Explode message
-Explode commit message to the list (disabled by default):
+Explode commit message to the list (enabled by default):
 ```shell
 $ commithook message explode 1
 ```
@@ -34,7 +34,7 @@ $ commithook message explode-string '|'
 Let's test:
 ```
 $ git add myfile.php
-$ git commit -m '- I have done this. Yeah, I'm sure. | And I have done that.'
+$ git commit -m '- I have done this. Yeah... I'm sure. | And I have done that.'
 ```
 Expected commit message:
 ```
