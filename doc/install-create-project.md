@@ -2,7 +2,7 @@
 
 ## Installation via `create-project`
 ```shell
-composer create-project andkirby/commithook /path/to/commithook/ ~2.0@beta
+composer create-project --no-dev andkirby/commithook /path/to/commithook/ ~2.0@beta
 ```
 
 And path to binary file will be:
