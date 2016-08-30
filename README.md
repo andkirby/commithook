@@ -55,6 +55,12 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 - [Active task in commit message](doc/active-task.md)
 - [Auto-explode commit message into the list.](doc/config-message.md)
 
+## Problems
+#### Code validators doesn't work with GIT cache
+The code validation with GIT but it doesn't support git cache. It means if you added a file (`git add file.php`), changed it, and trying to commit (without adding it into GIT cache). In commit, of course, you will get code from cache but validators will validate your real file. ([#113](../../issues/113))
+#### Minor bugs in short commit message
+[#92](../../issues/92), [#91](../../issues/91), [#32](../../issues/32)
+
 ## Tips & tricks
 ### Redundant gaps in code
 You may quickly find gaps/trailing spaces in your code by the regular expression:
