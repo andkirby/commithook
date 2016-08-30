@@ -2,7 +2,7 @@
 
 # Commit Message configuration
 ## Explode message
-Explode commit message to the list (disabled by default):
+Explode commit message to the list (enabled by default):
 ```shell
 $ commithook message explode 1
 ```
