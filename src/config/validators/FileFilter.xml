@@ -5,6 +5,21 @@
  */
 -->
 <config>
+    <console>
+        <files>
+            <description>FileFilter validator configuration.</description>
+            <args>
+                <allow-default>
+                    <xpath type="bool">validators/FileFilter/allowed_by_default</xpath>
+                    <description>This command can define configuration for allowing to commit files by default.</description>
+                    <scope>
+                        <default>project</default>
+                    </scope>
+                </allow-default>
+            </args>
+        </files>
+    </console>
+
     <validators>
         <FileFilter>
             <!--

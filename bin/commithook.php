@@ -20,7 +20,7 @@ $app->add(new Config\Tracker\Wizard($root));
 $app->add(new Config\File\Skip($root));
 $app->add(new Config\File\Protect($root));
 $app->add(new Config\File\Allow($root));
-$app->add(new Config\File\AllowDefault($root));
+$app->add(new Config\File\FilesConfig($root));
 $app->add(new Test($root));
 $app->add(new ClearCache($root));
 $app->add(new Validator\Disable($root));
