@@ -23,13 +23,13 @@ This command should be used to allow committing within protected path.
 ### Allowed be default
 There is an option which allows to commit any file.
 
-`commithook files:allow-default`
+`commithook files allow-default`
 
 In this case "allowed" list will be ended rule and will have highest priority.
 
 You switch it to OFF:
 
-`commithook files:allow-default 0`
+`commithook files allow-default 0`
 
 In this case "protected" list will be ended rule and will have highest priority.
 It will pass a commit only if "allowed" list covers a path.

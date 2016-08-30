@@ -11,7 +11,7 @@
             <args>
                 <allow-default>
                     <xpath type="bool">validators/FileFilter/allowed_by_default</xpath>
-                    <description>This command can define configuration for allowing to commit files by default.</description>
+                    <description>Set allowing to commit files by default.</description>
                     <scope>
                         <default>project</default>
                     </scope>
