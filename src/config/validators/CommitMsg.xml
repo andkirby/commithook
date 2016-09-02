@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <console>
+        <message>
+            <args>
+                <tracker-sync>
+                    <xpath type="bool">hooks/commit-msg/message/tracker_sync</xpath>
+                    <description>Status of synchronization with external issue tracker. Short commit message won't available if it's OFF.</description>
+                    <scope>
+                        <default>project-self</default>
+                    </scope>
+                </tracker-sync>
+            </args>
+        </message>
+    </console>
+    <hooks>
+        <commit-msg>
+            <message>
+                <tracker_sync>1</tracker_sync>
+            </message>
+        </commit-msg>
+    </hooks>
+</config>
