@@ -111,12 +111,16 @@ class Test extends AbstractCommand
                 throw new Exception('Sorry, absolute path is not supported so far.');
             }
 
-            $finder = new Finder();
-            $finder->files()->in($path);
+            if (is_file($path)) {
+                $customFiles[] = $path;
+            } else {
+                $finder = new Finder();
+                $finder->files()->in($path);
 
-            /** @var SplFileInfo $file */
-            foreach ($finder as $file) {
-                $customFiles[] = rtrim($path, '\\/').DIRECTORY_SEPARATOR.$file->getRelativePathname();
+                /** @var SplFileInfo $file */
+                foreach ($finder as $file) {
+                    $customFiles[] = rtrim($path, '\\/').DIRECTORY_SEPARATOR.$file->getRelativePathname();
+                }
             }
         }
 
