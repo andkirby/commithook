@@ -3,10 +3,11 @@
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
 namespace PreCommit\Test;
-use PreCommit\Validator\PhpDoc;
+
 use PreCommit\Config;
 use PreCommit\Processor;
 use PreCommit\Processor\PreCommit;
+use PreCommit\Validator\PhpDoc;
 
 /**
  * Class test for Processor
@@ -18,21 +19,21 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      *
      * @var string
      */
-    static protected $_classTest = 'testsuite/PreCommit/Test/_fixture/TestClass.php';
+    protected static $classTest = 'testsuite/PreCommit/Test/_fixture/TestClass.php';
 
     /**
      * Test model
      *
      * @var PreCommit
      */
-    static protected $_model;
+    protected static $model;
 
     /**
      * Set up test model
      */
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
-        Config::initInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
+        Config::initInstance(['file' => PROJECT_ROOT.'/commithook.xml']);
         Config::setSrcRootDir(PROJECT_ROOT);
 
         $vcsAdapter = self::getVcsAdapterMock();
@@ -40,10 +41,35 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var PreCommit $preCommit */
         $preCommit = Processor::factory('pre-commit', $vcsAdapter);
         $preCommit->setCodePath(self::getCodePath())
-            ->setFiles(array(self::$_classTest));
+            ->setFiles([self::$classTest]);
 
         $preCommit->process();
-        self::$_model = $preCommit;
+        self::$model = $preCommit;
+    }
+
+    /**
+     * Test failure validation
+     */
+    public function testFailureValidation()
+    {
+        $this->assertTrue((bool) self::$model->getErrors());
+    }
+
+    /**
+     * Test CODE_PHP_DOC_MISSED
+     */
+    public function testPhpDocMissed()
+    {
+        $errors = $this->getSpecificErrorsList(self::$classTest, PhpDoc::CODE_PHP_DOC_MISSED);
+
+        //TODO implement group comment validation
+        $expected = [
+            'const WRONG = 0;',
+            'protected $_param2;',
+            'public function test1(){',
+            'class Some_testClass extends stdClass {',
+        ];
+        $this->validateErrors($errors, $expected);
     }
 
     /**
@@ -53,11 +79,12 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getVcsAdapterMock()
     {
-        $generator = new \PHPUnit_Framework_MockObject_Generator();
+        $generator  = new \PHPUnit_Framework_MockObject_Generator();
         $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects(self::once())
             ->method('getAffectedFiles')
-            ->will(self::returnValue(array()));
+            ->will(self::returnValue([]));
+
         return $vcsAdapter;
     }
 
@@ -66,9 +93,9 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    static protected function getCodePath()
+    protected static function getCodePath()
     {
-        return realpath(__DIR__ . DIRECTORY_SEPARATOR . '../../..');
+        return realpath(__DIR__.DIRECTORY_SEPARATOR.'../../..');
     }
 
     /**
@@ -81,46 +108,24 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getSpecificErrorsList($file, $code)
     {
-        $errors = self::$_model->getErrors();
+        $errors = self::$model->getErrors();
         if (!isset($errors[$file])) {
-            throw new \PHPUnit_Framework_Exception('Errors for file ' . self::$_classTest . ' not found.');
+            throw new \PHPUnit_Framework_Exception('Errors for file '.self::$classTest.' not found.');
         }
         $errors = $errors[$file];
 
         if (!isset($errors[$code])) {
             throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
         }
+
         return $errors[$code];
     }
 
     /**
-     * Test failure validation
-     */
-    public function testFailureValidation()
-    {
-        $this->assertTrue((bool) self::$_model->getErrors());
-    }
-
-    /**
-     * Test CODE_PHP_DOC_MISSED
-     */
-    public function testPhpDocMissed()
-    {
-        $errors = $this->getSpecificErrorsList(self::$_classTest, PhpDoc::CODE_PHP_DOC_MISSED);
-
-        //TODO implement group comment validation
-        $expected = array (
-            'const WRONG = 0;',
-            'protected $_param2;',
-            'public function test1(){',
-            'class Some_testClass extends stdClass {',
-        );
-        $this->validateErrors($errors, $expected);
-    }
-
-    /**
-     * @param $errors
-     * @param $expected
+     * Validate errors list
+     *
+     * @param array $errors
+     * @param array $expected
      */
     protected function validateErrors($errors, $expected)
     {
