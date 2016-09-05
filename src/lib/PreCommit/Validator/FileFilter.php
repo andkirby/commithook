@@ -65,7 +65,12 @@ class FileFilter extends AbstractValidator
         $matchSkip = new PathMatch();
         $matchSkip->setAllowed($this->getPathList(self::XPATH_SKIP_PATH));
         if ($matchSkip->test($file) || $this->isExtensionSkipped($file)) {
-            return true;
+            /**
+             * Return FALSE as file is not allowed to validate, ie should be skipped
+             *
+             * @see \PreCommit\Processor\PreCommit::process()
+             */
+            return false;
         }
 
         $match = new PathMatch();
