@@ -25,7 +25,6 @@
         <!--Common config-->
         <pre-commit xs:type="ConfigFile">config/pre-commit.xml</pre-commit>
         <commit-msg xs:type="ConfigFile">config/commit-msg.xml</commit-msg>
-        <magento xs:type="ConfigFile">config/pre-commit-magento.xml</magento>
         <local xs:type="ConfigFile">../commithook-local.xml</local>
         <!--User-->
         <userprofile xs:type="ConfigFile">HOME/.commithook/commithook.xml</userprofile>
