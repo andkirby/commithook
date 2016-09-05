@@ -22,11 +22,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      */
     public function dataProvider()
     {
-        return array(
+        return [
             /**
              * Test getting default verb by issue type
              */
-            array(
+            [
                 'TEST-123', //issue key
                 'Test summary!!!', //issue summary
                 'task', //issue type
@@ -35,11 +35,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 "123 My test 1!\nTest 2.", //full commit message
                 'Implemented', //verb
                 '', //short verb
-            ),
+            ],
             /**
              * Test getting verb by short verb
              */
-            array(
+            [
                 'TEST-123', //issue key
                 'Test summary!!!', //issue summary
                 'task', //issue type
@@ -48,11 +48,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 "F 123 My test 1!\nTest 2.", //full commit message
                 'Fixed', //verb
                 'F', //short verb
-            ),
+            ],
             /**
              * Test working with full issue key
              */
-            array(
+            [
                 'TEST-123', //issue key
                 'Test summary!!!', //issue summary
                 'task', //issue type
@@ -61,8 +61,8 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 "F TEST-123 My test 1!\nTest 2.", //full commit message
                 'Fixed', //verb
                 'F', //short verb
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -79,16 +79,22 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      * @dataProvider dataProvider
      */
     public function testFilterShortMessageWithoutVerb(
-        $issueKey, $summary, $type, $originalType, $userBody, $commitMessage, $verb, $shortVerb
-    )
-    {
+        $issueKey,
+        $summary,
+        $type,
+        $originalType,
+        $userBody,
+        $commitMessage,
+        $verb,
+        $shortVerb
+    ) {
         $message       = new Message();
         $message->body = $commitMessage;
 
-        $issue = $this->_getIssueMock($summary, $issueKey, $type, $originalType);
+        $issue = $this->getIssueMock($summary, $issueKey, $type, $originalType);
 
         /** @var ShortCommitMsg\Parser|\PHPUnit_Framework_MockObject_MockObject $parser */
-        $parser = $this->getMock('PreCommit\Filter\ShortCommitMsg\Parser', array('_initIssue', '_getIssue'));
+        $parser = $this->getMock('PreCommit\Filter\ShortCommitMsg\Parser', ['_initIssue', '_getIssue']);
         $parser->method('_initIssue')
             ->willReturnSelf();
         $parser->method('_getIssue')
@@ -114,10 +120,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      * @param string $originalType
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function _getIssueMock($summary, $key, $type, $originalType)
+    protected function getIssueMock($summary, $key, $type, $originalType)
     {
         /** @var Issue\AbstractAdapter|\PHPUnit_Framework_MockObject_MockObject $filter */
-        $issue = $this->getMock('PreCommit\Issue\AdapterAbstract', array(), array(), '', false);
+        $issue = $this->getMock('PreCommit\Issue\AdapterAbstract', [], [], '', false);
         $issue->method('getSummary')
             ->willReturn($summary);
         $issue->method('getKey')
@@ -126,6 +132,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
             ->willReturn($type);
         $issue->method('getOriginalType')
             ->willReturn($originalType);
+
         return $issue;
     }
 }

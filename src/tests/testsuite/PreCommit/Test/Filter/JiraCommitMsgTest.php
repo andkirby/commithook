@@ -17,7 +17,7 @@ class ShortCommitMsgTest extends \PHPUnit_Framework_TestCase
     public function testFilterGetCachedSummarySingle()
     {
         $this->markTestIncomplete('Due updated schema it is not complete.');
-        $message = <<<MMM
+        $message  = <<<MMM
 I TEST-551
  - Some additional comment.
 MMM;
@@ -28,12 +28,12 @@ MMM;
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\ShortCommitMsg',
-            array('_getCacheDir', '_getIssue')
+            __NAMESPACE__.'\ShortCommitMsg',
+            ['_getCacheDir', '_getIssue']
         );
         $test->expects($this->once())
             ->method('_getCacheDir')
-            ->will($this->returnValue(__DIR__ . '/_fixture/'));
+            ->will($this->returnValue(__DIR__.'/_fixture/'));
 
         $test->expects($this->never())
             ->method('_getIssue');
@@ -54,12 +54,12 @@ MMM;
         $this->markTestIncomplete('Due updated schema it is not complete.');
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\ShortCommitMsg',
-            array('_getCacheFile', '_getIssue')
+            __NAMESPACE__.'\ShortCommitMsg',
+            ['_getCacheFile', '_getIssue']
         );
         $test->expects($this->once())
             ->method('_getCacheFile')
-            ->will($this->returnValue(__DIR__ . '/_fixture/issues-test-v0_plenty'));
+            ->will($this->returnValue(__DIR__.'/_fixture/issues-test-v0_plenty'));
         $test->expects($this->never())
             ->method('_getIssue');
 
@@ -74,7 +74,7 @@ MMM;
      */
     public function dataManySummaries()
     {
-        return require __DIR__ . '/_fixture/issues-test-v0_plenty-data.php';
+        return require __DIR__.'/_fixture/issues-test-v0_plenty-data.php';
     }
 
     /**
@@ -89,8 +89,8 @@ Implemented TEST-551: Implement CmsDev module
 MMM;
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShortCommitMsg $test */
         $test = $this->getMock(
-            __NAMESPACE__ . '\ShortCommitMsg',
-            array('_getCacheFile', '_getIssue')
+            __NAMESPACE__.'\ShortCommitMsg',
+            ['_getCacheFile', '_getIssue']
         );
         $test->expects($this->never())
             ->method('_getCacheFile');

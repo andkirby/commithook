@@ -69,7 +69,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
@@ -99,7 +99,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyFile()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             XmlParser::CODE_XML_ERROR
         );

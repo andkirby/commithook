@@ -68,7 +68,7 @@ class TrailingSpaceTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
@@ -98,7 +98,7 @@ class TrailingSpaceTest extends \PHPUnit_Framework_TestCase
      */
     public function testExistTrailingSpaces()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             \PreCommit\Validator\TrailingSpace::CODE_PHP_REDUNDANT_TRAILING_SPACES
         );
@@ -112,7 +112,7 @@ class TrailingSpaceTest extends \PHPUnit_Framework_TestCase
      */
     public function testNotExistsTrailingLine()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             \PreCommit\Validator\TrailingSpace::CODE_PHP_NO_END_TRAILING_LINE
         );

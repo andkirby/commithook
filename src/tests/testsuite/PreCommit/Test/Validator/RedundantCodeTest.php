@@ -68,7 +68,7 @@ class RedundantCodeTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
@@ -98,7 +98,7 @@ class RedundantCodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNullExist()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             RedundantCode::CODE_IS_NULL
         );
@@ -115,7 +115,7 @@ class RedundantCodeTest extends \PHPUnit_Framework_TestCase
     public function testIntValExist()
     {
         $this->markTestIncomplete();
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             RedundantCode::CODE_INTVAL
         );

@@ -17,7 +17,7 @@ class MageExceptionThrowTest extends CodingStandardTest
      */
     public function testDeprecatedThrowException()
     {
-        $errors   = $this->_getSpecificErrorsList(
+        $errors   = $this->getSpecificErrorsList(
             self::$_classTest,
             MageExceptionThrow::CODE_PHP_DEPRECATED_THROW_EXCEPTION
         );

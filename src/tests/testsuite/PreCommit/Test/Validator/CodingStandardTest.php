@@ -72,7 +72,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testOperatorSpaces()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_OPERATOR_SPACES_MISSED
         );
@@ -129,7 +129,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testAssignmentInCondition()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_CONDITION_ASSIGNMENT
         );
@@ -144,7 +144,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testRedundantSpaces()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_REDUNDANT_SPACES
         );
@@ -169,7 +169,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testLineExceed()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_LINE_EXCEEDS,
             true
@@ -183,7 +183,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testSpaceBracket()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_SPACE_BRACKET
         );
@@ -229,7 +229,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testFunctionNaming()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID
         );
@@ -238,7 +238,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             'public function PublicFunc()',
         );
         $this->assertEquals($expected, array_values($errors));
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID
         );
@@ -248,7 +248,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, array_values($errors));
 
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_METHOD_SCOPE
         );
@@ -264,7 +264,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testGaps()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_GAPS
         );
@@ -276,7 +276,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testGapsAfterOrBeforeBracket()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_BRACKET_GAPS
         );
@@ -297,7 +297,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
             ->setFiles(array('testsuite/PreCommit/Test/_fixture/TestSkip.php'));
         $processor->process();
 
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             'testsuite/PreCommit/Test/_fixture/TestSkip.php',
             CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID,
             false,
@@ -312,7 +312,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnderscoreInVar()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_classTest,
             CodingStandard::CODE_PHP_UNDERSCORE_IN_VAR
         );
@@ -407,7 +407,7 @@ class CodingStandardTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
     {
         if (!$model) {
             $model = self::$_model;

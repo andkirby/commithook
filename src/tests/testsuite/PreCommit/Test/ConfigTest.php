@@ -14,15 +14,15 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      *
      * @var \PreCommit\Config
      */
-    static protected $_model;
+    static protected $model;
 
     /**
      * Set up test model
      */
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
-        $file         = __DIR__ . '/_fixture/config-test.xml';
-        self::$_model = simplexml_load_file($file, '\\PreCommit\\Config');
+        $file        = __DIR__.'/_fixture/config-test.xml';
+        self::$model = simplexml_load_file($file, '\\PreCommit\\Config');
     }
 
     /**
@@ -30,7 +30,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetNode()
     {
-        $result = self::$_model->getNode('node2/structure1/child');
+        $result = self::$model->getNode('node2/structure1/child');
         $this->assertEquals('value1', $result);
     }
 
@@ -39,9 +39,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetNodeArray()
     {
-        $result = self::$_model->getNodeArray('node2/structure1');
+        $result = self::$model->getNodeArray('node2/structure1');
         $this->assertEquals(
-            array('child' => 'value1', 'child2' => 'value2'),
+            ['child' => 'value1', 'child2' => 'value2'],
             $result
         );
     }
@@ -51,9 +51,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetMultiNode()
     {
-        $result = self::$_model->getMultiNode('list/same', true, false);
+        $result = self::$model->getMultiNode('list/same', true, false);
         $this->assertEquals(
-            array('same1', 'same2', 'same3', 'same4'),
+            ['same1', 'same2', 'same3', 'same4'],
             $result
         );
     }

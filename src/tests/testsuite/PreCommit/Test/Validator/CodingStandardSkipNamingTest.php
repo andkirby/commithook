@@ -18,33 +18,51 @@ class CodingStandardSkipNamingTest extends \PHPUnit_Framework_TestCase
      *
      * @var string
      */
-    static protected $_classTest = 'tests/testsuite/PreCommit/Test/_fixture/TestClassSkipNaming.php';
+    protected static $classTest = 'tests/testsuite/PreCommit/Test/_fixture/TestClassSkipNaming.php';
 
     /**
      * Test model
      *
      * @var Processor\PreCommit
      */
-    static protected $_model;
+    protected static $model;
 
     /**
      * Set up test model
      */
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
         //init config object
-        Config::initInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        Config::initInstance(['file' => PROJECT_ROOT.'/config.xml']);
         Config::setSrcRootDir(PROJECT_ROOT);
         Config::mergeExtraConfig();
 
-        $vcsAdapter = self::_getVcsAdapterMock();
+        $vcsAdapter = self::getVcsAdapterMock();
 
         /** @var Processor\PreCommit $processor */
         $processor = Processor::factory('pre-commit', $vcsAdapter);
         $processor->setCodePath(PROJECT_ROOT)
-            ->setFiles(array(self::$_classTest));
+            ->setFiles([self::$classTest]);
         $processor->process();
-        self::$_model = $processor;
+        self::$model = $processor;
+    }
+
+    /**
+     * Test skip method naming validation
+     */
+    public function testSkipPublicFunctionNaming()
+    {
+        $errors = $this->getSpecificErrorsList(
+            self::$classTest,
+            CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID
+        );
+        $this->assertEmpty(array_values($errors));
+
+        $errors = $this->getSpecificErrorsList(
+            self::$classTest,
+            CodingStandard::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID
+        );
+        $this->assertEmpty(array_values($errors));
     }
 
     /**
@@ -52,13 +70,14 @@ class CodingStandardSkipNamingTest extends \PHPUnit_Framework_TestCase
      *
      * @return object
      */
-    protected static function _getVcsAdapterMock()
+    protected static function getVcsAdapterMock()
     {
-        $generator = new \PHPUnit_Framework_MockObject_Generator();
+        $generator  = new \PHPUnit_Framework_MockObject_Generator();
         $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
         $vcsAdapter->expects(self::once())
             ->method('getAffectedFiles')
-            ->will(self::returnValue(array()));
+            ->will(self::returnValue([]));
+
         return $vcsAdapter;
     }
 
@@ -67,28 +86,28 @@ class CodingStandardSkipNamingTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $file
      * @param string $code
-     * @param bool $returnLines
+     * @param bool   $returnLines
      * @param object $model
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false, $model = null)
     {
         if (!$model) {
-            $model = self::$_model;
+            $model = self::$model;
         }
         $errors = $model->getErrors();
         if (!isset($errors[$file])) {
-            return array();
+            return [];
         }
         $errors = $errors[$file];
 
         if (!isset($errors[$code])) {
-            return array();
+            return [];
         }
 
-        $list = array();
-        $key = $returnLines ? 'line' : 'value';
+        $list = [];
+        $key  = $returnLines ? 'line' : 'value';
         foreach ($errors[$code] as $item) {
             if ($key == 'value' && isset($item['line'])) {
                 $list[$item['line']] = $item[$key];
@@ -96,24 +115,7 @@ class CodingStandardSkipNamingTest extends \PHPUnit_Framework_TestCase
                 $list[] = $item[$key];
             }
         }
+
         return $list;
-    }
-
-    /**
-     * Test skip method naming validation
-     */
-    public function testSkipPublicFunctionNaming()
-    {
-        $errors = $this->_getSpecificErrorsList(
-            self::$_classTest,
-            CodingStandard::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID
-        );
-        $this->assertEmpty(array_values($errors));
-
-        $errors = $this->_getSpecificErrorsList(
-            self::$_classTest,
-            CodingStandard::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID
-        );
-        $this->assertEmpty(array_values($errors));
     }
 }

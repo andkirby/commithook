@@ -35,11 +35,11 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         Config::initInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         Config::setSrcRootDir(PROJECT_ROOT);
 
-        $vcsAdapter = self::_getVcsAdapterMock();
+        $vcsAdapter = self::getVcsAdapterMock();
 
         /** @var PreCommit $preCommit */
         $preCommit = Processor::factory('pre-commit', $vcsAdapter);
-        $preCommit->setCodePath(self::_getCodePath())
+        $preCommit->setCodePath(self::getCodePath())
             ->setFiles(array(self::$_classTest));
 
         $preCommit->process();
@@ -51,7 +51,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      *
      * @return object
      */
-    protected static function _getVcsAdapterMock()
+    protected static function getVcsAdapterMock()
     {
         $generator = new \PHPUnit_Framework_MockObject_Generator();
         $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
@@ -66,7 +66,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    static protected function _getCodePath()
+    static protected function getCodePath()
     {
         return realpath(__DIR__ . DIRECTORY_SEPARATOR . '../../..');
     }
@@ -79,7 +79,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code)
+    protected function getSpecificErrorsList($file, $code)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
@@ -106,7 +106,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocMissed()
     {
-        $errors = $this->_getSpecificErrorsList(self::$_classTest, PhpDoc::CODE_PHP_DOC_MISSED);
+        $errors = $this->getSpecificErrorsList(self::$_classTest, PhpDoc::CODE_PHP_DOC_MISSED);
 
         //TODO implement group comment validation
         $expected = array (
@@ -115,14 +115,14 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
             'public function test1(){',
             'class Some_testClass extends stdClass {',
         );
-        $this->_validateErrors($errors, $expected);
+        $this->validateErrors($errors, $expected);
     }
 
     /**
      * @param $errors
      * @param $expected
      */
-    protected function _validateErrors($errors, $expected)
+    protected function validateErrors($errors, $expected)
     {
         $this->assertCount(count($expected), $errors);
         foreach ($expected as $i => $value) {

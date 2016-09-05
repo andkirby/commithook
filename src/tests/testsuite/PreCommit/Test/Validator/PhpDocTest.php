@@ -34,7 +34,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
         //init config object
         Config::initInstance(array('file' => PROJECT_ROOT . '/commithook.xml'));
         Config::setSrcRootDir(PROJECT_ROOT);
-        $vcsAdapter = self::_getVcsAdapterMock();
+        $vcsAdapter = self::getVcsAdapterMock();
 
         /** @var Processor\PreCommit $processor */
         $processor = Processor::factory('pre-commit', $vcsAdapter);
@@ -49,7 +49,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      *
      * @return object
      */
-    protected static function _getVcsAdapterMock()
+    protected static function getVcsAdapterMock()
     {
         $generator = new \PHPUnit_Framework_MockObject_Generator();
         $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
@@ -68,7 +68,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @throws \PHPUnit_Framework_Exception
      */
-    protected function _getSpecificErrorsList($file, $code, $returnLines = false)
+    protected function getSpecificErrorsList($file, $code, $returnLines = false)
     {
         $errors = self::$_model->getErrors();
         if (!isset($errors[$file])) {
@@ -97,7 +97,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocBlockMissed()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_MISSED
         );
@@ -117,7 +117,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocDescriptionMissed()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_MESSAGE
         );
@@ -160,7 +160,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocMissedGap()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_MISSED_GAP
         );
@@ -177,7 +177,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocEnterDescription()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_ENTER_DESCRIPTION
         );
@@ -191,7 +191,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocUnknownDescription()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_UNKNOWN
         );
@@ -205,7 +205,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocExtraGap()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_EXTRA_GAP
         );
@@ -219,7 +219,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testPhpDocVarNull()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_VAR_NULL
         );
@@ -233,7 +233,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
      */
     public function testParamEmptyType()
     {
-        $errors = $this->_getSpecificErrorsList(
+        $errors = $this->getSpecificErrorsList(
             self::$_fileTest,
             PhpDoc::CODE_PHP_DOC_VAR_EMPTY
         );
