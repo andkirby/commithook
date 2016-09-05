@@ -88,6 +88,8 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $verb,
         $shortVerb
     ) {
+        $this->markTestIncomplete();
+
         $message       = new Message();
         $message->body = $commitMessage;
 
