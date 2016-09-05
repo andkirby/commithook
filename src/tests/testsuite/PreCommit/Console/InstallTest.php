@@ -5,6 +5,9 @@
 namespace PreCommit\Console;
 
 use PreCommit\Console\Command\Install\Install;
+use Rikby\Console\Helper\Shell\ShellHelper;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Test CLI install command
@@ -32,10 +35,17 @@ class InstallTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstall()
     {
+        //test commit hook file contains proper body
+        $install = new Install('');
+        $phpExe  = $install->getSystemPhpPath();
+
         //install commit hooks
-        // @codingStandardsIgnoreStart
-        $output = `cd {$this->tmp} && git init && php -f {$this->bin}/commithook.php install -n`;
-        // @codingStandardsIgnoreEnd
+        $gitBin = GIT_BIN;
+        $output = $this->getShellHelper()->shellExec(
+            "cd {$this->tmp} && {$gitBin} init && $phpExe -f {$this->bin}/commithook.php install -n",
+            true,
+            ''
+        );
 
         //test success output
         $this->assertContains('PHP CommitHook files have been created.', $output);
@@ -46,10 +56,6 @@ class InstallTest extends \PHPUnit_Framework_TestCase
         //test commit hooks files are exist
         $this->assertFileExists($preCommitFile);
         $this->assertFileExists($commitMsgFile);
-
-        //test commit hook file contains proper body
-        $install = new Install('');
-        $phpExe = $install->getSystemPhpPath();
 
         $ds = DIRECTORY_SEPARATOR;
 // @codingStandardsIgnoreStart
@@ -78,13 +84,14 @@ BODY;
         $this->bin = realpath(__DIR__.'/../../../../../bin');
         $this->tmp = realpath(__DIR__.'/../../../tmp');
         if (!$this->tmp) {
-            $this->fail('Temp directory not found.');
+            $this->fail("'Temp directory '{$this->tmp}' not found.'");
         }
         if (!$this->bin) {
             $this->fail('"bin" directory is not set.');
         }
         // @codingStandardsIgnoreStart
-        if (false === strpos(`git --version 2>&1`, 'git version')) {
+        $gitBin = GIT_BIN;
+        if (false === strpos(`$gitBin --version 2>&1`, 'git version')) {
             $this->fail('VCS GIT console command not found.');
         }
         // @codingStandardsIgnoreEnd
@@ -97,9 +104,50 @@ BODY;
     {
         if (is_dir($this->tmp)) {
             // @codingStandardsIgnoreStart
-            `rm -rf {$this->tmp}/*`;
+            self::rrmdir($this->tmp, false, ['..', '.', '.gitignore']);
             // @codingStandardsIgnoreEnd
         }
         parent::tearDown();
+    }
+
+    /**k
+     * Remove directory
+     *
+     * @param string $dir
+     * @param bool   $remove
+     * @param array  $ignore
+     */
+    protected static function rrmdir($dir, $remove = true, $ignore = ['..', '.'])
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if (!in_array($object, $ignore)) {
+                    if (filetype($dir."/".$object) == "dir") {
+                        self::rrmdir($dir."/".$object);
+                    } else {
+                        unlink($dir."/".$object);
+                    }
+                }
+            }
+
+            reset($objects);
+            $remove && rmdir($dir);
+        }
+    }
+
+    /**
+     * Get shell helper
+     *
+     * @return ShellHelper
+     */
+    protected function getShellHelper()
+    {
+        $shell         = new ShellHelper();
+//        $outputConsole = new ConsoleOutput();
+//        $outputConsole->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
+//        $shell->setOutput($outputConsole);
+
+        return $shell;
     }
 }

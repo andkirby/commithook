@@ -122,7 +122,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
     {
         $hooksDir = $projectDir.'/.git/hooks';
         if (!is_dir($hooksDir)) {
-            throw new Exception('GIT hooks directory not found.');
+            throw new Exception("Git hooks directory '$hooksDir' not found.");
         }
 
         return $hooksDir;
