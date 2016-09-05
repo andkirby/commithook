@@ -35,7 +35,10 @@ class Git implements AdapterInterface
         if (null === $this->affectedFiles) {
             //@startSkipCommitHooks
             $this->affectedFiles = array_filter(
-                explode("\n", `git diff --cached --name-only --diff-filter=ACM`)
+                explode(
+                    "\n",
+                    str_replace('\\', '/', `git diff --cached --name-only --diff-filter=ACM`)
+                )
             );
             //@finishSkipCommitHooks
         }
@@ -51,6 +54,12 @@ class Git implements AdapterInterface
      */
     public function setAffectedFiles(array $files = null)
     {
+        if ($files) {
+            foreach ($files as &$path) {
+                $path = str_replace('\\', '/', $path);
+            }
+        }
+
         return $this->affectedFiles = $files;
     }
 
