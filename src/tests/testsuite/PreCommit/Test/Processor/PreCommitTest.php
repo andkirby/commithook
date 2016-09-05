@@ -14,10 +14,10 @@ class PreCommitTest extends \PHPUnit_Framework_TestCase
     /**
      * Set up test model
      */
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
         //init config
-        Config::initInstance(array('file' => PROJECT_ROOT . '/config.xml'));
+        Config::initInstance(['file' => PROJECT_ROOT.'/config.xml']);
         Config::setSrcRootDir(PROJECT_ROOT);
         Config::mergeExtraConfig();
     }
@@ -29,37 +29,38 @@ class PreCommitTest extends \PHPUnit_Framework_TestCase
      */
     public function dataTestValidatorsType()
     {
-        return array(
-            array(
+        return [
+            [
                 'php',
-                array(
-                    'PhpClass' => 1,
-                    'PhpDoc' => 1,
-                    'CodingStandard' => 1,
-                    'RedundantCode' => 1,
-                    'CodingStandardMagento' => 1,
-                )
-            ),
-            array(
+                [
+                    'PhpClass'                   => 1,
+                    'PhpDoc'                     => 1,
+                    'CodingStandard'             => 1,
+                    'RedundantCode'              => 1,
+                    'Magento-MageExceptionThrow' => 1,
+                    'Magento-ModelEventFields'   => 1,
+                ],
+            ],
+            [
                 'phtml',
-                array(
-                    'RedundantCode' => 1,
+                [
+                    'RedundantCode'       => 1,
                     'CodingStandardPhtml' => 1,
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'js',
-                array(
+                [
                     'RedundantCode' => 1,
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'xml',
-                array(
+                [
                     'XmlParser' => 1,
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -72,7 +73,7 @@ class PreCommitTest extends \PHPUnit_Framework_TestCase
     public function testGetValidatorsType($type, $expected)
     {
         /** @var \PreCommit\Processor\PreCommit $test */
-        $test = $this->getMock('\PreCommit\Processor\PreCommit', array('____'), array(), '', false);
+        $test   = $this->getMock('\PreCommit\Processor\PreCommit', ['____'], [], '', false);
         $result = $test->getValidators($type);
         $this->assertEquals($expected, $result);
     }

@@ -2,20 +2,21 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
-namespace PreCommit\Validator;
+namespace PreCommit\Validator\Magento;
+
+use PreCommit\Validator\CodingStandard;
 
 /**
  * Class CodingStandard validator
  *
  * @package PreCommit\Validator
  */
-class CodingStandardMagento extends CodingStandard
+class MageExceptionThrow extends CodingStandard
 {
     /**#@+
      * Error codes
      */
     const CODE_PHP_DEPRECATED_THROW_EXCEPTION = 'deprecatedUsingMageThrowException';
-
     /**#@-*/
 
     /**
@@ -25,7 +26,7 @@ class CodingStandardMagento extends CodingStandard
      */
     protected $errorMessages
         = array(
-            self::CODE_PHP_DEPRECATED_THROW_EXCEPTION => 'Used deprecated method Mage::throwException(). Use: throw new Mage_Core_Exception("Translated message.")',
+            self::CODE_PHP_DEPRECATED_THROW_EXCEPTION => 'Used deprecated method Mage::throwException(). Use: throw new Your_Module_Exception(\'Your message.\')',
         );
 
     /**

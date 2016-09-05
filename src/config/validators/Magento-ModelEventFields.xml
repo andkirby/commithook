@@ -21,19 +21,17 @@
             <filetype>
                 <php>
                     <validators>
-                        <CodingStandardMagento>1</CodingStandardMagento>
-                        <Magento-ModelEventFields>1</Magento-ModelEventFields>
+                        <Magento-ModelEventFields>0</Magento-ModelEventFields>
                     </validators>
                 </php>
             </filetype>
             <ignore>
                 <validator>
                     <code>
-                        <CodingStandardMagento>1</CodingStandardMagento>
+                        <Magento-ModelEventFields>1</Magento-ModelEventFields>
                     </code>
                 </validator>
             </ignore>
         </pre-commit>
     </hooks>
 </config>
-

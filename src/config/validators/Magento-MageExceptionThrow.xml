@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <validators>
+                        <Magento-MageExceptionThrow>0</Magento-MageExceptionThrow>
+                    </validators>
+                </php>
+            </filetype>
+            <ignore>
+                <validator>
+                    <code>
+                        <Magento-MageExceptionThrow>1</Magento-MageExceptionThrow>
+                    </code>
+                </validator>
+            </ignore>
+        </pre-commit>
+    </hooks>
+</config>
+
