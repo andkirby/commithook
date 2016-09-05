@@ -4,6 +4,9 @@
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
 define('PROJECT_ROOT', realpath(__DIR__ . '/../..'));
+
+!defined('GIT_BIN') && define('GIT_BIN', 'git');
+
 /** @var Composer\Autoload\ClassLoader $autoloader */
 require realpath(__DIR__ . '/../../..') . '/bin/autoload-init.php';
 

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
-        bootstrap="./framework/bootstrap.php" colors="true">
+        bootstrap="./framework/bootstrap.php"
+        colors="true">
     <testsuite name="Php Hooks Unit Tests">
         <directory>testsuite/</directory>
     </testsuite>
     <php>
         <ini name="date.timezone" value="America/Los_Angeles"/>
-        <!--<const name="GIT_BIN" value="d:/prog/git/bin/git.exe"/>-->
+        <const name="GIT_BIN" value="d:/prog/git/bin/git.exe"/>
     </php>
 </phpunit>
