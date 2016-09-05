@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <validators>
+        <FileFilter>
+            <filter>
+                <skip>
+                    <path>
+                        <src_tests_testsuite_____fixture>src/tests/testsuite/**/_fixture</src_tests_testsuite_____fixture>
+                    </path>
+                </skip>
+            </filter>
+        </FileFilter>
+    </validators>
+</config>
