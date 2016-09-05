@@ -110,7 +110,7 @@ BODY;
         parent::tearDown();
     }
 
-    /**k
+    /**
      * Remove directory
      *
      * @param string $dir
