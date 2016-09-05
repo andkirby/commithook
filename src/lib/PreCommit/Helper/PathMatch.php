@@ -190,7 +190,7 @@ class PathMatch
 
                 if ('/' !== substr($path, -1)) {
                     //path is being path to file (not directory)
-                    $reg .= '$';
+                    $reg .= '([/].*)?$';
                 }
 
                 if (preg_match('#^'.$reg.'#', $file)) {

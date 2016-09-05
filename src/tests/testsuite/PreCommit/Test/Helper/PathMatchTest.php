@@ -210,8 +210,10 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new PathMatch();
         $match->setAllowed(['/test/11*']);
-        $this->assertFalse($match->test('/test/11/foo/'));
-        $this->assertFalse($match->test('/test/11aaa/foo/'));
+        $this->assertTrue($match->test('/test/11'));
+        $this->assertTrue($match->test('/test/11111'));
+        $this->assertTrue($match->test('/test/11/foo/'));
+        $this->assertTrue($match->test('/test/11aaa/foo/'));
         $this->assertTrue($match->test('/test/1112313'));
     }
 
@@ -244,5 +246,24 @@ class PathMatchTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue($match->test('test/a/b/c/11/test.1'));
+    }
+
+    /**
+     * Test simple match with recursive asterisk (**)
+     *
+     * E.g.: test/11 should not match with test/1111
+     */
+    public function testMatchAsteriskDirectoryNoSlash()
+    {
+        $match = new PathMatch();
+        $match->setAllowed(
+            [
+                'test/*/11',
+            ]
+        );
+
+        $this->assertTrue($match->test('test/a/11/test.1'));
+        $this->assertTrue($match->test('test/a/11'));
+        $this->assertFalse($match->test('test/a/11111'));
     }
 }
