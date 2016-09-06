@@ -7,6 +7,7 @@ namespace PreCommit\Test\Validator;
 use PreCommit\Config;
 use PreCommit\Processor;
 use PreCommit\Validator\TrailingSpace;
+use PreCommit\Vcs\Git;
 
 /**
  * Class test for Processor
@@ -33,7 +34,7 @@ class TrailingSpaceTest extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         //init config object
-        Config::initInstance(['file' => PROJECT_ROOT.'/commithook.xml']);
+        Config::initInstance(['file' => PROJECT_ROOT.'/config/root.xml']);
         Config::setSrcRootDir(PROJECT_ROOT);
         $vcsAdapter = self::getVcsAdapterMock();
 
@@ -101,11 +102,8 @@ CONTENT;
      */
     protected static function getVcsAdapterMock()
     {
-        $generator  = new \PHPUnit_Framework_MockObject_Generator();
-        $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
-        $vcsAdapter->expects(self::once())
-            ->method('getAffectedFiles')
-            ->will(self::returnValue([]));
+        $vcsAdapter = new Git();
+        $vcsAdapter->setAffectedFiles([]);
 
         return $vcsAdapter;
     }
