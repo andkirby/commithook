@@ -12,20 +12,20 @@
                     <text><![CDATA[
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
- */
-                    ]]></text>
+ */]]></text>
                     <test_text>andkirby/commithook/master/LICENSE.md</test_text>
                     <paths>
                         <required>
                             <src>src</src>
                         </required>
-                        <ignored>src/tests/testsuite/**/_fixture</ignored>
+                        <ignored>
+                            <src_tests_testsuite_____fixture>src/tests/testsuite/**/_fixture</src_tests_testsuite_____fixture>
+                        </ignored>
                     </paths>
                 </commithook>
             </licenses>
         </License>
     </validators>
-
     <hooks>
         <pre-commit>
             <filetype>
