@@ -4,7 +4,8 @@
  */
 namespace PreCommit\Test\Validator;
 
-use PreCommit\Config;
+use PreCommit\Message;
+use PreCommit\Processor\ErrorCollector;
 use PreCommit\Validator\CommitMsg;
 
 /**
@@ -17,14 +18,22 @@ class CommitMsgTest extends \PHPUnit_Framework_TestCase
      */
     public function testMessageFailure()
     {
-        $processor = $this->prepareModelAndProcess('My message.');
-        $errors    = $processor->getErrors();
-        $errors    = $errors['Commit Message'][CommitMsg::CODE_BAD_COMMIT_MESSAGE];
-        $expected  = [
-            'value'   => 'My message.',
-            'message' => 'Your commit message "My message." has improper form.',
-        ];
-        $this->assertEquals($expected, $errors[0]);
+        $message        = new Message();
+        $message->body  = 'My message.';
+        $message->head  = 'My message.';
+        $errorCollector = new ErrorCollector();
+        $validator      = new CommitMsg(['errorCollector' => $errorCollector]);
+
+        $this->assertFalse($validator->validate($message, null));
+
+        $errors = $errorCollector->getErrors();
+        $this->assertCount(1, $errors);
+
+        $errors = array_shift($errors);
+        $this->assertArrayHasKey(CommitMsg::CODE_BAD_COMMIT_MESSAGE, $errors);
+
+        $errors = array_shift($errors);
+        $this->assertCount(1, $errors);
     }
 
     /**
@@ -51,31 +60,12 @@ class CommitMsgTest extends \PHPUnit_Framework_TestCase
      */
     public function testMessageSuccess($message)
     {
-        $processor = $this->prepareModelAndProcess($message);
-        $this->assertEquals([], $processor->getErrors());
-    }
+        $msg            = new Message();
+        $msg->body      = $message;
+        $msg->head      = $message;
+        $errorCollector = new ErrorCollector();
+        $validator      = new CommitMsg(['errorCollector' => $errorCollector]);
 
-    /**
-     * Prepare model and method mocks
-     *
-     * @param string $message
-     * @return \PreCommit\Processor\CommitMsg|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function prepareModelAndProcess($message)
-    {
-        Config::initInstance(['file' => PROJECT_ROOT.'/commithook.xml']);
-        Config::setSrcRootDir(PROJECT_ROOT);
-        $vcsAdapter = $this->getMock('PreCommit\Vcs\Git');
-        $vcsAdapter->expects($this->once())
-            ->method('getCommitMessage')
-            ->will($this->returnValue($message));
-
-        /** @var CommitMsg|\PHPUnit_Framework_MockObject_MockObject $processor */
-        $processor = $this->getMock('PreCommit\Processor\CommitMsg', ['_getVcsAdapter'], [$vcsAdapter]);
-
-        $processor->setCodePath(PROJECT_ROOT);
-        $processor->process();
-
-        return $processor;
+        $this->assertTrue($validator->validate($msg, null));
     }
 }
