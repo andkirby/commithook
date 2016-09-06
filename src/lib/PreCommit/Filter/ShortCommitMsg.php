@@ -6,7 +6,6 @@ namespace PreCommit\Filter;
 
 use PreCommit\Filter\ShortCommitMsg\Parser;
 use PreCommit\Config;
-use PreCommit\Exception;
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Message;
 

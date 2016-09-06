@@ -4,6 +4,8 @@
  */
 namespace PreCommit;
 
+use PreCommit\Vcs\AdapterInterface;
+
 /**
  * Class Processor. Input point for validate files
  *
@@ -14,8 +16,8 @@ class Processor
     /**
      * Factory method
      *
-     * @param string $adapter
-     * @param array  $options
+     * @param string                        $adapter
+     * @param string|AdapterInterface|array $options
      * @return Processor\AbstractAdapter
      * @throws Exception
      */
