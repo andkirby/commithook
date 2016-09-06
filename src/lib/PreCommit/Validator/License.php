@@ -82,6 +82,16 @@ class License extends AbstractValidator
     }
 
     /**
+     * Get license name
+     *
+     * @return null|string
+     */
+    public function getLicenseName()
+    {
+        return $this->getConfig()->getNode('license/name');
+    }
+
+    /**
      * Check
      *
      * @param string $file
@@ -131,15 +141,5 @@ class License extends AbstractValidator
     protected function getConfig()
     {
         return Config::getInstance();
-    }
-
-    /**
-     * Get license name
-     *
-     * @return null|string
-     */
-    protected function getLicenseName()
-    {
-        return $this->getConfig()->getNode('license/name');
     }
 }
