@@ -15,6 +15,8 @@
 */
 !defined('COMMIT_HOOKS_ROOT') && define('COMMIT_HOOKS_ROOT', realpath(__DIR__ . '/..'));
 !defined('TEST_MODE') && define('TEST_MODE', false);
+!defined('GIT_BIN') && define('GIT_BIN', 'git');
+
 set_include_path(
     implode(
         PATH_SEPARATOR,

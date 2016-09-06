@@ -33,11 +33,12 @@ class Git implements AdapterInterface
     public function getAffectedFiles()
     {
         if (null === $this->affectedFiles) {
+            $gitBin = GIT_BIN;
             //@startSkipCommitHooks
             $this->affectedFiles = array_filter(
                 explode(
                     "\n",
-                    str_replace('\\', '/', `git diff --cached --name-only --diff-filter=ACM`)
+                    str_replace('\\', '/', `$gitBin diff --cached --name-only --diff-filter=ACM`)
                 )
             );
             //@finishSkipCommitHooks
@@ -75,7 +76,8 @@ class Git implements AdapterInterface
         if (!realpath($path)) {
             throw new Exception('Unknown path: '.$path);
         }
-        `git add $path`;
+        $gitBin = GIT_BIN;
+        `$gitBin add $path`;
 
         return $this;
     }
@@ -104,8 +106,9 @@ class Git implements AdapterInterface
     public function getCodePath()
     {
         if (null === $this->codePath) {
+            $gitBin = GIT_BIN;
             //@startSkipCommitHooks
-            $this->codePath = trim(`git rev-parse --show-toplevel`);
+            $this->codePath = trim(`$gitBin rev-parse --show-toplevel`);
             //@finishSkipCommitHooks
         }
 
