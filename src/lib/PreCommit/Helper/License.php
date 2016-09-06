@@ -74,7 +74,7 @@ class License
         }
 
         $paths = array_values(
-            $this->getConfig()->getNodeArray('validators/License/licenses/'.$this->getLicenseName().'/paths/'.$type)
+            $this->getConfig()->getNodeArray($this->getPathsXpath($type))
         );
         foreach ($paths as &$path) {
             $path = rtrim($path, '/').'/';
@@ -103,6 +103,17 @@ class License
     public function contentHasLicense($content)
     {
         return false !== strpos($content, $this->getTestLicense());
+    }
+
+    /**
+     * Get paths XPath
+     *
+     * @param string $type Type: ignored or required
+     * @return string
+     */
+    public function getPathsXpath($type)
+    {
+        return 'validators/License/licenses/'.$this->getLicenseName().'/paths/'.$type;
     }
 
     /**
