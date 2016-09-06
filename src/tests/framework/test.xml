@@ -9,5 +9,9 @@
         <jira>
             <project>TEST</project>
         </jira>
+        <github>
+            <name>foo</name>
+            <repository>bar</repository>
+        </github>
     </tracker>
 </config>

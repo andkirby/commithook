@@ -15,9 +15,13 @@
     <!--Additional configuration file-->
     <additional_config>
         <main>config/commithook.xml</main>
+        <!--Per module/validator/filter-->
+        <modules>config/modules/</modules>
+        <validators>config/validators/</validators>
+        <filters>config/filters/</filters>
+        <!--Common config-->
         <pre-commit>config/pre-commit.xml</pre-commit>
         <commit-msg>config/commit-msg.xml</commit-msg>
-        <magento>config/commithook-magento.xml</magento>
         <test>test.xml</test>
     </additional_config>
     <cache_dir>tests/tmp/cache</cache_dir>
