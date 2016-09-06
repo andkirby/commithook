@@ -8,6 +8,7 @@ use PreCommit\Config;
 use PreCommit\Processor;
 use PreCommit\Processor\PreCommit;
 use PreCommit\Validator\PhpDoc;
+use PreCommit\Vcs\Git;
 
 /**
  * Class test for Processor
@@ -33,7 +34,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        Config::initInstance(['file' => PROJECT_ROOT.'/commithook.xml']);
+        Config::initInstance(['file' => PROJECT_ROOT.'/config/root.xml']);
         Config::setSrcRootDir(PROJECT_ROOT);
 
         $vcsAdapter = self::getVcsAdapterMock();
@@ -79,11 +80,8 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getVcsAdapterMock()
     {
-        $generator  = new \PHPUnit_Framework_MockObject_Generator();
-        $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
-        $vcsAdapter->expects(self::once())
-            ->method('getAffectedFiles')
-            ->will(self::returnValue([]));
+        $vcsAdapter = new Git();
+        $vcsAdapter->setAffectedFiles([]);
 
         return $vcsAdapter;
     }
