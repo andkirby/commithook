@@ -4,45 +4,21 @@
  */
 namespace PreCommit\Test\Validator;
 
-use PreCommit\Config;
 use PreCommit\Processor;
 use PreCommit\Validator\PhpDoc;
 
 /**
  * Class test for Processor
  */
-class PhpDocTest extends \PHPUnit_Framework_TestCase
+class PhpDocTest extends PreCommitFlowTestCase
 {
-    /**
-     * Php file for text hooks
-     *
-     * @var string
-     */
-    protected static $fileTest = 'tests/testsuite/PreCommit/Test/_fixture/TestPhpDocClass.php';
-
-    /**
-     * Test model
-     *
-     * @var Processor\PreCommit
-     */
-    protected static $model;
-
     /**
      * Set up test model
      */
     public static function setUpBeforeClass()
     {
-        //init config object
-        Config::initInstance(['file' => PROJECT_ROOT.'/commithook.xml']);
-        Config::setSrcRootDir(PROJECT_ROOT);
-        $vcsAdapter = self::getVcsAdapterMock();
-
-        /** @var Processor\PreCommit $processor */
-        $processor = Processor::factory('pre-commit', $vcsAdapter);
-        $processor->setCodePath(PROJECT_ROOT)
-            ->setFiles([self::$fileTest]);
-        $processor->process();
-        self::$model = $processor;
+        self::$fileTest = 'tests/testsuite/PreCommit/Test/_fixture/TestPhpDocClass.php';
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -66,49 +42,49 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test CODE_PHP_DOC_MESSAGE
+     * Test CODE_PHP_DOC_MISSED
+     */
+    public function testSimplePhpDocBlockMissed()
+    {
+        $errorCollector = new Processor\ErrorCollector();
+        $validator      = new PhpDoc(['errorCollector' => $errorCollector]);
+
+        $this->assertFalse($validator->validate($this->getTestFileContent(), static::$fileTest));
+
+        $errors   = $this->getSpecificErrorsList(
+            static::$fileTest,
+            PhpDoc::CODE_PHP_DOC_MISSED,
+            $errorCollector->getErrors()
+        );
+        $expected = [
+            'const WRONG = 0; //PhpDoc is missed',
+            'protected $_paramB; //PhpDoc is missed',
+            'protected $_paramBB; //PhpDoc is missed',
+            'public function test1() //PhpDoc is missed',
+            'class Some_testClassPhpDoc extends stdClass //PhpDoc is missed',
+        ];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test CODE_PHP_DOC_MESSAGE - missed PHPDoc or first letter in lower case
      */
     public function testPhpDocDescriptionMissed()
     {
+        $errorCollector = new Processor\ErrorCollector();
+        $validator      = new PhpDoc(['errorCollector' => $errorCollector]);
+
+        $this->assertFalse($validator->validate($this->getTestFileContent(), static::$fileTest));
+
         $errors = $this->getSpecificErrorsList(
-            self::$fileTest,
-            PhpDoc::CODE_PHP_DOC_MESSAGE
+            static::$fileTest,
+            PhpDoc::CODE_PHP_DOC_MESSAGE,
+            true,
+            $errorCollector
         );
 
-        // @codingStandardsIgnoreStart
-        $expected = [
-            '    /**
-     * @var string
-     */',
-            '    /**
-     *
-     * @var string
-     */',
-            '    /**
-     * @var string      Here PHPDoc message missed
-     */',
-            '    /**
-     * @param int $param
-     */',
-            '    /**
-     *
-     * @param int $param
-     */',
-            '    /**
-     * lowercase name
-     *
-     * @param int $param
-     */',
-            '    /**
-     *
-     * Test extra gap 4
-     *
-     * @param int $param
-     */',
-        ];
-        // @codingStandardsIgnoreEnd
-
-        $this->assertEquals($expected, array_values($errors));
+        $expected = [57, 63, 68, 164, 173, 183, 235];
+        $this->assertEquals($expected, array_shift($errors));
     }
 
     /**
@@ -167,7 +143,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = 3;
-        $this->assertEquals($expected, $errors[0]);
+        $this->assertEquals($expected, array_shift($errors));
     }
 
     /**
@@ -181,7 +157,7 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = 3;
-        $this->assertEquals($expected, $errors[0]);
+        $this->assertEquals($expected, array_shift($errors));
     }
 
     /**
@@ -195,56 +171,6 @@ class PhpDocTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = 3;
-        $this->assertEquals($expected, $errors[0]);
-    }
-
-    /**
-     * Get VCS adapter mock
-     *
-     * @return object
-     */
-    protected static function getVcsAdapterMock()
-    {
-        $generator  = new \PHPUnit_Framework_MockObject_Generator();
-        $vcsAdapter = $generator->getMock('PreCommit\Vcs\Git');
-        $vcsAdapter->expects(self::once())
-            ->method('getAffectedFiles')
-            ->will(self::returnValue([]));
-
-        return $vcsAdapter;
-    }
-
-    /**
-     * Get specific errors list
-     *
-     * @param string $file
-     * @param string $code
-     * @param bool   $returnLines
-     * @return array
-     * @throws \PHPUnit_Framework_Exception
-     */
-    protected function getSpecificErrorsList($file, $code, $returnLines = false)
-    {
-        $errors = self::$model->getErrors();
-        if (!isset($errors[$file])) {
-            throw new \PHPUnit_Framework_Exception('Errors for file '.self::$fileTest.' not found.');
-        }
-        $errors = $errors[$file];
-
-        if (!isset($errors[$code])) {
-            throw new \PHPUnit_Framework_Exception("Errors for code $code not found.");
-        }
-
-        $list = [];
-        $key  = $returnLines ? 'line' : 'value';
-        foreach ($errors[$code] as $item) {
-            if ($key == 'value' && isset($item['line'])) {
-                $list[$item['line']] = $item[$key];
-            } else {
-                $list[] = $item[$key];
-            }
-        }
-
-        return $list;
+        $this->assertEquals($expected, array_shift($errors));
     }
 }
