@@ -2,6 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
+
 class Some_testClassPhpDoc extends stdClass //PhpDoc is missed
 {
     const WRONG = 0; //PhpDoc is missed
