@@ -27,9 +27,9 @@ class License extends AbstractValidator
      * @var array
      */
     protected $errorMessages
-        = array(
+        = [
             self::CODE_MISSED_LICENSE => 'Missed license block.',
-        );
+        ];
 
     /**
      * Validate content
@@ -52,6 +52,36 @@ class License extends AbstractValidator
     }
 
     /**
+     * Get license text block
+     *
+     * @return null|string
+     */
+    public function getTestLicense()
+    {
+        $test = trim(
+            $this->getConfig()->getNode(
+                'validators/License/licenses/'.$this->getLicenseName().'/test_text'
+            )
+        );
+
+        return $test ?: $this->getLicense();
+    }
+
+    /**
+     * Get license text block
+     *
+     * @return null|string
+     */
+    public function getLicense()
+    {
+        return trim(
+            $this->getConfig()->getNode(
+                'validators/License/licenses/'.$this->getLicenseName().'/text'
+            )
+        );
+    }
+
+    /**
      * Check
      *
      * @param string $file
@@ -69,22 +99,6 @@ class License extends AbstractValidator
                 $this->getPaths('ignored')
             )
             ->test($file);
-    }
-
-    /**
-     * Get license text block
-     *
-     * @return null|string
-     */
-    public function getTestLicense()
-    {
-        $test = trim(
-            $this->getConfig()->getNode(
-                'validators/License/licenses/'.$this->getLicenseName().'/test_text'
-            )
-        );
-
-        return $test ?: $this->getLicense();
     }
 
     /**
@@ -127,19 +141,5 @@ class License extends AbstractValidator
     protected function getLicenseName()
     {
         return $this->getConfig()->getNode('license/name');
-    }
-
-    /**
-     * Get license text block
-     *
-     * @return null|string
-     */
-    public function getLicense()
-    {
-        return trim(
-            $this->getConfig()->getNode(
-                'validators/License/licenses/'.$this->getLicenseName().'/text'
-            )
-        );
     }
 }
