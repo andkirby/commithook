@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "require": {
     "php": ">=5.5",
-    "andkirby/console-helper": "^0.8@stable",
+    "andkirby/console-helper": "^0.9@stable",
     "rikby/crypter": "~1.0@stable",
     "symfony/console": "~3.0@stable",
     "symfony/filesystem": "~2.5@stable",

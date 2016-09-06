@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5ad2adeaef4ee18bfc858e46bdfabb80",
-    "content-hash": "b361e4658484cb858a1177f0aa160ddb",
+    "hash": "286c7d03a581a7dbfa6f93eb6e1e5e49",
+    "content-hash": "44ffe786a1376650f6ee229a01c5b1b8",
     "packages": [
         {
             "name": "andkirby/console-helper",
-            "version": "v0.8.0",
+            "version": "v0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andkirby/console-helper.git",
-                "reference": "c77c6c92556f67265cf2e6485aa1aa592703faae"
+                "reference": "72e398624c2b1ff30587262621b3125f9b827d98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/c77c6c92556f67265cf2e6485aa1aa592703faae",
-                "reference": "c77c6c92556f67265cf2e6485aa1aa592703faae",
+                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/72e398624c2b1ff30587262621b3125f9b827d98",
+                "reference": "72e398624c2b1ff30587262621b3125f9b827d98",
                 "shasum": ""
             },
             "require": {
@@ -38,7 +38,7 @@
                 "GPL-3.0"
             ],
             "description": "Symfony console helpers.",
-            "time": "2016-08-18 14:15:36"
+            "time": "2016-09-06 07:30:54"
         },
         {
             "name": "chobie/jira-api-restclient",
