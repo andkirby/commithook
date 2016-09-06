@@ -4,8 +4,8 @@
  */
 namespace PreCommit\Filter;
 
-use PreCommit\Filter\ShortCommitMsg\Parser;
 use PreCommit\Config;
+use PreCommit\Filter\ShortCommitMsg\Parser;
 use PreCommit\Interpreter\InterpreterInterface;
 use PreCommit\Message;
 
@@ -66,10 +66,16 @@ class ShortCommitMsg implements Message\FilterInterface
      * Get parser
      *
      * @return Parser\IssueParserInterface|InterpreterInterface
+     * @throws Exception
      */
     protected function getParser()
     {
-        return Parser::factory(null);
+        $parser = Parser::factory(null);
+        if (!$parser) {
+            throw new Exception('Could not local parser.');
+        }
+
+        return $parser;
     }
 
     /**
