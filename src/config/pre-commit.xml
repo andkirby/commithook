@@ -29,7 +29,7 @@
                 <interpreter_type>node</interpreter_type>
 
                 <!--Path to executable file of JSHint file which should be interpreted by the interpreter-->
-                <!--<linter>/path/to/jshint/bin/jshint</linter>-->
+                <linter>jshint</linter>
 
                 <!--Command which will be executed to run linter-->
                 <command>%interpreter% %linter% --config "%config%" %file%</command>
