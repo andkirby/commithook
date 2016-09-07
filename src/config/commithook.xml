@@ -12,6 +12,8 @@
 
     <code>
         <interpreter>
+            <sh>sh</sh>
+            <bash>bash</bash>
             <php>c:/xampp/php/php.exe</php>
             <node>c:/xampp/node/node.exe</node>
             <!--<rhino>c:/progra~1/Java/bin/java.exe -jar rhino/js.jar</rhino>-->
