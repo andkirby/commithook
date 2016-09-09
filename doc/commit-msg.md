@@ -21,7 +21,7 @@ There are available commit verbs:
 
 *NOTE:* Actually this can be extended. Please take a look [some specific customization of commit message format](https://gist.github.com/andkirby/12175e1a46d2a9e6f2bb).
 
-### Ignore validation
+### Ignore commit message validation
 About ignoring validation please read [here](commit-msg-ignore.md).
 
 # Short commit message
