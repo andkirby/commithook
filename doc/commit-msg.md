@@ -105,32 +105,28 @@ There is predefined configuration:
 ```xml
 <?xml version="1.0"?>
 <config>
-    ...
-    <filters>
-        <ShortCommitMsg>
-            ...
-            <issue>
-                <jira>
-                    <issue>
-                        <type>
-                            <!-- Tasks -->
-                            <Task>task</Task>
-                            <Sub_Task_Task>task</Sub_Task_Task>
-                            <Change_Request>task</Change_Request>
-                            <!-- Bugs -->
-                            <Bug>bug</Bug>
-                        </type>
-                    </issue>
-                </jira>
-            </issue>
-        </ShortCommitMsg>
-    </filters>
-    ...
+    <hooks>
+        <commit-msg>
+            <message>
+                <issue>
+                    <type>
+                        <tracker>
+                            <jira>
+                                <default>
+                                    <New_Type>task</New_Type>
+                                </default>
+                            </jira>
+                        </tracker>
+                    </type>
+                </issue>
+            </message>
+        </commit-msg>
+    </hooks>
 </config>
 ```
-You extend it with adding new nodes by adding new config node. E.g. we need to map `NEW_TYPE` to type `task`.
+You extend it with adding new nodes by adding new config node. E.g. we need to map `New Type` to type `task`.
 ```
-$ commithook config --xpath hooks/commit-msg/message/issue/type/tracker/jira/default/NEW_TYPE task
+$ commithook config --xpath hooks/commit-msg/message/issue/type/tracker/jira/default/New_Type task
 ```
 
 ## Be aware about numbers. :)
