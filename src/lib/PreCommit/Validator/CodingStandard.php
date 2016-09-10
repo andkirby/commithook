@@ -4,7 +4,6 @@
  */
 namespace PreCommit\Validator;
 
-use PreCommit\Config;
 use PreCommit\Validator\Helper\LineFinder;
 
 /**
@@ -14,13 +13,6 @@ use PreCommit\Validator\Helper\LineFinder;
  */
 class CodingStandard extends AbstractValidator
 {
-    /**#@+
-     * Skip tag for publicMethodNaming errors
-     */
-    const SKIP_TAG_PUBLIC_METHOD_NAMING = 'skipPublicMethodNaming';
-    const SKIP_TAG_METHOD_NAMING        = 'skipCommitHookMethodNaming';
-    /**#@-*/
-
     /**#@+
      * Error codes
      */
@@ -34,8 +26,6 @@ class CodingStandard extends AbstractValidator
     const CODE_PHP_CONDITION_ASSIGNMENT                          = 'conditionAssignment';
     const CODE_PHP_OPERATOR_SPACES_MISSED                        = 'operatorSpace';
     const CODE_PHP_PUBLIC_METHOD_NAMING_INVALID                  = 'publicMethodNaming';
-    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID               = 'protectedMethodNaming';
-    const CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE = 'protectedMethodNamingNoUnderscore';
     const CODE_PHP_METHOD_SCOPE                                  = 'methodWithoutScope';
     const CODE_PHP_GAPS                                          = 'redundantGaps';
     const CODE_PHP_BRACKET_GAPS                                  = 'redundantGapAfterBracket';
@@ -60,8 +50,6 @@ class CodingStandard extends AbstractValidator
             self::CODE_PHP_CONDITION_ASSIGNMENT                          => 'Assignment in condition is not allowed. Avoid usage of next structures: "if (\$a = time()) {" Original line: %value%',
             self::CODE_PHP_OPERATOR_SPACES_MISSED                        => 'Spaces are required before and after operators(<>=.-+&%*). Original line: %value%',
             self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID                  => 'Public method name should start with two small letters (except magic methods). Original line: %value%',
-            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID               => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
-            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE => 'Protected or private method name should start with underscore and two small letters. Original line: %value%',
             self::CODE_PHP_METHOD_SCOPE                                  => 'Method should have scope: public or protected. Original line: %value%',
             self::CODE_PHP_GAPS                                          => 'File contains at least two gaps in succession %value% time(s).',
             self::CODE_PHP_BRACKET_GAPS                                  => 'File contains at least one gap after opened bracket/brace or before closed bracket/brace %value% time(s).',
@@ -327,28 +315,6 @@ class CodingStandard extends AbstractValidator
 
             //check function naming and scope
             if (strpos($str, ' function ') && preg_match('#^ {4}[a-z][a-z ]+#', $str, $matches)) {
-                if (!$this->isSkipMethodNameValidation($content, $str)) {
-                    if (preg_match('/^\s*(static )?public /', $str)
-                        && !preg_match('/public (static )?function ([a-z]{2}|__[a-z]{2})/', $str)
-                    ) {
-                        $this->addError($file, self::CODE_PHP_PUBLIC_METHOD_NAMING_INVALID, $currentString, $line);
-                    } elseif ($this->useUnderScoreInProtected()
-                              && preg_match('/^\s*(static )?(protected|private) /', $str)
-                              && !preg_match('/(protected|private) (static )?function _[a-z]{2}/', $str)
-                    ) {
-                        $this->addError($file, self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID, $currentString, $line);
-                    } elseif (!$this->useUnderScoreInProtected()
-                              && preg_match('/^\s*(static )?(protected|private) /', $str)
-                              && !preg_match('/(protected|private) (static )?function [a-z]{2}/', $str)
-                    ) {
-                        $this->addError(
-                            $file,
-                            self::CODE_PHP_PROTECTED_METHOD_NAMING_INVALID_NO_UNDERSCORE,
-                            $currentString,
-                            $line
-                        );
-                    }
-                }
                 if (!preg_match('/(protected|private|public) (static )?function/', $str)) {
                     $this->addError($file, self::CODE_PHP_METHOD_SCOPE, $currentString, $line);
                 }
@@ -389,37 +355,5 @@ class CodingStandard extends AbstractValidator
     protected function findLines($find, $content, $once = false)
     {
         return LineFinder::findLines($find, $content, $once);
-    }
-
-    /**
-     * Check skip validation public method
-     *
-     * @param string $content
-     * @param string $str
-     * @return bool
-     */
-    protected function isSkipMethodNameValidation($content, $str)
-    {
-        preg_match('/function ([A-z_]+)/', $str, $matches);
-        if ($matches) {
-            $funcName = $matches[1];
-            $reg      = '~[ *]*\@('.self::SKIP_TAG_PUBLIC_METHOD_NAMING.'|'.self::SKIP_TAG_METHOD_NAMING.')\s+'.$funcName.'\n~';
-            if (preg_match($reg, $content, $m)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get configuration of underscore using in non-public methods
-     *
-     * @return bool
-     */
-    protected function useUnderScoreInProtected()
-    {
-        return (bool) Config::getInstance()
-            ->getNode('validators/CodingStandard/underscore_in_non_public');
     }
 }

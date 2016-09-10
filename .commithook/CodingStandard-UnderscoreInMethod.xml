@@ -3,8 +3,8 @@
 <config>
     <!--Validators setup-->
     <validators>
-        <CodingStandard>
+        <CodingStandard-UnderscoreInMethod>
             <underscore_in_non_public>0</underscore_in_non_public>
-        </CodingStandard>
+        </CodingStandard-UnderscoreInMethod>
     </validators>
 </config>
