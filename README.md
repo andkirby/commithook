@@ -21,7 +21,7 @@ Implemented #33: Make smth good now
 See more details [here](doc/commit-msg.md).
 
 ## Installation
-### Latest release is `v2.0.0-beta.32`
+### Latest release is `v2.0.0-beta.35`
 ### Install globally
 To get last beta version please define your `minimum-stability`.
 ```
