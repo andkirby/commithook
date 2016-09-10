@@ -7,9 +7,6 @@
 <config>
     <!--Validators setup-->
     <validators>
-        <CodingStandard>
-            <underscore_in_non_public>1</underscore_in_non_public>
-        </CodingStandard>
         <CodeSniffer>
             <rule>
                 <!-- Name of existed standard -->

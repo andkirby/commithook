@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <!--Validators setup-->
+    <validators>
+        <CodingStandard-UnderscoreInMethod>
+            <underscore_in_non_public>1</underscore_in_non_public>
+        </CodingStandard-UnderscoreInMethod>
+    </validators>
+
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <validators>
+                        <CodingStandard-UnderscoreInMethod>1</CodingStandard-UnderscoreInMethod>
+                    </validators>
+                </php>
+            </filetype>
+            <ignore>
+                <validator>
+                    <code>
+                        <CodingStandard-UnderscoreInMethod>1</CodingStandard-UnderscoreInMethod>
+                    </code>
+                </validator>
+            </ignore>
+        </pre-commit>
+    </hooks>
+</config>
