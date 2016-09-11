@@ -4,54 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "286c7d03a581a7dbfa6f93eb6e1e5e49",
-    "content-hash": "44ffe786a1376650f6ee229a01c5b1b8",
+    "hash": "8afedc2804811c16fd2c255e286eb7a5",
+    "content-hash": "95af9ccc66f7414ee72d3476e86f83fb",
     "packages": [
-        {
-            "name": "andkirby/console-helper",
-            "version": "v0.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andkirby/console-helper.git",
-                "reference": "72e398624c2b1ff30587262621b3125f9b827d98"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andkirby/console-helper/zipball/72e398624c2b1ff30587262621b3125f9b827d98",
-                "reference": "72e398624c2b1ff30587262621b3125f9b827d98",
-                "shasum": ""
-            },
-            "require": {
-                "symfony/console": "~3.1"
-            },
-            "require-dev": {
-                "escapestudios/symfony2-coding-standard": "~2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Rikby\\Console\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "description": "Symfony console helpers.",
-            "time": "2016-09-06 07:30:54"
-        },
         {
             "name": "chobie/jira-api-restclient",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chobie/jira-api-restclient.git",
-                "reference": "78a5e181b779b35f81c72f8699264a844202ca27"
+                "reference": "617d3714d2e264bdb12d00efd4ba142e0f44ff80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chobie/jira-api-restclient/zipball/78a5e181b779b35f81c72f8699264a844202ca27",
-                "reference": "78a5e181b779b35f81c72f8699264a844202ca27",
+                "url": "https://api.github.com/repos/chobie/jira-api-restclient/zipball/617d3714d2e264bdb12d00efd4ba142e0f44ff80",
+                "reference": "617d3714d2e264bdb12d00efd4ba142e0f44ff80",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +57,7 @@
                 "jira",
                 "rest"
             ],
-            "time": "2016-08-18 20:26:50"
+            "time": "2016-09-08 08:26:29"
         },
         {
             "name": "container-interop/container-interop",
@@ -278,17 +245,50 @@
             "time": "2016-07-26 08:49:38"
         },
         {
+            "name": "rikby/console-helper",
+            "version": "v0.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rikby/console-helper.git",
+                "reference": "72e398624c2b1ff30587262621b3125f9b827d98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rikby/console-helper/zipball/72e398624c2b1ff30587262621b3125f9b827d98",
+                "reference": "72e398624c2b1ff30587262621b3125f9b827d98",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/console": "~3.1"
+            },
+            "require-dev": {
+                "escapestudios/symfony2-coding-standard": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rikby\\Console\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "Symfony console helpers.",
+            "time": "2016-09-06 07:30:54"
+        },
+        {
             "name": "rikby/crypter",
             "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rikby/crypter.git",
-                "reference": "0f4fae725cea8a0c25c7f1fd1972b417484eda87"
+                "reference": "a34f05f37189a181633c8c848906c80c85a7894b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rikby/crypter/zipball/0f4fae725cea8a0c25c7f1fd1972b417484eda87",
-                "reference": "0f4fae725cea8a0c25c7f1fd1972b417484eda87",
+                "url": "https://api.github.com/repos/rikby/crypter/zipball/a34f05f37189a181633c8c848906c80c85a7894b",
+                "reference": "a34f05f37189a181633c8c848906c80c85a7894b",
                 "shasum": ""
             },
             "require": {
@@ -310,20 +310,20 @@
                 "GPL-3.0"
             ],
             "description": "Simple tool for encrypting/decrypting a string. It based upon system ID. ",
-            "time": "2016-08-22 20:29:11"
+            "time": "2016-08-22 21:14:22"
         },
         {
             "name": "symfony/console",
-            "version": "v3.1.3",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "f9e638e8149e9e41b570ff092f8007c477ef0ce5"
+                "reference": "8ea494c34f0f772c3954b5fbe00bffc5a435e563"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/f9e638e8149e9e41b570ff092f8007c477ef0ce5",
-                "reference": "f9e638e8149e9e41b570ff092f8007c477ef0ce5",
+                "url": "https://api.github.com/repos/symfony/console/zipball/8ea494c34f0f772c3954b5fbe00bffc5a435e563",
+                "reference": "8ea494c34f0f772c3954b5fbe00bffc5a435e563",
                 "shasum": ""
             },
             "require": {
@@ -370,11 +370,11 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-26 08:04:17"
+            "time": "2016-08-19 06:48:39"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.9",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -434,16 +434,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.8.9",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "ab4c3f085c8f5a56536845bf985c4cef30bf75fd"
+                "reference": "44b499521defddf2eae17a18c811bbdae4f98bdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/ab4c3f085c8f5a56536845bf985c4cef30bf75fd",
-                "reference": "ab4c3f085c8f5a56536845bf985c4cef30bf75fd",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/44b499521defddf2eae17a18c811bbdae4f98bdf",
+                "reference": "44b499521defddf2eae17a18c811bbdae4f98bdf",
                 "shasum": ""
             },
             "require": {
@@ -479,20 +479,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-20 05:41:28"
+            "time": "2016-09-06 10:55:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.8.9",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "60804d88691e4a73bbbb3035eb1d9f075c5c2c10"
+                "reference": "bec5533e6ed650547d6ec8de4b541dc9929066f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/60804d88691e4a73bbbb3035eb1d9f075c5c2c10",
-                "reference": "60804d88691e4a73bbbb3035eb1d9f075c5c2c10",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/bec5533e6ed650547d6ec8de4b541dc9929066f7",
+                "reference": "bec5533e6ed650547d6ec8de4b541dc9929066f7",
                 "shasum": ""
             },
             "require": {
@@ -528,7 +528,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-26 08:02:44"
+            "time": "2016-08-26 11:57:43"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1867,16 +1867,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.6.2",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83"
+                "reference": "571e27b6348e5b3a637b2abc82ac0d01e6d7bbed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4edb770cb853def6e60c93abb088ad5ac2010c83",
-                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/571e27b6348e5b3a637b2abc82ac0d01e6d7bbed",
+                "reference": "571e27b6348e5b3a637b2abc82ac0d01e6d7bbed",
                 "shasum": ""
             },
             "require": {
@@ -1941,20 +1941,20 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-07-13 23:29:13"
+            "time": "2016-09-01 23:53:02"
         },
         {
             "name": "symfony/process",
-            "version": "v3.1.3",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "04c2dfaae4ec56a5c677b0c69fac34637d815758"
+                "reference": "e64e93041c80e77197ace5ab9385dedb5a143697"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/04c2dfaae4ec56a5c677b0c69fac34637d815758",
-                "reference": "04c2dfaae4ec56a5c677b0c69fac34637d815758",
+                "url": "https://api.github.com/repos/symfony/process/zipball/e64e93041c80e77197ace5ab9385dedb5a143697",
+                "reference": "e64e93041c80e77197ace5ab9385dedb5a143697",
                 "shasum": ""
             },
             "require": {
@@ -1990,20 +1990,20 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-28 11:13:48"
+            "time": "2016-08-16 14:58:24"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.3",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "1819adf2066880c7967df7180f4f662b6f0567ac"
+                "reference": "f291ed25eb1435bddbe8a96caaef16469c2a092d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/1819adf2066880c7967df7180f4f662b6f0567ac",
-                "reference": "1819adf2066880c7967df7180f4f662b6f0567ac",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/f291ed25eb1435bddbe8a96caaef16469c2a092d",
+                "reference": "f291ed25eb1435bddbe8a96caaef16469c2a092d",
                 "shasum": ""
             },
             "require": {
@@ -2039,7 +2039,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-17 14:02:08"
+            "time": "2016-09-02 02:12:52"
         },
         {
             "name": "webmozart/assert",
@@ -2095,7 +2095,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "andkirby/console-helper": 0,
+        "rikby/console-helper": 0,
         "rikby/crypter": 0,
         "symfony/console": 0,
         "symfony/filesystem": 0,
