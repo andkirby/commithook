@@ -56,7 +56,7 @@ if [ $? != 0 ]; then echo "error: Can't update file '${php_file}'."; exit 1; fi
 
 # Update version in README file
 if ! [[ "${target_version}" =~ dev ]]; then
-    match=$(grep -E "Latest release is.*" ${readme_file})
+    match=$(grep -Eo "Latest release is.*" ${readme_file})
     if [ -z "${match}" ]; then echo "error: Cannot find version string in ${readme_file}."; exit 1; fi
     sed -i.bak "s:${match}:Latest release is v\`${target_version}\`:g" ${xml_file}
 fi
