@@ -67,6 +67,8 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 [Enable JsHint validation (Javascript)](doc/jshint-setup.md)
 
 ## Problems
+### Bugs
+[Issue bugs list](../../labels/bug).
 #### Code validators doesn't work with GIT cache
 The code validation with GIT but it doesn't support git cache. It means if you added a file (`git add file.php`), changed it, and trying to commit (without adding it into GIT cache). In commit, of course, you will get code from cache but validators will validate your real file. ([#113](../../issues/113))
 #### Minor bugs in short commit message
