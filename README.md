@@ -13,12 +13,12 @@ Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json
 $ git add myfile.php
 $ git commit -m 'Added my file.'
 ```
-Last command will generate commit message:
+Last command makes commit with generated commit message:
 ```
 Implemented #33: Make smth good now
  - Added my file.
 ```
-See more details [here](doc/commit-msg.md).
+See more details [short commit messages](doc/commit-msg.md).
 
 ## Installation
 ### Latest release is `v2.0.0-beta.35`
