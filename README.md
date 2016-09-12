@@ -49,13 +49,21 @@ If global way doesn't work you may use [installation via `create-project`](doc/i
 
 ## Documentation references
 [Configuration Wizard](doc/example-quick-wizard.md)
+
 [GIT integration: hook files installation](doc/hooks-installation.md)
+
 [Ignore validation](doc/exclude-code-validation.md)
+
 [Protect code](doc/protect-code.md)
+
 [Commit message format](doc/commit-msg.md)
+
 [Ignore commit message validation](doc/commit-msg-ignore.md)
+
 [Active task in commit message](doc/active-task.md)
+
 [Auto-explode commit message into the list](doc/config-message.md)
+
 [Enable JsHint validation (Javascript)](doc/jshint-setup.md)
 
 ## Problems
