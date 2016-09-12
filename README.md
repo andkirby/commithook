@@ -48,23 +48,17 @@ Here is [an example of `.bashrc` file](doc/example-bashrc.md) for global using.
 If global way doesn't work you may use [installation via `create-project`](doc/install-create-project.md).
 
 ## Documentation references
-[Configuration Wizard](doc/example-quick-wizard.md)
-
-[GIT integration: hook files installation](doc/hooks-installation.md)
-
-[Ignore validation](doc/exclude-code-validation.md)
-
-[Protect code](doc/protect-code.md)
-
-[Commit message format](doc/commit-msg.md)
-
-[Ignore commit message validation](doc/commit-msg-ignore.md)
-
-[Active task in commit message](doc/active-task.md)
-
-[Auto-explode commit message into the list](doc/config-message.md)
-
-[Enable JsHint validation (Javascript)](doc/jshint-setup.md)
+[Configuration Wizard](doc/example-quick-wizard.md)<br>
+[GIT integration: hook files installation](doc/hooks-installation.md)<br>
+### Code validation
+[Ignore validation](doc/exclude-code-validation.md)<br>
+[Protect code](doc/protect-code.md)<br>
+[Enable JsHint validation (Javascript)](doc/jshint-setup.md)<br>
+### Commit message
+[Commit message format](doc/commit-msg.md)<br>
+[Ignore commit message validation](doc/commit-msg-ignore.md)<br>
+[Active task in commit message](doc/active-task.md)<br>
+[Auto-explode commit message into the list](doc/config-message.md)<br>
 
 ## Problems
 ### Bugs
