@@ -18,7 +18,7 @@ Last command makes commit with generated commit message:
 Implemented #33: Make smth good now
  - Added my file.
 ```
-See more details [short commit messages](doc/commit-msg.md).
+See more details about [short commit messages](doc/commit-msg.md).
 
 ## Installation
 ### Latest release is `v2.0.0-beta.35`
