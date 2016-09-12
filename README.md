@@ -48,7 +48,8 @@ Here is [an example of `.bashrc` file](doc/example-bashrc.md) for global using.
 If global way doesn't work you may use [installation via `create-project`](doc/install-create-project.md).
 
 ## Documentation references
-[Configuration Wizard](doc/example-quick-wizard.md)<br>
+### Installation
+[Initialize configuration wizard](doc/example-quick-wizard.md)<br>
 [GIT integration: hook files installation](doc/hooks-installation.md)<br>
 ### Code validation
 [Ignore validation](doc/exclude-code-validation.md)<br>
