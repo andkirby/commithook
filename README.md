@@ -1,6 +1,6 @@
 # CmHook
 
-CmHook is GIT commit hook the code validator for PHP, CSS (base only), JS code and commit message formatter/filler with the issue tracker integration (JIRA, GitHub).
+CmHook is GIT commit hook the code validator for PHP (Code Sniffer), CSS (base only), JS (JsHint) code and commit message formatter/filler with the issue tracker integration (JIRA, GitHub).
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
