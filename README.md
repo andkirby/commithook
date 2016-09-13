@@ -6,7 +6,7 @@ CmHook is GIT commit hook the code validator for PHP, CSS (base only), JS code a
 
 The main purpose of this project is
  - checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)
- - filling up commit messages automatically to proper format ([details](doc/commit-msg.md))
+ - filling up commit messages automatically to proper format ([details](docs/commit-msg.md))
 
 Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
 
@@ -21,7 +21,7 @@ This commit message will be generated automatically, we need to type only commit
 $ git add myfile.php
 $ git commit -m 'Added my file.'
 ```
-See more details about [short commit messages](doc/commit-msg.md).
+See more details about [short commit messages](docs/commit-msg.md).
 
 ## Installation
 ### Latest release is `v2.0.0-beta.35`
@@ -45,24 +45,24 @@ $ composer global require andkirby/commithook ~2.0@beta
 ```
 
 #### Sample `.bashrc`
-Here is [an example of `.bashrc` file](doc/example-bashrc.md) for global using.
+Here is [an example of `.bashrc` file](docs/example-bashrc.md) for global using.
 
 ### Separate installation
-If global way doesn't work you may use [installation via `create-project`](doc/install-create-project.md).
+If global way doesn't work you may use [installation via `create-project`](docs/install-create-project.md).
 
 ## Documentation references
 ### Installation
-[Initialize configuration wizard](doc/example-quick-wizard.md)<br>
-[GIT integration: hook files installation](doc/hooks-installation.md)<br>
+[Initialize configuration wizard](docs/example-quick-wizard.md)<br>
+[GIT integration: hook files installation](docs/hooks-installation.md)<br>
 ### Code validation
-[Ignore validation](doc/exclude-code-validation.md)<br>
-[Protect code](doc/protect-code.md)<br>
-[Enable JsHint validation (Javascript)](doc/jshint-setup.md)<br>
+[Ignore validation](docs/exclude-code-validation.md)<br>
+[Protect code](docs/protect-code.md)<br>
+[Enable JsHint validation (Javascript)](docs/jshint-setup.md)<br>
 ### Commit message
-[Commit message format](doc/commit-msg.md)<br>
-[Ignore commit message validation](doc/commit-msg-ignore.md)<br>
-[Active task in commit message](doc/active-task.md)<br>
-[Auto-explode commit message into the list](doc/config-message.md)<br>
+[Commit message format](docs/commit-msg.md)<br>
+[Ignore commit message validation](docs/commit-msg-ignore.md)<br>
+[Active task in commit message](docs/active-task.md)<br>
+[Auto-explode commit message into the list](docs/config-message.md)<br>
 
 ## Problems
 ### Bugs
@@ -85,4 +85,4 @@ Tested on Windows in GIT Bash v2.9.
 
 Feel free [to create](../../issues/new "Add a new issue") your faced issue.
 
-## [Release notes](doc/release-notes.md)
+## [Release notes](docs/release-notes.md)
