@@ -1,4 +1,6 @@
-# CommitHOOKs
+# CmHook
+
+CmHook is GIT commit hook the code validator for PHP, CSS (base only), JS code and commit message formatter/filler with the issue tracker integration (JIRA, GitHub).
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -9,14 +11,15 @@ The main purpose of this project is
 Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
 
 ## The simplest commit message you could ever make
-```
-$ git add myfile.php
-$ git commit -m 'Added my file.'
-```
-Last command makes commit with generated commit message:
+Target commit message:
 ```
 Implemented #33: Make smth good now
  - Added my file.
+```
+This commit message will be generated automatically, we need to type only commit description:
+```
+$ git add myfile.php
+$ git commit -m 'Added my file.'
 ```
 See more details about [short commit messages](doc/commit-msg.md).
 
