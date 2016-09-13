@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>CmHook by andkirby</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>CmHook</h1>
+        <p>CmHook is GIT commit hook code validation and auto formatting/filling commit message with the issue tracker integration.</p>
+        <p class="view"><a href="https://github.com/andkirby/commithook">View the Project on GitHub <small>andkirby/commithook</small></a></p>
+        <ul>
+          <li><a href="https://github.com/andkirby/commithook/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/andkirby/commithook/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/andkirby/commithook">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="commithooks" class="anchor" href="#commithooks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CommitHOOKs</h1>
+
+<p><a href="https://gitter.im/andkirby/commithook?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Gitter"></a></p>
+
+<p>The main purpose of this project is</p>
+
+<ul>
+<li>checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)</li>
+<li>filling up commit messages automatically to proper format (<a href="doc/commit-msg.md">details</a>)</li>
+</ul>
+
+<p>Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.</p>
+
+<h2>
+<a id="the-simplest-commit-message-you-could-ever-make" class="anchor" href="#the-simplest-commit-message-you-could-ever-make" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The simplest commit message you could ever make</h2>
+
+<pre><code>$ git add myfile.php
+$ git commit -m 'Added my file.'
+</code></pre>
+
+<p>Last command makes commit with generated commit message:</p>
+
+<pre><code>Implemented #33: Make smth good now
+ - Added my file.
+</code></pre>
+
+<p>See more details about <a href="doc/commit-msg.md">short commit messages</a>.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a id="latest-release-is-v200-beta35" class="anchor" href="#latest-release-is-v200-beta35" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Latest release is <code>v2.0.0-beta.35</code>
+</h3>
+
+<h3>
+<a id="install-globally" class="anchor" href="#install-globally" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install globally</h3>
+
+<p>To get last beta version please define your <code>minimum-stability</code>.</p>
+
+<pre><code>{
+  "minimum-stability": "beta",
+  "prefer-stable": true
+}
+</code></pre>
+
+<p>Due to reason the package requires one package which still in "dev", please fetch it first:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ composer global require chobie/jira-api-restclient ^2.0@dev</pre></div>
+
+<p>Now fetch the package:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ composer global require andkirby/commithook <span class="pl-k">~</span>2.0@beta</pre></div>
+
+<h4>
+<a id="sample-bashrc" class="anchor" href="#sample-bashrc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sample <code>.bashrc</code>
+</h4>
+
+<p>Here is <a href="doc/example-bashrc.md">an example of <code>.bashrc</code> file</a> for global using.</p>
+
+<h3>
+<a id="separate-installation" class="anchor" href="#separate-installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Separate installation</h3>
+
+<p>If global way doesn't work you may use <a href="doc/install-create-project.md">installation via <code>create-project</code></a>.</p>
+
+<h2>
+<a id="documentation-references" class="anchor" href="#documentation-references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation references</h2>
+
+<h3>
+<a id="installation-1" class="anchor" href="#installation-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+
+<p><a href="doc/example-quick-wizard.md">Initialize configuration wizard</a><br>
+<a href="doc/hooks-installation.md">GIT integration: hook files installation</a><br></p>
+
+<h3>
+<a id="code-validation" class="anchor" href="#code-validation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code validation</h3>
+
+<p><a href="doc/exclude-code-validation.md">Ignore validation</a><br>
+<a href="doc/protect-code.md">Protect code</a><br>
+<a href="doc/jshint-setup.md">Enable JsHint validation (Javascript)</a><br></p>
+
+<h3>
+<a id="commit-message" class="anchor" href="#commit-message" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Commit message</h3>
+
+<p><a href="doc/commit-msg.md">Commit message format</a><br>
+<a href="doc/commit-msg-ignore.md">Ignore commit message validation</a><br>
+<a href="doc/active-task.md">Active task in commit message</a><br>
+<a href="doc/config-message.md">Auto-explode commit message into the list</a><br></p>
+
+<h2>
+<a id="problems" class="anchor" href="#problems" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Problems</h2>
+
+<h3>
+<a id="bugs" class="anchor" href="#bugs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bugs</h3>
+
+<p><a href="../../labels/bug">Issue bugs list</a>.</p>
+
+<h4>
+<a id="code-validators-doesnt-work-with-git-cache" class="anchor" href="#code-validators-doesnt-work-with-git-cache" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code validators doesn't work with GIT cache</h4>
+
+<p>The code validation with GIT but it doesn't support git cache. It means if you added a file (<code>git add file.php</code>), changed it, and trying to commit (without adding it into GIT cache). In commit, of course, you will get code from cache but validators will validate your real file. (<a href="../../issues/113">#113</a>)</p>
+
+<h4>
+<a id="minor-bugs-in-short-commit-message" class="anchor" href="#minor-bugs-in-short-commit-message" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Minor bugs in short commit message</h4>
+
+<p><a href="../../issues/92">#92</a>, <a href="../../issues/91">#91</a>, <a href="../../issues/32">#32</a></p>
+
+<h2>
+<a id="tips--tricks" class="anchor" href="#tips--tricks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tips &amp; tricks</h2>
+
+<h3>
+<a id="redundant-gaps-in-code" class="anchor" href="#redundant-gaps-in-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Redundant gaps in code</h3>
+
+<p>You may quickly find gaps/trailing spaces in your code by the regular expression:</p>
+
+<pre><code>(\n\s*\n\s*\})|(\n\s*\n\s*\n)|(\{\n\s*\n)| +\n
+</code></pre>
+
+<p>Just use it in your IDE.</p>
+
+<h2>
+<a id="os-environment" class="anchor" href="#os-environment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>OS environment</h2>
+
+<p>Tested on Windows in GIT Bash v2.9.</p>
+
+<p>Feel free <a href="../../issues/new" title="Add a new issue">to create</a> your faced issue.</p>
+
+<h2>
+<a id="release-notes" class="anchor" href="#release-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="doc/release-notes.md">Release notes</a>
+</h2>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/andkirby">andkirby</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
