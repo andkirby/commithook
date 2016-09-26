@@ -54,6 +54,8 @@ If global way doesn't work you may use [installation via `create-project`](docs/
 ### Installation
 [Initialize configuration wizard](docs/example-quick-wizard.md)<br>
 [GIT integration: hook files installation](docs/hooks-installation.md)<br>
+### Password tracker update
+[Password update](docs/example-wizard.md#password-reset)<br>
 ### Code validation
 [Ignore validation](docs/exclude-code-validation.md)<br>
 [Protect code](docs/protect-code.md)<br>
