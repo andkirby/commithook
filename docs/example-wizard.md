@@ -62,7 +62,8 @@ $ cat ~/.commithook/.commithook.xml
     </tracker>
 </config>
 ```
-_**NOTE:** To reset your password you may use command:_
+#### Password reset
+To reset your password you may use command (example for JIRA):
 ```
 $ commithook config --global --tracker jira password pass123
 ```
