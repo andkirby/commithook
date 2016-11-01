@@ -128,7 +128,9 @@ abstract class AbstractLintValidator extends AbstractValidator
         $linterPath      = $this->getLinterPath();
         $configPath      = $this->getConfigPath();
 
-        if (!$interpreterPath || !$linterPath || !$configPath && strpos($command, '%config%')) {
+        if (!$interpreterPath && false !== strpos($command, '%interpreter%')
+            || !$linterPath || !$configPath && strpos($command, '%config%')
+        ) {
             //the linter is not configured
             $this->command = '';
 
