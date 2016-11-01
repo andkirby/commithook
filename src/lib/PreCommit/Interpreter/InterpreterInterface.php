@@ -15,7 +15,7 @@ interface InterpreterInterface
      * Interpret data
      *
      * @param mixed $data
-     * @return $this
+     * @return mixed
      */
     public function interpret($data);
 }
