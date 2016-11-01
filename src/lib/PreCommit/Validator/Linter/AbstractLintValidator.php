@@ -67,11 +67,45 @@ abstract class AbstractLintValidator extends AbstractValidator
     {
         $command = $this->getCommand($file);
         if (!$command) {
-            return array();
+            return [];
         }
-        exec($command, $output);
+        exec($command, $output, $code);
+
+        if ($this->isPositiveResult($output, $code)) {
+            return [];
+        }
 
         return $this->getOutputInterpreter()->interpret($output);
+    }
+
+    /**
+     * If there is some output it can be positive
+     *
+     * @param string $output
+     * @param int    $code
+     * @return bool
+     */
+    protected function isPositiveResult($output, $code)
+    {
+        if (0 === $code) {
+            return true;
+        }
+
+        if (!$this->getPositiveStringOutput()) {
+            return false;
+        }
+
+        return false !== strpos($output, $this->getPositiveStringOutput());
+    }
+
+    /**
+     * Get positive string to match with output
+     *
+     * @return string
+     */
+    protected function getPositiveStringOutput()
+    {
+        return '';
     }
 
     /**
