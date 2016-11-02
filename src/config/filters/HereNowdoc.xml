@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
+ */
+-->
+<config>
+    <!--Hooks process setup-->
+    <hooks>
+        <pre-commit>
+            <filetype>
+                <php>
+                    <filters>
+                        <HereNowdoc>1</HereNowdoc>
+                    </filters>
+                </php>
+            </filetype>
+        </pre-commit>
+    </hooks>
+</config>
