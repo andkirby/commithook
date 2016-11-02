@@ -11,13 +11,21 @@
  */
 LCS
 
-SRC_DIR=$(cd `dirname "${BASH_SOURCE[0]}"`/.. && pwd)
-readonly SRC_DIR
-cd "${SRC_DIR}"
+set -o errexit
+set -o pipefail
+set -o nounset
+#set -o xtrace
 
-php_file=${SRC_DIR}/lib/PreCommit/Console/Application.php
-xml_file=${SRC_DIR}/config/root.xml
-readme_file=${SRC_DIR}/../README.md
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+readonly __dir __file
+
+cd "${__dir}"
+
+php_file=${__dir}/lib/PreCommit/Console/Application.php
+xml_file=${__dir}/config/root.xml
+readme_file=${__dir}/../README.md
 
 version_regex='(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))(\+.+)?'
 
@@ -62,7 +70,7 @@ if ! [[ "${target_version}" =~ dev ]]; then
 fi
 
 # Commit changes
-output=$(cd ${SRC_DIR} && git reset \
+output=$(cd ${__dir} && git reset \
     && git add ${xml_file} ${php_file} \
     && git commit -m '@@through Updated version to '${target_version}'.' 2>&1)
 
@@ -78,6 +86,6 @@ if [[ "${target_version}" =~ (alpha|beta) ]] && [ $(git rev-parse --abbrev-ref H
         && git pull && git merge develop \
         && git tag 'v'${target_version} \
         && git checkout develop \
-        && ${SRC_DIR}/shell/version.sh 2.0.x-dev
+        && ${__dir}/shell/version.sh 2.0.x-dev
 fi
 
