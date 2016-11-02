@@ -59,6 +59,7 @@ validate_version () {
 
 target_version=$1
 shift
+force_opt=''
 #################################
 # Init options
 while getopts "hf" opt; do
@@ -71,7 +72,7 @@ while getopts "hf" opt; do
     show_help
     exit 1
     ;;
-  f)  force_tag=1
+  f)  force_opt='-f'
     ;;
   esac
 done
@@ -178,11 +179,11 @@ echo '    '$(git log -1 --format=%B)
 rm -f ${xml_file}.bak  ${php_file}.bak ${readme_file}.bak
 
 # Add tag for beta or alpha version turn back to dev
-if [[ "${target_version}" =~ (alpha|beta) ]] && [ $(git rev-parse --abbrev-ref HEAD) == 'develop' ] ; then
+if [[ "${target_version}" =~ (alpha|beta) ]] && [[ $(git rev-parse --abbrev-ref HEAD) =~ ^(develop|master)$ ]] ; then
     git pull && git checkout master\
         && git pull && git merge develop \
-        && git tag 'v'${target_version} \
+        && git tag 'v'${target_version} ${force_opt} \
         && git checkout develop \
-        && ${__dir}/shell/version.sh 2.0.x-dev
+        && bash ${__file} 2.0.x-dev
 fi
 
