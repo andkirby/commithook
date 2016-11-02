@@ -23,16 +23,117 @@ readonly __dir __file
 
 cd "${__dir}"
 
-php_file=${__dir}/lib/PreCommit/Console/Application.php
-xml_file=${__dir}/config/root.xml
-readme_file=${__dir}/../README.md
+# t_color MESSAGE COLOR_NO [TAIL_MESSAGE]
+t_color () {
+    local style message tail
+    message=${1}; shift
+    style=${1}; shift
+    tail="$@"
+    printf '\e[%sm''%s''\e[0m''%s' "${style}" "${message}" "${tail}"
+}
+t_error () {
+  local message=${1}; shift
+  t_color ${message} 31 "$@"
+}
+t_warning () {
+  local message=${1}; shift
+  t_color ${message} 33 "$@"
+}
+t_question() {
+  local message=${1}; shift
+  t_color "${message}" 36 "$@"
+}
+t_ok () {
+  local message=${1}; shift
+  t_color ${message} 32 "$@"
+}
 
-version_regex='(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))(\+.+)?'
+validate_version () {
+  local version_regex
+  version_regex='v?(([0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|patch)(\.[0-9]+)*)?)|([0-9]+(\.[0-9]+)?\.x-dev))(\+.+)?'
+
+  if [[ "${1}" =~ ^${version_regex}$ ]]; then
+    echo 'ok'
+  fi
+}
 
 target_version=$1
+shift
+#################################
+# Init options
+while getopts "hf" opt; do
+  case "${opt}" in
+  h)
+    show_help
+    exit 0
+    ;;
+  \?)
+    show_help
+    exit 1
+    ;;
+  f)  force_tag=1
+    ;;
+  esac
+done
+#################################
+
+increment_tag () {
+  local last_tag last_no target_version
+
+  last_tag=$1
+
+  if [ "$(validate_version ${last_tag})" != 'ok' ]; then
+    return
+  fi
+
+  last_no=$(echo "${last_tag}" | grep -oP '[0-9]+(\+.*)?$' | sed -re 's|(\+.*)$||' || true)
+
+  if [ -n "${last_no}" ]; then
+    target_version=$(echo "${last_tag}" | sed -re 's|[0-9]+(\+.*)?$|'$((${last_no} + 1))'|')
+  else
+    t_error 'error:'
+    echo " Cannot increment last version '${last_tag}'."
+    exit 1
+  fi
+  echo ${target_version}
+}
+
+# Increment tag
+if [ 'i' == "${target_version}" ] || [ 'increment' == "${target_version}" ]; then
+  # fetch last tag and increment it
+  target_version=$(increment_tag "$(tag=$(git tags 2>&1 | tail -1 || true) && echo ${tag})")
+
+  if [ -z "${target_version}" ]; then
+    t_error 'error:'
+    echo " Cannot use last version tag."
+  fi
+
+  t_ok ${target_version}; echo
+  printf 'Correct? y/n [y]: '
+  read answer
+  if [ "${answer}" != "y" ] && [ -n "${answer}" ]; then
+     t_error 'Exit.'
+     exit 1
+  fi
+fi
+
+# remove "v" in the beginning
 if [ 'v' = "${target_version::1}" ]; then
     target_version=${target_version#'v'}
 fi
+
+if [ -n "${target_version}" ] && [ "$(validate_version ${target_version})" != 'ok' ]; then
+    echo "error: Incorrect format. Please use format from semver.org."
+    exit 1
+fi
+
+###########################
+# Update version in files #
+###########################
+
+php_file=${__dir}/../lib/PreCommit/Console/Application.php
+xml_file=${__dir}/../config/root.xml
+readme_file=${__dir}/../../README.md
 
 current_version=$(cat ${xml_file} | grep -Eo '<version>[^<]+' | grep -Eo '[0-9][^<]+')
 
@@ -42,12 +143,8 @@ if [ -z "${target_version}" ]; then
 fi
 
 if [ ${target_version} == ${current_version} ]; then
-    echo "error: Target version and current one is the same."
-    exit 1
-fi
-
-if ! [[ "${target_version}" =~ ^${version_regex}$ ]]; then
-    echo "error: Incorrect format. Please use format from semver.org."
+    t_error 'error: '
+    echo ' Target version and current one is the same.'
     exit 1
 fi
 
