@@ -82,6 +82,10 @@ increment_tag () {
   local last_tag last_no target_version
   last_tag=$(echo $1 | sed -re 's|(\+.*)$||' || true)
 
+  # using semver
+  echo $(semver ${last_tag} --preid "$(echo ${last_tag} | grep -Eo '-[a-z]+' | tr -d '-')" -i prerelease)
+  return
+
   if [ "$(validate_version ${last_tag})" != 'ok' ]; then
     return
   fi
