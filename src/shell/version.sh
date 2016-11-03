@@ -80,17 +80,16 @@ done
 
 increment_tag () {
   local last_tag last_no target_version
-
-  last_tag=$1
+  last_tag=$(echo $1 | sed -re 's|(\+.*)$||' || true)
 
   if [ "$(validate_version ${last_tag})" != 'ok' ]; then
     return
   fi
 
-  last_no=$(echo "${last_tag}" | grep -oP '[0-9]+(\+.*)?$' | sed -re 's|(\+.*)$||' || true)
+  last_no=$(echo "${last_tag}" | grep -oP '[0-9]+$' || true)
 
   if [ -n "${last_no}" ]; then
-    target_version=$(echo "${last_tag}" | sed -re 's|[0-9]+(\+.*)?$|'$((${last_no} + 1))'|')
+    target_version=$(echo "${last_tag}" | sed -re 's|[0-9]+$|'$((${last_no} + 1))'|')
   else
     t_error 'error:'
     echo " Cannot increment last version '${last_tag}'."
@@ -119,9 +118,7 @@ if [ 'i' == "${target_version}" ] || [ 'increment' == "${target_version}" ]; the
 fi
 
 # remove "v" in the beginning
-if [ 'v' = "${target_version::1}" ]; then
-    target_version=${target_version#'v'}
-fi
+target_version=${target_version#'v'}
 
 if [ -n "${target_version}" ] && [ "$(validate_version ${target_version})" != 'ok' ]; then
     echo "error: Incorrect format. Please use format from semver.org."
