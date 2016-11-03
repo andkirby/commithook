@@ -25,11 +25,11 @@ cd "${__dir}"
 
 # t_color MESSAGE COLOR_NO [TAIL_MESSAGE]
 t_color () {
-    local style message tail
-    message=${1}; shift
-    style=${1}; shift
-    tail="$@"
-    printf '\e[%sm''%s''\e[0m''%s' "${style}" "${message}" "${tail}"
+  local style message tail
+  message=${1}; shift
+  style=${1}; shift
+  tail="$@"
+  printf '\e[%sm''%s''\e[0m''%s' "${style}" "${message}" "${tail}"
 }
 t_error () {
   local message=${1}; shift
@@ -125,8 +125,8 @@ fi
 target_version=${target_version#'v'}
 
 if [ -n "${target_version}" ] && [ "$(validate_version ${target_version})" != 'ok' ]; then
-    echo "error: Incorrect format. Please use format from semver.org."
-    exit 1
+  echo "error: Incorrect format. Please use format from semver.org."
+  exit 1
 fi
 
 ###########################
@@ -140,14 +140,14 @@ readme_file=${__dir}/../../README.md
 current_version=$(cat ${xml_file} | grep -Eo '<version>[^<]+' | grep -Eo '[0-9][^<]+')
 
 if [ -z "${target_version}" ]; then
-    echo ${current_version}
-    exit 0
+  echo ${current_version}
+  exit 0
 fi
 
 if [ ${target_version} == ${current_version} ]; then
-    t_error 'error: '
-    echo ' Target version and current one is the same.'
-    exit 1
+  t_error 'error: '
+  echo ' Target version and current one is the same.'
+  exit 1
 fi
 
 # Update version in XML file
@@ -163,28 +163,28 @@ if [ $? != 0 ]; then echo "error: Can't update file '${php_file}'."; exit 1; fi
 
 # Update version in README file
 if ! [[ "${target_version}" =~ dev ]]; then
-    match=$(grep -Eo "Latest release is.*" ${readme_file})
-    if [ -z "${match}" ]; then echo "error: Cannot find version string in ${readme_file}."; exit 1; fi
-    sed -i.bak "s:${match}:Latest release is v\`${target_version}\`:g" ${xml_file}
+  match=$(grep -Eo "Latest release is.*" ${readme_file})
+  if [ -z "${match}" ]; then echo "error: Cannot find version string in ${readme_file}."; exit 1; fi
+  sed -i.bak "s:${match}:Latest release is v\`${target_version}\`:g" ${xml_file}
 fi
 
 # Commit changes
 output=$(cd ${__dir} && git reset \
-    && git add ${xml_file} ${php_file} \
-    && git commit -m '@@through Updated version to '${target_version}'.' 2>&1)
+  && git add ${xml_file} ${php_file} \
+  && git commit -m '@@through Updated version to '${target_version}'.' 2>&1)
 
 echo
-echo '    '$(git log -1 --format=%B)
+echo '  '$(git log -1 --format=%B)
 
 # Clean up .bak files
 rm -f ${xml_file}.bak  ${php_file}.bak ${readme_file}.bak
 
 # Add tag for beta or alpha version turn back to dev
 if [[ "${target_version}" =~ (alpha|beta) ]] && [[ $(git rev-parse --abbrev-ref HEAD) =~ ^(develop|master)$ ]] ; then
-    git pull && git checkout master\
-        && git pull && git merge develop \
-        && git tag 'v'${target_version} ${force_opt} \
-        && git checkout develop \
-        && bash ${__file} 2.0.x-dev
+  git pull && git checkout master\
+    && git pull && git merge develop \
+    && git tag 'v'${target_version} ${force_opt} \
+    && git checkout develop \
+    && bash ${__file} 2.0.x-dev
 fi
 
