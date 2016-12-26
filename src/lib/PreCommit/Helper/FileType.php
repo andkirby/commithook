@@ -47,7 +47,7 @@ class FileType
         if ($all) {
             $base = array_merge(
                 $base,
-                array_values($this->getConfig()->getNodesExpr(self::XPATH_FILE_TYPES))
+                array_values($this->getConfig()->getNodesExpr(self::XPATH_FILE_TYPES_ALL))
             );
         }
 
