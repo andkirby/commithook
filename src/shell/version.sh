@@ -184,6 +184,7 @@ if [[ "${target_version}" =~ (alpha|beta) ]] && [[ $(git rev-parse --abbrev-ref 
   git pull && git checkout master\
     && git pull && git merge develop \
     && git tag 'v'${target_version} ${force_opt} \
+    && git push origin 'v'${target_version} ${force_opt} \
     && git checkout develop \
     && bash ${__file} 2.0.x-dev
 fi
