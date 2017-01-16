@@ -1,7 +1,7 @@
 [Back to top](../README.md)
 
 ## Release notes
-- Last beta: v2.0.0-beta.16
+- Last beta: v2.0.0-beta.39
 - v2.x-dev
     - ([#83](/../../issues/83)) Added command `validator:disable` for quick disable a validator.
     - ([#13](/../../issues/13)) Added an integration with GitHub (for short commit message).
