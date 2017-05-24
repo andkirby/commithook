@@ -136,20 +136,22 @@ class ParentThis extends AbstractValidator
         $class   = ltrim($class, '\\');
         $matched = null;
 
-        preg_match('~use [\x5C]?'.$class.' as ([A-z0-9_]+);~', $content, $matches);
-        if (!empty($matches[1])) {
-            $matched = $matches[1];
+        $classRegular = str_replace('\\', '[\x5C]', $class);
+
+        preg_match('~(use [\x5C]?'.$classRegular.') as ([A-z0-9_]+);~', $content, $matches);
+        if (!empty($matches[2])) {
+            $matched = $matches[2];
         }
 
         if ($matched === null) {
-            preg_match('~use ([A-z0-9\x5C_]+[\x5C]'.$class.');~', $content, $matches);
+            preg_match('~use ([A-z0-9\x5C_]+[\x5C]'.$classRegular.');~', $content, $matches);
             if (!empty($matches[1])) {
                 $matched = $matches[1];
             }
         }
 
         if ($matched === null) {
-            preg_match('~use ([A-z0-9\x5C_]+) as '.$class.';~', $content, $matches);
+            preg_match('~use ([A-z0-9\x5C_]+) as '.$classRegular.';~', $content, $matches);
             if (!empty($matches[1])) {
                 $matched = $matches[1];
             }
