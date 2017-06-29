@@ -12,6 +12,7 @@ set -o xtrace
 
 VERSION_DRY_RUN=0
 
+ERR_NO_CRITICAL=2
 ERR_NO_INVALID_ARG=3
 ERR_NO_LOGICAL=4
 ERR_NO_USER_EXIT=6
@@ -40,13 +41,19 @@ if [ -z "$(echo "${answer}" | grep -i "^y")" ]; then
   check_error ${ERR_NO_USER_EXIT} 'Stop!'
 fi
 
+# check if a tag defined on HEAD
+if ! git describe HEAD --tags --exact-match 1> /dev/null 2> /dev/null; then
+  check_error ${ERR_NO_CRITICAL} 'There is no tag on HEAD commit.'
+fi
+
 # reset files with the version
-git checkout -- config/root.xml && git checkout -- lib/PreCommit/Command/Application.php
-if [ $? != 0 ]; then echo "error: Can't reset files Application.php and root.xml."; exit 1; fi
+git checkout -- config/root.xml && git checkout -- lib/PreCommit/Command/Application.php \
+  || check_error ${ERR_NO_CRITICAL} "Can't reset files Application.php and root.xml."; exit 1; fi
 
 # Read current version
-current_version=$(grep -E '<version>[^<]' ${__dir}/../config/root.xml | grep -Eo '[0-9][^<]+')
-if [ $? != 0 ]; then echo "error: Can't get current version."; exit 1; fi
+current_version=$(grep -E '<version>[^<]' ${__dir}/../config/root.xml | grep -Eo '[0-9][^<]+') \
+  || check_error ${ERR_NO_CRITICAL} "Can't get current version from config/root.xml."
+
 echo "Current version: ${current_version}"
 
 match=$(grep " = '${current_version}'" ${__dir}/../lib/PreCommit/Command/Application.php)
@@ -54,8 +61,8 @@ if [ -z "${match}" ]; then
   check_error ${ERR_NO_LOGICAL} "error: The same version '${current_version}' not found in PreCommit/Command/Application.php file."
 fi
 
-last_tag_name=$(git tags | tail -1)
-last_version=$(echo "${last_version}" | sed 's/^v\(.*\)/\1/')
+last_tag_name=$(git describe HEAD --tags --exact-match | head -n1)
+last_version=$(echo "${last_tag_name}" | sed 's/^v\(.*\)/\1/')
 
 # Ask about selected version
 echo -n "Is it correct version to change? ${last_version} (y/n) "
@@ -85,7 +92,7 @@ git add ${__dir}/../../release_version
 git status
 
 # Ask about selected version
-echo -n "Correct files for commit? (y/n) "
+echo -n "Are these files correct for commit? (y/n) "
 read answer
 if [ -z $(echo "${answer}" | grep -i "^y") ]; then
   # Answer is not YES
