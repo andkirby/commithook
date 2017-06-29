@@ -8,7 +8,7 @@ LCS
 set -o pipefail
 set -o errexit
 set -o nounset
-set -o xtrace
+#set -o xtrace
 
 VERSION_DRY_RUN=0
 
