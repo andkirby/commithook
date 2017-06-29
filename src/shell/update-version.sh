@@ -69,12 +69,13 @@ echo ${current_version} > ${__dir}/../../dev_version \
   && echo ${last_version} > ${__dir}/../../release_version
 
 # replace version
-sed 's|<version>'"${current_version}"'</version>|<version>'"${last_version}"'</version>|g' ${__dir}/../config/root.xml \
-        > ${__dir}/../config/root.xml.tmp \
-        && mv ${__dir}/../config/root.xml.tmp ${__dir}/../config/root.xml \
-&& sed "s| = '${current_version}';| = '${last_version}';|g" ${__dir}/../lib/PreCommit/Command/Application.php \
+sed 's|<version>'"${current_version}"'</version>|<version>'"${last_version}"'</version>|g' \
+    ${__dir}/../config/root.xml \
+    > ${__dir}/../config/root.xml.tmp \
+  && mv ${__dir}/../config/root.xml.tmp ${__dir}/../config/root.xml \
+  && sed "s| = '${current_version}';| = '${last_version}';|g" ${__dir}/../lib/PreCommit/Command/Application.php \
     > ${__dir}/../lib/PreCommit/Command/Application.php.tmp \
-    && mv ${__dir}/../lib/PreCommit/Command/Application.php.tmp ${__dir}/../lib/PreCommit/Command/Application.php
+  && mv ${__dir}/../lib/PreCommit/Command/Application.php.tmp ${__dir}/../lib/PreCommit/Command/Application.php
 
 # commit updated files
 git add ${__dir}/../../src/lib/PreCommit/Command/Application.php && \
