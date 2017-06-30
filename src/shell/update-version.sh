@@ -48,7 +48,8 @@ fi
 
 # reset files with the version
 git checkout -- config/root.xml && git checkout -- lib/PreCommit/Command/Application.php \
-  || check_error ${ERR_NO_CRITICAL} "Can't reset files Application.php and root.xml."; exit 1; fi
+  || check_error ${ERR_NO_CRITICAL} "Can't reset files Application.php and root.xml."
+
 
 # Read current version
 current_version=$(grep -E '<version>[^<]' ${__dir}/../config/root.xml | grep -Eo '[0-9][^<]+') \
