@@ -231,8 +231,8 @@
                 </issue>
             </message>
             <end_message>
-                <success>Commit message is valid.</success>
-                <error>You cannot commit. Please see errors.</error>
+                <success>ಠ‿↼ Commit message is valid.</success>
+                <error>¯\(°_o)/¯ You cannot commit. Please see errors.</error>
             </end_message>
         </commit-msg>
     </hooks>

@@ -207,8 +207,8 @@
                 </after_all>
             </filetype>
             <end_message>
-                <success>Your code is valid.</success>
-                <error>Ooops! Something wrong in your files.</error>
+                <success>༼ʘ̚ل͜ʘ̚༽ Your code is valid.</success>
+                <error>﴾͡๏̯͡๏﴿ O'RLY? Ooops! Something wrong in your files.</error>
             </end_message>
         </pre-commit>
     </hooks>
