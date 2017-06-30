@@ -115,15 +115,13 @@ try {
     if (TEST_MODE) {
         throw $e;
     }
-    echo PHP_EOL;
     echo 'Error: '.$e->getMessage();
     echo PHP_EOL;
-    exit($e->getCode() ?: PreCommit\Console\Exception::CODE_INTERNAL);
+    exit(PreCommit\Console\Exception::CODE_INTERNAL);
 } catch (\Exception $e) {
     if (TEST_MODE) {
         throw $e;
     }
-    echo PHP_EOL;
     echo 'Exception: '.$e->getMessage();
     echo PHP_EOL;
     echo $e->getTraceAsString();
