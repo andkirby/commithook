@@ -10,7 +10,7 @@
             <ignore>
                 <validator>
                     <code>
-                        <PhpClass>1</PhpClass>
+                        <PhpClass>0</PhpClass>
                     </code>
                 </validator>
             </ignore>
