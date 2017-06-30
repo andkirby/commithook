@@ -2,6 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
+
 namespace PreCommit\Validator;
 
 use PreCommit\Config;
@@ -18,9 +19,7 @@ class PhpClass extends AbstractValidator
      * Error codes
      */
     const CODE_PHP_TAG       = 'noPhpTagStart';
-
     const CODE_PHP_INTERPRET = 'phpInterpret';
-
     /**#@-*/
 
     /**
