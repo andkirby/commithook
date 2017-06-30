@@ -2,6 +2,7 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
+
 namespace PreCommit\Console\Command\Config;
 
 use PreCommit\Console\Command\AbstractCommand;
@@ -32,7 +33,6 @@ class Set extends AbstractCommand
      * Shell exit code for deprecated way
      */
     const SHELL_CODE_COMMAND_DEPRECATED = 11;
-
     /**#@+
      * Option scopes
      *
@@ -94,25 +94,6 @@ class Set extends AbstractCommand
     protected $updated = false;
 
     /**
-     * Execute command
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int
-     * @throws Exception
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::execute($input, $output);
-
-        if ($this->checkDeprecatedKey()) {
-            return self::SHELL_CODE_COMMAND_DEPRECATED;
-        }
-
-        return $this->processValue();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function setApplication(Application $application = null)
@@ -123,6 +104,25 @@ class Set extends AbstractCommand
         $this->getHelperSet()->set(new Helper\Config\WriterHelper());
         $this->getHelperSet()->set(new Helper\ClearCacheHelper());
         $this->getHelperSet()->set(new Helper\Config\FileFilterHelper());
+    }
+
+    /**
+     * Execute command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws Exception
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+
+        if ($this->checkDeprecatedKey()) {
+            return self::SHELL_CODE_COMMAND_DEPRECATED;
+        }
+
+        return $this->processValue();
     }
 
     /**
@@ -149,7 +149,8 @@ class Set extends AbstractCommand
             return true;
         }
         if ('exclude-path' == $this->getKey() || 'skip-path' == $this->getKey()
-            || 'exclude-file' == $this->getKey() || 'skip-file' == $this->getKey()
+            || 'exclude-file' == $this->getKey()
+            || 'skip-file' == $this->getKey()
         ) {
             $this->output->writeln('This command is deprecated. Please use');
             $this->output->writeln('');
@@ -418,7 +419,7 @@ class Set extends AbstractCommand
     protected function writePredefinedOptions($readAll = false)
     {
         foreach ($this->trackerConnectionOptions as $name) {
-            $value = $this->input->getOption($name);
+            $value = $this->getInputOption($name);
             if (!$readAll && null === $value) {
                 continue;
             }
@@ -749,17 +750,25 @@ class Set extends AbstractCommand
      */
     protected function askValue($xpath)
     {
-        $question = $this->getSimpleQuestion()->getQuestion(
-            "Set value for XPath '$xpath'",
-            $this->getXpathValue($xpath)
-        );
-
         /**
          * Ask value without showing input for passwords
          */
         if (false !== strpos($xpath, 'password')) {
+            ;
+            $question = $this->getSimpleQuestion()->getQuestion(
+                sprintf(
+                    'Set password',
+                    $xpath == 'password' ? '' : "($xpath)"
+                ),
+                $this->getXpathValue($xpath)
+            );
             $question->setHidden(true);
             $question->setHiddenFallback(true);
+        } else {
+            $question = $this->getSimpleQuestion()->getQuestion(
+                "Set value for XPath '$xpath'",
+                $this->getXpathValue($xpath)
+            );
         }
 
         return $this->io->askQuestion($question);
@@ -946,5 +955,16 @@ HELP;
     protected function setValue($value)
     {
         return $this->input->setArgument('value', $value);
+    }
+
+    /**
+     * Get input option value
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getInputOption($name)
+    {
+        return $this->input->getOption($name);
     }
 }
