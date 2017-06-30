@@ -109,22 +109,24 @@ try {
         $processor->dispatchEvent('end', 1);
         echo $processor->getErrorsOutput();
         echo PHP_EOL;
-        exit(1);
+        exit(PreCommit\Console\Exception::CODE_VALIDATION);
     }
-} catch (\PreCommit\Exception $e) {
+} catch (PreCommit\Exception $e) {
     if (TEST_MODE) {
         throw $e;
     }
-    echo 'app error: '.$e->getMessage();
     echo PHP_EOL;
-    exit(1);
+    echo 'Error: '.$e->getMessage();
+    echo PHP_EOL;
+    exit($e->getCode() ?: PreCommit\Console\Exception::CODE_INTERNAL);
 } catch (\Exception $e) {
     if (TEST_MODE) {
         throw $e;
     }
-    echo 'exception: '.$e->getMessage();
+    echo PHP_EOL;
+    echo 'Exception: '.$e->getMessage();
     echo PHP_EOL;
     echo $e->getTraceAsString();
     echo PHP_EOL;
-    exit(1);
+    exit(PreCommit\Console\Exception::CODE_FATAL);
 }
