@@ -78,7 +78,6 @@
                     <code>
                         <!-- PHP, JS -->
                         <CodeSniffer>1</CodeSniffer>
-                        <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
                         <RedundantCode>1</RedundantCode>
@@ -132,7 +131,6 @@
                     <validators>
                         <License>0</License>
                         <CodeSniffer>0</CodeSniffer>
-                        <PhpClass>1</PhpClass>
                         <PhpDoc>1</PhpDoc>
                         <CodingStandard>1</CodingStandard>
                         <RedundantCode>1</RedundantCode>
