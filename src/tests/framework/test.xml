@@ -11,7 +11,7 @@
         </jira>
         <github>
             <name>foo</name>
-            <repository>bar</repository>
+            <project>bar</project>
         </github>
     </tracker>
 </config>

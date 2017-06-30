@@ -300,7 +300,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
      */
     protected function getRepositoryName()
     {
-        $name = $this->getConfig()->getNode('tracker/github/repository');
+        $name = $this->getConfig()->getNode('tracker/github/project');
         if (!$name) {
             if (!strpos($this->getProject(), '/')) {
                 throw new Exception('Cannot get GitHub repository name');
