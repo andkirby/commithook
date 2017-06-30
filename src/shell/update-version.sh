@@ -47,7 +47,7 @@ if ! git describe HEAD --tags --exact-match 1> /dev/null 2> /dev/null; then
 fi
 
 # reset files with the version
-git checkout -- config/root.xml && git checkout -- lib/PreCommit/Command/Application.php \
+git checkout -- config/root.xml && git checkout -- lib/PreCommit/Console/Application.php \
   || check_error ${ERR_NO_CRITICAL} "Can't reset files Application.php and root.xml."
 
 
@@ -57,9 +57,9 @@ current_version=$(grep -E '<version>[^<]' ${__dir}/../config/root.xml | grep -Eo
 
 echo "Current version: ${current_version}"
 
-match=$(grep " = '${current_version}'" ${__dir}/../lib/PreCommit/Command/Application.php)
+match=$(grep " = '${current_version}'" ${__dir}/../lib/PreCommit/Console/Application.php)
 if [ -z "${match}" ]; then
-  check_error ${ERR_NO_LOGICAL} "error: The same version '${current_version}' not found in PreCommit/Command/Application.php file."
+  check_error ${ERR_NO_LOGICAL} "error: The same version '${current_version}' not found in PreCommit/Console/Application.php file."
 fi
 
 last_tag_name=$(git describe HEAD --tags --exact-match | head -n1)
@@ -81,12 +81,12 @@ sed 's|<version>'"${current_version}"'</version>|<version>'"${last_version}"'</v
     ${__dir}/../config/root.xml \
     > ${__dir}/../config/root.xml.tmp \
   && mv ${__dir}/../config/root.xml.tmp ${__dir}/../config/root.xml \
-  && sed "s| = '${current_version}';| = '${last_version}';|g" ${__dir}/../lib/PreCommit/Command/Application.php \
-    > ${__dir}/../lib/PreCommit/Command/Application.php.tmp \
-  && mv ${__dir}/../lib/PreCommit/Command/Application.php.tmp ${__dir}/../lib/PreCommit/Command/Application.php
+  && sed "s| = '${current_version}';| = '${last_version}';|g" ${__dir}/../lib/PreCommit/Console/Application.php \
+    > ${__dir}/../lib/PreCommit/Console/Application.php.tmp \
+  && mv ${__dir}/../lib/PreCommit/Console/Application.php.tmp ${__dir}/../lib/PreCommit/Console/Application.php
 
 # commit updated files
-git add ${__dir}/../../src/lib/PreCommit/Command/Application.php && \
+git add ${__dir}/../../src/lib/PreCommit/Console/Application.php && \
 git add ${__dir}/../../src/config/root.xml && \
 git add ${__dir}/../../dev_version && \
 git add ${__dir}/../../release_version
