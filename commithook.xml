@@ -5,7 +5,7 @@
         <type>github</type>
         <github>
             <name>andkirby</name>
-            <repository>commithook</repository>
+            <project>commithook</project>
         </github>
     </tracker>
 </config>
