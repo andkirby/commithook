@@ -2,10 +2,13 @@
 /**
  * @license https://raw.githubusercontent.com/andkirby/commithook/master/LICENSE.md
  */
+
 namespace PreCommit\Issue;
 
 use Github\Client as Api;
+use Github\Exception as GitHubException;
 use PreCommit\Exception;
+use PreCommit\Issue\Authorization\Exception as AuthException;
 use PreCommit\Issue\Authorization\Password;
 use Zend\Cache\Storage\Adapter\Filesystem as CacheAdapter;
 
@@ -212,11 +215,29 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
             throw new Exception('Connection params not fully set.');
         }
 
-        return $this->getApi()->issue()->show(
-            $this->getVendorName(),
-            $this->getRepositoryName(),
-            $this->getIssueNumber()
-        );
+        try {
+            return $this->getApi()->issue()->show(
+                $this->getVendorName(),
+                $this->getRepositoryName(),
+                $this->getIssueNumber()
+            );
+        } catch (GitHubException\ErrorException $e) {
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        } catch (GitHubException\TwoFactorAuthenticationRequiredException $e) {
+            throw new AuthException($e->getMessage(), $e->getCode(), $e);
+        } catch (GithubException\RuntimeException $e) {
+            if ($e->getMessage() == 'Bad credentials') {
+                throw new AuthException(
+                    sprintf(
+                        'Please check your GitHub credentials. Response: %s',
+                        $e->getMessage()
+                    ),
+                    $e->getCode(),
+                    $e
+                );
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -315,7 +336,7 @@ class GitHubAdapter extends AbstractAdapter implements AdapterInterface
     protected function canRequest()
     {
         return $this->getVendorName()
-               && $this->getRepositoryName();
+            && $this->getRepositoryName();
     }
 
     /**
