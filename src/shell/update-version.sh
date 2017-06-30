@@ -103,5 +103,5 @@ fi
 # git tag-move -- custom command
 # Make commit, add tag, revert this commit
 git commit -m "@@through Update version to ${last_tag_name}." \
-  && git tag ${last_tag_name} \
+  && git tag ${last_tag_name} -f \
   && git revert HEAD
