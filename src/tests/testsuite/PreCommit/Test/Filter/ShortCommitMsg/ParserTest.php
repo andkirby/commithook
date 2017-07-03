@@ -4,7 +4,7 @@
  */
 namespace testsuite\PreCommit\Test\Filter\ShortCommitMsg;
 
-use PreCommit\Filter\ShortCommitMsg;
+use PreCommit\Filter\Explode;
 use PreCommit\Issue;
 use PreCommit\Message;
 
@@ -31,37 +31,65 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 'Test summary!!!', //issue summary
                 'task', //issue type
                 'Task', //original issue type
-                "My test 1!\nTest 2.", //user message
-                "123 My test 1!\nTest 2.", //full commit message
-                'Implemented', //verb
-                '', //short verb
+                "R 123 My new test header \nTest 2.", //full commit message
+                'TEST', // project key
+                'jira', // tracker type
+                "Refactored TEST-123: Test summary!!!\n - My new test header\nTest 2."
             ],
+
             /**
-             * Test getting verb by short verb
+             * Test getting default verb by issue type
              */
             [
-                'TEST-123', //issue key
+                'TEST-1', //issue key
                 'Test summary!!!', //issue summary
                 'task', //issue type
                 'Task', //original issue type
-                "My test 1!\nTest 2.", //user message
-                "F 123 My test 1!\nTest 2.", //full commit message
-                'Fixed', //verb
-                'F', //short verb
+                "I 1 My new test header \nTest 2.", //full commit message
+                'TEST', //project key
+                'jira', //tracker type
+                "Implemented TEST-1: Test summary!!!\n - My new test header\nTest 2."
             ],
+
             /**
-             * Test working with full issue key
+             * Test getting default verb by issue type
              */
             [
-                'TEST-123', //issue key
+                'TEST-1', // issue key
+                'Test summary!!!', // issue summary
+                'task', // issue type
+                'Task', // original issue type
+                "1 \nTest 2.", // full commit message
+                'TEST', // project key
+                'jira', // tracker type
+                "Implemented TEST-1: Test summary!!!\n - Test 2."
+            ],
+            /**
+             * Test getting default verb by issue type
+             */
+            [
+                'TEST-12', // issue key
+                'Test summary!!!', // issue summary
+                'task', // issue type
+                'Task', // original issue type
+                "12 Test 1 \nTest 2.", // full commit message
+                'TEST', // project key
+                'jira', // tracker type
+                "Implemented TEST-12: Test summary!!!\n - Test 1\nTest 2."
+            ],
+            /**
+             * Test getting default verb by issue type
+             */
+            [
+                'TEST-22', //issue key
                 'Test summary!!!', //issue summary
                 'task', //issue type
                 'Task', //original issue type
-                "My test 1!\nTest 2.", //user message
-                "F TEST-123 My test 1!\nTest 2.", //full commit message
-                'Fixed', //verb
-                'F', //short verb
-            ],
+                "C 22 My new test header \nTest 2.", //full commit message
+                'TEST', // project key
+                'jira', // tracker type
+                "CR Changes TEST-22: Test summary!!!\n - My new test header\nTest 2."
+            ]
         ];
     }
 
@@ -72,10 +100,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      * @param string $summary
      * @param string $type
      * @param string $originalType
-     * @param string $userBody
      * @param string $commitMessage
-     * @param string $verb
-     * @param string $shortVerb
+     * @param string $projectKey
+     * @param string $trackerType
+     * @param string $resultValue
      * @dataProvider dataProvider
      */
     public function testFilterShortMessageWithoutVerb(
@@ -83,34 +111,98 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $summary,
         $type,
         $originalType,
-        $userBody,
         $commitMessage,
-        $verb,
-        $shortVerb
+        $projectKey,
+        $trackerType,
+        $resultValue
     ) {
-        $this->markTestIncomplete();
+        // Real message.
+        $message = new Message();
 
-        $message       = new Message();
+        // Explode filter
+        $explodeFilter = new Explode();
+
+        // Prepare a commit message
         $message->body = $commitMessage;
 
+        // Filter commit message.
+        $message = $explodeFilter->filter($message);
         $issue = $this->getIssueMock($summary, $issueKey, $type, $originalType);
 
-        /** @var ShortCommitMsg\Parser|\PHPUnit_Framework_MockObject_MockObject $parser */
-        $parser = $this->getMock('PreCommit\Filter\ShortCommitMsg\Parser', ['_initIssue', '_getIssue']);
-        $parser->method('_initIssue')
-            ->willReturnSelf();
-        $parser->method('_getIssue')
-            ->willReturn($issue);
 
+        // Create a config object mock
+        $configMock = $this->getMockBuilder('PreCommit\Config')
+            ->getMock();
+
+        $map = [
+            [
+                "hooks/commit-msg/message/verb/list/", true, [
+                "I" => "Implemented",
+                "R" => "Refactored",
+                "F" => "Fixed",
+                "C" => "CR Changes"
+            ]
+            ],
+            [
+                "formatters/ShortCommitMsg/formatting/$trackerType", true, [
+                "regular" => "~^__format__~",
+                "format"  => "__verb__ __issue_key__: __summary__",
+            ],
+            ]
+        ];
+
+        $mapNode = [
+            ["tracker/type", true, $trackerType],
+            ["tracker/jira/project", true, $projectKey],
+            ["tracker/jira/active_task", true, $issueKey],
+            ["filters/ShortCommitMsg/issue/default_type_verb/task", true, "I"],
+            ["filters/ShortCommitMsg/issue/default_type_verb/bug", true, "F"],
+        ];
+
+        // Configure the getNodeArray stub.
+        $configMock->method('getNodeArray')
+            ->will($this->returnValueMap($map));
+
+        // Configure the getNode stub.
+        $configMock->method('getNode')
+            ->will($this->returnValueMap($mapNode));
+
+        $reflector = new \ReflectionClass("\\PreCommit\\Filter\\ShortCommitMsg\\Parser\\Jira");
+
+        // A new parser object. Set a custom config mock to a config property.
+
+        // Create a new instance without constructor.
+        $parser = $reflector->newInstanceWithoutConstructor();
+        $configProperty = $reflector->getProperty("config");
+        $configProperty->setAccessible(true);
+        $configProperty->setValue($parser, $configMock);
+
+        // Specify an "issue" property. Add a custom mock object as an issue property.
+        $issueProperty = $reflector->getProperty("issue");
+        $issueProperty->setAccessible(true);
+        $issueProperty->setValue($parser, $issue);
+
+        // Interpret original commit message.
         $result = $parser->interpret($message);
 
-        $this->assertEquals($message, $result);
-        $this->assertEquals($issue, $message->issue);
-        $this->assertEquals($summary, $message->summary);
-        $this->assertEquals($issueKey, $message->issueKey);
-        $this->assertEquals($userBody, $message->userBody);
-        $this->assertEquals($verb, $message->verb);
-        $this->assertEquals($shortVerb, $message->shortVerb);
+        $reflector = new \ReflectionClass("\\PreCommit\\Filter\\ShortCommitMsg\\Formatter");
+
+        $formatter = $reflector->newInstanceWithoutConstructor();
+        $configProperty = $reflector->getProperty("config");
+
+        // Get a formatter type property, set a tracker type for the Formatter.
+        $typeProperty = $reflector->getProperty("type");
+        $typeProperty->setAccessible(true);
+        $typeProperty->setValue($formatter, $trackerType);
+
+        // Get a formatter config property, set a config model for the Formatter.
+        $configProperty->setAccessible(true);
+        $configProperty->setValue($formatter, $configMock);
+
+        $resultMessage = $formatter->filter($result);
+
+        // Verify commit messages
+        $this->assertEquals($resultMessage->__toString(), $resultValue);
     }
 
     /**
@@ -125,7 +217,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
     protected function getIssueMock($summary, $key, $type, $originalType)
     {
         /** @var Issue\AbstractAdapter|\PHPUnit_Framework_MockObject_MockObject $filter */
-        $issue = $this->getMock('PreCommit\Issue\AdapterAbstract', [], [], '', false);
+        $issue = $this->getMockBuilder('PreCommit\Issue\AdapterAbstract')
+            ->setMethods(['getSummary', 'getKey', 'getType', 'getOriginalType'])
+            ->getMock();
+
         $issue->method('getSummary')
             ->willReturn($summary);
         $issue->method('getKey')
