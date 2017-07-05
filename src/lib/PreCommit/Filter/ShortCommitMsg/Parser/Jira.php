@@ -289,8 +289,8 @@ class Jira implements InterpreterInterface, IssueParserInterface
         //endregion
 
         $userMessage = null;
-        if ($m) {
-            $userMessage = trim(array_pop($m));
+        if ($m && isset($m[6])) {
+            $userMessage = $m[6];
         }
 
         return [$commitVerb, $issueKey, $userMessage];
@@ -334,8 +334,9 @@ class Jira implements InterpreterInterface, IssueParserInterface
      */
     protected function initIssue($issueKey)
     {
-        $this->issue = Issue::factory($issueKey);
-
+        if (!$this->issue) {
+            $this->issue = Issue::factory($issueKey);
+        }
         return $this;
     }
 
