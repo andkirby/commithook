@@ -337,8 +337,9 @@ class Jira implements InterpreterInterface, IssueParserInterface
      */
     protected function initIssue($issueKey)
     {
-        $this->issue = Issue::factory($issueKey);
-
+        if (!$this->issue) {
+            $this->issue = Issue::factory($issueKey);
+        }
         return $this;
     }
 
