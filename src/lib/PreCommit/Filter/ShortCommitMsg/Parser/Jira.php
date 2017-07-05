@@ -289,11 +289,8 @@ class Jira implements InterpreterInterface, IssueParserInterface
         //endregion
 
         $userMessage = null;
-        if ($m) {
-            $userMessage = trim(array_pop($m));
-            if (is_numeric($userMessage)) {
-                $userMessage = "";
-            }
+        if ($m && isset($m[6])) {
+            $userMessage = $m[6];
         }
 
         return [$commitVerb, $issueKey, $userMessage];
