@@ -24,6 +24,13 @@ abstract class AbstractAdapter
     protected static $vcsAdapter;
 
     /**
+     * Current work directory
+     *
+     * @var string
+     */
+    protected static $cwd;
+
+    /**
      * Error collector
      *
      * @var \PreCommit\Processor\ErrorCollector
@@ -65,9 +72,6 @@ abstract class AbstractAdapter
     {
         if (null === self::$vcsAdapter) {
             static::$vcsAdapter = $this->initVcsAdapter($options);
-
-            //change current directory
-            $this->cdToVcsDir();
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
@@ -75,6 +79,20 @@ abstract class AbstractAdapter
         } else {
             $this->errorCollector = $this->getErrorCollector();
         }
+    }
+
+    /**
+     * Get current work directory
+     *
+     * @return string
+     */
+    public static function getCwd()
+    {
+        if (self::$cwd === null) {
+            self::$cwd = getcwd();
+        }
+
+        return self::$cwd;
     }
 
     /**
@@ -271,26 +289,5 @@ abstract class AbstractAdapter
         }
 
         return $this->filters[$name];
-    }
-
-    /**
-     * Change current directory to VCS root dir
-     *
-     * @param bool $exception Throw exception on error
-     * @return bool
-     * @throws Exception
-     */
-    protected function cdToVcsDir($exception = false)
-    {
-        $directory = self::$vcsAdapter->getCodePath();
-        if (!$directory || !is_dir($directory)) {
-            if ($exception) {
-                throw new Exception('No such directory: '.$directory);
-            }
-
-            return false;
-        }
-
-        return chdir($directory);
     }
 }

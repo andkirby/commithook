@@ -20,7 +20,7 @@ use Symfony\Component\Console\Helper\HelperSet;
  * Class abstract process adapter
  *
  * @package PreCommit\Processor
- * @method FilterInterface loadFilter
+ * @method FilterInterface loadFilter($name, array $options = [])
  */
 class PreCommit extends AbstractAdapter
 {
@@ -291,7 +291,7 @@ class PreCommit extends AbstractAdapter
      */
     protected function getFilePath($file)
     {
-        $filePath = $this->codePath.DIRECTORY_SEPARATOR.$file;
+        $filePath = $this->getCwd().DIRECTORY_SEPARATOR.$file;
         if (!file_exists($filePath)) {
             throw new Exception("File '$filePath' does not exist.");
         }
