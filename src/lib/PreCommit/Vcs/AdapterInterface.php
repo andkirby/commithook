@@ -27,7 +27,7 @@ interface AdapterInterface
     /**
      * Get affected files
      *
-     * @return string
+     * @return array
      */
     public function getAffectedFiles();
 
