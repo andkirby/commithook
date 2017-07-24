@@ -22,6 +22,7 @@ Fetch PHPCS package (for CommitHook global installation):
 $ composer global require squizlabs/php_codesniffer:~2.0@stable
 ```
 
+## Install exists configuration for Magento 1.x
 #### Fast install (Magento 1.x ECG standards)
 Go to your project git root directory and run commands:
 ```
