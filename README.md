@@ -56,7 +56,7 @@ If a project already have base configuration files all what you need to:
     ```shell
     $ composer global require squizlabs/php_codesniffer:~2.0@stable
     ```
-  - [JSHint](docs/jshint-setup.md)
+  - [JSHint](docs/jshint-setup.md) ([Original installation document](http://jshint.com/install/))
   - [Rubocop installation)[https://github.com/bbatsov/rubocop/blob/master/manual/installation.md]
 - (optional) Perhaps, you have to define binaries for extra code validators in case they are not allow to use globally. (e.g. [JSHint](docs/jshint-setup.md), any see how to install any "linter" in [this example](src/config/examples/pre-commit/Linter-SimplyLint.xml).)
 - Install GIT hook files
