@@ -44,6 +44,24 @@ Now fetch the package:
 $ composer global require andkirby/commithook ~2.0@beta
 ```
 
+### Enable hooks in a project (with predefined configuration)
+If a project already have base configuration files all what you need to:
+- define interpreters (PHP for PHPCS, Ruby for Rubocop, NodeJs for JSHint)
+  - PHP example:
+    ```shell
+    $ commithook config --xpath code/interpreter/php d:/s/php-7.0.14/php.exe --project-self
+    ```
+- Install extra code validators:
+  - PHPCS
+    ```shell
+    $ composer global require squizlabs/php_codesniffer:~2.0@stable
+    ```
+- (optional) Perhaps, you have to define binaries for extra code validators in case they are not allow to use globally. (e.g. [JSHint](docs/jshint-setup.md), any see how to install any "linter" in [this example](src/config/examples/pre-commit/Linter-SimplyLint.xml).)
+- Install GIT hook files
+  ```
+  $ commithook install
+  ```
+
 #### Sample `.bashrc`
 Here is [an example of `.bashrc` file](docs/example-bashrc.md) for global using.
 
