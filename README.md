@@ -63,6 +63,10 @@ If a project already have base configuration files all what you need to:
   ```
   $ commithook install
   ```
+- Enable your tracker integration:
+  ```
+  $ commithook tracker:wizard
+  ```
 
 #### Sample `.bashrc`
 Here is [an example of `.bashrc` file](docs/example-bashrc.md) for global using.
