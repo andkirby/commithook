@@ -51,7 +51,7 @@ class Git implements AdapterInterface
      * Set affected files
      *
      * @param array $files
-     * @return string
+     * @return $this
      */
     public function setAffectedFiles(array $files = null)
     {
@@ -61,7 +61,9 @@ class Git implements AdapterInterface
             }
         }
 
-        return $this->affectedFiles = $files;
+        $this->affectedFiles = $files;
+
+        return $this;
     }
 
     /**
