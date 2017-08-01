@@ -219,15 +219,15 @@ abstract class AbstractAdapter
             ) {
                 $vcsAdapter = $options['vcs'];
             }
-
-            //set custom affected files
-            $vcsAdapter->setAffectedFiles(
-                isset($options['vcsFiles'])
-                    ? $options['vcsFiles'] : null
-            );
         }
+
         if (!$vcsAdapter) {
             throw new Exception('VCS adapter is not set.');
+        }
+
+        if (!empty($options['vcsFiles'])) {
+            //set custom affected files
+            $vcsAdapter->setAffectedFiles($options['vcsFiles']);
         }
 
         return $vcsAdapter;
