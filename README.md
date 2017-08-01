@@ -24,7 +24,7 @@ $ git commit -m 'Added my file.'
 See more details about [short commit messages](docs/commit-msg.md).
 
 ## Installation
-### Latest release is `v2.0.0-beta.45`
+### Latest release is `v2.0.0-beta.44`
 ### Install globally
 To get last beta version please define your `minimum-stability`.
 ```
