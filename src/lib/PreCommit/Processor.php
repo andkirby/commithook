@@ -44,7 +44,7 @@ class Processor
      * Get class name of adapter
      *
      * @param string $adapter
-     * @return array
+     * @return string
      */
     protected static function getAdapterClassName($adapter)
     {
