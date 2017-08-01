@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c1cc18f82abd1412ef21150e2e18089",
+    "content-hash": "b859ee2b20f833655f237763d708731d",
     "packages": [
         {
             "name": "chobie/jira-api-restclient",
@@ -292,16 +292,16 @@
         },
         {
             "name": "rikby/console-helper",
-            "version": "v0.10.0",
+            "version": "v0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rikby/console-helper.git",
-                "reference": "96ccdab2e861e43a5dbaa0c5725b2624e5cc23e3"
+                "reference": "c618daf79e01439ea6cd60a75c9ff5b09de9b75d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rikby/console-helper/zipball/96ccdab2e861e43a5dbaa0c5725b2624e5cc23e3",
-                "reference": "96ccdab2e861e43a5dbaa0c5725b2624e5cc23e3",
+                "url": "https://api.github.com/repos/rikby/console-helper/zipball/c618daf79e01439ea6cd60a75c9ff5b09de9b75d",
+                "reference": "c618daf79e01439ea6cd60a75c9ff5b09de9b75d",
                 "shasum": ""
             },
             "require": {
@@ -321,7 +321,7 @@
                 "GPL-3.0"
             ],
             "description": "Symfony console helpers.",
-            "time": "2017-07-31T21:45:45+00:00"
+            "time": "2017-08-01T09:56:23+00:00"
         },
         {
             "name": "rikby/crypter",

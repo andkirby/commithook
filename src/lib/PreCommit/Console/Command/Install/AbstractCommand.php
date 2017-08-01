@@ -121,7 +121,7 @@ abstract class AbstractCommand extends Command\AbstractCommand
     protected function getHooksDir($projectDir)
     {
         $hooksDir = $this->getProjectDirHelper()
-            ->getDotGitDirectory($projectDir);
+            ->getHooksDirectory($projectDir);
         if (!is_dir($hooksDir)) {
             throw new Exception("Git hooks directory '$hooksDir' not found.");
         }
