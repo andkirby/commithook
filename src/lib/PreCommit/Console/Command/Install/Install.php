@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * CommitHooks files installer
  *
- * @package PreCommit
+ * @package PreCommit\Console\Command\Install
  */
 class Install extends AbstractCommand
 {
@@ -29,7 +29,7 @@ class Install extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $this->askProjectDir($input, $output)
+                $this->askProjectDir()
             );
             $this->createHooks(
                 $hooksDir,
@@ -208,7 +208,7 @@ class Install extends AbstractCommand
     /**
      * Ask about PHP executable file
      *
-     * @return array
+     * @return string
      * @throws \PreCommit\Console\Exception
      */
     protected function askPhpPath()

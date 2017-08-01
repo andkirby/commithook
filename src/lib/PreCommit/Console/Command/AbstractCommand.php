@@ -148,7 +148,7 @@ abstract class AbstractCommand extends ConsoleAbstractCommand
     /**
      * Ask about GIT project root dir
      *
-     * @return array
+     * @return string
      * @throws Exception
      */
     protected function askProjectDir()
