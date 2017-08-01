@@ -51,6 +51,7 @@ If a project already have base configuration files all what you need to:
     ```shell
     $ commithook config --xpath code/interpreter/php d:/s/php-7.0.14/php.exe --project-self
     ```
+    (You may try to use [PHP Windows Binaries Downloader (gist)](https://gist.github.com/andkirby/67e87e319c376b8676d559edb759e3fe))
 - Install extra code validators:
   - PHPCS
     ```shell
