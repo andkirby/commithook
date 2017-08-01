@@ -101,16 +101,13 @@ class Git implements AdapterInterface
     }
 
     /**
-     * Get path to project
-     *
-     * @param string|null $gitDir Anti-pattern, please use carefully.
-     * @return string
+     * {@inheritdoc}
      */
-    public function getCodePath($gitDir = null)
+    public function getCodePath($dotGitDir = null)
     {
         if (null === $this->codePath) {
             $gitBin       = GIT_BIN;
-            $gitDirOption = $gitDir ? ' --git-dir '.$gitDir : '';
+            $gitDirOption = $dotGitDir ? ' --git-dir '.$dotGitDir : '';
             //@startSkipCommitHooks
             $this->codePath = trim(`$gitBin $gitDirOption rev-parse --show-toplevel`);
             //@finishSkipCommitHooks

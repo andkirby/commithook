@@ -12,9 +12,12 @@ interface AdapterInterface
     /**
      * Get path to project
      *
+     * @param string|null $dotGitDir Anti-pattern, please use it carefully.
+     *                               This variable may have path to dot-git directory.
+     *                               It's quiet useful for GIT submodules.
      * @return string
      */
-    public function getCodePath();
+    public function getCodePath($dotGitDir = null);
 
     /**
      * Get affected files
