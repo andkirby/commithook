@@ -139,7 +139,7 @@ class Git implements AdapterInterface
      */
     public function isMergeInProgress()
     {
-        $mergeFile = $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'MERGE_HEAD';
+        $mergeFile = $this->getDotGitDirectory().DIRECTORY_SEPARATOR.'MERGE_HEAD';
 
         return file_exists($mergeFile);
     }
@@ -149,8 +149,20 @@ class Git implements AdapterInterface
      *
      * @return string
      */
-    protected function getCommitMessageFile()
+    public function getCommitMessageFile()
     {
-        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+        return $this->getDotGitDirectory().DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+    }
+
+    /**
+     * Get GIT directory (.git)
+     *
+     * @return string
+     */
+    public function getDotGitDirectory()
+    {
+        // @codingStandardsIgnoreStart
+        return realpath(trim(`git -C {$this->getCodePath()} rev-parse --git-dir 2>&1`));
+        // @codingStandardsIgnoreEnd
     }
 }
