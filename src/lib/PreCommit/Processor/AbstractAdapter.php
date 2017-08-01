@@ -6,7 +6,7 @@ namespace PreCommit\Processor;
 
 use PreCommit\Exception;
 use PreCommit\Processor\ErrorCollector as Error;
-use PreCommit\Vcs\AdapterInterface;
+use PreCommit\Vcs;
 
 /**
  * Class abstract process adapter
@@ -65,13 +65,13 @@ abstract class AbstractAdapter
     /**
      * Set default error collector
      *
-     * @param string|AdapterInterface|array $options
+     * @param string|Vcs\AdapterInterface|array $options
      * @throws Exception
      */
     public function __construct($options = [])
     {
         if (null === self::$vcsAdapter) {
-            static::$vcsAdapter = $this->initVcsAdapter($options);
+            static::$vcsAdapter = Vcs\Factory::factory($options);
         }
 
         if (is_array($options) && isset($options['errorCollector'])) {
@@ -98,7 +98,7 @@ abstract class AbstractAdapter
     /**
      * Get VCS object
      *
-     * @return AdapterInterface
+     * @return Vcs\AdapterInterface
      */
     public static function getVcsAdapter()
     {
@@ -178,59 +178,6 @@ abstract class AbstractAdapter
         }
 
         return $this;
-    }
-
-    /**
-     * Init VCS from string
-     *
-     * @param array|string $options
-     * @return AbstractAdapter
-     */
-    protected function initVcsFromString($options)
-    {
-        if (strpos($options, '\\') || strpos($options, '_')) {
-            $class = $options;
-        } else {
-            $class = '\\PreCommit\\Vcs\\'.ucfirst($options);
-        }
-
-        return new $class($options);
-    }
-
-    /**
-     * Init VCS adapter
-     *
-     * @param string|AdapterInterface|array $options
-     * @return mixed AdapterInterface
-     * @throws Exception
-     */
-    protected function initVcsAdapter($options)
-    {
-        $vcsAdapter = null;
-        if (is_object($options) && $options instanceof AdapterInterface) {
-            $vcsAdapter = $options;
-        } elseif (is_string($options)) {
-            $vcsAdapter = $this->initVcsFromString($options);
-        } elseif (is_array($options)) {
-            if (isset($options['vcs']) && is_string($options['vcs'])) {
-                $vcsAdapter = $this->initVcsFromString($options['vcs']);
-            } elseif (isset($options['vcs']) && is_object($options['vcs'])
-                      && $options['vcs'] instanceof AdapterInterface
-            ) {
-                $vcsAdapter = $options['vcs'];
-            }
-
-            //set custom affected files
-            $vcsAdapter->setAffectedFiles(
-                isset($options['vcsFiles'])
-                    ? $options['vcsFiles'] : null
-            );
-        }
-        if (!$vcsAdapter) {
-            throw new Exception('VCS adapter is not set.');
-        }
-
-        return $vcsAdapter;
     }
 
     /**
