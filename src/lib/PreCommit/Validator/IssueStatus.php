@@ -64,7 +64,8 @@ class IssueStatus extends AbstractValidator
      */
     public function validate($message, $file)
     {
-        if ($message->issue && $message->issue->getStatus()
+        if ($message->issue && false === strpos($message->body, '@@add')
+            && $message->issue->getStatus()
             && !$this->isAllowed($message->issue->getStatus())
         ) {
             $this->addError(
