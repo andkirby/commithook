@@ -20,7 +20,7 @@ class Application extends BaseApplication
      *
      * @see src/config.xml
      */
-    const VERSION = '2.0.x-dev';
+    const VERSION = '2.0.0-beta.46';
 
 // @codingStandardsIgnoreStart
     /**
