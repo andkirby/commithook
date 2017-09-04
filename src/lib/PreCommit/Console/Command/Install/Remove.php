@@ -28,7 +28,7 @@ class Remove extends AbstractCommand
         parent::execute($input, $output);
         try {
             $hooksDir = $this->getHooksDir(
-                $this->askProjectDir($input, $output)
+                $this->askProjectDir()
             );
             $files = $this->getTargetFiles();
             $status = $this->removeHookFiles($hooksDir, $files);
@@ -75,9 +75,8 @@ class Remove extends AbstractCommand
     /**
      * Remove hook files
      *
-     * @param OutputInterface $output
-     * @param string          $hooksDir
-     * @param array           $files
+     * @param string \$hooksDir
+     * @param array $files
      * @return bool
      */
     protected function removeHookFiles(

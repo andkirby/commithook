@@ -51,7 +51,7 @@ class Git implements AdapterInterface
      * Set affected files
      *
      * @param array $files
-     * @return string
+     * @return $this
      */
     public function setAffectedFiles(array $files = null)
     {
@@ -61,7 +61,9 @@ class Git implements AdapterInterface
             }
         }
 
-        return $this->affectedFiles = $files;
+        $this->affectedFiles = $files;
+
+        return $this;
     }
 
     /**
@@ -99,16 +101,15 @@ class Git implements AdapterInterface
     }
 
     /**
-     * Get path to project
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getCodePath()
+    public function getCodePath($dotGitDir = null)
     {
         if (null === $this->codePath) {
-            $gitBin = GIT_BIN;
+            $gitBin       = GIT_BIN;
+            $gitDirOption = $dotGitDir ? ' --git-dir '.$dotGitDir : '';
             //@startSkipCommitHooks
-            $this->codePath = trim(`$gitBin rev-parse --show-toplevel`);
+            $this->codePath = trim(`$gitBin $gitDirOption rev-parse --show-toplevel`);
             //@finishSkipCommitHooks
         }
 
@@ -139,7 +140,7 @@ class Git implements AdapterInterface
      */
     public function isMergeInProgress()
     {
-        $mergeFile = $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'MERGE_HEAD';
+        $mergeFile = $this->getDotGitDirectory().DIRECTORY_SEPARATOR.'MERGE_HEAD';
 
         return file_exists($mergeFile);
     }
@@ -149,8 +150,20 @@ class Git implements AdapterInterface
      *
      * @return string
      */
-    protected function getCommitMessageFile()
+    public function getCommitMessageFile()
     {
-        return $this->getCodePath().DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+        return $this->getDotGitDirectory().DIRECTORY_SEPARATOR.'COMMIT_EDITMSG';
+    }
+
+    /**
+     * Get GIT directory (.git)
+     *
+     * @return string
+     */
+    public function getDotGitDirectory()
+    {
+        // @codingStandardsIgnoreStart
+        return realpath(trim(`git -C {$this->getCodePath()} rev-parse --git-dir 2>&1`));
+        // @codingStandardsIgnoreEnd
     }
 }

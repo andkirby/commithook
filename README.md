@@ -24,7 +24,7 @@ $ git commit -m 'Added my file.'
 See more details about [short commit messages](docs/commit-msg.md).
 
 ## Installation
-### Latest release is `v2.0.0-beta.42`
+### Latest release is `v2.0.0-beta.45`
 ### Install globally
 To get last beta version please define your `minimum-stability`.
 ```
@@ -51,6 +51,7 @@ If a project already have base configuration files all what you need to:
     ```shell
     $ commithook config --xpath code/interpreter/php d:/s/php-7.0.14/php.exe --project-self
     ```
+    (You may try to use [PHP Windows Binaries Downloader (gist)](https://gist.github.com/andkirby/67e87e319c376b8676d559edb759e3fe))
 - Install extra code validators:
   - PHPCS
     ```shell
