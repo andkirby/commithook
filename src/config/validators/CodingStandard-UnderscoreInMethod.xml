@@ -8,7 +8,7 @@
     <!--Validators setup-->
     <validators>
         <CodingStandard-UnderscoreInMethod>
-            <underscore_in_non_public>1</underscore_in_non_public>
+            <underscore_in_non_public>0</underscore_in_non_public>
         </CodingStandard-UnderscoreInMethod>
     </validators>
 
