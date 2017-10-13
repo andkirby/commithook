@@ -8,7 +8,7 @@ The main purpose of this project is
  - checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)
  - filling up commit messages automatically to proper format ([details](docs/commit-msg.md))
 
-Supprted file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
+Supported file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
 
 ## The simplest commit message you could ever make
 Target commit message:
