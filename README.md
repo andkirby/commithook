@@ -5,7 +5,7 @@ CmHook is GIT commit hook the code validator for PHP (Code Sniffer), CSS (base o
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andkirby/commithook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The main purpose of this project is
- - checking coding standards before commit (with using PHP CodeSniffer, JSHint, or any lint tool)
+ - checking coding standards before commit (by using PHP CodeSniffer, JSHint, RuboCop, or any lint tool)
  - filling up commit messages automatically to proper format ([details](docs/commit-msg.md))
 
 Supported file types: php, phtml, js, coffee, css, scss, xml, sh, scss, css, json, less, html, htm.
